@@ -1,0 +1,477 @@
+/* --- Global & Body --- */
+body { /* Apply to body if this CSS is global, or to a wrapper if component-scoped */
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #fff7f0;
+  color: #333;
+}
+
+/* --- Header Styles (Based on your updated navbar design) --- */
+header {
+  background-color: #f1673a;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #000;
+}
+
+.header-left-content,
+.header-right-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.burger-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.burger-btn svg {
+  width: 28px;
+  height: 28px;
+  /* stroke: #000; Defined in SVG itself */
+}
+
+.header-logo-link .header-logo-img {
+  height: 30px;
+  vertical-align: middle;
+}
+
+.header-nav-links a {
+  color: #000;
+  text-decoration: none;
+  margin: 0 8px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+.header-nav-links a:hover {
+  text-decoration: underline;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 20px;
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+}
+.search-bar input[type="search"] {
+  border: none;
+  outline: none;
+  background: transparent;
+  margin-right: 8px;
+  font-size: 0.9em;
+  color: #333;
+  width: 150px;
+}
+.search-bar input[type="search"]::placeholder {
+  color: #888;
+}
+.search-bar button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+.search-bar button svg {
+  width: 18px;
+  height: 18px;
+  /* stroke: #000; Defined in SVG itself */
+}
+
+.header-icon-link svg {
+  width: 24px;
+  height: 24px;
+  /* fill/stroke defined in SVG for black color */
+  vertical-align: middle;
+}
+.header-icon-link:hover svg {
+  opacity: 0.7;
+}
+
+.header-separator {
+  width: 1px;
+  height: 20px;
+  background-color: #00000050;
+  margin: 0 5px;
+}
+
+.header-social-icons a img {
+  height: 22px;
+  width: 22px;
+  vertical-align: middle;
+}
+.header-social-icons a:not(:last-child) {
+    margin-right: 8px;
+}
+
+/* --- Container & General Page Elements --- */
+.container {
+  padding: 20px;
+  max-width: 960px;
+  margin: 20px auto; /* Added top/bottom margin */
+}
+h2 {
+    font-weight: 700;
+    font-size: 1.8em;
+    margin-bottom: 25px;
+}
+
+/* --- Main Shopping Cart Items --- */
+.cart-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 25px 0;
+  gap: 15px;
+}
+.cart-item:last-child { /* Renamed from .main-cart-items .cart-item:last-child */
+    border-bottom: none;
+}
+.cart-item img {
+  width: 100px;
+  height: auto; /* Maintain aspect ratio */
+  max-height: 100px; /* Prevent overly tall images */
+  object-fit: cover; /* Or 'contain' depending on preference */
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.item-info {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 150px;
+}
+.item-info strong {
+  font-weight: 700;
+  font-size: 1.1em;
+}
+.item-info .stock-status {
+  font-size: 0.9em;
+  color: #0e9b57;
+  font-weight: 500;
+}
+.item-info .size-info {
+  font-size: 0.9em;
+  color: #555;
+}
+.item-actions {
+  flex: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap; /* Ensure buttons stay in one line if space allows */
+}
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  background-color: #f1fbfd;
+  border-radius: 12px;
+  padding: 5px 10px;
+  border: 1px solid #bfeaf5;
+}
+.quantity-controls button {
+  border: none;
+  background: none;
+  font-size: 1.1em;
+  cursor: pointer;
+  padding: 0 8px;
+  color: #333;
+}
+.quantity-controls span {
+  padding: 0 8px;
+  font-weight: 500;
+  min-width: 15px;
+  text-align: center;
+}
+.item-actions .action-btn {
+  padding: 6px 12px;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 0.85em;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.item-actions .delete-btn {
+  border-color: #ffdede;
+  background-color: #fff;
+  color: red;
+}
+.item-actions .save-btn {
+  border-color: #ffeaa7;
+  background-color: #fff;
+  color: #f7b500;
+}
+.item-actions .share-btn {
+  border-color: #cceeff;
+  background-color: #fff;
+  color: #00aaff;
+}
+.price-tag {
+  flex: 1;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  min-width: 120px;
+}
+.deal-label {
+  background-color: #0e5d4d;
+  color: white;
+  padding: 3px 8px;
+  font-size: 0.75em;
+  border-radius: 4px;
+  display: inline-block;
+  font-weight: 500;
+}
+.price-tag .item-price-display {
+  font-weight: 700;
+  font-size: 1.1em;
+  color: #333;
+}
+
+/* --- Other Page Elements --- */
+.update-cart-btn {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 10px 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95em;
+  margin-top: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
+}
+.update-cart-btn:hover {
+    background-color: #f8f9fa;
+}
+.payment-trust-icons {
+    text-align: center;
+    margin: 30px 0;
+    font-size: 1.5em;
+    color: #aaa;
+    letter-spacing: 10px;
+}
+.cart-total {
+  margin-top: 30px;
+  background: #fff;
+  padding: 25px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+.cart-total h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-weight: 700;
+  font-size: 1.4em;
+}
+.cart-total p {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  font-size: 0.95em;
+}
+.cart-total p.total-row strong {
+  font-size: 1.1em;
+}
+.cart-total .address-line {
+    justify-content: flex-start;
+    gap: 5px;
+}
+.cart-total .change-address-btn {
+  background: none;
+  border: none;
+  color: #f1673a;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0;
+  margin-left: 5px;
+}
+.cart-total .change-address-btn:hover {
+    text-decoration: underline;
+}
+.complete-purchase-btn {
+  background: #f1673a;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 20px;
+}
+.complete-purchase-btn:hover {
+    background: #e0562a;
+}
+
+/* --- Recommended ("Later") Section --- */
+.recommended {
+  margin-top: 40px;
+}
+.recommended h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-weight: 700;
+  font-size: 1.4em;
+}
+.recommended-product-card {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  max-width: 250px; /* This will cause items to stack if container is not wide enough or not using flexbox for layout of cards */
+  margin-bottom: 15px; /* Add some space between cards if they stack */
+}
+.recommended-product-image {
+  display: block;
+  width: 100%;
+  height: 200px; /* Fixed height for consistency */
+  object-fit: cover;
+  background-color: #e0e0e0;
+}
+.recommended-product-content {
+  background-color: #e0f2f1;
+  padding: 15px;
+}
+.recommended-product-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 15px;
+}
+.recommended-product-name {
+  font-weight: 700;
+  font-size: 1.1em;
+  color: #00695c;
+}
+.recommended-product-price {
+  font-size: 1em;
+  color: #333;
+  font-weight: 500;
+}
+.recommended-product-stock,
+.recommended-product-size {
+  font-size: 0.9em;
+  color: #00796b;
+}
+.recommended-product-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.btn-move-to-cart-later {
+  background-color: #FFFDE7;
+  color: #F9A825;
+  border: 1px solid #FDD835;
+  padding: 10px 15px;
+  border-radius: 20px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.95em;
+}
+.btn-move-to-cart-later:hover {
+  background-color: #FFF9C4;
+}
+.btn-delete-later {
+  background-color: transparent;
+  color: red;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.9em;
+  padding: 5px 0;
+  align-self: flex-start;
+}
+.btn-delete-later:hover {
+  color: darkred;
+}
+
+/* --- Footer --- */
+.footer {
+  background: #f1673a;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap; /* Allow columns to wrap on smaller screens */
+  gap: 20px; /* Add gap for wrapped items */
+  padding: 30px 20px;
+  margin-top: 50px;
+}
+.footer .footer-column { /* Changed from 'div' to be more specific */
+  flex: 1 1 250px; /* Allow columns to grow, shrink, and have a base size */
+  min-width: 200px; /* Ensure columns don't get too narrow */
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+.footer a { color: white; text-decoration: none; }
+.footer a:hover { text-decoration: underline;}
+.footer strong { display: block; margin-bottom: 8px;}
+.footer .social-icons a img {
+    height: 20px;
+    margin-right: 8px;
+}
+
+/* Small screen adjustments for item actions (optional, but good practice) */
+@media (max-width: 768px) {
+  .cart-item {
+    flex-direction: column;
+    align-items: center; /* Center items when stacked */
+  }
+  .item-actions {
+    flex-wrap: wrap; /* Allow action buttons to wrap */
+    justify-content: center;
+    margin-top: 10px;
+  }
+  .price-tag {
+    text-align: center;
+    align-items: center;
+    margin-top: 10px;
+    width: 100%;
+  }
+  .header-left-content .header-nav-links {
+    display: none; /* Example: hide nav links, show burger for menu */
+  }
+  .header-right-content .search-bar {
+    display: none; /* Example: hide search on very small screens */
+  }
+}
+@media (max-width: 480px) {
+    .header-left-content, .header-right-content {
+        gap: 8px; /* Reduce gap on very small screens */
+    }
+    .header-logo-link .header-logo-img {
+        height: 24px;
+    }
+     .header-icon-link svg {
+        width: 20px;
+        height: 20px;
+    }
+    .header-social-icons a img {
+        height: 18px;
+        width: 18px;
+    }
+}

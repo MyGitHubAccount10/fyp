@@ -31,7 +31,14 @@ const LoginPage = () => {
             <input type="search" placeholder="Search" />
             <button type="submit"><svg viewBox="0 0 24 24" fill="none"><path d="M11 19a8 8 0 100-16 8 8 0 000 16zM21 21l-4.35-4.35" stroke="#000" strokeWidth="2"/></svg></button>
           </form>
-          <a href="#" className="header-icon-link" aria-label="Cart"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2L3 6V20C3 20.5 3.2 21 3.6 21.4 4 21.8 4.5 22 5 22H19c.5 0 1-.2 1.4-.6.4-.4.6-.9.6-1.4V6L18 2H6Z" stroke="#000" strokeWidth="1.5"/></svg></a>
+          {/* MODIFIED CART ICON HERE */}
+          <a href="#" aria-label="Shopping Cart" className="header-icon-link" title="Shopping Cart">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 2L3 6V20C3 20.5304 3.21071 21.0391 3.58579 21.4142C3.96086 21.7893 4.46957 22 5 22H19C19.5304 21.7893 20.2107 21.4142 20.5858 21.0391C20.9609 20.664 21.1716 20.1554 21.1716 19.625V6L18 2H6Z" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" transform="scale(0.9) translate(1.2, 1.2)"/>
+                <path d="M3 6H21" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" transform="scale(0.9) translate(1.2, 1.2)"/>
+                <path d="M16 10C16 11.0609 15.5786 12.0783 14.8284 12.8284C14.0783 13.5786 13.0609 14 12 14C10.9391 14 9.92172 13.5786 9.17157 12.8284C8.42143 12.0783 8 11.0609 8 10" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" transform="scale(0.9) translate(1.2, 1.2)"/>
+            </svg>
+          </a>
           <a href="#" className="header-icon-link" aria-label="User"><svg viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="#000" strokeWidth="1.5"/></svg></a>
           <span className="header-separator" />
           <div className="header-social-icons">

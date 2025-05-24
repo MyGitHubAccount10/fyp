@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './ShoppingCartPage.css'; // We'll create this CSS file next
+import './Website.css'; // We'll create this CSS file next
 
 // Assume images are in public/images/ directory relative to your server's root
 const logoImage = '/images/this-side-up-logo.png';

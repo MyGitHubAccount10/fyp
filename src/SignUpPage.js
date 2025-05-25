@@ -144,7 +144,7 @@ Password: ${password} (not shown for security)`);
         </div>
         <div className="footer-column">
           <strong>Handcrafted in Singapore</strong>
-          From humble beginnings in a small bookshop to growing into a community-driven crew, dedicated to producing the rare, wearable works of absolute drip. Our selection includes t-shirts, accessories, and art objects of all kinds. Our mission is simple: to spread the love of screenprinting and the stories that live between. The joy of that perfect, drippy glide.
+          Here at This Side Up, we're a passionate, Singapore-based skimboard company committed to bringing the exhilarating rush of skimboarding to enthusiasts of every skill level. We specialize in crafting custom-designed skimboards, blending high-quality materials with your unique, personalized designs. The result? Boards that not only perform exceptionally but let your individual style shine on the shore. Rooted in Singapore's vibrant coastal culture, we aim to inspire a spirited community of adventure seekers and champion an active, sun-soaked lifestyle.
         </div>
       </footer>
     </>

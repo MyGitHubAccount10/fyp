@@ -114,7 +114,7 @@ const LoginPage = () => {
         </div>
         <div className="footer-column">
           <strong>Handcrafted in Singapore</strong>
-          From humble beginnings in a small beachside garage, we've grown into a community cornerstone, dedicated to providing the best accessories, and advice to all. Our mission is simple: to spread the joy of that perfect, glassy glide.
+          Here at This Side Up, we're a passionate, Singapore-based skimboard company committed to bringing the exhilarating rush of skimboarding to enthusiasts of every skill level. We specialize in crafting custom-designed skimboards, blending high-quality materials with your unique, personalized designs. The result? Boards that not only perform exceptionally but let your individual style shine on the shore. Rooted in Singapore's vibrant coastal culture, we aim to inspire a spirited community of adventure seekers and champion an active, sun-soaked lifestyle.
         </div>
       </footer>
     </>

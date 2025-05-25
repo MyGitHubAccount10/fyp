@@ -5,7 +5,7 @@ import SignUpPage from './SignUpPage';
 import PlaceOrderPage from './PlaceOrderPage';
 import OrderHistoryPage from './OrderHistoryPage';
 import UserProfilePage from './UserProfilePage';
-// import './index.css'; // Or your global stylesheet where Inter font might be imported
+import './index.css';
 
 function App() {
   return (

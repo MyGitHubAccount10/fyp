@@ -916,3 +916,174 @@ h2 {
         margin-bottom: 8px;
     }
 }
+
+/* --- User Profile Page Specific Styles --- */
+.user-profile-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.profile-section {
+    background-color: #fff;
+    padding: 20px 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+}
+
+.profile-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.profile-section-header h3 {
+    margin: 0;
+    font-size: 1.3em;
+    color: #f1673a; /* Theme color */
+}
+
+.btn-edit-profile, .btn-add-profile {
+    background-color: transparent;
+    color: #f1673a;
+    border: 1px solid #f1673a;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+}
+.btn-edit-profile:hover, .btn-add-profile:hover {
+    background-color: #f1673a;
+    color: white;
+}
+.btn-add-profile { /* Slightly different style if needed */
+    margin-left: 10px;
+    border-color: #007bff; /* Example different color */
+    color: #007bff;
+}
+.btn-add-profile:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+
+.profile-form .form-group { /* Reuses .form-group from checkout */
+    margin-bottom: 20px;
+}
+.profile-form .form-group label {
+    font-weight: 600; /* Slightly bolder labels in profile */
+}
+.profile-form input[disabled] {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
+.profile-form .form-text.text-muted {
+    font-size: 0.8em;
+    color: #6c757d;
+    display: block;
+    margin-top: 4px;
+}
+
+.form-actions {
+    margin-top: 25px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start; /* Align buttons to the start */
+}
+
+.btn-save-profile, .btn-cancel-profile, .btn-link-profile {
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 0.95em;
+    text-decoration: none; /* For btn-link-profile */
+    display: inline-block; /* For btn-link-profile */
+}
+
+.btn-save-profile {
+    background-color: #f1673a; /* Theme color */
+    color: white;
+    border: 1px solid #f1673a;
+}
+.btn-save-profile:hover {
+    background-color: #e0562a;
+    border-color: #e0562a;
+}
+
+.btn-cancel-profile {
+    background-color: #6c757d; /* Grey for cancel */
+    color: white;
+    border: 1px solid #6c757d;
+}
+.btn-cancel-profile:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.profile-display p {
+    margin: 0 0 10px 0;
+    font-size: 1em;
+    color: #444;
+    line-height: 1.6;
+}
+.profile-display p strong {
+    color: #333;
+    margin-right: 8px;
+    min-width: 120px; /* Helps align values if desired, may need adjustment */
+    display: inline-block;
+}
+.profile-display.address-display {
+    border: 1px solid #f0f0f0;
+    padding: 15px;
+    border-radius: 4px;
+    background-color: #fcfcfc;
+}
+.default-badge {
+    background-color: #28a745;
+    color: white;
+    font-size: 0.75em;
+    padding: 3px 8px;
+    border-radius: 10px;
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.btn-link-profile {
+    background-color: #007bff; /* Bootstrap primary blue for example */
+    color: white;
+    border: 1px solid #007bff;
+}
+.btn-link-profile:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Responsive adjustments for Profile Page */
+@media (max-width: 768px) {
+    .profile-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .profile-section-header h3 {
+        margin-bottom: 10px;
+    }
+    .btn-edit-profile, .btn-add-profile {
+        align-self: flex-start; /* Ensure buttons align left when header stacks */
+    }
+     .form-actions {
+        flex-direction: column;
+    }
+    .form-actions button {
+        width: 100%;
+    }
+    .form-actions button:not(:last-child) {
+        margin-bottom: 10px;
+    }
+}

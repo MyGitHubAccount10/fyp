@@ -71,12 +71,6 @@ const LoginPage = () => {
             <button className="update-cart-btn" style={{flexGrow: 1, backgroundColor: '#f0f0f0', color: '#333', border: '1px solid #ccc'}}>Forgot Password?</button>
             <button className="complete-purchase-btn" onClick={handleLogin} style={{flexGrow: 1, backgroundColor: '#333', color: '#fff'}}>Login</button>
           </div>
-          <hr style={{marginBottom: '20px'}}/> {/* Added style for spacing */}
-          <p style={{marginBottom: '10px'}}>Or log in with</p> {/* Added style for spacing */}
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <img src="https://img.icons8.com/color/32/google-logo.png" alt="Google" style={{cursor: 'pointer'}} />
-            <img src="https://img.icons8.com/color/32/windows-10.png" alt="Microsoft" style={{cursor: 'pointer'}} />
-          </div>
         </div>
 
         {/* Right Column - Role Card (UPDATED TO MATCH SIGNUP PAGE) */}

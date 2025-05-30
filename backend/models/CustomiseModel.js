@@ -3,6 +3,11 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const customiseSchema = new Schema({
+  order: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Order',
+    required: true
+  },
   board_type: {
     type: String,
     required: true
@@ -19,24 +24,29 @@ const customiseSchema = new Schema({
     type: String,
     required: true
   },
-  base_top_color: {
+  top_color: {
     type: String,
     required: true
   },
-  base_bottom_color: {
+  bottom_color: {
     type: String,
     required: true
   },
   customise_price: {
-    type: Number,
-    required: true
+    type: mongoose.Schema.Types.Decimal128,
+    required: true,
+    set: v => {
+      return mongoose.Schema.Types.Decimal128.fromString(
+        Number(v).toFixed(2)
+      );
+    }
   },
   customise_status: {
     type: String,
     required: true
   },
-  created_at: {
-    type: String,
+  customise_date: {
+    type: Date,
     required: true
   }
 }, { timestamps: true })

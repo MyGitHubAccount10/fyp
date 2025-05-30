@@ -9,7 +9,7 @@ router.get('/:id', (req, res) => {
     res.json({message: 'GET a single category'});
 });
 
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
    res.json({message: 'POST a new category'});
 });
 

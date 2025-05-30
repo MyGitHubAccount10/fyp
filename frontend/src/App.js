@@ -10,6 +10,7 @@ import AdminLayout from './AdminLayout';
 import ManageProductsPage from './ManageProductsPage';
 import AdminDashboard from './AdminDashboard'; // Import the new component
 import AddProductPage from './AddProductPage';
+import AllOrdersPage from './AllOrdersPage';
 import './AdminStyles.css'; // Ensure admin styles are imported
 
 import './index.css';
@@ -23,6 +24,7 @@ function App() {
       <AdminLayout pageTitle="Admin Dashboard">
         <AdminDashboard />
         <AddProductPage />
+        <AllOrdersPage />
         {/* AddProductPage can be conditionally rendered based on the route */}
       </AdminLayout>
 

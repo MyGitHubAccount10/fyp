@@ -1200,3 +1200,194 @@
          padding: 8px 12px;
      }
 }
+
+
+/* --- Page Specific: All Orders --- */
+.all-orders-page {
+    /* Container adjustments if needed */
+}
+
+.filter-bar {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px; /* Space between filter elements */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    align-items: center; /* Align items vertically in the center */
+}
+
+/* Base style for filter inputs (search, select, date) */
+.filter-bar .filter-input {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95em;
+    min-width: 150px; /* Minimum width for inputs */
+    box-sizing: border-box; /* Include padding/border in width */
+}
+
+/* Specific styles for input types if needed */
+.filter-bar .search-input {
+    flex-grow: 1; /* Allow search input to take more space */
+     min-width: 180px;
+}
+
+.filter-bar .status-select {
+    background-color: white;
+    cursor: pointer;
+}
+
+/* Style for date input wrapper if you add a custom icon */
+.filter-bar .date-input-wrapper {
+    position: relative; /* For positioning custom icons if needed */
+    display: flex; /* Ensure input takes full width in wrapper */
+     min-width: 120px; /* Adjust min-width for date inputs */
+     padding: 0; /* Remove padding from wrapper, add to input */
+     border: none; /* Remove border from wrapper, add to input */
+}
+.filter-bar .date-input-wrapper input.date-input {
+     width: 100%;
+     padding: 10px 15px;
+     border: 1px solid #ccc;
+     border-radius: 4px;
+     font-size: 0.95em;
+     box-sizing: border-box;
+     background-color: white;
+     /* Hide native calendar icon if adding custom */
+     /* appearance: none;
+     -webkit-appearance: none; */
+}
+/* Style for custom calendar icon if used */
+/* .filter-bar .date-input-wrapper .calendar-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; // Prevent icon from interfering with clicks
+    color: #555;
+} */
+
+
+.filter-bar .btn-apply-filters {
+    background-color: #f1673a; /* Theme color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    /* Ensure button doesn't shrink excessively */
+    flex-shrink: 0;
+}
+.filter-bar .btn-apply-filters:hover {
+    background-color: #e0562a;
+}
+
+
+.orders-table-container { /* Reuse or adapt product-table-container styles */
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    overflow-x: auto; /* Allow horizontal scrolling on small screens */
+}
+
+.orders-table { /* Reuse or adapt product-table styles */
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.orders-table th,
+.orders-table td {
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+     white-space: nowrap; /* Prevent text wrapping in cells */
+}
+
+.orders-table th { /* Reuse or adapt product-table th styles */
+    background-color: #f8f9fa;
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #555;
+    text-transform: uppercase;
+}
+
+.orders-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Link button style for 'View Details' */
+.orders-table .link-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: #007bff; /* Bootstrap primary blue or similar link color */
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+.orders-table .link-button:hover {
+    color: #0056b3;
+}
+
+/* Specific Order Status colors (reusing from Dashboard if defined, otherwise define here) */
+.orders-table .status-shipped { color: #28a745; font-weight: 500; } /* Green */
+.orders-table .status-processing { color: #ffc107; font-weight: 500; } /* Yellow */
+.orders-table .status-delivered { color: #28a745; font-weight: 500; } /* Green */
+.orders-table .status-cancelled { color: #dc3545; font-weight: 500; } /* Red */
+.orders-table .status-pending { color: #6c757d; font-weight: 500; } /* Grey/Muted */
+
+
+/* Pagination styles reuse from ManageProductsPage.pagination-controls */
+/* .pagination-controls { ... } */
+
+
+/* Responsive adjustments for All Orders Page */
+@media (max-width: 768px) {
+     .filter-bar {
+        flex-direction: column; /* Stack filter elements */
+        gap: 10px;
+        padding: 15px;
+     }
+     .filter-bar .filter-input,
+     .filter-bar .search-input,
+     .filter-bar .status-select,
+     .filter-bar .date-input-wrapper,
+     .filter-bar .btn-apply-filters {
+         width: 100%; /* Make filter elements full width */
+         min-width: auto; /* Remove min-width constraint */
+         flex-grow: 0; /* Remove flex grow */
+     }
+      /* If using custom date icon, adjust positioning here */
+
+     .orders-table th,
+     .orders-table td {
+        padding: 8px 10px; /* Reduce padding */
+        font-size: 0.9em; /* Slightly smaller font */
+        white-space: normal; /* Allow wrapping in cells if needed */
+     }
+     .orders-table .link-button {
+        font-size: 0.85em;
+     }
+}
+
+@media (max-width: 480px) {
+    .filter-bar {
+        padding: 10px;
+    }
+     .orders-table th,
+     .orders-table td {
+        font-size: 0.8em; /* Further reduce font size */
+        padding: 6px 8px;
+     }
+      .orders-table .link-button {
+        font-size: 0.8em;
+     }
+}

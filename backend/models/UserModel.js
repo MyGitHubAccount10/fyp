@@ -7,6 +7,11 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  role: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role',
+    required: true
+  },
   email: {
     type: String,
     required: true

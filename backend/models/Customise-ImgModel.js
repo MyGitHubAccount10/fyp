@@ -3,6 +3,11 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const customiseimgSchema = new Schema({
+  customise: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Customise',
+    required: true
+  },
   customise_img: {
     type: String,
     required: true

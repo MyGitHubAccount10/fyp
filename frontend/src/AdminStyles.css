@@ -931,3 +931,272 @@
         font-size: 0.9em;
     }
 }
+
+
+/* --- Page Specific: Add Product --- */
+.add-product-page {
+    /* Container adjustments if needed, but AdminLayout.admin-main-content handles padding */
+}
+
+.btn-back-to-products {
+    background-color: #e9ecef; /* Light grey */
+    color: #555;
+    border: 1px solid #ced4da;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between icon and text */
+    transition: background-color 0.2s ease;
+     text-decoration: none; /* If using <a> tag */
+     margin-left: auto; /* Push to the right if in a flex container */
+}
+.btn-back-to-products:hover {
+    background-color: #ced4da;
+}
+.btn-back-to-products svg {
+    width: 16px; /* Smaller icon for button */
+    height: 16px;
+    stroke: currentColor; /* Use parent color */
+}
+
+
+.add-product-form-layout {
+    display: flex;
+    gap: 30px; /* Space between the two columns */
+    flex-wrap: wrap; /* Allow columns to stack on smaller screens */
+    margin-top: 20px; /* Space below the back button */
+}
+
+.add-product-main-column {
+    flex: 2; /* Allow main content to take more space */
+    min-width: 350px; /* Ensure a minimum width before stacking */
+    display: flex;
+    flex-direction: column; /* Stack cards vertically */
+    gap: 20px; /* Space between cards in the main column */
+}
+
+.add-product-sidebar-panel {
+    flex: 1; /* Allow sidebar panel to take less space */
+    min-width: 250px; /* Ensure a minimum width before stacking */
+    display: flex;
+    flex-direction: column; /* Stack cards vertically */
+    gap: 20px; /* Space between cards in the sidebar panel */
+    /* Align to top if main column content is shorter - handled by default flex behavior */
+}
+
+
+.form-section-card { /* Reused class, define common card styles here */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    /* margin-bottom is applied by gap in the column flex container */
+}
+
+.section-card-title { /* Style for h3 inside the cards */
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+
+/* Reuse form-group, label, input, select, textarea styles from AdminStyles */
+/* Specific styles for radio buttons */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Space between radio options */
+}
+.radio-label {
+    display: flex;
+    align-items: center;
+    font-weight: normal; /* Reset font weight from form-group label */
+    cursor: pointer;
+    font-size: 0.95em;
+    color: #555;
+}
+.radio-label input[type="radio"] {
+    margin-right: 8px;
+    /* Customize radio button appearance if needed, but default is fine */
+}
+
+/* Specific styles for file upload area */
+.file-upload-area {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    background-color: #f8f9fa; /* Light background */
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.file-input-hidden {
+    display: none; /* Hide the default file input */
+}
+.file-input-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    flex-grow: 1; /* Allow text to take space */
+}
+.file-input-button {
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    color: #495057;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    margin-right: 10px;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+.file-input-button:hover {
+    background-color: #ced4da;
+}
+.file-input-text {
+    color: #555;
+    font-size: 0.9em;
+    overflow: hidden; /* Prevent overflow of long file names */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.selected-file-names { /* Optional: style for displaying selected names */
+    margin-top: 5px;
+    font-size: 0.85em;
+    color: #6c757d;
+    word-break: break-all; /* Break long names */
+}
+
+
+.form-actions-vertical { /* Style for buttons section in the right panel */
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 15px; /* Space between buttons */
+}
+
+.btn-save-product { /* Style for the Save button */
+    background-color: #f1673a; /* Theme color */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    width: 100%; /* Make button full width */
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center text and icon */
+    gap: 8px; /* Space between icon and text */
+    transition: background-color 0.2s ease;
+}
+.btn-save-product:hover {
+     background-color: #e0562a;
+}
+.btn-save-product svg {
+     width: 18px; /* Adjust icon size */
+    height: 18px;
+    fill: white;
+}
+
+
+.btn-cancel-product { /* Style for the Cancel button */
+    background-color: #e9ecef; /* Light grey */
+    color: #495057;
+    border: 1px solid #ced4da;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    width: 100%; /* Make button full width */
+    text-align: center;
+    transition: background-color 0.2s ease;
+}
+.btn-cancel-product:hover {
+     background-color: #ced4da;
+}
+
+
+/* Responsive adjustments for Add Product Page (within existing media queries) */
+@media (max-width: 992px) {
+     .add-product-main-column { min-width: 300px; }
+     .add-product-sidebar-panel { min-width: 200px; }
+}
+
+@media (max-width: 768px) {
+    .add-product-form-layout {
+        flex-direction: column; /* Stack columns vertically */
+        gap: 20px; /* Adjust gap when stacked */
+    }
+    .add-product-main-column,
+    .add-product-sidebar-panel {
+        flex: none; /* Remove flex grow/shrink */
+        width: 100%; /* Take full width when stacked */
+        min-width: auto; /* Remove min-width constraint */
+        gap: 20px; /* Gap between cards already defined */
+    }
+
+    .btn-back-to-products {
+        font-size: 0.85em;
+        padding: 6px 12px;
+    }
+     .btn-back-to-products svg {
+        width: 14px;
+        height: 14px;
+     }
+
+      .form-section-card {
+        padding: 15px; /* Reduce padding on smaller screens */
+    }
+     .section-card-title {
+         font-size: 1em;
+         margin-bottom: 15px;
+     }
+     /* Reuse form-group, label, input styles - already somewhat responsive */
+
+     .form-actions-vertical {
+        gap: 10px; /* Reduce button gap */
+     }
+     .btn-save-product,
+     .btn-cancel-product {
+         font-size: 0.95em;
+         padding: 10px 15px;
+     }
+}
+
+@media (max-width: 480px) {
+     .form-section-card {
+        padding: 10px;
+    }
+     .section-card-title {
+         font-size: 0.95em;
+         margin-bottom: 10px;
+     }
+     .radio-label {
+        font-size: 0.9em;
+     }
+     .file-input-button,
+     .file-input-text {
+        font-size: 0.85em;
+     }
+      .btn-save-product,
+     .btn-cancel-product {
+         font-size: 0.9em;
+         padding: 8px 12px;
+     }
+}

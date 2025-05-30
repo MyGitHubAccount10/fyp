@@ -9,6 +9,7 @@ import UserProfilePage from './UserProfilePage';
 import AdminLayout from './AdminLayout';
 import ManageProductsPage from './ManageProductsPage';
 import AdminDashboard from './AdminDashboard'; // Import the new component
+import AddProductPage from './AddProductPage';
 import './AdminStyles.css'; // Ensure admin styles are imported
 
 import './index.css';
@@ -21,8 +22,11 @@ function App() {
     <div className="App">
       <AdminLayout pageTitle="Admin Dashboard">
         <AdminDashboard />
+        <AddProductPage />
+        {/* AddProductPage can be conditionally rendered based on the route */}
       </AdminLayout>
-      
+
+
       <SignUpPage />
       <LoginPage />
       <UserProfilePage />

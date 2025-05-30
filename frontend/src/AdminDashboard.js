@@ -190,7 +190,7 @@ function AdminDashboard() {
                  </div>
                  <div className="section-footer-link">
                     <a href="#" className="view-all-link" onClick={(e) => {e.preventDefault(); handleViewOrders();}}>
-                        View All Orders >
+                        View All Orders {">"}
                     </a>
                  </div>
             </div>
@@ -202,7 +202,7 @@ function AdminDashboard() {
                  </div>
                   <div className="section-footer-link">
                     <a href="#" className="view-all-link" onClick={(e) => {e.preventDefault(); handleViewFullSales();}}>
-                        View Full Sales Report >
+                        View Full Sales Report {">"}
                     </a>
                  </div>
             </div>

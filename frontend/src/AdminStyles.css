@@ -1349,45 +1349,553 @@
 /* .pagination-controls { ... } */
 
 
-/* Responsive adjustments for All Orders Page */
-@media (max-width: 768px) {
-     .filter-bar {
-        flex-direction: column; /* Stack filter elements */
-        gap: 10px;
-        padding: 15px;
-     }
-     .filter-bar .filter-input,
-     .filter-bar .search-input,
-     .filter-bar .status-select,
-     .filter-bar .date-input-wrapper,
-     .filter-bar .btn-apply-filters {
-         width: 100%; /* Make filter elements full width */
-         min-width: auto; /* Remove min-width constraint */
-         flex-grow: 0; /* Remove flex grow */
-     }
-      /* If using custom date icon, adjust positioning here */
+/* --- Generic Admin Card/Section Style --- */
+/* This style applies the card background, padding, border-radius, and shadow */
+.form-section-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    /* Margin/Gap between cards is handled by the parent flex container */
+}
 
-     .orders-table th,
-     .orders-table td {
-        padding: 8px 10px; /* Reduce padding */
-        font-size: 0.9em; /* Slightly smaller font */
-        white-space: normal; /* Allow wrapping in cells if needed */
-     }
-     .orders-table .link-button {
+.section-card-title { /* Style for h3 inside the cards */
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+/* Generic form actions for horizontal layout */
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start; /* Default alignment */
+    margin-top: 20px;
+}
+
+/* --- Generic Admin Card/Section Style --- */
+/* This style applies the card background, padding, border-radius, and shadow */
+.form-section-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    /* Margin/Gap between cards is handled by the parent flex container */
+}
+
+.section-card-title { /* Style for h3 inside the cards */
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+/* Generic form actions for horizontal layout */
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start; /* Default alignment */
+    margin-top: 20px;
+}
+
+/* --- Page Specific: Order Details --- */
+.order-details-page {
+     /* Container adjustments if needed */
+}
+
+/* Back button style (reused from Add Product Page section) */
+.btn-back-to-products {
+    background-color: #e9ecef; /* Light grey */
+    color: #555;
+    border: 1px solid #ced4da;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between icon and text */
+    transition: background-color 0.2s ease;
+     text-decoration: none; /* If using <a> tag */
+     margin-left: auto; /* Push to the right if in a flex container */
+}
+.btn-back-to-products:hover {
+    background-color: #ced4da;
+}
+.btn-back-to-products svg {
+    width: 16px; /* Smaller icon for button */
+    height: 16px;
+    stroke: currentColor; /* Use parent color */
+}
+
+
+.order-details-actions {
+    margin-top: 20px; /* Space below the header/back button */
+    margin-bottom: 30px; /* Space above the summary */
+    display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap */
+    gap: 10px; /* Space between buttons and select */
+    align-items: center; /* Vertically align select and buttons */
+}
+
+/* Reusing btn-order-action from order history, but defining specific variants */
+.btn-order-action {
+    padding: 8px 15px;
+    border-radius: 5px;
+    border: 1px solid transparent; /* Default border */
+    font-weight: 500;
+    font-size: 0.9em;
+    cursor: pointer;
+    display: inline-flex; /* Align icon and text */
+    align-items: center;
+    gap: 5px; /* Space between icon and text */
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+     white-space: nowrap; /* Prevent wrapping inside button */
+}
+.btn-order-action svg {
+    width: 16px; /* Adjust icon size */
+    height: 16px;
+    stroke: currentColor; /* Use parent color */
+    fill: none; /* Ensure icons are outlines unless specified */
+}
+
+/* Primary Button (Orange) */
+.btn-order-action.btn-primary {
+    background-color: #f1673a; /* Theme color */
+    color: white;
+    border-color: #f1673a;
+}
+.btn-order-action.btn-primary:hover {
+    background-color: #e0562a;
+    border-color: #e0562a;
+}
+.btn-order-action.btn-primary svg {
+    stroke: white; /* Ensure icons are white */
+}
+
+/* Secondary Button (Grey) */
+.btn-order-action.btn-secondary {
+    background-color: #e9ecef; /* Light grey */
+    color: #495057;
+    border-color: #ced4da;
+}
+.btn-order-action.btn-secondary:hover {
+    background-color: #ced4da;
+    border-color: #ced4da;
+}
+.btn-order-action:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* Status Dropdown Style */
+.order-details-actions .status-dropdown {
+    /* Reuse styles from filter-input or define custom */
+     padding: 8px 15px; /* Match button padding */
+     border: 1px solid #ccc;
+     border-radius: 5px; /* Match button border-radius */
+     font-size: 0.9em; /* Match button font size */
+     background-color: white;
+     cursor: pointer;
+     color: #495057; /* Match secondary button text color */
+     min-width: 120px; /* Ensure it has a reasonable width */
+     box-sizing: border-box;
+}
+.order-details-actions .status-dropdown:focus {
+     border-color: #f1673a;
+     outline: none;
+     box-shadow: 0 0 0 2px rgba(241, 103, 58, 0.2);
+}
+
+
+/* --- Main Content Sections Layout --- */
+/* Wrapper for vertical spacing between main sections */
+.order-details-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* Vertical space between main sections (the cards) */
+}
+
+
+/* Summary Section Layout (Inner layout within the summary card) */
+.summary-layout {
+    display: flex;
+    gap: 20px; /* Space between the two summary cards (horizontal) */
+    flex-wrap: wrap; /* Allow cards to stack */
+    /* This is now a flex container *inside* a .form-section-card */
+    /* It does NOT have padding/background/shadow itself */
+}
+
+/* Apply card styling directly to the summary layout wrapper */
+/* .summary-layout.form-section-card { Inherits card styles } */
+
+
+.summary-layout .summary-card {
+    flex: 1; /* Allow cards to share space */
+    min-width: 300px; /* Minimum width before stacking */
+    /* IMPORTANT: .summary-card is now ALSO a .form-section-card in JSX
+                 so it inherits the card styling from the generic rule. */
+    /* Removed margin-bottom as parent .summary-layout now handles spacing via gap */
+    margin-bottom: 0; /* Ensure no extra bottom margin */
+}
+
+/* Inner padding for summary cards now comes from the .form-section-card rule applied to .summary-card */
+/* Need to adjust title margin/padding if it relied on card padding */
+.summary-layout .summary-card .section-card-title {
+     /* Ensure title margin/padding works correctly within the summary card */
+     /* These usually work fine if the padding is on the parent */
+}
+
+
+.summary-info p {
+    margin: 0 0 8px 0; /* Space between info lines */
+    font-size: 0.95em;
+    color: #444;
+}
+.summary-info p strong { /* Style for bold labels in summary */
+    font-weight: bold; /* Ensure bold */
+    color: #333; /* Dark color */
+    margin-right: 5px;
+}
+
+
+/* Items Ordered Section */
+/* .items-ordered-section now HAS the .form-section-card class directly in JSX */
+.items-ordered-section {
+     /* Removed margin-bottom as parent .order-details-content handles spacing */
+     margin-bottom: 0; /* Ensure no extra bottom margin */
+}
+
+
+.items-ordered-table { /* Reuse or adapt table styles */
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px; /* Space above summary totals */
+}
+.items-ordered-table th,
+.items-ordered-table td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+     /* white-space: nowrap; Removed based on screenshot appearance */
+}
+.items-ordered-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #555;
+    text-transform: uppercase;
+}
+.items-ordered-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.items-ordered-table .item-image {
+    width: 60px; /* Adjust image size */
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    vertical-align: middle;
+     /* Set fixed width on the td instead of image for consistent column size */
+     /* This rule might be better: */
+     /* .items-ordered-table td:first-child { width: 80px; } */
+}
+
+.items-ordered-table .item-options {
+    font-size: 0.8em;
+    color: #777;
+    margin-top: 3px;
+}
+
+/* Summary Totals styles - BOLDING */
+.summary-totals {
+    text-align: right;
+    font-size: 0.95em;
+    color: #444;
+}
+.summary-totals p {
+    margin: 0 0 5px 0;
+     display: flex;
+     justify-content: space-between; /* Align labels left, values right */
+     gap: 20px; /* Space between label and value */
+}
+.summary-totals p strong { /* Style for bold labels in summary totals */
+    font-weight: bold; /* Ensure bold */
+    color: #333; /* Dark color for bold labels */
+}
+.summary-totals p span {
+    font-weight: normal; /* Ensure values are not bold by default */
+    color: #333;
+}
+.summary-totals .grand-total-row {
+    font-size: 1.1em;
+    font-weight: normal; /* Remove bold from the row itself */
+    color: #333; /* Still apply the dark color to the row */
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+.summary-totals .grand-total-row strong { /* Style for bold label in grand total row */
+    font-weight: bold;
+    color: #333;
+}
+.summary-totals .grand-total-row span {
+    font-weight: bold; /* Make the grand total VALUE bold */
+}
+
+
+/* Fulfillment Section */
+/* .fulfillment-section now HAS the .form-section-card class directly in JSX */
+.fulfillment-section {
+     /* Removed margin-bottom as parent .order-details-content handles spacing */
+    margin-bottom: 0; /* Ensure no extra bottom margin */
+}
+
+.fulfillment-section p {
+     margin: 0 0 8px 0;
+     font-size: 0.95em;
+     color: #444;
+}
+.fulfillment-section p strong {
+     color: #333;
+}
+
+.fulfillment-form-group {
+    display: flex; /* Layout input, select, button inline */
+    gap: 10px;
+    align-items: center;
+    margin-top: 15px; /* Space below tracking info */
+     flex-wrap: wrap; /* Allow wrapping */
+}
+
+.fulfillment-input { /* Reuse form input styles */
+    flex-grow: 1; /* Allow input to take space */
+     min-width: 180px;
+     /* Padding, border, etc. inherited from general form input styles */
+}
+
+.fulfillment-carrier-select { /* Reuse select styles */
+     min-width: 120px;
+     /* Padding, border, etc. inherited from general form select styles */
+     flex-shrink: 0; /* Prevent shrinking */
+}
+
+.btn-update-tracking { /* Reuse .btn-order-action.btn-primary */
+    /* Any specific overrides if needed */
+     min-width: 150px; /* Ensure button doesn't get too small */
+     justify-content: center;
+     flex-shrink: 0; /* Prevent shrinking */
+}
+
+/* Order Notes & History Section */
+/* .notes-history-section now HAS the .form-section-card class directly in JSX */
+.notes-history-section {
+     /* Removed margin-bottom as parent .order-details-content handles spacing */
+    margin-bottom: 0; /* Ensure no extra bottom margin */
+}
+
+.order-history-list {
+     margin-bottom: 20px; /* Space below history entries */
+     padding-bottom: 15px;
+     border-bottom: 1px solid #eee;
+}
+.order-history-list p {
+     margin: 0 0 10px 0;
+     font-size: 0.9em;
+     color: #555;
+     line-height: 1.4;
+}
+.order-history-list p strong { /* Style for bold history types */
+     color: #333;
+     font-weight: bold;
+}
+.order-history-list p em { /* Style for timestamp/source */
+     font-size: 0.9em; /* Smaller font for timestamp/source */
+     color: #777;
+     font-style: normal;
+}
+.order-history-list p:last-child {
+     margin-bottom: 0;
+}
+
+/* Reuse form-group, label, textarea styles for the note input */
+
+.btn-save-note { /* Style for the Save Note button */
+     background-color: #f1673a; /* Theme color */
+     color: white;
+     border: none;
+     padding: 10px 20px;
+     border-radius: 5px;
+     cursor: pointer;
+     font-size: 0.95em;
+     font-weight: 500;
+     transition: background-color 0.2s ease;
+}
+.btn-save-note:hover {
+     background-color: #e0562a;
+}
+/* Assuming form-actions in this section uses the general .form-actions style,
+   ensure it allows the button to be full-width on small screens if needed,
+   or use a specific form-actions class for vertical stacking.
+   The current general .form-actions doesn't specify direction, so adding a specific one here.
+*/
+.notes-history-section .form-actions { /* Specific form actions for notes section */
+    display: flex;
+    justify-content: flex-start; /* Align left */
+    gap: 10px;
+    margin-top: 15px;
+    /* Remove padding-top/border-top if added to parent card */
+}
+
+
+/* Responsive adjustments for Order Details Page */
+@media (max-width: 768px) {
+    .order-details-actions {
+        gap: 8px; /* Reduce button gap */
+        justify-content: center; /* Center buttons when they wrap */
+    }
+    .btn-order-action,
+    .order-details-actions .status-dropdown { /* Apply responsive styles to dropdown too */
+        padding: 6px 12px;
         font-size: 0.85em;
+        gap: 4px;
+    }
+    .btn-order-action svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .summary-layout {
+         flex-direction: column; /* Stack summary cards */
+         gap: 15px;
+     }
+     .summary-layout .summary-card {
+         min-width: auto; /* Remove min-width */
+     }
+     .summary-info p {
+        font-size: 0.9em;
+        margin-bottom: 6px;
+     }
+     .summary-info p strong {
+         /* Revert to inline for smaller screens if block stacking was not desired */
+         display: inline; /* Ensure label is inline with value */
+     }
+      .summary-info p strong::after { /* Add space after bold label */
+         content: " ";
+     }
+
+
+     .items-ordered-table th,
+     .items-ordered-table td {
+        padding: 8px 10px;
+        font-size: 0.9em;
+         white-space: normal; /* Allow wrapping */
+         &:first-child { width: 60px; } /* Adjust image column width */
+     }
+     .items-ordered-table .item-image {
+        width: 50px;
+        height: 50px;
+     }
+     .items-ordered-table .item-options {
+        font-size: 0.75em;
+     }
+     .summary-totals {
+        font-size: 0.9em;
+     }
+     .summary-totals p { /* Adjust gap for smaller screens */
+         gap: 10px;
+     }
+     .summary-totals .grand-total-row {
+        font-size: 1em;
+        margin-top: 10px;
+        padding-top: 10px;
+     }
+      .summary-totals p strong {
+         display: inline; /* Ensure bold labels in totals are inline */
+      }
+       .summary-totals p strong::after { /* Add space after bold label */
+         content: " ";
+     }
+     .summary-totals .grand-total-row span {
+        font-weight: bold; /* Make the grand total VALUE bold */
+     }
+
+
+     .fulfillment-form-group {
+        flex-direction: column; /* Stack fulfillment form elements */
+        gap: 10px;
+        align-items: stretch; /* Stretch items to full width */
+     }
+     .fulfillment-input,
+     .fulfillment-carrier-select,
+     .btn-update-tracking {
+         width: 100%; /* Make elements full width */
+         min-width: auto;
+         box-sizing: border-box;
+     }
+
+     .order-history-list p {
+         font-size: 0.85em;
+         margin-bottom: 8px;
+     }
+     .btn-save-note {
+         font-size: 0.9em;
+         padding: 8px 15px;
+     }
+     .notes-history-section .form-actions { /* Specific form actions for notes section */
+         flex-direction: column;
+         gap: 10px;
+     }
+     .notes-history-section .form-actions button {
+         width: 100%;
+         box-sizing: border-box;
      }
 }
 
 @media (max-width: 480px) {
-    .filter-bar {
-        padding: 10px;
-    }
-     .orders-table th,
-     .orders-table td {
-        font-size: 0.8em; /* Further reduce font size */
-        padding: 6px 8px;
-     }
-      .orders-table .link-button {
+     .btn-order-action,
+     .order-details-actions .status-dropdown { /* Apply responsive styles to dropdown too */
         font-size: 0.8em;
+        padding: 5px 10px;
+     }
+      .items-ordered-table th,
+      .items-ordered-table td {
+        font-size: 0.8em;
+        padding: 6px 8px;
+         &:first-child { width: 50px; } /* Further adjust image column */
+     }
+      .items-ordered-table .item-image {
+        width: 40px;
+        height: 40px;
+     }
+      .summary-totals {
+        font-size: 0.85em;
+     }
+     .summary-totals .grand-total-row {
+        font-size: 0.95em;
+     }
+
+     .fulfillment-input,
+     .fulfillment-carrier-select,
+     .btn-update-tracking {
+        font-size: 0.9em;
+        padding: 8px 12px;
+     }
+
+     .order-history-list p {
+         font-size: 0.8em;
+     }
+     .btn-save-note {
+         font-size: 0.85em;
+         padding: 6px 12px;
      }
 }

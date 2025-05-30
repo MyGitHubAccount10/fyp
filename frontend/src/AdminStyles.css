@@ -709,12 +709,6 @@
 /* Add padding to the body or main wrapper to account for fixed header and sidebar */
 /* This is handled by .admin-body-wrapper padding-top and .admin-main-content margin-left */
 
-
-/* --- Page Specific: Admin Dashboard --- */
-.admin-dashboard-page {
-    /* Any specific padding or layout adjustments needed for the overall dashboard page */
-}
-
 .dashboard-stats {
     display: grid; /* Use grid for flexible layout */
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive columns */
@@ -815,13 +809,6 @@
     fill: white;
     stroke: white; /* Ensure icon colors are white */
 }
-
-/* Adjust specific quick action button colors if needed */
-.btn-quick-action.btn-add-product { /* Use default orange */ }
-.btn-quick-action.btn-view-orders { /* Use default orange */ }
-.btn-quick-action.btn-manage-inventory { /* Use default orange */ }
-.btn-quick-action.btn-review-designs { /* Use default orange */ }
-
 
 .recent-orders-table,
 .dashboard-section .table-container table { /* Reuse or adapt table styles */
@@ -930,12 +917,6 @@
     .view-all-link {
         font-size: 0.9em;
     }
-}
-
-
-/* --- Page Specific: Add Product --- */
-.add-product-page {
-    /* Container adjustments if needed, but AdminLayout.admin-main-content handles padding */
 }
 
 .btn-back-to-products {
@@ -1201,12 +1182,6 @@
      }
 }
 
-
-/* --- Page Specific: All Orders --- */
-.all-orders-page {
-    /* Container adjustments if needed */
-}
-
 .filter-bar {
     background-color: #fff;
     padding: 20px;
@@ -1342,7 +1317,6 @@
 .orders-table .status-processing { color: #ffc107; font-weight: 500; } /* Yellow */
 .orders-table .status-delivered { color: #28a745; font-weight: 500; } /* Green */
 .orders-table .status-cancelled { color: #dc3545; font-weight: 500; } /* Red */
-.orders-table .status-pending { color: #6c757d; font-weight: 500; } /* Grey/Muted */
 
 
 /* Pagination styles reuse from ManageProductsPage.pagination-controls */
@@ -1403,11 +1377,6 @@
     gap: 10px;
     justify-content: flex-start; /* Default alignment */
     margin-top: 20px;
-}
-
-/* --- Page Specific: Order Details --- */
-.order-details-page {
-     /* Container adjustments if needed */
 }
 
 /* Back button style (reused from Add Product Page section) */
@@ -1547,14 +1516,6 @@
     /* Removed margin-bottom as parent .summary-layout now handles spacing via gap */
     margin-bottom: 0; /* Ensure no extra bottom margin */
 }
-
-/* Inner padding for summary cards now comes from the .form-section-card rule applied to .summary-card */
-/* Need to adjust title margin/padding if it relied on card padding */
-.summary-layout .summary-card .section-card-title {
-     /* Ensure title margin/padding works correctly within the summary card */
-     /* These usually work fine if the padding is on the parent */
-}
-
 
 .summary-info p {
     margin: 0 0 8px 0; /* Space between info lines */

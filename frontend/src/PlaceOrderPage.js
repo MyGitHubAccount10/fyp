@@ -12,6 +12,29 @@ const grabpayLogo = '/images/payment-logos/grabpay.png';
 const enetsLogo = '/images/payment-logos/enets.png';
 const creditcardLogo = '/images/payment-logos/creditcard.png'; // Generic credit card icon
 
+// Simple SVG Icons for secondary navigation (black color is set via CSS or inline fill)
+const TshirtIcon = () => (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="black">
+        <path d="M12,2C9.243,2,7,4.243,7,7v3H5c-1.103,0-2,0.897-2,2v8c0,1.103,0.897,2,2,2h14c1.103,0,2-0.897,2-2v-8c0-1.103-0.897-2-2-2h-2V7 C17,4.243,14.757,2,12,2z M10,7V6c0-1.103,0.897-2,2-2s2,0.897,2,2v1H10z"/>
+    </svg>
+);
+const JacketIcon = () => (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="black">
+        <path d="M18 7h-2V5c0-1.103-.897-2-2-2h-4c-1.103 0-2 .897-2 2v2H6c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zm-8-2h4v2h-4V5zm6 14H8V9h8v10z"/>
+        <path d="M10 12h4v2h-4zm0 15h4v2h-4z"/>
+    </svg>
+);
+const BoardshortsIcon = () => (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="black">
+        <path d="M8 2v4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v-6h4v6h4c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-2V2h-8zm2 5h4v3h-4V7z"/>
+    </svg>
+);
+const AccessoriesIcon = () => (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="black">
+        <path d="M21.41,11.59l-9-9C12.05,2.24,11.55,2,11,2H4C2.9,2,2,2.9,2,4v7c0,0.55,0.24,1.05,0.59,1.41l9,9 C11.95,21.76,12.45,22,13,22s1.05-0.24,1.41-0.59l7-7C22.17,13.66,22.17,12.34,21.41,11.59z M13,20L4,11V4h7l9,9L13,20z"/>
+        <circle cx="6.5" cy="6.5" r="1.5"/>
+    </svg>
+);
 
 function PlaceOrderPage() {
     const [shippingDetails, setShippingDetails] = useState({
@@ -31,16 +54,21 @@ function PlaceOrderPage() {
         cardHolderName: ''
     });
 
-    // Dummy order summary data - in a real app, this would come from cart context/state
     const [orderSummary, setOrderSummary] = useState({
         items: [
             { id: 1, name: 'Skimboard Pro Model', quantity: 1, price: 250.00 },
             { id: 2, name: 'Board Wax', quantity: 2, price: 10.00 },
         ],
         subtotal: 270.00,
-        shippingFee: 15.00, // Example shipping
+        shippingFee: 15.00,
         total: 285.00,
     });
+    const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false); // New state
+
+    const toggleProductDropdown = (e) => { // New handler
+        e.preventDefault();
+        setIsProductDropdownOpen(!isProductDropdownOpen);
+    };
 
     const handleShippingChange = (e) => {
         const { name, value } = e.target;
@@ -62,20 +90,16 @@ function PlaceOrderPage() {
             alert('Please select a payment method.');
             return;
         }
-        // Basic validation for shipping (can be more thorough)
         if (!shippingDetails.fullName || !shippingDetails.addressLine1 || !shippingDetails.postalCode || !shippingDetails.phoneNumber || !shippingDetails.email) {
             alert('Please fill in all required shipping details.');
             return;
         }
-
         if (selectedPaymentMethod === 'creditCard') {
             if (!cardDetails.cardNumber || !cardDetails.expiryDate || !cardDetails.cvv || !cardDetails.cardHolderName) {
                 alert('Please fill in all credit card details.');
                 return;
             }
-            // Add validation for card number, expiry, cvv format here
         }
-
         console.log('Order Submitted:', {
             shippingDetails,
             paymentMethod: selectedPaymentMethod,
@@ -83,23 +107,18 @@ function PlaceOrderPage() {
             orderSummary
         });
         alert(`Order placed successfully using ${selectedPaymentMethod}! (This is a demo)`);
-        // Here you would typically send data to a backend, redirect to a payment gateway, etc.
     };
 
     useEffect(() => {
-        // Simulate fetching order summary or cart total on component mount
-        // In a real app, this data might come from a global state (Context API, Redux)
-        // or be passed as props.
-        // For now, we'll use the dummy data.
         const calculatedSubtotal = orderSummary.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-        const shipping = 15.00; // Fixed shipping for Singapore example
+        const shipping = 15.00;
         setOrderSummary(prev => ({
             ...prev,
             subtotal: calculatedSubtotal,
             shippingFee: shipping,
             total: calculatedSubtotal + shipping
         }));
-    }, []); // Empty dependency array means this runs once on mount
+    }, []); // Removed orderSummary.items from dependencies to avoid loop with dummy data
 
     const paymentOptions = [
         { id: 'paypal', name: 'PayPal', logo: paypalLogo },
@@ -113,7 +132,7 @@ function PlaceOrderPage() {
 
     return (
         <>
-            {/* --- Consistent Header --- */}
+            {/* --- UPDATED Header --- */}
             <header>
                 <div className="header-left-content">
                     <button className="burger-btn" aria-label="Menu" title="Menu">
@@ -130,6 +149,12 @@ function PlaceOrderPage() {
                         <a href="#">About</a>
                         <a href="#">Contact</a>
                         <a href="#">FAQ</a>
+                        <a href="#" onClick={toggleProductDropdown} className="product-dropdown-toggle">
+                            Product
+                            <svg className={`product-arrow ${isProductDropdownOpen ? 'up' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </a>
                     </nav>
                 </div>
                 <div className="header-right-content">
@@ -162,6 +187,23 @@ function PlaceOrderPage() {
                     </div>
                 </div>
             </header>
+
+            {isProductDropdownOpen && (
+                <nav className="secondary-navbar">
+                    <a href="#" className="secondary-navbar-item">
+                        <TshirtIcon /> T-shirt
+                    </a>
+                    <a href="#" className="secondary-navbar-item">
+                        <JacketIcon /> Jackets
+                    </a>
+                    <a href="#" className="secondary-navbar-item">
+                        <BoardshortsIcon /> Boardshorts
+                    </a>
+                    <a href="#" className="secondary-navbar-item">
+                        <AccessoriesIcon /> Accessories
+                    </a>
+                </nav>
+            )}
 
             {/* --- Main Content --- */}
             <div className="container checkout-page-container">

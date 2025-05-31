@@ -8,13 +8,40 @@ const skimboardImage1 = '/images/skimboard-pro.jpg';
 const skimboardAccessoryImage = '/images/traction-pad.jpg';
 const blueShirtImage = '/images/blue-shirt.jpg';
 
+// Simple SVG Icons for secondary navigation (black color is set via CSS or inline fill)
+const TshirtIcon = () => (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="black">
+        <path d="M12,2C9.243,2,7,4.243,7,7v3H5c-1.103,0-2,0.897-2,2v8c0,1.103,0.897,2,2,2h14c1.103,0,2-0.897,2-2v-8c0-1.103-0.897-2-2-2h-2V7 C17,4.243,14.757,2,12,2z M10,7V6c0-1.103,0.897-2,2-2s2,0.897,2,2v1H10z"/>
+    </svg>
+);
+const JacketIcon = () => (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="black">
+        <path d="M18 7h-2V5c0-1.103-.897-2-2-2h-4c-1.103 0-2 .897-2 2v2H6c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zm-8-2h4v2h-4V5zm6 14H8V9h8v10z"/>
+        <path d="M10 12h4v2h-4zm0 15h4v2h-4z"/>
+    </svg>
+);
+const BoardshortsIcon = () => (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="black">
+        <path d="M8 2v4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v-6h4v6h4c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-2V2h-8zm2 5h4v3h-4V7z"/>
+    </svg>
+);
+const AccessoriesIcon = () => (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="black">
+        <path d="M21.41,11.59l-9-9C12.05,2.24,11.55,2,11,2H4C2.9,2,2,2.9,2,4v7c0,0.55,0.24,1.05,0.59,1.41l9,9 C11.95,21.76,12.45,22,13,22s1.05-0.24,1.41-0.59l7-7C22.17,13.66,22.17,12.34,21.41,11.59z M13,20L4,11V4h7l9,9L13,20z"/>
+        <circle cx="6.5" cy="6.5" r="1.5"/>
+    </svg>
+);
 
 function OrderHistoryPage() {
     const [orders, setOrders] = useState([]);
-    const [expandedOrderId, setExpandedOrderId] = useState(null); // To track which order details are shown
+    const [expandedOrderId, setExpandedOrderId] = useState(null);
+    const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false); // New state
 
-    // --- Dummy Order Data ---
-    // In a real app, this would be fetched from a backend API
+    const toggleProductDropdown = (e) => { // New handler
+        e.preventDefault();
+        setIsProductDropdownOpen(!isProductDropdownOpen);
+    };
+
     const dummyOrdersData = [
         {
             id: 'TSU-SG-00345',
@@ -53,9 +80,8 @@ function OrderHistoryPage() {
     ];
 
     useEffect(() => {
-        // Simulate fetching orders
         setOrders(dummyOrdersData);
-    }, []);
+    }, []); // Added dummyOrdersData to dependency array for completeness, though it's constant here
 
     const toggleOrderDetails = (orderId) => {
         setExpandedOrderId(prevId => (prevId === orderId ? null : orderId));
@@ -71,10 +97,9 @@ function OrderHistoryPage() {
         }
     };
 
-
     return (
         <>
-            {/* --- Consistent Header --- */}
+            {/* --- UPDATED Header --- */}
             <header>
                 <div className="header-left-content">
                     <button className="burger-btn" aria-label="Menu" title="Menu">
@@ -91,6 +116,12 @@ function OrderHistoryPage() {
                         <a href="#">About</a>
                         <a href="#">Contact</a>
                         <a href="#">FAQ</a>
+                        <a href="#" onClick={toggleProductDropdown} className="product-dropdown-toggle">
+                            Product
+                            <svg className={`product-arrow ${isProductDropdownOpen ? 'up' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </a>
                     </nav>
                 </div>
                 <div className="header-right-content">
@@ -123,6 +154,23 @@ function OrderHistoryPage() {
                     </div>
                 </div>
             </header>
+
+            {isProductDropdownOpen && (
+                <nav className="secondary-navbar">
+                    <a href="#" className="secondary-navbar-item">
+                        <TshirtIcon /> T-shirt
+                    </a>
+                    <a href="#" className="secondary-navbar-item">
+                        <JacketIcon /> Jackets
+                    </a>
+                    <a href="#" className="secondary-navbar-item">
+                        <BoardshortsIcon /> Boardshorts
+                    </a>
+                    <a href="#" className="secondary-navbar-item">
+                        <AccessoriesIcon /> Accessories
+                    </a>
+                </nav>
+            )}
 
             {/* --- Main Content --- */}
             <div className="container order-history-container">

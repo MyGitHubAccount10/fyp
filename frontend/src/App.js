@@ -13,12 +13,16 @@ import ProductDetailPage from './ProductDetailPage';
 
 import AdminLayout from './AdminLayout';
 import ManageProductsPage from './ManageProductsPage';
-import AdminDashboard from './AdminDashboard'; // Import the new component
+import AdminDashboard from './AdminDashboard';
 import AddProductPage from './AddProductPage';
 import AllOrdersPage from './AllOrdersPage';
 import OrderDetailsPage from './OrderDetailsPage';
+<<<<<<< HEAD
 import CustomerDetailsPage from './CustomerDetailsPage';
 import './AdminStyles.css'; // Ensure admin styles are imported
+=======
+import './AdminStyles.css';
+>>>>>>> d58112eb88cb039475a106e4920ba2374c6cebe0
 
 import './index.css';
 

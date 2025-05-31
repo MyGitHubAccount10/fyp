@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Website.css';
 import Header from './Header';
+import Footer from './Footer';
 
 function UserProfilePage() {
     // --- STATE ---
@@ -185,29 +186,8 @@ function UserProfilePage() {
                        <a href="/order-history" className="btn-link-profile">View Order History</a>
                     </div>
                 </div>
-
             </div>
-
-            {/* --- Consistent Footer --- */}
-            <footer className="footer">
-                <div className="footer-column">
-                    <strong>#THISSIDEUP</strong>
-                    <div className="social-icons">
-                        <a href="#" aria-label="Instagram"><img src="https://img.icons8.com/ios-filled/50/ffffff/instagram-new.png" alt="Instagram" /></a>
-                        <a href="#" aria-label="TikTok"><img src="https://img.icons8.com/ios-filled/50/ffffff/tiktok--v1.png" alt="TikTok" /></a>
-                    </div>
-                </div>
-                <div className="footer-column">
-                    <strong>Customer Service</strong>
-                    <a href="#">Contact</a><br />
-                    <a href="#">FAQ</a><br />
-                    <a href="#">About</a>
-                </div>
-                <div className="footer-column">
-                <strong>This Side Up</strong>
-                <p>Welcome to This Side Up! From our home in Singapore, we're passionate about sharing the thrill of skimboarding with riders of all levels. We craft high-performance, custom-designed skimboards using top-quality materials and your unique vision, so your board performs exceptionally and truly reflects your style. Inspired by Singapore's vibrant coastal scene, we're building a community for adventure and championing an active life by the water.</p>
-                </div>
-            </footer>
+            <Footer />
         </>
     );
 }

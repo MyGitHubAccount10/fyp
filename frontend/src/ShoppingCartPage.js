@@ -7,6 +7,31 @@ const whiteShirtImage = '/images/white-shirt.jpg';
 const blueShirtImage = '/images/blue-shirt.jpg';
 const blueShirtGonImage = '/images/blue-shirt-gon.jpg';
 
+// Simple SVG Icons for secondary navigation (black color is set via CSS or inline fill)
+const TshirtIcon = () => (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="black">
+        <path d="M12,2C9.243,2,7,4.243,7,7v3H5c-1.103,0-2,0.897-2,2v8c0,1.103,0.897,2,2,2h14c1.103,0,2-0.897,2-2v-8c0-1.103-0.897-2-2-2h-2V7 C17,4.243,14.757,2,12,2z M10,7V6c0-1.103,0.897-2,2-2s2,0.897,2,2v1H10z"/>
+    </svg>
+);
+const JacketIcon = () => (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="black">
+        <path d="M18 7h-2V5c0-1.103-.897-2-2-2h-4c-1.103 0-2 .897-2 2v2H6c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2V9c0-1.103-.897-2-2-2zm-8-2h4v2h-4V5zm6 14H8V9h8v10z"/>
+        <path d="M10 12h4v2h-4zm0 15h4v2h-4z"/>
+    </svg>
+);
+const BoardshortsIcon = () => (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="black">
+        <path d="M8 2v4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4v-6h4v6h4c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-2V2h-8zm2 5h4v3h-4V7z"/>
+    </svg>
+);
+const AccessoriesIcon = () => (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="black">
+        <path d="M21.41,11.59l-9-9C12.05,2.24,11.55,2,11,2H4C2.9,2,2,2.9,2,4v7c0,0.55,0.24,1.05,0.59,1.41l9,9 C11.95,21.76,12.45,22,13,22s1.05-0.24,1.41-0.59l7-7C22.17,13.66,22.17,12.34,21.41,11.59z M13,20L4,11V4h7l9,9L13,20z"/>
+        <circle cx="6.5" cy="6.5" r="1.5"/>
+    </svg>
+);
+
+
 function ShoppingCartPage() {
     // --- STATE ---
     const initialCartItemsData = [
@@ -20,6 +45,7 @@ function ShoppingCartPage() {
 
     const [cartItems, setCartItems] = useState(initialCartItemsData);
     const [recommendedItems, setRecommendedItems] = useState(initialRecommendedItemsData);
+    const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false); // New state for product dropdown
 
     // --- EVENT HANDLERS ---
     const handleQuantityChange = (itemId, change) => {
@@ -32,19 +58,15 @@ function ShoppingCartPage() {
 
     const handleDeleteItem = (itemId) => {
         setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
-        // In a real app, you might also want to add it to "recommended" or a "deleted" list
     };
 
     const handleSaveForLater = (itemId) => {
         const itemToSave = cartItems.find(item => item.id === itemId);
         if (itemToSave) {
-            // Remove from cart
             setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
-            // Add to recommended (or a separate "saved for later" list)
-            // For simplicity, adding to existing recommended if not already there by name
             setRecommendedItems(prevRec => {
                 if (!prevRec.find(rec => rec.name === itemToSave.name)) {
-                    return [...prevRec, { ...itemToSave, id: `rec-${itemToSave.id}`, price: itemToSave.price.replace('S$', '$')}]; // Adjusting ID and price format for consistency
+                    return [...prevRec, { ...itemToSave, id: `rec-${itemToSave.id}`, price: itemToSave.price.replace('S$', '$')}];
                 }
                 return prevRec;
             });
@@ -62,9 +84,8 @@ function ShoppingCartPage() {
             setRecommendedItems(prevRec => prevRec.filter(item => item.id !== recommendedItemId));
             setCartItems(prevCart => {
                 if (!prevCart.find(cartItem => cartItem.name === itemToMove.name)) {
-                    return [...prevCart, { ...itemToMove, id: `cart-${Date.now()}`, quantity: 1, price: itemToMove.price.replace('$', 'S$')}]; // Adjusting ID and price
+                    return [...prevCart, { ...itemToMove, id: `cart-${Date.now()}`, quantity: 1, price: itemToMove.price.replace('$', 'S$')}];
                 }
-                // If item already in cart by name, maybe just increment quantity or notify user
                 alert(`${itemToMove.name} is already in the cart or a similar item exists.`);
                 return prevCart;
             });
@@ -76,6 +97,10 @@ function ShoppingCartPage() {
         setRecommendedItems(prevItems => prevItems.filter(item => item.id !== recommendedItemId));
     };
 
+    const toggleProductDropdown = (e) => {
+        e.preventDefault();
+        setIsProductDropdownOpen(!isProductDropdownOpen);
+    };
 
     // --- RENDER ---
     return (
@@ -96,6 +121,12 @@ function ShoppingCartPage() {
                         <a href="#">About</a>
                         <a href="#">Contact</a>
                         <a href="#">FAQ</a>
+                        <a href="#" onClick={toggleProductDropdown} className="product-dropdown-toggle">
+                            Product
+                            <svg className={`product-arrow ${isProductDropdownOpen ? 'up' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </a>
                     </nav>
                 </div>
                 <div className="header-right-content">
@@ -128,6 +159,23 @@ function ShoppingCartPage() {
                     </div>
                 </div>
             </header>
+
+            {isProductDropdownOpen && (
+                <nav className="secondary-navbar">
+                    <a href="#" className="secondary-navbar-item">
+                        <TshirtIcon /> T-shirt
+                    </a>
+                    <a href="#" className="secondary-navbar-item">
+                        <JacketIcon /> Jackets
+                    </a>
+                    <a href="#" className="secondary-navbar-item">
+                        <BoardshortsIcon /> Boardshorts
+                    </a>
+                    <a href="#" className="secondary-navbar-item">
+                        <AccessoriesIcon /> Accessories
+                    </a>
+                </nav>
+            )}
 
             <div className="container">
                 <h2>Shopping Cart</h2>

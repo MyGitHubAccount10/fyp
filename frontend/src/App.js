@@ -17,6 +17,7 @@ import AdminDashboard from './AdminDashboard'; // Import the new component
 import AddProductPage from './AddProductPage';
 import AllOrdersPage from './AllOrdersPage';
 import OrderDetailsPage from './OrderDetailsPage';
+import CustomerDetailsPage from './CustomerDetailsPage';
 import './AdminStyles.css'; // Ensure admin styles are imported
 
 import './index.css';
@@ -36,6 +37,8 @@ function App() {
         <OrderDetailsPage /> */}
         {/* AddProductPage can be conditionally rendered based on the route */}
       {/* </AdminLayout> */}
+      <CustomerDetailsPage />
+
 
 
       <SignUpPage />

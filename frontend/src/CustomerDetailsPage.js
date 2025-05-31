@@ -1,0 +1,2693 @@
+import React, { useState } from 'react';
+
+// The CSS is included as a string within the JS file
+const adminStylesCss = `
+/* --- Admin Global & Body --- */
+/* Apply this to a main wrapper div if not applying globally */
+.admin-body-wrapper {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6; /* Light background for the content area */
+    color: #333;
+    display: flex; /* Use flexbox for sidebar and main content layout */
+    min-height: 100vh; /* Ensure wrapper takes at least full viewport height */
+    padding-top: 60px; /* Add padding to make space for the fixed header */
+    box-sizing: border-box; /* Include padding in element's total width and height */
+}
+
+/* --- Admin Layout --- */
+/* The main wrapper below the header */
+.admin-layout-container {
+    display: flex;
+    width: 100%;
+}
+
+/* --- Admin Header Styles --- */
+.admin-header {
+    position: fixed; /* Fix header to the top */
+    top: 0;
+    left: 0; /* Header spans full width by default */
+    right: 0;
+    height: 60px; /* Fixed height */
+    background-color: #f1673a; /* Theme color */
+    color: #000; /* Black text */
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 100; /* Ensure header is above other content */
+}
+
+.admin-header .header-left,
+.admin-header .header-right {
+    display: flex;
+    align-items: center;
+}
+
+.admin-header .header-page-title {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.admin-header .header-welcome {
+    font-size: 0.9em;
+    margin-right: 30px;
+    color: #333; /* Darker text for admin name */
+}
+
+.admin-header .header-link {
+    display: flex;
+    align-items: center;
+    color: #000;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: opacity 0.2s ease;
+}
+.admin-header .header-link:hover {
+    opacity: 0.8;
+}
+
+.admin-header .header-link svg {
+    width: 18px;
+    height: 18px;
+    margin-right: 5px;
+    /* stroke and fill should be handled by the SVG itself */
+}
+
+/* Specific back button for clarity */
+.admin-header .header-link.header-back-btn {
+    margin-left: 0; /* No margin if it's the first item in a group */
+    margin-right: 20px;
+}
+
+
+/* --- Admin Sidebar Styles --- */
+.admin-sidebar {
+    width: 250px; /* Default width */
+    background-color: #343a40; /* Dark background color */
+    color: #adb5bd; /* Default text color */
+    padding: 20px 0;
+    transition: width 0.3s ease, padding 0.3s ease; /* Smooth transition for minimize */
+    flex-shrink: 0; /* Prevent sidebar from shrinking */
+    position: fixed; /* Fix sidebar position */
+    top: 60px; /* Below the header */
+    bottom: 0;
+    left: 0;
+    z-index: 50; /* Below the header */
+    overflow-y: auto; /* Enable scrolling if content overflows */
+    box-sizing: border-box;
+}
+
+.admin-sidebar.minimized {
+    width: 60px; /* Minimized width */
+    padding: 20px 0; /* Adjust padding if needed */
+}
+
+.admin-sidebar .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px 20px 20px;
+    border-bottom: 1px solid #495057;
+    margin-bottom: 20px;
+    white-space: nowrap; /* Prevent text wrapping */
+    overflow: hidden; /* Hide text when minimized */
+}
+
+.admin-sidebar.minimized .sidebar-header {
+    padding: 0 15px 20px 15px;
+    justify-content: center; /* Center items when minimized */
+}
+
+
+.admin-sidebar .sidebar-logo {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.admin-sidebar .sidebar-logo img {
+    height: 30px; /* Adjust logo size */
+    margin-right: 10px;
+}
+
+.admin-sidebar.minimized .sidebar-logo span {
+    display: none; /* Hide text logo when minimized */
+}
+
+.admin-sidebar .sidebar-toggle-btn {
+    background: none;
+    border: none;
+    color: #adb5bd;
+    cursor: pointer;
+    font-size: 1.2em;
+    padding: 5px;
+    transition: transform 0.3s ease;
+}
+.admin-sidebar .sidebar-toggle-btn:hover {
+    color: #fff;
+}
+
+.admin-sidebar.minimized .sidebar-toggle-btn {
+     transform: rotate(180deg); /* Rotate arrow when minimized */
+}
+.admin-sidebar .sidebar-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: #adb5bd;
+    transition: stroke 0.2s ease;
+}
+.admin-sidebar .sidebar-toggle-btn:hover svg {
+    stroke: #fff;
+}
+
+
+.admin-sidebar .sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.admin-sidebar .sidebar-nav li {
+    margin-bottom: 8px;
+}
+
+.admin-sidebar .sidebar-nav a {
+    display: flex;
+    align-items: center;
+    color: #adb5bd;
+    text-decoration: none;
+    padding: 12px 20px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden; /* Hide text when minimized */
+}
+.admin-sidebar.minimized .sidebar-nav a {
+     padding: 12px 0; /* Adjust padding for icon-only view */
+     justify-content: center; /* Center icons */
+}
+
+.admin-sidebar .sidebar-nav a:hover {
+    background-color: #495057;
+    color: #fff;
+}
+
+.admin-sidebar .sidebar-nav a.active {
+    background-color: #495057; /* Highlight active link */
+    color: #fff;
+    border-left: 3px solid #f1673a; /* Theme color indicator */
+    padding-left: 17px; /* Adjust padding due to border */
+}
+.admin-sidebar.minimized .sidebar-nav a.active {
+     border-left: none; /* Hide border when minimized */
+     background-color: #495057; /* Still highlight background */
+     color: #fff;
+     padding-left: 0; /* Reset padding */
+}
+
+
+.admin-sidebar .sidebar-nav a svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 15px; /* Space between icon and text */
+    /* Default icon color - usually set via stroke/fill in SVG itself or parent color */
+    flex-shrink: 0; /* Prevent icon from shrinking */
+}
+.admin-sidebar.minimized .sidebar-nav a svg {
+    margin-right: 0; /* Remove margin when text is hidden */
+}
+
+.admin-sidebar.minimized .sidebar-nav a span {
+    display: none; /* Hide text when minimized */
+}
+
+
+/* --- Main Content Area --- */
+.admin-main-content {
+    flex-grow: 1; /* Allow main content to take remaining space */
+    padding: 20px; /* Provides margin from all sides */
+    margin-left: 250px; /* Push content over by sidebar width */
+    transition: margin-left 0.3s ease;
+    position: relative; /* Needed for absolute positioning of right sidebar */
+    box-sizing: border-box;
+}
+
+.admin-layout-container.sidebar-minimized .admin-main-content {
+    margin-left: 60px; /* Adjust margin when sidebar is minimized */
+}
+
+
+/* --- Page Specific: Manage Products --- */
+.manage-products-page .page-header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.manage-products-page .page-title {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.manage-products-page .btn-add-new {
+    background-color: #f1673a; /* Theme color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+.manage-products-page .btn-add-new:hover {
+    background-color: #e0562a;
+}
+.manage-products-page .btn-add-new svg {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    fill: white; /* Ensure icon is white */
+}
+
+
+.manage-products-page .search-filter-bar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.manage-products-page .search-input {
+    flex-grow: 1; /* Allow search input to take available space */
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95em;
+    min-width: 180px; /* Ensure min-width before wrapping */
+}
+
+.manage-products-page .category-select {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95em;
+    background-color: white;
+    cursor: pointer;
+    min-width: 150px; /* Ensure min-width before wrapping */
+}
+
+.manage-products-page .btn-filter {
+    background-color: #17a2b8; /* Secondary action color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+.manage-products-page .btn-filter:hover {
+    background-color: #138496;
+}
+
+
+.manage-products-page .product-table-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    overflow-x: auto; /* Allow horizontal scrolling on small screens */
+}
+
+.manage-products-page .product-table {
+    width: 100%;
+    border-collapse: collapse; /* Remove space between borders */
+}
+
+.manage-products-page .product-table th,
+.manage-products-page .product-table td {
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee; /* Light separator */
+}
+
+.manage-products-page .product-table th {
+    background-color: #f8f9fa; /* Light header background */
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #555;
+    text-transform: uppercase; /* Match image */
+}
+
+.manage-products-page .product-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.manage-products-page .product-table .product-image {
+    width: 50px; /* Adjust image size */
+    height: 50px;
+    object-fit: cover; /* Cover the area */
+    border-radius: 4px;
+    vertical-align: middle; /* Align image nicely in the cell */
+}
+
+.manage-products-page .product-table .product-name {
+    font-weight: 500;
+    color: #333;
+}
+
+.manage-products-page .product-table .status-cell {
+    font-size: 0.9em;
+    font-weight: 500;
+}
+.manage-products-page .product-table .status-published { color: #28a745; } /* Green */
+.manage-products-page .product-table .status-draft { color: #ffc107; } /* Yellow */
+/* Add other statuses like status-archived etc. */
+
+.manage-products-page .action-icons {
+    display: flex;
+    gap: 10px;
+}
+.manage-products-page .action-icons button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0; /* Remove button default padding */
+    font-size: 1em; /* Icon size */
+    color: #555; /* Default icon color */
+    transition: color 0.2s ease;
+}
+.manage-products-page .action-icons button:hover {
+    color: #f1673a; /* Theme color on hover */
+}
+.manage-products-page .action-icons button svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor; /* Use parent color */
+}
+.manage-products-page .action-icons button.delete-btn:hover {
+    color: #dc3545; /* Red on hover for delete */
+}
+
+
+.manage-products-page .pagination-controls {
+    display: flex;
+    justify-content: flex-end; /* Align to the right */
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.manage-products-page .pagination-controls span {
+    font-size: 0.9em;
+    color: #555;
+}
+
+.manage-products-page .pagination-controls button {
+    background-color: #e9ecef; /* Light grey */
+    border: 1px solid #ced4da;
+    color: #495057;
+    padding: 5px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+.manage-products-page .pagination-controls button:hover:not(:disabled) {
+    background-color: #ced4da;
+}
+.manage-products-page .pagination-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+/* --- Right Product Settings Sidebar --- */
+.product-settings-sidebar {
+    position: fixed;
+    top: 60px; /* Below header */
+    right: -350px; /* Start off-screen */
+    bottom: 0;
+    width: 350px; /* Fixed width */
+    background-color: white;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    z-index: 90; /* Below main header, above main content */
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto; /* Allow scrolling */
+    display: flex;
+    flex-direction: column; /* Stack children */
+}
+
+.product-settings-sidebar.visible {
+    right: 0; /* Slide in */
+}
+
+.product-settings-sidebar .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.product-settings-sidebar .sidebar-title {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+.product-settings-sidebar .close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5em;
+    color: #555;
+    padding: 5px; /* Make click area larger */
+}
+.product-settings-sidebar .close-btn:hover {
+    color: #f1673a;
+}
+
+.product-settings-sidebar .form-group {
+    margin-bottom: 20px;
+}
+
+.product-settings-sidebar .form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 0.95em;
+}
+
+.product-settings-sidebar .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95em;
+    background-color: white;
+    cursor: pointer;
+    box-sizing: border-box; /* Include padding/border in width */
+}
+.product-settings-sidebar .form-group select:focus {
+     border-color: #f1673a;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(241, 103, 58, 0.2);
+}
+
+
+.product-settings-sidebar .form-actions {
+    margin-top: auto; /* Push buttons to the bottom */
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.product-settings-sidebar .btn-cancel {
+    background-color: #e9ecef;
+    color: #495057;
+    border: 1px solid #ced4da;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    width: 100%;
+    text-align: center;
+    transition: background-color 0.2s ease;
+}
+.product-settings-sidebar .btn-cancel:hover {
+     background-color: #ced4da;
+}
+
+.product-settings-sidebar .btn-save {
+    background-color: #f1673a;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+.product-settings-sidebar .btn-save:hover {
+    background-color: #e0562a;
+}
+.product-settings-sidebar .btn-save svg {
+     width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    fill: white;
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+    /* Adjust sidebar width slightly */
+    .admin-sidebar {
+        width: 200px;
+    }
+    .admin-main-content {
+        margin-left: 200px;
+    }
+    .admin-sidebar.minimized {
+        width: 60px;
+    }
+     .admin-layout-container.sidebar-minimized .admin-main-content {
+        margin-left: 60px;
+    }
+     .product-settings-sidebar {
+        width: 300px; /* Adjust right sidebar width */
+        right: -300px;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Stack header elements if needed (optional for admin) */
+    .admin-header {
+        flex-direction: column;
+        height: auto; /* Allow height to adjust */
+        padding: 10px 20px;
+    }
+    .admin-header .header-left,
+    .admin-header .header-right {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+     .admin-header .header-page-title,
+     .admin-header .header-welcome,
+     .admin-header .header-link {
+        margin: 5px 0; /* Add vertical spacing */
+     }
+
+    /* Adjust main content margin to account for fixed sidebar */
+     .admin-main-content {
+        padding-top: 80px; /* Add more space if header wraps */
+     }
+
+    /* Basic responsive for the product table */
+    .manage-products-page .product-table td,
+    .manage-products-page .product-table th {
+        padding: 8px 10px;
+    }
+    .manage-products-page .product-table .product-image {
+        width: 40px;
+        height: 40px;
+    }
+     .manage-products-page .search-filter-bar {
+         flex-direction: column;
+         gap: 10px;
+     }
+     .manage-products-page .search-input,
+     .manage-products-page .category-select,
+     .manage-products-page .btn-filter {
+         width: 100%; /* Make filter elements full width */
+         box-sizing: border-box;
+     }
+}
+
+@media (max-width: 480px) {
+    .admin-sidebar {
+        width: 180px; /* Further reduce sidebar width */
+        padding: 10px 0;
+    }
+    .admin-main-content {
+        margin-left: 180px;
+        padding: 15px;
+    }
+    .admin-sidebar.minimized {
+        width: 50px;
+    }
+     .admin-layout-container.sidebar-minimized .admin-main-content {
+        margin-left: 50px;
+    }
+
+    .admin-header {
+        padding: 10px 15px;
+    }
+     .admin-header .header-page-title {
+        font-size: 1.1em;
+     }
+     .admin-header .header-welcome {
+        font-size: 0.8em;
+     }
+     .admin-header .header-link {
+        font-size: 0.8em;
+        margin-left: 10px;
+     }
+     .admin-header .header-link svg {
+        width: 16px;
+        height: 16px;
+     }
+
+
+    .manage-products-page .page-title {
+        font-size: 1.3em;
+    }
+    .manage-products-page .btn-add-new {
+        font-size: 0.9em;
+        padding: 8px 15px;
+    }
+
+     .manage-products-page .product-table th,
+     .manage-products-page .product-table td {
+        font-size: 0.85em;
+     }
+
+     .manage-products-page .pagination-controls {
+         justify-content: center; /* Center pagination controls */
+     }
+
+    .product-settings-sidebar {
+        width: 100%; /* Right sidebar takes full width */
+        right: -100%; /* Start off-screen */
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2); /* More pronounced shadow */
+        padding: 15px;
+    }
+     .product-settings-sidebar.visible {
+        right: 0;
+    }
+     .product-settings-sidebar .sidebar-title {
+         font-size: 1.2em;
+     }
+     .product-settings-sidebar .form-group label {
+        font-size: 0.9em;
+     }
+     .product-settings-sidebar .form-group select,
+     .product-settings-sidebar .btn-cancel,
+     .product-settings-sidebar .btn-save {
+        font-size: 0.95em;
+        padding: 10px;
+     }
+}
+
+/* Add padding to the body or main wrapper to account for fixed header and sidebar */
+/* This is handled by .admin-body-wrapper padding-top and .admin-main-content margin-left */
+
+.dashboard-stats {
+    display: grid; /* Use grid for flexible layout */
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive columns */
+    gap: 20px; /* Space between cards */
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.stat-card .stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* Circle shape */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0; /* Prevent icon area from shrinking */
+}
+
+/* Icon background colors based on image */
+.stat-card .icon-sales { background-color: #f1673a; } /* Theme Orange */
+.stat-card .icon-new-orders { background-color: #ffc107; } /* Yellow */
+.stat-card .icon-fulfillment { background-color: #17a2b8; } /* Info Blue */
+.stat-card .icon-low-stock { background-color: #ffc107; } /* Warning Yellow */
+.stat-card .icon-out-stock { background-color: #dc3545; } /* Danger Red */
+
+
+.stat-card .stat-info {
+    flex-grow: 1; /* Allow info text to take space */
+}
+
+.stat-card .stat-label {
+    font-size: 0.9em;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.stat-card .stat-value {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+}
+
+.dashboard-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    margin-bottom: 30px;
+}
+
+.dashboard-section .section-title {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+.quick-action-buttons {
+    display: grid; /* Use grid for the buttons */
+     /* Create 2 columns with equal width, wrap on smaller screens */
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px; /* Space between buttons */
+}
+
+.btn-quick-action {
+    background-color: #f1673a; /* Theme color */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center text and icon */
+    transition: background-color 0.2s ease;
+    gap: 8px; /* Space between icon and text */
+}
+.btn-quick-action:hover {
+    background-color: #e0562a;
+}
+.btn-quick-action svg {
+    width: 20px; /* Adjust icon size */
+    height: 20px;
+    fill: white;
+    stroke: white; /* Ensure icon colors are white */
+}
+
+.recent-orders-table,
+.dashboard-section .table-container table { /* Reuse or adapt table styles */
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.recent-orders-table th,
+.recent-orders-table td {
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+}
+.recent-orders-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #555;
+    text-transform: uppercase;
+}
+.recent-orders-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Status colors (reusing or creating) */
+.recent-orders-table .status-cell.status-shipped { color: #28a745; font-weight: 500; } /* Green */
+.recent-orders-table .status-cell.status-processing { color: #ffc107; font-weight: 500; } /* Yellow */
+.recent-orders-table .status-cell.status-complete { color: #777; font-weight: normal; font-style: italic; } /* Faded */
+
+
+.sales-chart-placeholder {
+    background-color: #e0e0e0; /* Grey placeholder color */
+    height: 200px; /* Example height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #555;
+    font-size: 1.1em;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.section-footer-link {
+    text-align: right;
+    margin-top: 10px;
+}
+.view-all-link {
+    color: #f1673a; /* Theme color */
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95em;
+}
+.view-all-link:hover {
+    text-decoration: underline;
+}
+
+/* Responsive adjustments for Dashboard (within media queries in AdminStyles.css) */
+@media (max-width: 768px) {
+    .dashboard-stats {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjust min width for smaller screens */
+        gap: 15px;
+    }
+    .stat-card {
+        padding: 15px;
+        flex-direction: column; /* Stack icon and info on smaller screens */
+        text-align: center;
+    }
+    .stat-card .stat-icon { margin-bottom: 5px; }
+    .stat-card .stat-info { text-align: center; } /* Ensure info is centered */
+
+     .quick-action-buttons {
+         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Adjust quick button min width */
+         gap: 10px;
+     }
+     .btn-quick-action {
+        font-size: 0.9em;
+        padding: 10px 15px;
+     }
+      .recent-orders-table th,
+      .recent-orders-table td {
+        padding: 8px 10px;
+        font-size: 0.9em;
+      }
+}
+
+@media (max-width: 480px) {
+    .dashboard-stats {
+         grid-template-columns: 1fr; /* Stack stat cards on very small screens */
+         gap: 10px;
+    }
+    .quick-action-buttons {
+        grid-template-columns: 1fr; /* Stack quick action buttons */
+         gap: 8px;
+    }
+    .dashboard-section {
+        padding: 15px;
+    }
+     .dashboard-section .section-title {
+         font-size: 1.1em;
+         margin-bottom: 15px;
+     }
+     .recent-orders-table th,
+      .recent-orders-table td {
+        font-size: 0.85em;
+     }
+    .view-all-link {
+        font-size: 0.9em;
+    }
+}
+
+.btn-back-to-products {
+    background-color: #e9ecef; /* Light grey */
+    color: #555;
+    border: 1px solid #ced4da;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between icon and text */
+    transition: background-color 0.2s ease;
+     text-decoration: none; /* If using <a> tag */
+     margin-left: auto; /* Push to the right if in a flex container */
+}
+.btn-back-to-products:hover {
+    background-color: #ced4da;
+}
+.btn-back-to-products svg {
+    width: 16px; /* Smaller icon for button */
+    height: 16px;
+    stroke: currentColor; /* Use parent color */
+}
+
+
+.add-product-form-layout {
+    display: flex;
+    gap: 30px; /* Space between the two columns */
+    flex-wrap: wrap; /* Allow columns to stack on smaller screens */
+    margin-top: 20px; /* Space below the back button */
+}
+
+.add-product-main-column {
+    flex: 2; /* Allow main content to take more space */
+    min-width: 350px; /* Ensure a minimum width before stacking */
+    display: flex;
+    flex-direction: column; /* Stack cards vertically */
+    gap: 20px; /* Space between cards in the main column */
+}
+
+.add-product-sidebar-panel {
+    flex: 1; /* Allow sidebar panel to take less space */
+    min-width: 250px; /* Ensure a minimum width before stacking */
+    display: flex;
+    flex-direction: column; /* Stack cards vertically */
+    gap: 20px; /* Space between cards in the sidebar panel */
+    /* Align to top if main column content is shorter - handled by default flex behavior */
+}
+
+
+.form-section-card { /* Reused class, define common card styles here */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    /* Margin/Gap between cards is handled by the parent flex container */
+}
+
+.section-card-title { /* Style for h3 inside the cards */
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+
+/* Reuse form-group, label, input, select, textarea styles from AdminStyles */
+/* Specific styles for radio buttons */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Space between radio options */
+}
+.radio-label {
+    display: flex;
+    align-items: center;
+    font-weight: normal; /* Reset font weight from form-group label */
+    cursor: pointer;
+    font-size: 0.95em;
+    color: #555;
+}
+.radio-label input[type="radio"] {
+    margin-right: 8px;
+    /* Customize radio button appearance if needed, but default is fine */
+}
+
+/* Specific styles for file upload area */
+.file-upload-area {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    background-color: #f8f9fa; /* Light background */
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+.file-input-hidden {
+    display: none; /* Hide the default file input */
+}
+.file-input-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    flex-grow: 1; /* Allow text to take space */
+}
+.file-input-button {
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    color: #495057;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    margin-right: 10px;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+.file-input-button:hover {
+    background-color: #ced4da;
+}
+.file-input-text {
+    color: #555;
+    font-size: 0.9em;
+    overflow: hidden; /* Prevent overflow of long file names */
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.selected-file-names { /* Optional: style for displaying selected names */
+    margin-top: 5px;
+    font-size: 0.85em;
+    color: #6c757d;
+    word-break: break-all; /* Break long names */
+}
+
+
+.form-actions-vertical { /* Style for buttons section in the right panel */
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    gap: 15px; /* Space between buttons */
+}
+
+.btn-save-product { /* Style for the Save button */
+    background-color: #f1673a; /* Theme color */
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    width: 100%; /* Make button full width */
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center text and icon */
+    gap: 8px; /* Space between icon and text */
+    transition: background-color 0.2s ease;
+}
+.btn-save-product:hover {
+     background-color: #e0562a;
+}
+.btn-save-product svg {
+     width: 18px; /* Adjust icon size */
+    height: 18px;
+    fill: white;
+}
+
+
+.btn-cancel-product { /* Style for the Cancel button */
+    background-color: #e9ecef; /* Light grey */
+    color: #495057;
+    border: 1px solid #ced4da;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    width: 100%; /* Make button full width */
+    text-align: center;
+    transition: background-color 0.2s ease;
+}
+.btn-cancel-product:hover {
+     background-color: #ced4da;
+}
+
+
+/* Responsive adjustments for Add Product Page (within existing media queries) */
+@media (max-width: 992px) {
+     .add-product-main-column { min-width: 300px; }
+     .add-product-sidebar-panel { min-width: 200px; }
+}
+
+@media (max-width: 768px) {
+    .add-product-form-layout {
+        flex-direction: column; /* Stack columns vertically */
+        gap: 20px; /* Adjust gap when stacked */
+    }
+    .add-product-main-column,
+    .add-product-sidebar-panel {
+        flex: none; /* Remove flex grow/shrink */
+        width: 100%; /* Take full width when stacked */
+        min-width: auto; /* Remove min-width constraint */
+        gap: 20px; /* Gap between cards already defined */
+    }
+
+    .btn-back-to-products {
+        font-size: 0.85em;
+        padding: 6px 12px;
+    }
+     .btn-back-to-products svg {
+        width: 14px;
+        height: 14px;
+     }
+
+      .form-section-card {
+        padding: 15px; /* Reduce padding on smaller screens */
+    }
+     .section-card-title {
+         font-size: 1em;
+         margin-bottom: 15px;
+     }
+     /* Reuse form-group, label, input styles - already somewhat responsive */
+
+     .form-actions-vertical {
+        gap: 10px; /* Reduce button gap */
+     }
+     .btn-save-product,
+     .btn-cancel-product {
+         font-size: 0.95em;
+         padding: 10px 15px;
+     }
+}
+
+@media (max-width: 480px) {
+     .form-section-card {
+        padding: 10px;
+    }
+     .section-card-title {
+         font-size: 0.95em;
+         margin-bottom: 10px;
+     }
+     .radio-label {
+        font-size: 0.9em;
+     }
+     .file-input-button,
+     .file-input-text {
+        font-size: 0.85em;
+     }
+      .btn-save-product,
+     .btn-cancel-product {
+         font-size: 0.9em;
+         padding: 8px 12px;
+     }
+}
+
+.filter-bar {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    margin-bottom: 20px;
+    display: flex;
+    gap: 15px; /* Space between filter elements */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    align-items: center; /* Align items vertically in the center */
+}
+
+/* Base style for filter inputs (search, select, date) */
+.filter-bar .filter-input {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95em;
+    min-width: 150px; /* Minimum width for inputs */
+    box-sizing: border-box; /* Include padding/border in width */
+}
+
+/* Specific styles for input types if needed */
+.filter-bar .search-input {
+    flex-grow: 1; /* Allow search input to take more space */
+     min-width: 180px;
+}
+
+.filter-bar .status-select {
+    background-color: white;
+    cursor: pointer;
+}
+
+/* Style for date input wrapper if you add a custom icon */
+.filter-bar .date-input-wrapper {
+    position: relative; /* For positioning custom icons if needed */
+    display: flex; /* Ensure input takes full width in wrapper */
+     min-width: 120px; /* Adjust min-width for date inputs */
+     padding: 0; /* Remove padding from wrapper, add to input */
+     border: none; /* Remove border from wrapper, add to input */
+}
+.filter-bar .date-input-wrapper input.date-input {
+     width: 100%;
+     padding: 10px 15px;
+     border: 1px solid #ccc;
+     border-radius: 4px;
+     font-size: 0.95em;
+     box-sizing: border-box;
+     background-color: white;
+     /* Hide native calendar icon if adding custom */
+     /* appearance: none;
+     -webkit-appearance: none; */
+}
+/* Style for custom calendar icon if used */
+/* .filter-bar .date-input-wrapper .calendar-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; // Prevent icon from interfering with clicks
+    color: #555;
+} */
+
+
+.filter-bar .btn-apply-filters {
+    background-color: #f1673a; /* Theme color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    /* Ensure button doesn't shrink excessively */
+    flex-shrink: 0;
+}
+.filter-bar .btn-apply-filters:hover {
+    background-color: #e0562a;
+}
+
+
+.orders-table-container { /* Reuse or adapt product-table-container styles */
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    overflow-x: auto; /* Allow horizontal scrolling on small screens */
+}
+
+.orders-table { /* Reuse or adapt product-table styles */
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.orders-table th,
+.orders-table td {
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+     /* white-space: nowrap; Prevent text wrapping in cells */
+}
+
+.orders-table th { /* Reuse or adapt product-table th styles */
+    background-color: #f8f9fa;
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #555;
+    text-transform: uppercase;
+}
+
+.orders-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Link button style for 'View Details' */
+.orders-table .link-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: #007bff; /* Bootstrap primary blue or similar link color */
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+.orders-table .link-button:hover {
+    color: #0056b3;
+}
+
+/* Specific Order Status colors (reusing from Dashboard if defined, otherwise define here) */
+.orders-table .status-shipped { color: #28a745; font-weight: 500; } /* Green */
+.orders-table .status-processing { color: #ffc107; font-weight: 500; } /* Yellow */
+.orders-table .status-delivered { color: #28a745; font-weight: 500; } /* Green */
+.orders-table .status-cancelled { color: #dc3545; font-weight: 500; } /* Red */
+
+
+/* Pagination styles reuse from ManageProductsPage.pagination-controls */
+/* .pagination-controls { ... } */
+
+
+/* --- Generic Admin Card/Section Style --- */
+/* This style applies the card background, padding, border-radius, and shadow */
+.form-section-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    /* Margin/Gap between cards is handled by the parent flex container */
+}
+
+.section-card-title { /* Style for h3 inside the cards */
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+/* Generic form actions for horizontal layout */
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start; /* Default alignment */
+    margin-top: 20px;
+}
+
+/* --- Generic Admin Card/Section Style --- */
+/* This style applies the card background, padding, border-radius, and shadow */
+.form-section-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    /* Margin/Gap between cards is handled by the parent flex container */
+}
+
+.section-card-title { /* Style for h3 inside the cards */
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+/* Generic form actions for horizontal layout */
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start; /* Default alignment */
+    margin-top: 20px;
+}
+
+/* Back button style (reused from Add Product Page section) */
+.btn-back-to-products {
+    background-color: #e9ecef; /* Light grey */
+    color: #555;
+    border: 1px solid #ced4da;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between icon and text */
+    transition: background-color 0.2s ease;
+     text-decoration: none; /* If using <a> tag */
+     margin-left: auto; /* Push to the right if in a flex container */
+}
+.btn-back-to-products:hover {
+    background-color: #ced4da;
+}
+.btn-back-to-products svg {
+    width: 16px; /* Smaller icon for button */
+    height: 16px;
+    stroke: currentColor; /* Use parent color */
+}
+
+
+.order-details-actions {
+    margin-top: 20px; /* Space below the header/back button */
+    margin-bottom: 30px; /* Space above the summary */
+    display: flex;
+    flex-wrap: wrap; /* Allow buttons to wrap */
+    gap: 10px; /* Space between buttons and select */
+    align-items: center; /* Vertically align select and buttons */
+}
+
+/* Reusing btn-order-action from order history, but defining specific variants */
+.btn-order-action {
+    padding: 8px 15px;
+    border-radius: 5px;
+    border: 1px solid transparent; /* Default border */
+    font-weight: 500;
+    font-size: 0.9em;
+    cursor: pointer;
+    display: inline-flex; /* Align icon and text */
+    align-items: center;
+    gap: 5px; /* Space between icon and text */
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+     white-space: nowrap; /* Prevent wrapping inside button */
+}
+.btn-order-action svg {
+    width: 16px; /* Adjust icon size */
+    height: 16px;
+    stroke: currentColor; /* Use parent color */
+    fill: none; /* Ensure icons are outlines unless specified */
+}
+
+/* Primary Button (Orange) */
+.btn-order-action.btn-primary {
+    background-color: #f1673a; /* Theme color */
+    color: white;
+    border-color: #f1673a;
+}
+.btn-order-action.btn-primary:hover {
+    background-color: #e0562a;
+    border-color: #e0562a;
+}
+.btn-order-action.btn-primary svg {
+    stroke: white; /* Ensure icons are white */
+}
+
+/* Secondary Button (Grey) */
+.btn-order-action.btn-secondary {
+    background-color: #e9ecef; /* Light grey */
+    color: #495057;
+    border-color: #ced4da;
+}
+.btn-order-action.btn-secondary:hover {
+    background-color: #ced4da;
+    border-color: #ced4da;
+}
+.btn-order-action:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* Status Dropdown Style */
+.order-details-actions .status-dropdown {
+    /* Reuse styles from filter-input or define custom */
+     padding: 8px 15px; /* Match button padding */
+     border: 1px solid #ccc;
+     border-radius: 5px; /* Match button border-radius */
+     font-size: 0.9em; /* Match button font size */
+     background-color: white;
+     cursor: pointer;
+     color: #495057; /* Match secondary button text color */
+     min-width: 120px; /* Ensure it has a reasonable width */
+     box-sizing: border-box;
+}
+.order-details-actions .status-dropdown:focus {
+     border-color: #f1673a;
+     outline: none;
+     box-shadow: 0 0 0 2px rgba(241, 103, 58, 0.2);
+}
+
+
+/* --- Main Content Sections Layout --- */
+/* Wrapper for vertical spacing between main sections */
+.order-details-content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* Vertical space between main sections (the cards) */
+}
+
+
+/* Summary Section Layout (Inner layout within the summary card) */
+.summary-layout {
+    display: flex;
+    gap: 20px; /* Space between the two summary cards (horizontal) */
+    flex-wrap: wrap; /* Allow cards to stack */
+    /* This is now a flex container *inside* a .form-section-card */
+    /* It does NOT have padding/background/shadow itself */
+}
+
+/* Apply card styling directly to the summary layout wrapper */
+/* .summary-layout.form-section-card { Inherits card styles } */
+
+
+.summary-layout .summary-card {
+    flex: 1; /* Allow cards to share space */
+    min-width: 300px; /* Minimum width before stacking */
+    /* IMPORTANT: .summary-card is now ALSO a .form-section-card in JSX
+                 so it inherits the card styling from the generic rule. */
+    /* Removed margin-bottom as parent .summary-layout now handles spacing via gap */
+    margin-bottom: 0; /* Ensure no extra bottom margin */
+}
+
+.summary-info p {
+    margin: 0 0 8px 0; /* Space between info lines */
+    font-size: 0.95em;
+    color: #444;
+}
+.summary-info p strong { /* Style for bold labels in summary */
+    font-weight: bold; /* Ensure bold */
+    color: #333; /* Dark color */
+    margin-right: 5px;
+}
+
+
+/* Items Ordered Section */
+/* .items-ordered-section now HAS the .form-section-card class directly in JSX */
+.items-ordered-section {
+     /* Removed margin-bottom as parent .order-details-content handles spacing */
+     margin-bottom: 0; /* Ensure no extra bottom margin */
+}
+
+
+.items-ordered-table { /* Reuse or adapt table styles */
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px; /* Space above summary totals */
+}
+.items-ordered-table th,
+.items-ordered-table td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid #eee;
+     /* white-space: nowrap; Removed based on screenshot appearance */
+}
+.items-ordered-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #555;
+    text-transform: uppercase;
+}
+.items-ordered-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.items-ordered-table .item-image {
+    width: 60px; /* Adjust image size */
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    vertical-align: middle;
+     /* Set fixed width on the td instead of image for consistent column size */
+     /* This rule might be better: */
+     /* .items-ordered-table td:first-child { width: 80px; } */
+}
+
+.items-ordered-table .item-options {
+    font-size: 0.8em;
+    color: #777;
+    margin-top: 3px;
+}
+
+/* Summary Totals styles - BOLDING */
+.summary-totals {
+    text-align: right;
+    font-size: 0.95em;
+    color: #444;
+}
+.summary-totals p {
+    margin: 0 0 5px 0;
+     display: flex;
+     justify-content: space-between; /* Align labels left, values right */
+     gap: 20px; /* Space between label and value */
+}
+.summary-totals p strong { /* Style for bold labels in summary totals */
+    font-weight: bold; /* Ensure bold */
+    color: #333; /* Dark color for bold labels */
+}
+.summary-totals p span {
+    font-weight: normal; /* Ensure values are not bold by default */
+    color: #333;
+}
+.summary-totals .grand-total-row {
+    font-size: 1.1em;
+    font-weight: normal; /* Remove bold from the row itself */
+    color: #333; /* Still apply the dark color to the row */
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+.summary-totals .grand-total-row strong { /* Style for bold label in grand total row */
+    font-weight: bold;
+    color: #333;
+}
+.summary-totals .grand-total-row span {
+    font-weight: bold; /* Make the grand total VALUE bold */
+}
+
+
+/* Fulfillment Section */
+/* .fulfillment-section now HAS the .form-section-card class directly in JSX */
+.fulfillment-section {
+     /* Removed margin-bottom as parent .order-details-content handles spacing */
+    margin-bottom: 0; /* Ensure no extra bottom margin */
+}
+
+.fulfillment-section p {
+     margin: 0 0 8px 0;
+     font-size: 0.95em;
+     color: #444;
+}
+.fulfillment-section p strong {
+     color: #333;
+}
+
+.fulfillment-form-group {
+    display: flex; /* Layout input, select, button inline */
+    gap: 10px;
+    align-items: center;
+    margin-top: 15px; /* Space below tracking info */
+     flex-wrap: wrap; /* Allow wrapping */
+}
+
+.fulfillment-input { /* Reuse form input styles */
+    flex-grow: 1; /* Allow input to take space */
+     min-width: 180px;
+     /* Padding, border, etc. inherited from general form input styles */
+}
+
+.fulfillment-carrier-select { /* Reuse select styles */
+     min-width: 120px;
+     /* Padding, border, etc. inherited from general form select styles */
+     flex-shrink: 0; /* Prevent shrinking */
+}
+
+.btn-update-tracking { /* Reuse .btn-order-action.btn-primary */
+    /* Any specific overrides if needed */
+     min-width: 150px; /* Ensure button doesn't get too small */
+     justify-content: center;
+     flex-shrink: 0; /* Prevent shrinking */
+}
+
+/* Order Notes & History Section */
+/* .notes-history-section now HAS the .form-section-card class directly in JSX */
+.notes-history-section {
+     /* Removed margin-bottom as parent .order-details-content handles spacing */
+    margin-bottom: 0; /* Ensure no extra bottom margin */
+}
+
+.order-history-list {
+     margin-bottom: 20px; /* Space below history entries */
+     padding-bottom: 15px;
+     border-bottom: 1px solid #eee;
+}
+.order-history-list p {
+     margin: 0 0 10px 0;
+     font-size: 0.9em;
+     color: #555;
+     line-height: 1.4;
+}
+.order-history-list p strong { /* Style for bold history types */
+     color: #333;
+     font-weight: bold;
+}
+.order-history-list p em { /* Style for timestamp/source */
+     font-size: 0.9em; /* Smaller font for timestamp/source */
+     color: #777;
+     font-style: normal;
+}
+.order-history-list p:last-child {
+     margin-bottom: 0;
+}
+
+/* Reuse form-group, label, textarea styles for the note input */
+
+.btn-save-note { /* Style for the Save Note button */
+     background-color: #f1673a; /* Theme color */
+     color: white;
+     border: none;
+     padding: 10px 20px;
+     border-radius: 5px;
+     cursor: pointer;
+     font-size: 0.95em;
+     font-weight: 500;
+     transition: background-color 0.2s ease;
+}
+.btn-save-note:hover {
+     background-color: #e0562a;
+}
+/* Assuming form-actions in this section uses the general .form-actions style,
+   ensure it allows the button to be full-width on small screens if needed,
+   or use a specific form-actions class for vertical stacking.
+   The current general .form-actions doesn't specify direction, so adding a specific one here.
+*/
+.notes-history-section .form-actions { /* Specific form actions for notes section */
+    display: flex;
+    justify-content: flex-start; /* Align left */
+    gap: 10px;
+    margin-top: 15px;
+    /* Remove padding-top/border-top if added to parent card */
+}
+
+
+/* Responsive adjustments for Order Details Page */
+@media (max-width: 768px) {
+    .order-details-actions {
+        gap: 8px; /* Reduce button gap */
+        justify-content: center; /* Center buttons when they wrap */
+    }
+    .btn-order-action,
+    .order-details-actions .status-dropdown { /* Apply responsive styles to dropdown too */
+        padding: 6px 12px;
+        font-size: 0.85em;
+        gap: 4px;
+    }
+    .btn-order-action svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .summary-layout {
+         flex-direction: column; /* Stack summary cards */
+         gap: 15px;
+     }
+     .summary-layout .summary-card {
+         min-width: auto; /* Remove min-width */
+     }
+     .summary-info p {
+        font-size: 0.9em;
+        margin-bottom: 6px;
+     }
+     .summary-info p strong {
+         /* Revert to inline for smaller screens if block stacking was not desired */
+         display: inline; /* Ensure label is inline with value */
+     }
+      .summary-info p strong::after { /* Add space after bold label */
+         content: " ";
+     }
+
+
+     .items-ordered-table th,
+     .items-ordered-table td {
+        padding: 8px 10px;
+        font-size: 0.9em;
+         white-space: normal; /* Allow wrapping */
+         &:first-child { width: 60px; } /* Adjust image column width */
+     }
+     .items-ordered-table .item-image {
+        width: 50px;
+        height: 50px;
+     }
+     .items-ordered-table .item-options {
+        font-size: 0.75em;
+     }
+     .summary-totals {
+        font-size: 0.9em;
+     }
+     .summary-totals p { /* Adjust gap for smaller screens */
+         gap: 10px;
+     }
+     .summary-totals .grand-total-row {
+        font-size: 1em;
+        margin-top: 10px;
+        padding-top: 10px;
+     }
+      .summary-totals p strong {
+         display: inline; /* Ensure bold labels in totals are inline */
+      }
+       .summary-totals p strong::after { /* Add space after bold label */
+         content: " ";
+     }
+     .summary-totals .grand-total-row span {
+        font-weight: bold; /* Make the grand total VALUE bold */
+     }
+
+
+     .fulfillment-form-group {
+        flex-direction: column; /* Stack fulfillment form elements */
+        gap: 10px;
+        align-items: stretch; /* Stretch items to full width */
+     }
+     .fulfillment-input,
+     .fulfillment-carrier-select,
+     .btn-update-tracking {
+         width: 100%; /* Make elements full width */
+         min-width: auto;
+         box-sizing: border-box;
+     }
+
+     .order-history-list p {
+         font-size: 0.85em;
+         margin-bottom: 8px;
+     }
+     .btn-save-note {
+         font-size: 0.9em;
+         padding: 8px 15px;
+     }
+     .notes-history-section .form-actions { /* Specific form actions for notes section */
+         flex-direction: column;
+         gap: 10px;
+     }
+     .notes-history-section .form-actions button {
+         width: 100%;
+         box-sizing: border-box;
+     }
+}
+
+@media (max-width: 480px) {
+     .btn-order-action,
+     .order-details-actions .status-dropdown { /* Apply responsive styles to dropdown too */
+        font-size: 0.8em;
+        padding: 5px 10px;
+     }
+      .items-ordered-table th,
+      .items-ordered-table td {
+        font-size: 0.8em;
+        padding: 6px 8px;
+         &:first-child { width: 50px; } /* Further adjust image column */
+     }
+      .items-ordered-table .item-image {
+        width: 40px;
+        height: 40px;
+     }
+      .summary-totals {
+        font-size: 0.85em;
+     }
+     .summary-totals .grand-total-row {
+        font-size: 0.95em;
+     }
+
+     .fulfillment-input,
+     .fulfillment-carrier-select,
+     .btn-update-tracking {
+        font-size: 0.9em;
+        padding: 8px 12px;
+     }
+
+     .order-history-list p {
+         font-size: 0.8em;
+     }
+     .btn-save-note {
+         font-size: 0.85em;
+         padding: 6px 12px;
+     }
+}
+
+/* --- Customer Details Page Specific Styles --- */
+
+/* Layout for the top two cards (Customer Info and Addresses) */
+.customer-info-addresses-layout {
+    display: flex;
+    gap: 20px; /* Space between the two cards */
+    flex-wrap: wrap; /* Allow cards to stack on smaller screens */
+    margin-bottom: 30px; /* Space below this section */
+}
+
+/* Apply flex properties to the cards within this layout */
+.customer-info-addresses-layout > .form-section-card {
+    flex: 1; /* Allow cards to share space */
+    min-width: 300px; /* Minimum width before stacking */
+    /* Inherits padding, background, shadow from .form-section-card */
+}
+
+/* Style for text lines within Customer Info and Address cards */
+.customer-info p {
+    margin: 0 0 10px 0; /* Space between info lines */
+    font-size: 0.95em;
+    color: #444;
+    line-height: 1.4;
+}
+.customer-info p:last-child {
+    margin-bottom: 0;
+}
+
+/* Style for bold labels in Customer Info and Address cards */
+.customer-info p strong {
+    font-weight: bold;
+    color: #333;
+    margin-right: 5px; /* Space after the label */
+}
+
+/* Style for the email link */
+.customer-info a {
+    color: #007bff; /* Standard link color */
+    text-decoration: underline;
+}
+.customer-info a:hover {
+    color: #0056b3;
+}
+
+/* Action buttons below the page title */
+.customer-actions {
+    display: flex;
+    gap: 15px; /* Space between buttons */
+    margin-bottom: 30px; /* Space below the buttons */
+    flex-wrap: wrap; /* Allow buttons to wrap */
+}
+
+/* Style for the Ban Account button (Red) */
+.btn-ban {
+    background-color: #dc3545; /* Danger Red */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+    gap: 8px; /* Space between icon and text */
+}
+.btn-ban:hover {
+    background-color: #c82333;
+}
+.btn-ban svg {
+    width: 18px;
+    height: 18px;
+    fill: white;
+}
+
+/* Style for the Edit Customer Profile button (Orange) */
+.btn-edit-profile {
+    background-color: #f1673a; /* Theme color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+    gap: 8px; /* Space between icon and text */
+}
+.btn-edit-profile:hover {
+    background-color: #e0562a;
+}
+.btn-edit-profile svg {
+    width: 18px;
+    height: 18px;
+    fill: white;
+}
+
+/* Style for the Cancel Edit button (Grey) */
+.btn-cancel-edit {
+    background-color: #e9ecef; /* Light grey */
+    color: #495057;
+    border: 1px solid #ced4da;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+    gap: 8px; /* Space between icon and text */
+}
+.btn-cancel-edit:hover {
+     background-color: #ced4da;
+}
+.btn-cancel-edit svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor; /* Use parent color */
+    fill: none;
+}
+
+
+/* Style for the Save Changes button (Green) */
+.btn-save-changes {
+    background-color: #28a745; /* Success Green */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease;
+    gap: 8px; /* Space between icon and text */
+}
+.btn-save-changes:hover {
+    background-color: #218838;
+}
+.btn-save-changes svg {
+    width: 18px;
+    height: 18px;
+    fill: white;
+}
+
+
+/* Tab Navigation Styles */
+.tab-container {
+    display: flex;
+    border-bottom: 1px solid #eee; /* Separator below tabs */
+    margin-bottom: 20px; /* Space below tabs before content */
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    color: #555; /* Default color */
+    transition: color 0.2s ease, border-bottom-color 0.2s ease;
+    margin-right: 15px; /* Space between tabs */
+    border-bottom: 2px solid transparent; /* Transparent border for inactive */
+}
+.tab-button:hover {
+    color: #333;
+}
+.tab-button.active {
+    color: #f1673a; /* Theme color for active tab */
+    border-bottom-color: #f1673a; /* Theme color underline */
+    font-weight: bold;
+}
+
+/* Tab Content Area */
+.tab-content {
+    /* Padding is handled by the parent .form-section-card */
+}
+
+/* Account Activity List */
+.activity-list {
+    margin-bottom: 20px; /* Space below the list */
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee; /* Separator below the list */
+}
+
+.activity-entry {
+    margin-bottom: 15px; /* Space between entries */
+    font-size: 0.9em;
+    color: #555;
+    line-height: 1.4;
+}
+.activity-entry:last-child {
+    margin-bottom: 0;
+}
+
+.activity-entry strong { /* Style for the activity type */
+    font-weight: bold;
+    color: #333;
+    margin-right: 5px;
+}
+
+.activity-entry em { /* Style for timestamp/source */
+    font-size: 0.9em;
+    color: #777;
+    font-style: normal; /* Use normal style as per screenshot */
+    display: block; /* Place timestamp on a new line */
+    margin-top: 3px;
+}
+
+/* Add Internal Note Form */
+.add-note-form {
+    margin-top: 20px; /* Space above the form */
+}
+
+.add-note-form .form-group label {
+    font-size: 0.95em; /* Match other labels */
+}
+
+.add-note-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95em;
+    box-sizing: border-box;
+    min-height: 100px; /* Give textarea some height */
+    resize: vertical; /* Allow vertical resizing */
+}
+.add-note-form textarea:focus {
+     border-color: #f1673a;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(241, 103, 58, 0.2);
+}
+
+.add-note-form .form-actions { /* Specific actions for the note form */
+    display: flex;
+    justify-content: flex-start; /* Align left */
+    margin-top: 15px; /* Space above the button */
+}
+
+.btn-save-note { /* Style for the Save Note button */
+     background-color: #f1673a; /* Theme color */
+     color: white;
+     border: none;
+     padding: 10px 20px;
+     border-radius: 5px;
+     cursor: pointer;
+     font-size: 0.95em;
+     font-weight: 500;
+     transition: background-color 0.2s ease;
+}
+.btn-save-note:hover {
+     background-color: #e0562a;
+}
+
+
+/* Specific styles for Order History Table within Customer Details */
+.customer-order-history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.customer-order-history-table th,
+.customer-order-history-table td {
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap; /* Prevent text wrapping in cells */
+}
+
+.customer-order-history-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #555;
+    text-transform: uppercase;
+}
+
+.customer-order-history-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Link button style for 'View Orders' */
+.customer-order-history-table .link-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: #007bff; /* Standard link color */
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9em;
+}
+.customer-order-history-table .link-button:hover {
+    color: #0056b3;
+}
+
+/* Status colors (reusing from Orders page) */
+.customer-order-history-table .status-shipped { color: #28a745; font-weight: 500; } /* Green */
+.customer-order-history-table .status-delivered { color: #28a745; font-weight: 500; } /* Green */
+.customer-order-history-table .status-processing { color: #ffc107; font-weight: 500; } /* Yellow */
+.customer-order-history-table .status-cancelled { color: #dc3545; font-weight: 500; } /* Red */
+
+
+/* Responsive adjustments for Customer Order History Table */
+@media (max-width: 768px) {
+    .customer-order-history-table th,
+    .customer-order-history-table td {
+        padding: 8px 10px;
+        font-size: 0.9em;
+        white-space: normal; /* Allow wrapping */
+    }
+}
+
+@media (max-width: 480px) {
+    .customer-order-history-table th,
+    .customer-order-history-table td {
+        padding: 6px 8px;
+        font-size: 0.85em;
+    }
+}
+
+/* Styles for form inputs within the edit sections */
+.customer-edit-form .form-group {
+    margin-bottom: 15px; /* Slightly less space than generic form-group */
+}
+
+.customer-edit-form .form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 5px; /* Less space below label */
+    color: #555;
+    font-size: 0.9em; /* Slightly smaller label font */
+}
+
+.customer-edit-form input[type="text"],
+.customer-edit-form input[type="email"],
+.customer-edit-form input[type="tel"],
+.customer-edit-form textarea {
+    width: 100%;
+    padding: 8px 12px; /* Slightly less padding */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95em;
+    box-sizing: border-box;
+    background-color: white;
+}
+.customer-edit-form input:focus,
+.customer-edit-form textarea:focus {
+     border-color: #f1673a;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(241, 103, 58, 0.2);
+}
+
+/* Specific style for the password input wrapper */
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%; /* Ensure it takes full width */
+}
+
+.password-input-wrapper input[type="password"],
+.password-input-wrapper input[type="text"] { /* Apply styles to both types when toggled */
+    padding-right: 40px; /* Make space for the icon */
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #555;
+    width: 20px;
+    height: 20px;
+}
+.password-toggle-icon:hover {
+    color: #333;
+}
+
+/* Style for address textareas */
+.customer-edit-form textarea.address-textarea {
+    min-height: 80px; /* Adjust height for address fields */
+    resize: vertical;
+}
+
+/* Responsive adjustments for Edit Mode */
+@media (max-width: 768px) {
+     .btn-cancel-edit,
+     .btn-save-changes {
+         padding: 8px 15px;
+         font-size: 0.9em;
+         gap: 6px;
+     }
+     .btn-cancel-edit svg,
+     .btn-save-changes svg {
+         width: 16px;
+         height: 16px;
+     }
+     .customer-edit-form .form-group {
+         margin-bottom: 10px;
+     }
+     .customer-edit-form .form-group label {
+         font-size: 0.85em;
+         margin-bottom: 3px;
+     }
+     .customer-edit-form input[type="text"],
+     .customer-edit-form input[type="email"],
+     .customer-edit-form input[type="tel"],
+     .customer-edit-form textarea {
+         padding: 6px 10px;
+         font-size: 0.9em;
+     }
+     .password-input-wrapper input[type="password"],
+     .password-input-wrapper input[type="text"] {
+         padding-right: 35px; /* Adjust padding for smaller icon */
+     }
+     .password-toggle-icon {
+         width: 18px;
+         height: 18px;
+         right: 8px;
+     }
+     .customer-edit-form textarea.address-textarea {
+        min-height: 60px;
+     }
+}
+
+@media (max-width: 480px) {
+     .btn-cancel-edit,
+     .btn-save-changes {
+         padding: 6px 12px;
+         font-size: 0.85em;
+         gap: 4px;
+     }
+     .btn-cancel-edit svg,
+     .btn-save-changes svg {
+         width: 14px;
+         height: 14px;
+     }
+     .customer-edit-form .form-group label {
+         font-size: 0.8em;
+     }
+     .customer-edit-form input[type="text"],
+     .customer-edit-form input[type="email"],
+     .customer-edit-form input[type="tel"],
+     .customer-edit-form textarea {
+         padding: 5px 8px;
+         font-size: 0.85em;
+     }
+      .password-input-wrapper input[type="password"],
+     .password-input-wrapper input[type="text"] {
+         padding-right: 30px; /* Adjust padding for smaller icon */
+     }
+     .password-toggle-icon {
+         width: 16px;
+         height: 16px;
+         right: 6px;
+     }
+      .customer-edit-form textarea.address-textarea {
+        min-height: 50px;
+     }
+}
+
+`;
+
+// Inject CSS into the document head
+if (typeof document !== 'undefined') {
+  const style = document.createElement('style');
+  style.type = 'text/css';
+  style.appendChild(document.createTextNode(adminStylesCss));
+  document.head.appendChild(style);
+}
+
+
+const CustomerDetailsPage = () => {
+    const [activeTab, setActiveTab] = useState('history'); // 'history' or 'activity'
+    const [isEditing, setIsEditing] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+
+    // Placeholder data (can be managed with state if editing was functional)
+    const customer = {
+        id: 'CUST-001',
+        fullName: 'Johnathan Doe',
+        email: 'john.doe@example.com',
+        password: 'ThinkNoodles1427!48H', // Example password for edit mode
+        phone: '(555) 123-4567',
+        shippingAddress: {
+            name: 'Johnathan Doe',
+            street: '123 Beach Ave',
+            city: 'Surf City',
+            state: 'CA',
+            zip: '90210',
+            country: 'USA'
+        },
+        billingAddress: {
+            name: 'Johnathan Doe',
+            street: '123 Beach Ave',
+            city: 'Surf City',
+            state: 'CA',
+            zip: '90210',
+            country: 'USA'
+        }
+    };
+
+    const accountActivity = [
+        { type: 'Admin Note', content: 'Customer called asking about custom board options. Seemed very interested.', timestamp: 'Admin User - Oct 20, 2023, 11:30 AM' },
+        { type: 'Customer changed password', content: '', timestamp: 'System - Sep 05, 2023, 02:15 PM' },
+        { type: 'Customer created account', content: '', timestamp: 'System - Jan 15, 2023, 09:00 AM' },
+    ];
+
+    const orderHistory = [
+        { id: '#TSU-1001', date: '2023-10-26', status: 'Shipped', items: 3, total: 175.50 },
+        { id: '#TSU-952', date: '2023-09-10', status: 'Delivered', items: 1, total: 50.25 },
+        // Add more dummy data if needed
+    ];
+
+    const totalOrderValue = orderHistory.reduce((sum, order) => sum + order.total, 0).toFixed(2);
+
+
+    // Dummy handlers
+    const handleBackClick = () => {
+        alert('Navigate back to Customers list');
+    };
+
+    const handleBanAccount = () => {
+        alert('Ban Account clicked');
+    };
+
+    const handleEditProfile = () => {
+        setIsEditing(true);
+        alert('Edit Customer Profile clicked');
+    };
+
+    const handleCancelEdit = () => {
+        setIsEditing(false);
+        alert('Cancel Edit clicked');
+        // Reset form fields if they were managed by state
+    };
+
+    const handleSaveChanges = () => {
+        alert('Save Changes clicked');
+        // Implement save logic here
+        // setIsEditing(false); // Uncomment to exit edit mode after saving
+    };
+
+    const handleSaveNote = () => {
+        alert('Save Note clicked');
+        // Add logic to save the note
+    };
+
+    const handleViewOrderDetails = (orderId) => {
+        alert(`View details for order ${orderId}`);
+        // Navigate to order details page
+    };
+
+     const handleViewAllOrders = () => {
+        alert('View all orders for this customer clicked');
+        // Navigate to filtered orders list page
+     };
+
+     const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+     };
+
+
+    return (
+        // Note: This component assumes it is rendered within the main content area
+        // of the admin layout (e.g., inside a div with class .admin-main-content)
+        <div className="customer-details-page"> {/* Add a specific class for this page if needed for overrides */}
+
+            {/* Page Header Section */}
+            <div className="page-header-section">
+                <h1 className="page-title">Customer: {customer.fullName}</h1>
+                <button className="btn-back-to-products" onClick={handleBackClick}>
+                    {/* SVG for back arrow */}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                    </svg>
+                    Back to All Customers
+                </button>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="customer-actions">
+                 <button className="btn-ban" onClick={handleBanAccount}>
+                    {/* SVG for Ban icon (e.g., stop sign or minus circle) */}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                    </svg>
+                    Ban Account
+                 </button>
+                 {isEditing ? (
+                    <>
+                        <button className="btn-cancel-edit" onClick={handleCancelEdit}>
+                            {/* SVG for Cancel icon (e.g., X or slash) */}
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Cancel
+                        </button>
+                        <button className="btn-save-changes" onClick={handleSaveChanges}>
+                            {/* SVG for Save icon (e.g., checkmark or floppy disk) */}
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Save Changes
+                        </button>
+                    </>
+                 ) : (
+                    <button className="btn-edit-profile" onClick={handleEditProfile}>
+                        {/* SVG for Edit icon (e.g., pencil) */}
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 2.276a2.25 2.25 0 013.122 3.122L17.5 10.5l-4.122-4.122L16.862 2.276zm0 0L19.5 5M13.5 10.5L10.5 13.5m-4.122-4.122L2.276 16.862a2.25 2.25 0 003.122 3.122l5.25-5.25-4.122-4.122z" />
+                        </svg>
+                        Edit Customer Profile
+                    </button>
+                 )}
+            </div>
+
+            {/* Top Cards Layout */}
+            <div className="customer-info-addresses-layout">
+                {/* Customer Information Card */}
+                <div className="form-section-card">
+                    <h3 className="section-card-title">{isEditing ? 'Edit Customer Information' : 'Customer Information'}</h3>
+                    <div className="customer-info customer-edit-form"> {/* Add customer-edit-form class for input styles */}
+                        <div className="form-group">
+                            <label>Customer ID:</label>
+                            {isEditing ? (
+                                <input type="text" value={customer.id} disabled /> // ID is usually not editable
+                            ) : (
+                                <p><strong>Customer ID:</strong> {customer.id}</p>
+                            )}
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="fullName">Full Name:</label>
+                            {isEditing ? (
+                                <input type="text" id="fullName" defaultValue={customer.fullName} />
+                            ) : (
+                                <p><strong>Full Name:</strong> {customer.fullName}</p>
+                            )}
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="email">Email:</label>
+                            {isEditing ? (
+                                <input type="email" id="email" defaultValue={customer.email} />
+                            ) : (
+                                <p><strong>Email:</strong> <a href={`mailto:${customer.email}`}>{customer.email}</a></p>
+                            )}
+                        </div>
+                         <div className="form-group">
+                            <label htmlFor="password">Password:</label>
+                            {isEditing ? (
+                                <div className="password-input-wrapper">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        id="password"
+                                        defaultValue={customer.password}
+                                    />
+                                    <span className="password-toggle-icon" onClick={togglePasswordVisibility}>
+                                        {/* SVG for eye icon (open/closed) */}
+                                        {showPassword ? (
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.774 3.162 10.066 7.5-.091.376-.232.73-.407 1.068M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+                                            </svg>
+                                        ) : (
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                        )}
+                                    </span>
+                                </div>
+                            ) : (
+                                <p><strong>Password:</strong> ****************</p> // Always masked in view mode
+                            )}
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="phone">Phone:</label>
+                            {isEditing ? (
+                                <input type="tel" id="phone" defaultValue={customer.phone} />
+                            ) : (
+                                <p><strong>Phone:</strong> {customer.phone}</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Addresses Card */}
+                <div className="form-section-card">
+                    <h3 className="section-card-title">{isEditing ? 'Edit Addresses' : 'Addresses'}</h3>
+                    <div className="customer-info customer-edit-form"> {/* Add customer-edit-form class */}
+                        <div className="form-group">
+                            <label htmlFor="shippingAddress">Default Shipping Address:</label>
+                            {isEditing ? (
+                                <textarea id="shippingAddress" className="address-textarea" defaultValue={`${customer.shippingAddress.name}\n${customer.shippingAddress.street}\n${customer.shippingAddress.city}, ${customer.shippingAddress.state} ${customer.shippingAddress.zip}\n${customer.shippingAddress.country}`}></textarea>
+                            ) : (
+                                <p>
+                                    <strong>Default Shipping Address</strong><br/>
+                                    {customer.shippingAddress.name}<br/>
+                                    {customer.shippingAddress.street}<br/>
+                                    {customer.shippingAddress.city}, {customer.shippingAddress.state} {customer.shippingAddress.zip}<br/>
+                                    {customer.shippingAddress.country}
+                                </p>
+                            )}
+                        </div>
+                         <div className="form-group">
+                            <label htmlFor="billingAddress">Billing Address:</label>
+                            {isEditing ? (
+                                <textarea id="billingAddress" className="address-textarea" defaultValue={`${customer.billingAddress.name}\n${customer.billingAddress.street}\n${customer.billingAddress.city}, ${customer.billingAddress.state} ${customer.billingAddress.zip}\n${customer.billingAddress.country}`}></textarea>
+                            ) : (
+                                <p>
+                                    <strong>Billing Address:</strong><br/>
+                                    {customer.billingAddress.name}<br/>
+                                    {customer.billingAddress.street}<br/>
+                                    {customer.billingAddress.city}, {customer.billingAddress.state} {customer.billingAddress.zip}<br/>
+                                    {customer.billingAddress.country}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Bottom Section (Tabs) */}
+            <div className="form-section-card"> {/* Card wrapper for the tabbed content */}
+                 <div className="tab-container">
+                    <button
+                        className={`tab-button ${activeTab === 'history' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('history')}
+                    >
+                        Order History
+                    </button>
+                    <button
+                        className={`tab-button ${activeTab === 'activity' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('activity')}
+                    >
+                        Account Activity
+                    </button>
+                 </div>
+
+                 <div className="tab-content">
+                    {activeTab === 'history' && (
+                        <div className="order-history-tab"> {/* Specific class for this tab */}
+                            {/* Content for Order History Tab */}
+                            <h3 className="section-card-title">Customer Order History ({orderHistory.length} Orders - Total ${totalOrderValue})</h3>
+                            <div className="orders-table-container"> {/* Use the container for overflow-x */}
+                                <table className="customer-order-history-table"> {/* Use specific table class */}
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Items</th>
+                                            <th>Total</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {orderHistory.map(order => (
+                                            <tr key={order.id}>
+                                                <td>{order.id}</td>
+                                                <td>{order.date}</td>
+                                                {/* Use status classes if available, otherwise just text */}
+                                                <td className={`status-${order.status.toLowerCase()}`}>{order.status}</td>
+                                                <td>{order.items}</td>
+                                                <td>${order.total.toFixed(2)}</td>
+                                                <td>
+                                                    <button className="link-button" onClick={() => handleViewOrderDetails(order.id)}>
+                                                        View Orders
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="section-footer-link"> {/* Use this class for alignment */}
+                                <a href="#" className="view-all-link" onClick={(e) => { e.preventDefault(); handleViewAllOrders(); }}>
+                                    View all orders for this Customer →
+                                </a>
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'activity' && (
+                        <div className="account-activity-tab">
+                            {/* Content for Account Activity Tab */}
+                            <h3 className="section-card-title">Account Activity & Notes</h3>
+                            <div className="activity-list">
+                                {accountActivity.map((activity, index) => (
+                                    <div key={index} className="activity-entry">
+                                        <p>
+                                            <strong>{activity.type}:</strong> {activity.content}
+                                            <em>{activity.timestamp}</em>
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Add Internal Note Form */}
+                            <div className="add-note-form">
+                                <div className="form-group">
+                                    <label htmlFor="internalNote">Add Internal Note:</label>
+                                    <textarea id="internalNote" placeholder="Enter your note for this customer..."></textarea>
+                                </div>
+                                <div className="form-actions"> {/* Using specific form-actions for this section */}
+                                    <button className="btn-save-note" onClick={handleSaveNote}>Save Note</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                 </div>
+            </div>
+
+        </div>
+    );
+};
+
+export default CustomerDetailsPage;

@@ -5,6 +5,7 @@ import SignUpPage from './SignUpPage';
 import PlaceOrderPage from './PlaceOrderPage';
 import OrderHistoryPage from './OrderHistoryPage';
 import UserProfilePage from './UserProfilePage';
+import HomePage from './HomePage';
 
 import AdminLayout from './AdminLayout';
 import ManageProductsPage from './ManageProductsPage';
@@ -22,24 +23,25 @@ function App() {
   // const currentPage = isAdminRoute ? 'dashboard' : 'site'; // 'dashboard' or 'products'
   return (
     <div className="App">
-      <AdminLayout pageTitle="Admin Dashboard">
-        <AdminDashboard />
+      {/* <AdminLayout pageTitle="Admin Dashboard"> */}
+        {/* <AdminDashboard />
         <AddProductPage />
         <AllOrdersPage />
-        <OrderDetailsPage />
+        <OrderDetailsPage /> */}
         {/* AddProductPage can be conditionally rendered based on the route */}
-      </AdminLayout>
+      {/* </AdminLayout> */}
 
 
       <SignUpPage />
       <LoginPage />
+      <HomePage />
       <UserProfilePage />
       <ShoppingCartPage />
       <PlaceOrderPage />
       <OrderHistoryPage />
-      <AdminLayout pageTitle="Manage Products">
-        <ManageProductsPage />
-      </AdminLayout>
+      {/* <AdminLayout pageTitle="Manage Products"> */}
+        {/* <ManageProductsPage /> */}
+      {/* </AdminLayout> */}
     </div>
   );
 }

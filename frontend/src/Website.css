@@ -1168,3 +1168,176 @@ h2 {
         margin-bottom: 10px;
     }
 }
+
+/* --- HomePage Specific Styles --- */
+.homepage-content {
+    /* Optional: if you need specific wrapper styles for the main content area */
+}
+
+/* Hero Section */
+.hero-section {
+    width: 100%;
+    margin-bottom: 40px; /* Space below hero */
+}
+
+.hero-image-container {
+    position: relative; /* For absolute positioning of arrows and button */
+    width: 100%;
+    max-height: 500px; /* Adjust as needed */
+    overflow: hidden; /* Ensures image stays within bounds if larger */
+    display: flex; /* For centering image if aspect ratio is different */
+    justify-content: center;
+    align-items: center;
+    background-color: #ccc; /* Fallback if image doesn't load */
+}
+
+.hero-image {
+    width: 100%;
+    height: auto; /* Maintain aspect ratio */
+    object-fit: cover; /* Cover the container, might crop */
+    display: block;
+}
+
+.hero-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    padding: 0; /* Reset padding if button element adds default */
+}
+.hero-arrow svg { /* Ensure SVG scales if needed */
+    width: 20px;
+    height: 20px;
+}
+
+.hero-arrow:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+}
+
+.hero-arrow-left {
+    left: 20px;
+}
+
+.hero-arrow-right {
+    right: 20px;
+}
+
+.hero-cta-button {
+    position: absolute;
+    bottom: 30px; /* Adjust position as needed */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #e0f2f1; /* Light teal from reference */
+    color: #00695c; /* Darker teal text from reference */
+    border: none;
+    padding: 12px 25px;
+    border-radius: 20px; /* Rounded corners */
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.2s ease;
+}
+
+.hero-cta-button:hover {
+    background-color: #c5e0dd; /* Slightly darker teal on hover */
+}
+
+/* Popular Designs Section */
+.popular-designs-section {
+    padding-top: 20px; /* Add some space from hero or previous element */
+    padding-bottom: 40px;
+}
+
+.popular-designs-title {
+    text-align: center;
+    font-size: 2em; /* From reference, matches h2 */
+    font-weight: 700; /* From reference, matches h2 */
+    margin-bottom: 30px; /* Space below title */
+    color: #333;
+}
+
+.popular-designs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+    gap: 25px; /* Space between cards */
+}
+
+.popular-design-card {
+    background-color: #fff; /* Card background */
+    border-radius: 12px; /* Rounded corners for the whole card */
+    overflow: hidden; /* To respect border-radius of children */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.popular-design-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+}
+
+.popular-design-card-image {
+    width: 100%;
+    height: 200px; /* Fixed height for image consistency */
+    object-fit: cover; /* Cover the area, may crop */
+    display: block; /* Remove extra space below image */
+    background-color: #e0e0e0; /* Placeholder background */
+}
+
+.popular-design-card-caption {
+    background-color: #e0f2f1; /* Light teal from reference */
+    padding: 15px;
+    text-align: center;
+    font-weight: 500;
+    color: #00695c; /* Darker teal text from reference */
+    font-size: 0.95em;
+}
+
+/* Responsive adjustments for homepage elements */
+@media (max-width: 768px) {
+    .hero-cta-button {
+        font-size: 0.9em;
+        padding: 10px 20px;
+        bottom: 20px;
+    }
+    .hero-arrow {
+        width: 35px;
+        height: 35px;
+    }
+    .hero-arrow svg {
+        width: 18px;
+        height: 18px;
+    }
+    .popular-designs-title {
+        font-size: 1.8em;
+    }
+    .popular-designs-grid {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-image-container {
+        max-height: 350px; /* Smaller hero on mobile */
+    }
+    .hero-cta-button {
+        font-size: 0.85em;
+        padding: 8px 15px;
+    }
+     .popular-designs-grid {
+        grid-template-columns: 1fr; /* Stack cards on very small screens */
+    }
+    .popular-design-card-image {
+        height: 180px;
+    }
+}

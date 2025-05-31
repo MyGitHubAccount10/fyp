@@ -17,12 +17,12 @@ import AdminDashboard from './AdminDashboard';
 import AddProductPage from './AddProductPage';
 import AllOrdersPage from './AllOrdersPage';
 import OrderDetailsPage from './OrderDetailsPage';
-<<<<<<< HEAD
+// <<<<<<< HEAD
 import CustomerDetailsPage from './CustomerDetailsPage';
 import './AdminStyles.css'; // Ensure admin styles are imported
-=======
-import './AdminStyles.css';
->>>>>>> d58112eb88cb039475a106e4920ba2374c6cebe0
+// =======
+// import './AdminStyles.css';
+// >>>>>>> d58112eb88cb039475a106e4920ba2374c6cebe0
 
 import './index.css';
 

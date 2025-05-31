@@ -9,6 +9,7 @@ import HomePage from './HomePage';
 import AboutPage from './AboutPage';
 import ContactPage from './ContactPage';
 import FaqPage from './FaqPage';
+import ProductDetailPage from './ProductDetailPage';
 
 import AdminLayout from './AdminLayout';
 import ManageProductsPage from './ManageProductsPage';
@@ -26,6 +27,8 @@ function App() {
   // const currentPage = isAdminRoute ? 'dashboard' : 'site'; // 'dashboard' or 'products'
   return (
     <div className="App">
+      {/* NOTE FROM RALPH: I commented out the admin pages because I wanted to test the user pages and the admin sidebar and navbar overlaps litterally every single page and is fixed in place, not moving along with the pages */}
+
       {/* <AdminLayout pageTitle="Admin Dashboard"> */}
         {/* <AdminDashboard />
         <AddProductPage />
@@ -38,10 +41,11 @@ function App() {
       <SignUpPage />
       <LoginPage />
       <HomePage />
-      <UserProfilePage />
+      <ProductDetailPage />
       <ShoppingCartPage />
       <PlaceOrderPage />
       <OrderHistoryPage />
+      <UserProfilePage />
       <AboutPage />
       <ContactPage />
       <FaqPage />

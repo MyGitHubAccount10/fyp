@@ -6,6 +6,7 @@ import PlaceOrderPage from './PlaceOrderPage';
 import OrderHistoryPage from './OrderHistoryPage';
 import UserProfilePage from './UserProfilePage';
 import HomePage from './HomePage';
+import AboutPage from './AboutPage';
 
 import AdminLayout from './AdminLayout';
 import ManageProductsPage from './ManageProductsPage';
@@ -39,6 +40,7 @@ function App() {
       <ShoppingCartPage />
       <PlaceOrderPage />
       <OrderHistoryPage />
+      <AboutPage />
       {/* <AdminLayout pageTitle="Manage Products"> */}
         {/* <ManageProductsPage /> */}
       {/* </AdminLayout> */}

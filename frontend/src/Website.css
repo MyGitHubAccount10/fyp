@@ -1341,3 +1341,122 @@ h2 {
         height: 180px;
     }
 }
+
+/* --- About Page Specific Styles --- */
+.about-page-content {
+    /* Uses the global body background color: #fff7f0 */
+}
+
+.about-banner-section {
+    position: relative; /* For absolute positioning of the title */
+    width: 100%;
+    height: 300px; /* Adjust height as needed, or make it responsive */
+    overflow: hidden;
+    display: flex; /* For centering title if needed, though absolute positioning is used */
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px; /* Space below banner */
+}
+
+.about-banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cover the area, will crop if aspect ratio differs */
+    display: block;
+}
+
+.about-banner-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 4.5em; /* Large title text */
+    font-weight: bold;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5); /* Text shadow for readability */
+    margin: 0;
+    padding: 0;
+}
+
+.about-main-text {
+    text-align: center; /* Center all text content within this section */
+    padding-bottom: 50px; /* Space at the bottom of the page */
+}
+
+.about-section-title {
+    font-size: 2.2em;
+    color: #333;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.about-orange-divider {
+    width: 60%; /* Adjust width as needed */
+    max-width: 400px; /* Max width for very wide screens */
+    height: 3px;
+    background-color: #f1673a; /* Theme orange color */
+    margin: 0 auto 30px auto; /* Center the divider and add space below */
+    border: none;
+}
+
+.about-story-subtitle {
+    font-size: 1.5em;
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.about-story-paragraph {
+    font-size: 1em;
+    color: #444; /* Slightly lighter than pure black for body text */
+    line-height: 1.7;
+    max-width: 750px; /* Limit width for readability */
+    margin-left: auto;
+    margin-right: auto; /* Center the paragraph block */
+}
+
+
+/* Responsive adjustments for About Page */
+@media (max-width: 768px) {
+    .about-banner-section {
+        height: 250px; /* Slightly smaller banner */
+        margin-bottom: 30px;
+    }
+    .about-banner-title {
+        font-size: 3.5em;
+    }
+    .about-section-title {
+        font-size: 2em;
+    }
+    .about-story-subtitle {
+        font-size: 1.3em;
+    }
+    .about-story-paragraph {
+        font-size: 0.95em;
+        padding: 0 15px; /* Add some horizontal padding for narrower text block */
+    }
+    .about-orange-divider {
+        width: 70%;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-banner-section {
+        height: 200px;
+    }
+    .about-banner-title {
+        font-size: 2.8em;
+    }
+    .about-section-title {
+        font-size: 1.8em;
+    }
+    .about-story-subtitle {
+        font-size: 1.2em;
+    }
+    .about-story-paragraph {
+        font-size: 0.9em;
+    }
+    .about-orange-divider {
+        width: 80%;
+    }
+}

@@ -8,6 +8,7 @@ import UserProfilePage from './UserProfilePage';
 import HomePage from './HomePage';
 import AboutPage from './AboutPage';
 import ContactPage from './ContactPage';
+import FaqPage from './FaqPage';
 
 import AdminLayout from './AdminLayout';
 import ManageProductsPage from './ManageProductsPage';
@@ -43,6 +44,7 @@ function App() {
       <OrderHistoryPage />
       <AboutPage />
       <ContactPage />
+      <FaqPage />
       {/* <AdminLayout pageTitle="Manage Products"> */}
         {/* <ManageProductsPage /> */}
       {/* </AdminLayout> */}

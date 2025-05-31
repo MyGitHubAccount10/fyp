@@ -172,12 +172,6 @@ header {
   /* color: #f1673a !important; /* Optional: theme color on hover, if desired, but ensure no underline */
 }
 
-.secondary-navbar-item svg {
-  /* width and height are set on the SVG components directly */
-  /* fill is set to 'black' on the SVG components directly */
-  /* No additional CSS needed for icon color if set inline and !important not required */
-}
-
 /* --- Container & General Page Elements --- */
 .container {
   padding: 20px;
@@ -1169,11 +1163,6 @@ h2 {
     }
 }
 
-/* --- HomePage Specific Styles --- */
-.homepage-content {
-    /* Optional: if you need specific wrapper styles for the main content area */
-}
-
 /* Hero Section */
 .hero-section {
     width: 100%;
@@ -1342,11 +1331,6 @@ h2 {
     }
 }
 
-/* --- About Page Specific Styles --- */
-.about-page-content {
-    /* Uses the global body background color: #fff7f0 */
-}
-
 .about-banner-section {
     position: relative; /* For absolute positioning of the title */
     width: 100%;
@@ -1459,11 +1443,6 @@ h2 {
     .about-orange-divider {
         width: 80%;
     }
-}
-
-/* --- Contact Page Specific Styles --- */
-.contact-page-content {
-    /* Uses the global body background color: #fff7f0 */
 }
 
 .contact-banner-section {
@@ -1980,11 +1959,6 @@ h2 {
     font-size: 0.95em;
     display: block; /* Make label take full width before buttons */
     margin-bottom: 8px;
-}
-
-.product-sizes, .product-quantity-selector {
-    /* display: flex; */ /* Removed to allow label above */
-    /* align-items: center; */
 }
 
 .size-button {

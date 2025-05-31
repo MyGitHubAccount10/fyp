@@ -1460,3 +1460,159 @@ h2 {
         width: 80%;
     }
 }
+
+/* --- Contact Page Specific Styles --- */
+.contact-page-content {
+    /* Uses the global body background color: #fff7f0 */
+}
+
+.contact-banner-section {
+    position: relative;
+    width: 100%;
+    height: 300px; /* Same as About page banner, adjust if needed */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px; /* Space below banner */
+}
+
+.contact-banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.contact-banner-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 4.5em; /* Large title text */
+    font-weight: bold;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+    margin: 0;
+    padding: 0;
+}
+
+.contact-form-section {
+    padding-bottom: 50px; /* Space at the bottom */
+}
+
+.contact-form-main-title {
+    text-align: center;
+    font-size: 2.2em;
+    color: #333;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.contact-form-actual {
+    max-width: 600px; /* Limit form width for better readability */
+    margin: 0 auto; /* Center the form */
+}
+
+.contact-form-group {
+    margin-bottom: 25px; /* Increased space between form groups */
+}
+
+.contact-form-label {
+    display: block;
+    font-weight: 600; /* Bold labels */
+    font-size: 0.95em;
+    color: #333;
+    margin-bottom: 8px; /* Space between label and input */
+}
+
+.contact-form-input,
+.contact-form-textarea {
+    width: 100%;
+    padding: 12px 15px; /* Padding inside input fields */
+    background-color: #e9e9e9; /* Light grey background from image */
+    border: none; /* No border as per image */
+    border-radius: 20px; /* Highly rounded corners from image */
+    font-size: 1em;
+    color: #333;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif; /* Ensure consistent font */
+}
+
+.contact-form-input::placeholder,
+.contact-form-textarea::placeholder {
+    color: #888; /* Placeholder text color */
+}
+
+.contact-form-input:focus,
+.contact-form-textarea:focus {
+    outline: 2px solid #f1673a; /* Theme color outline on focus */
+    background-color: #f0f0f0; /* Slightly lighter grey on focus */
+}
+
+.contact-form-textarea {
+    resize: vertical; /* Allow vertical resize only */
+    min-height: 120px; /* Minimum height for textarea */
+}
+
+.contact-form-submit-group {
+    text-align: center; /* Center the submit button */
+    margin-top: 30px;
+}
+
+.contact-submit-button {
+    background-color: #e0f2f1; /* Light teal/blue from image */
+    color: #000; /* Black text from image */
+    border: 1px solid #000; /* Black border from image */
+    padding: 12px 40px; /* Generous padding */
+    font-size: 1.1em;
+    font-weight: bold;
+    border-radius: 25px; /* Highly rounded corners */
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.contact-submit-button:hover {
+    background-color: #c5e0dd; /* Slightly darker teal/blue on hover */
+}
+.contact-submit-button:active {
+    transform: scale(0.98);
+}
+
+
+/* Responsive adjustments for Contact Page */
+@media (max-width: 768px) {
+    .contact-banner-section {
+        height: 250px;
+    }
+    .contact-banner-title {
+        font-size: 3.5em;
+    }
+    .contact-form-main-title {
+        font-size: 2em;
+    }
+    .contact-form-actual {
+        padding: 0 15px; /* Add padding to form on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-banner-section {
+        height: 200px;
+    }
+    .contact-banner-title {
+        font-size: 2.8em;
+    }
+    .contact-form-main-title {
+        font-size: 1.8em;
+    }
+    .contact-form-input,
+    .contact-form-textarea {
+        padding: 10px 12px;
+        font-size: 0.95em;
+    }
+    .contact-submit-button {
+        font-size: 1em;
+        padding: 10px 30px;
+    }
+}

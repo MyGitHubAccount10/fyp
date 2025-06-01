@@ -5,15 +5,15 @@ import Footer from './Footer';
 
 // Slideshow images for hero section
 const slideshowImages = [
+    '/images/an1.jpeg',
+    '/images/an2.jpeg',
     '/images/aizat1.jpeg',
     '/images/aizat2.jpeg',
     // Add more image paths here if needed for the slideshow
 ];
 
-const popularDesign1Image = '/images/popular-shipwreck.jpg'; // Placeholder
-const popularDesign2Image = '/images/popular-wooden-shack.jpg'; // Placeholder
-const popularDesign3Image = '/images/popular-jing-of-seas.jpg'; // Placeholder
-const popularDesign4Image = '/images/popular-choose-name.jpg'; // Placeholder
+const popularDesign1Image = '/images/Candy-Camo.jpeg'; // Placeholder
+const popularDesign2Image = '/images/Samurai.jpeg'; // Placeholder
 
 
 // SVG for hero arrows
@@ -79,20 +79,12 @@ const HomePage = () => {
           <h2 className="popular-designs-title">Popular Designs</h2>
           <div className="popular-designs-grid">
             <div className="popular-design-card">
-              <img src={popularDesign1Image} alt="Shipwreck Breaker Skimboard" className="popular-design-card-image" />
-              <div className="popular-design-card-caption">Shipwreck Breaker</div>
+              <img src={popularDesign1Image} alt="Candy Camo Skimboard" className="popular-design-card-image" />
+              <div className="popular-design-card-caption">Candy Camo</div>
             </div>
             <div className="popular-design-card">
-              <img src={popularDesign2Image} alt="The Wooden Shack Skateboard" className="popular-design-card-image" />
-              <div className="popular-design-card-caption">The Wooden Shack Skimboard</div>
-            </div>
-            <div className="popular-design-card">
-              <img src={popularDesign3Image} alt="Jing of Seas Skimboard" className="popular-design-card-image" />
-              <div className="popular-design-card-caption">Jing of Seas</div>
-            </div>
-            <div className="popular-design-card">
-              <img src={popularDesign4Image} alt="Choose Name Skimboard" className="popular-design-card-image" />
-              <div className="popular-design-card-caption">Choose Name</div>
+              <img src={popularDesign2Image} alt="Samurai Skimboard" className="popular-design-card-image" />
+              <div className="popular-design-card-caption">Samurai</div>
             </div>
           </div>
         </section>

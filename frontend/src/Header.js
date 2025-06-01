@@ -102,21 +102,21 @@ const Header = () => {
 
             {isProductDropdownOpen && (
                 <nav className="secondary-navbar">
-                    <Link to="/products/skimboards" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
+                    <NavLink to="/products/skimboards" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
                         <SkimboardIcon /> Skimboards
-                    </Link>
-                    <Link to="/products/t-shirts" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
-                        <TshirtIcon /> T-shirt
-                    </Link>
-                    <Link to="/products/jackets" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
+                    </NavLink>
+                    <NavLink to="/products/t-shirts" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
+                        <TshirtIcon /> T-Shirts
+                    </NavLink>
+                    <NavLink to="/products/jackets" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
                         <JacketIcon /> Jackets
-                    </Link>
-                    <Link to="/products/boardshorts" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
-                        <BoardshortsIcon /> Boardshorts
-                    </Link>
-                    <Link to="/products/accessories" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
+                    </NavLink>
+                    <NavLink to="/products/boardshorts" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
+                        <BoardshortsIcon /> Board Shorts
+                    </NavLink>
+                    <NavLink to="/products/accessories" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
                         <AccessoriesIcon /> Accessories
-                    </Link>
+                    </NavLink>
                 </nav>
             )}            
         </>

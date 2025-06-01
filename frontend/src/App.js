@@ -1,27 +1,32 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-import ShoppingCartPage from './ShoppingCartPage';
-import LoginPage from './LoginPage';
-import SignUpPage from './SignUpPage';
-import PlaceOrderPage from './PlaceOrderPage';
-import OrderHistoryPage from './OrderHistoryPage';
-import UserProfilePage from './UserProfilePage';
 import HomePage from './HomePage';
 import AboutPage from './AboutPage';
 import ContactPage from './ContactPage';
 import FaqPage from './FaqPage';
+import SkimboardsPage from './SkimboardsPage';
+import ShirtsPage from './ShirtsPage';
+import JacketPage from './JacketPage';
+import BoardShortsPage from './BoardShortsPage';
+import AccessoriesPage from './AccessoriesPage';
+import SignUpPage from './SignUpPage';
+import LoginPage from './LoginPage';
+import UserProfilePage from './UserProfilePage';
 import ProductDetailPage from './ProductDetailPage';
+import ShoppingCartPage from './ShoppingCartPage';
+import PlaceOrderPage from './PlaceOrderPage';
+import OrderHistoryPage from './OrderHistoryPage';
 
-
-import ManageProductsPage from './ManageProductsPage';
 import AdminDashboard from './AdminDashboard';
+import ManageProductsPage from './ManageProductsPage';
 import AddProductPage from './AddProductPage';
 import AllOrdersPage from './AllOrdersPage';
 import OrderDetailsPage from './OrderDetailsPage';
-import AdminSettingsPage from './AdminSettingsPage';
-// <<<<<<< HEAD
 import CustomerDetailsPage from './CustomerDetailsPage';
+import AdminSettingsPage from './AdminSettingsPage';
+
+
 import './AdminStyles.css'; // Ensure admin styles are imported
 // =======
 // import './AdminStyles.css';
@@ -42,6 +47,13 @@ function App() {
         <Route path="about" element={<AboutPage />} />
         <Route path="contact" element={<ContactPage />} />
         <Route path="faq" element={<FaqPage />} />
+        <Route path="products">
+          <Route path='skimboards' element={<SkimboardsPage />} />
+          <Route path="t-shirts" element={<ShirtsPage />} />
+          <Route path="jackets" element={<JacketPage />} />
+          <Route path="boardshorts" element={<BoardShortsPage />} />
+          <Route path="accessories" element={<AccessoriesPage />} />
+        </Route>
         <Route path="signup" element={<SignUpPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="profile" element={<UserProfilePage />} />        

@@ -27,7 +27,7 @@
     right: 0;
     height: 60px; /* Fixed height */
     background-color: #FA704C; /* Theme color */
-    color: #000; /* Black text */
+    color: #000000; /* Black text */
     padding: 0 20px;
     display: flex;
     justify-content: space-between;
@@ -57,7 +57,7 @@
 .admin-header .header-link {
     display: flex;
     align-items: center;
-    color: #000;
+    color: #000000;
     text-decoration: none;
     margin-left: 20px;
     font-size: 0.9em;
@@ -1440,11 +1440,11 @@
 .btn-order-action.btn-primary {
     background-color: #FA704C; /* Theme color */
     color: white;
-    border-color: #e0562a;
+    border-color: #FFAB89;
 }
 .btn-order-action.btn-primary:hover {
     background-color: #FA704C;
-    border-color: #e0562a;
+    border-color: #FFAB89;
 }
 .btn-order-action.btn-primary svg {
     stroke: white; /* Ensure icons are white */

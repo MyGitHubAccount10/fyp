@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 
 import ShoppingCartPage from './ShoppingCartPage';
 import LoginPage from './LoginPage';
@@ -13,7 +13,7 @@ import ContactPage from './ContactPage';
 import FaqPage from './FaqPage';
 import ProductDetailPage from './ProductDetailPage';
 
-import AdminLayout from './AdminLayout';
+
 import ManageProductsPage from './ManageProductsPage';
 import AdminDashboard from './AdminDashboard';
 import AddProductPage from './AddProductPage';

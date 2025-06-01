@@ -5,7 +5,7 @@ body { /* Apply to body if this CSS is global, or to a wrapper if component-scop
   margin: 0;
   padding: 0;
   background-color: #FFF0E1;
-  color: #333;
+  color: #000000;
 }
 
 /* --- Header Styles (Based on your updated navbar design) --- */
@@ -15,7 +15,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #000;
+  color: #000000;
   position: relative; /* Added for potential future absolute positioning inside, though not used now */
   z-index: 100; /* Ensure header is above other content if secondary nav overlaps slightly during transition (not the case here) */
 }
@@ -39,7 +39,6 @@ header {
 .burger-btn svg {
   width: 28px;
   height: 28px;
-  /* stroke: #000; Defined in SVG itself */
 }
 
 .header-logo-link .header-logo-img {
@@ -48,7 +47,7 @@ header {
 }
 
 .header-nav-links a {
-  color: #000;
+  color: #000000;
   text-decoration: none;
   margin: 0 8px;
   font-weight: bold;
@@ -74,7 +73,7 @@ header {
 .product-arrow {
   width: 14px; /* Arrow size */
   height: 14px;
-  stroke: #000; /* Arrow color */
+  stroke: #000000; /* Arrow color */
   stroke-width: 2.5px; /* Arrow thickness */
   fill: none;
   transition: transform 0.2s ease-in-out;
@@ -99,7 +98,7 @@ header {
   background: transparent;
   margin-right: 8px;
   font-size: 0.9em;
-  color: #333;
+  color: #000000;
   width: 150px;
 }
 .search-bar input[type="search"]::placeholder {
@@ -116,7 +115,6 @@ header {
 .search-bar button svg {
   width: 18px;
   height: 18px;
-  /* stroke: #000; Defined in SVG itself */
 }
 
 .header-icon-link svg {
@@ -161,7 +159,7 @@ header {
   display: flex;
   align-items: center;
   gap: 8px; /* Space between icon and text */
-  color: #000 !important; /* Black text - !important to override generic a styles if needed */
+  color: #000000 !important; /* Black text - !important to override generic a styles if needed */
   text-decoration: none !important; /* ENSURE NO UNDERLINE as per request */
   font-size: 0.9em; /* Consistent font size */
   font-weight: 500; /* Slightly less bold than main nav, or adjust as needed */
@@ -245,7 +243,7 @@ h2 {
   font-size: 1.1em;
   cursor: pointer;
   padding: 0 8px;
-  color: #333;
+  color: #000000;
 }
 .quantity-controls span {
   padding: 0 8px;
@@ -301,7 +299,7 @@ h2 {
 .price-tag .item-price-display {
   font-weight: 700;
   font-size: 1.1em;
-  color: #333;
+  color: #000000;
 }
 
 /* --- Other Page Elements --- */
@@ -381,7 +379,7 @@ h2 {
   margin-top: 20px;
 }
 .complete-purchase-btn:hover {
-    background: #e0562a;
+    background: #FA704C;
 }
 
 /* --- Recommended ("Later") Section --- */
@@ -426,7 +424,7 @@ h2 {
 }
 .recommended-product-price {
   font-size: 1em;
-  color: #333;
+  color: #000000;
   font-weight: 500;
 }
 .recommended-product-stock,
@@ -470,7 +468,7 @@ h2 {
 /* --- Footer --- */
 .footer {
   background: #FA704C;
-  color: white;
+  color: #000000;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap; /* Allow columns to wrap on smaller screens */
@@ -484,12 +482,13 @@ h2 {
   font-size: 0.9em;
   line-height: 1.5;
 }
-.footer a { color: white; text-decoration: none; }
+.footer a { color: #000000; text-decoration: none; }
 .footer a:hover { text-decoration: underline;}
 .footer strong { display: block; margin-bottom: 8px;}
 .footer .social-icons a img {
     height: 20px;
     margin-right: 8px;
+    color: #000000;
 }
 
 /* Small screen adjustments for item actions (optional, but good practice) */
@@ -593,7 +592,7 @@ h2 {
     margin-top: 0;
     margin-bottom: 20px;
     font-size: 1.3em;
-    color: #333;
+    color: #000000;
     border-bottom: 1px solid #D9D9D9;
     padding-bottom: 10px;
 }
@@ -634,7 +633,7 @@ h2 {
 .form-group input[type="email"]:focus,
 .form-group input[type="tel"]:focus,
 .form-group input[type="password"]:focus {
-    border-color: #FA704C;
+    border-color: #FFAB89;
     outline: none;
     box-shadow: 0 0 0 2px rgba(241, 103, 58, 0.2);
 }
@@ -672,11 +671,11 @@ h2 {
     color: #444;
 }
 .payment-option:hover {
-    border-color: #FA704C;
+    border-color: #FFAB89;
     box-shadow: 0 0 5px rgba(241, 103, 58, 0.3);
 }
 .payment-option.selected {
-    border-color: #FA704C;
+    border-color: #FFAB89;
     background-color: #FFF0E1; /* Light theme color */
     box-shadow: 0 0 8px rgba(241, 103, 58, 0.5);
     color: #FA704C;
@@ -738,7 +737,7 @@ h2 {
 }
 .summary-line strong {
     font-weight: 700;
-    color: #333;
+    color: #000000;
 }
 .place-order-btn { /* Reuses .complete-purchase-btn for base, adds specifics */
     margin-top: 20px;
@@ -841,7 +840,7 @@ h2 {
 .order-id {
     font-weight: bold;
     font-size: 0.95em;
-    color: #333;
+    color: #000000;
 }
 .order-date {
     font-size: 0.9em;
@@ -881,7 +880,7 @@ h2 {
     color: #444;
 }
 .order-card-details strong {
-    color: #333;
+    color: #000000;
 }
 
 .order-items-list {
@@ -915,7 +914,7 @@ h2 {
 }
 .order-item-info span:first-child {
     font-weight: 500;
-    color: #333;
+    color: #000000;
 }
 .order-item-info span:last-child {
     color: #666;
@@ -930,7 +929,7 @@ h2 {
 .btn-order-action {
     padding: 8px 15px;
     border-radius: 5px;
-    border: 1px solid #FA704C;
+    border: 1px solid #FFAB89;
     background-color: #FA704C;
     color: white;
     font-weight: 500;
@@ -939,13 +938,13 @@ h2 {
     transition: background-color 0.2s ease;
 }
 .btn-order-action:hover {
-    background-color: #e0562a;
-    border-color: #e0562a;
+    background-color: #FA704C;
+    border-color: #FFAB89;
 }
 .btn-order-action.btn-secondary {
     background-color: #fff;
     color: #FA704C;
-    border: 1px solid #FA704C;
+    border: 1px solid #FFAB89;
 }
 .btn-order-action.btn-secondary:hover {
     background-color: #FFF0E1;
@@ -996,7 +995,7 @@ h2 {
 .user-profile-container h2 {
     text-align: center;
     margin-bottom: 30px;
-    color: #333;
+    color: #000000;
 }
 
 .profile-section {
@@ -1085,11 +1084,11 @@ h2 {
 .btn-save-profile {
     background-color: #FA704C; /* Theme color */
     color: white;
-    border: 1px solid #FA704C;
+    border: 1px solid #FFAB89;
 }
 .btn-save-profile:hover {
-    background-color: #e0562a;
-    border-color: #e0562a;
+    background-color: #FA704C;
+    border-color: #FFAB89;
 }
 
 .btn-cancel-profile {
@@ -1109,7 +1108,7 @@ h2 {
     line-height: 1.6;
 }
 .profile-display p strong {
-    color: #333;
+    color: #000000;
     margin-right: 8px;
     min-width: 120px; /* Helps align values if desired, may need adjustment */
     display: inline-block;
@@ -1252,7 +1251,7 @@ h2 {
     font-size: 2em; /* From reference, matches h2 */
     font-weight: 700; /* From reference, matches h2 */
     margin-bottom: 30px; /* Space below title */
-    color: #333;
+    color: #000000;
 }
 
 .popular-designs-grid {
@@ -1369,7 +1368,7 @@ h2 {
 
 .about-section-title {
     font-size: 2.2em;
-    color: #333;
+    color: #000000;
     font-weight: 700;
     margin-bottom: 20px;
 }
@@ -1385,7 +1384,7 @@ h2 {
 
 .about-story-subtitle {
     font-size: 1.5em;
-    color: #333;
+    color: #000000;
     font-weight: 600;
     margin-bottom: 15px;
 }
@@ -1483,7 +1482,7 @@ h2 {
 .contact-form-main-title {
     text-align: center;
     font-size: 2.2em;
-    color: #333;
+    color: #000000;
     font-weight: 700;
     margin-bottom: 30px;
 }
@@ -1501,7 +1500,7 @@ h2 {
     display: block;
     font-weight: 600; /* Bold labels */
     font-size: 0.95em;
-    color: #333;
+    color: #000000;
     margin-bottom: 8px; /* Space between label and input */
 }
 
@@ -1513,7 +1512,7 @@ h2 {
     border: none; /* No border as per image */
     border-radius: 20px; /* Highly rounded corners from image */
     font-size: 1em;
-    color: #333;
+    color: #000000;
     box-sizing: border-box;
     font-family: 'Inter', sans-serif; /* Ensure consistent font */
 }
@@ -1541,8 +1540,8 @@ h2 {
 
 .contact-submit-button {
     background-color: #E0F2F1; /* Light teal/blue from image */
-    color: #000; /* Black text from image */
-    border: 1px solid #000; /* Black border from image */
+    color: #000000; /* Black text from image */
+    border: 1px solid #000000; /* Black border from image */
     padding: 12px 40px; /* Generous padding */
     font-size: 1.1em;
     font-weight: bold;
@@ -1662,7 +1661,7 @@ h2 {
     outline: none;
     font-size: 1em;
     background: transparent;
-    color: #333;
+    color: #000000;
 }
 .faq-search-input::placeholder {
     color: #999;
@@ -1689,7 +1688,7 @@ h2 {
     justify-content: space-between; /* Pushes indicator to the right */
     align-items: center;
     padding: 10px 12px;
-    color: #333;
+    color: #000000;
     text-decoration: none;
     border-radius: 6px;
     margin-bottom: 5px;
@@ -1731,7 +1730,7 @@ h2 {
 }
 .faq-category-title {
     font-size: 1.6em;
-    color: #333;
+    color: #000000;
     margin: 0;
     font-weight: 600;
 }
@@ -1777,7 +1776,7 @@ h2 {
 
 .faq-answer-title {
     font-size: 1.4em;
-    color: #333;
+    color: #000000;
     margin-top: 0;
     margin-bottom: 15px;
     font-weight: 600;
@@ -1896,7 +1895,7 @@ h2 {
 
 .product-thumbnail-img:hover,
 .product-thumbnail-img.active {
-    border-color: #FA704C; /* Theme color for active/hover thumbnail */
+    border-color: #FFAB89; /* Theme color for active/hover thumbnail */
 }
 
 .product-main-image-container {
@@ -1920,7 +1919,7 @@ h2 {
 .product-details-content {
     display: flex;
     flex-direction: column;
-    color: #333;
+    color: #000000;
 }
 
 .product-name-detail {
@@ -1935,7 +1934,7 @@ h2 {
 .product-price-detail {
     font-size: 1.8em;
     font-weight: bold;
-    color: #333;
+    color: #000000;
     margin-bottom: 15px;
 }
 
@@ -1975,9 +1974,9 @@ h2 {
     background-color: #f0f0f0;
 }
 .size-button.selected {
-    background-color: #333; /* Dark background for selected */
+    background-color: #000000; /* Dark background for selected */
     color: white;
-    border-color: #333;
+    border-color: #000000;
 }
 
 .quantity-controls-detail {
@@ -2030,7 +2029,7 @@ h2 {
     color: white;
 }
 .btn-buy-now:hover {
-    background-color: #e0562a; /* Darker orange */
+    background-color: #FA704C; /* Darker orange */
 }
 
 .btn-add-to-cart-detail {

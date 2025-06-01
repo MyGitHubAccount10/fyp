@@ -19,6 +19,7 @@ import AdminDashboard from './AdminDashboard';
 import AddProductPage from './AddProductPage';
 import AllOrdersPage from './AllOrdersPage';
 import OrderDetailsPage from './OrderDetailsPage';
+import AdminSettingsPage from './AdminSettingsPage';
 // <<<<<<< HEAD
 import CustomerDetailsPage from './CustomerDetailsPage';
 import './AdminStyles.css'; // Ensure admin styles are imported
@@ -56,6 +57,8 @@ function App() {
         <Route path="all-orders" element={<AllOrdersPage />} />
         <Route path="order-details" element={<OrderDetailsPage />} />
         <Route path="customer-details" element={<CustomerDetailsPage />} />
+        <Route path="admin-settings" element={<AdminSettingsPage />} />
+
       </Routes>
     </>
     

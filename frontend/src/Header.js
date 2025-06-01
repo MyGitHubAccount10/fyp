@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
 
 // Assume images are in public/images/ directory relative to your server's root
 const logoImage = '/images/this-side-up-logo.png';
@@ -46,13 +47,13 @@ const Header = () => {
                         <path d="M3 18H21" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                 </button>
-                <a href="/" className="header-logo-link">
+                <Link to="/" className="header-logo-link">
                     <img src={logoImage} alt="This Side Up Logo" className="header-logo-img" />
-                </a>
+                </Link>
                 <nav className="header-nav-links">
-                    <a href="#">About</a>
-                    <a href="#">Contact</a>
-                    <a href="#">FAQ</a>
+                    <NavLink to="/about">About</NavLink>
+                    <NavLink to="/contact">Contact</NavLink>
+                    <NavLink to="/faq">FAQ</NavLink>
                     <a href="#" onClick={toggleProductDropdown} className="product-dropdown-toggle">
                         Product
                         <svg className={`product-arrow ${isProductDropdownOpen ? 'up' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

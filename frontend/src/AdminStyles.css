@@ -26,7 +26,7 @@
     left: 0; /* Header spans full width by default */
     right: 0;
     height: 60px; /* Fixed height */
-    background-color: #f1673a; /* Theme color */
+    background-color: #FA704C; /* Theme color */
     color: #000; /* Black text */
     padding: 0 20px;
     display: flex;
@@ -85,8 +85,8 @@
 /* --- Admin Sidebar Styles --- */
 .admin-sidebar {
     width: 250px; /* Default width */
-    background-color: #343a40; /* Dark background color */
-    color: #adb5bd; /* Default text color */
+    background-color: #34495E; /* Dark background color */
+    color: #D9D9D9; /* Default text color */
     padding: 20px 0;
     transition: width 0.3s ease, padding 0.3s ease; /* Smooth transition for minimize */
     flex-shrink: 0; /* Prevent sidebar from shrinking */
@@ -109,7 +109,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 20px 20px 20px;
-    border-bottom: 1px solid #495057;
+    border-bottom: 1px solid #34495E;
     margin-bottom: 20px;
     white-space: nowrap; /* Prevent text wrapping */
     overflow: hidden; /* Hide text when minimized */
@@ -142,7 +142,7 @@
 .admin-sidebar .sidebar-toggle-btn {
     background: none;
     border: none;
-    color: #adb5bd;
+    color: #D9D9D9;
     cursor: pointer;
     font-size: 1.2em;
     padding: 5px;
@@ -158,7 +158,7 @@
 .admin-sidebar .sidebar-toggle-btn svg {
     width: 20px;
     height: 20px;
-    stroke: #adb5bd;
+    stroke: #D9D9D9;
     transition: stroke 0.2s ease;
 }
 .admin-sidebar .sidebar-toggle-btn:hover svg {
@@ -179,7 +179,7 @@
 .admin-sidebar .sidebar-nav a {
     display: flex;
     align-items: center;
-    color: #adb5bd;
+    color: #D9D9D9;
     text-decoration: none;
     padding: 12px 20px;
     transition: background-color 0.2s ease, color 0.2s ease;
@@ -192,19 +192,19 @@
 }
 
 .admin-sidebar .sidebar-nav a:hover {
-    background-color: #495057;
+    background-color: #34495E;
     color: #fff;
 }
 
 .admin-sidebar .sidebar-nav a.active {
-    background-color: #495057; /* Highlight active link */
+    background-color: #34495E; /* Highlight active link */
     color: #fff;
-    border-left: 3px solid #f1673a; /* Theme color indicator */
+    border-left: 3px solid #FA704C; /* Theme color indicator */
     padding-left: 17px; /* Adjust padding due to border */
 }
 .admin-sidebar.minimized .sidebar-nav a.active {
      border-left: none; /* Hide border when minimized */
-     background-color: #495057; /* Still highlight background */
+     background-color: #34495E; /* Still highlight background */
      color: #fff;
      padding-left: 0; /* Reset padding */
 }
@@ -248,7 +248,7 @@
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 15px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #D9D9D9;
 }
 
 .manage-products-page .page-title {
@@ -257,7 +257,7 @@
 }
 
 .manage-products-page .btn-add-new {
-    background-color: #f1673a; /* Theme color */
+    background-color: #FA704C; /* Theme color */
     color: white;
     border: none;
     padding: 10px 20px;
@@ -270,7 +270,7 @@
     transition: background-color 0.2s ease;
 }
 .manage-products-page .btn-add-new:hover {
-    background-color: #e0562a;
+    background-color: #FA704C;
 }
 .manage-products-page .btn-add-new svg {
     width: 18px;
@@ -290,7 +290,7 @@
 .manage-products-page .search-input {
     flex-grow: 1; /* Allow search input to take available space */
     padding: 10px 15px;
-    border: 1px solid #ccc;
+    border: 1px solid #D9D9D9;
     border-radius: 4px;
     font-size: 0.95em;
     min-width: 180px; /* Ensure min-width before wrapping */
@@ -298,7 +298,7 @@
 
 .manage-products-page .category-select {
     padding: 10px 15px;
-    border: 1px solid #ccc;
+    border: 1px solid #D9D9D9;
     border-radius: 4px;
     font-size: 0.95em;
     background-color: white;
@@ -389,7 +389,7 @@
     transition: color 0.2s ease;
 }
 .manage-products-page .action-icons button:hover {
-    color: #f1673a; /* Theme color on hover */
+    color: #FA704C; /* Theme color on hover */
 }
 .manage-products-page .action-icons button svg {
     width: 18px;
@@ -416,8 +416,8 @@
 
 .manage-products-page .pagination-controls button {
     background-color: #e9ecef; /* Light grey */
-    border: 1px solid #ced4da;
-    color: #495057;
+    border: 1px solid #D9D9D9;
+    color: #34495E;
     padding: 5px 12px;
     border-radius: 4px;
     cursor: pointer;
@@ -425,7 +425,7 @@
     transition: background-color 0.2s ease, opacity 0.2s ease;
 }
 .manage-products-page .pagination-controls button:hover:not(:disabled) {
-    background-color: #ced4da;
+    background-color: #D9D9D9;
 }
 .manage-products-page .pagination-controls button:disabled {
     opacity: 0.5;
@@ -480,7 +480,7 @@
     padding: 5px; /* Make click area larger */
 }
 .product-settings-sidebar .close-btn:hover {
-    color: #f1673a;
+    color: #FA704C;
 }
 
 .product-settings-sidebar .form-group {
@@ -498,7 +498,7 @@
 .product-settings-sidebar .form-group select {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #ccc;
+    border: 1px solid #D9D9D9;
     border-radius: 4px;
     font-size: 0.95em;
     background-color: white;
@@ -506,7 +506,7 @@
     box-sizing: border-box; /* Include padding/border in width */
 }
 .product-settings-sidebar .form-group select:focus {
-     border-color: #f1673a;
+     border-color: #FA704C;
     outline: none;
     box-shadow: 0 0 0 2px rgba(241, 103, 58, 0.2);
 }
@@ -523,8 +523,8 @@
 
 .product-settings-sidebar .btn-cancel {
     background-color: #e9ecef;
-    color: #495057;
-    border: 1px solid #ced4da;
+    color: #34495E;
+    border: 1px solid #D9D9D9;
     padding: 12px 20px;
     border-radius: 5px;
     cursor: pointer;
@@ -535,11 +535,11 @@
     transition: background-color 0.2s ease;
 }
 .product-settings-sidebar .btn-cancel:hover {
-     background-color: #ced4da;
+     background-color: #D9D9D9;
 }
 
 .product-settings-sidebar .btn-save {
-    background-color: #f1673a;
+    background-color: #FA704C;
     color: white;
     border: none;
     padding: 12px 20px;
@@ -555,7 +555,7 @@
     transition: background-color 0.2s ease;
 }
 .product-settings-sidebar .btn-save:hover {
-    background-color: #e0562a;
+    background-color: #FA704C;
 }
 .product-settings-sidebar .btn-save svg {
      width: 18px;
@@ -737,7 +737,7 @@
 }
 
 /* Icon background colors based on image */
-.stat-card .icon-sales { background-color: #f1673a; } /* Theme Orange */
+.stat-card .icon-sales { background-color: #FA704C; } /* Theme Orange */
 .stat-card .icon-new-orders { background-color: #ffc107; } /* Yellow */
 .stat-card .icon-fulfillment { background-color: #17a2b8; } /* Info Blue */
 .stat-card .icon-low-stock { background-color: #ffc107; } /* Warning Yellow */
@@ -786,7 +786,7 @@
 }
 
 .btn-quick-action {
-    background-color: #f1673a; /* Theme color */
+    background-color: #FA704C; /* Theme color */
     color: white;
     border: none;
     padding: 12px 20px;
@@ -801,7 +801,7 @@
     gap: 8px; /* Space between icon and text */
 }
 .btn-quick-action:hover {
-    background-color: #e0562a;
+    background-color: #FA704C;
 }
 .btn-quick-action svg {
     width: 20px; /* Adjust icon size */
@@ -840,7 +840,7 @@
 
 
 .sales-chart-placeholder {
-    background-color: #e0e0e0; /* Grey placeholder color */
+    background-color: #D9D9D9; /* Grey placeholder color */
     height: 200px; /* Example height */
     display: flex;
     justify-content: center;
@@ -856,7 +856,7 @@
     margin-top: 10px;
 }
 .view-all-link {
-    color: #f1673a; /* Theme color */
+    color: #FA704C; /* Theme color */
     text-decoration: none;
     font-weight: 500;
     font-size: 0.95em;
@@ -922,7 +922,7 @@
 .btn-back-to-products {
     background-color: #e9ecef; /* Light grey */
     color: #555;
-    border: 1px solid #ced4da;
+    border: 1px solid #D9D9D9;
     padding: 8px 15px;
     border-radius: 5px;
     cursor: pointer;
@@ -936,7 +936,7 @@
      margin-left: auto; /* Push to the right if in a flex container */
 }
 .btn-back-to-products:hover {
-    background-color: #ced4da;
+    background-color: #D9D9D9;
 }
 .btn-back-to-products svg {
     width: 16px; /* Smaller icon for button */
@@ -1011,7 +1011,7 @@
 
 /* Specific styles for file upload area */
 .file-upload-area {
-    border: 1px solid #ccc;
+    border: 1px solid #D9D9D9;
     border-radius: 4px;
     padding: 8px;
     background-color: #f8f9fa; /* Light background */
@@ -1030,8 +1030,8 @@
 }
 .file-input-button {
     background-color: #e9ecef;
-    border: 1px solid #ced4da;
-    color: #495057;
+    border: 1px solid #D9D9D9;
+    color: #34495E;
     padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
@@ -1042,7 +1042,7 @@
     flex-shrink: 0; /* Prevent button from shrinking */
 }
 .file-input-button:hover {
-    background-color: #ced4da;
+    background-color: #D9D9D9;
 }
 .file-input-text {
     color: #555;
@@ -1069,7 +1069,7 @@
 }
 
 .btn-save-product { /* Style for the Save button */
-    background-color: #f1673a; /* Theme color */
+    background-color: #FA704C; /* Theme color */
     color: white;
     border: none;
     padding: 12px 20px;
@@ -1086,7 +1086,7 @@
     transition: background-color 0.2s ease;
 }
 .btn-save-product:hover {
-     background-color: #e0562a;
+     background-color: #FA704C;
 }
 .btn-save-product svg {
      width: 18px; /* Adjust icon size */
@@ -1097,8 +1097,8 @@
 
 .btn-cancel-product { /* Style for the Cancel button */
     background-color: #e9ecef; /* Light grey */
-    color: #495057;
-    border: 1px solid #ced4da;
+    color: #34495E;
+    border: 1px solid #D9D9D9;
     padding: 12px 20px;
     border-radius: 5px;
     cursor: pointer;
@@ -1109,7 +1109,7 @@
     transition: background-color 0.2s ease;
 }
 .btn-cancel-product:hover {
-     background-color: #ced4da;
+     background-color: #D9D9D9;
 }
 
 
@@ -1197,7 +1197,7 @@
 /* Base style for filter inputs (search, select, date) */
 .filter-bar .filter-input {
     padding: 10px 15px;
-    border: 1px solid #ccc;
+    border: 1px solid #D9D9D9;
     border-radius: 4px;
     font-size: 0.95em;
     min-width: 150px; /* Minimum width for inputs */
@@ -1226,7 +1226,7 @@
 .filter-bar .date-input-wrapper input.date-input {
      width: 100%;
      padding: 10px 15px;
-     border: 1px solid #ccc;
+     border: 1px solid #D9D9D9;
      border-radius: 4px;
      font-size: 0.95em;
      box-sizing: border-box;
@@ -1247,7 +1247,7 @@
 
 
 .filter-bar .btn-apply-filters {
-    background-color: #f1673a; /* Theme color */
+    background-color: #FA704C; /* Theme color */
     color: white;
     border: none;
     padding: 10px 20px;
@@ -1260,7 +1260,7 @@
     flex-shrink: 0;
 }
 .filter-bar .btn-apply-filters:hover {
-    background-color: #e0562a;
+    background-color: #FA704C;
 }
 
 
@@ -1383,7 +1383,7 @@
 .btn-back-to-products {
     background-color: #e9ecef; /* Light grey */
     color: #555;
-    border: 1px solid #ced4da;
+    border: 1px solid #D9D9D9;
     padding: 8px 15px;
     border-radius: 5px;
     cursor: pointer;
@@ -1397,7 +1397,7 @@
      margin-left: auto; /* Push to the right if in a flex container */
 }
 .btn-back-to-products:hover {
-    background-color: #ced4da;
+    background-color: #D9D9D9;
 }
 .btn-back-to-products svg {
     width: 16px; /* Smaller icon for button */
@@ -1438,12 +1438,12 @@
 
 /* Primary Button (Orange) */
 .btn-order-action.btn-primary {
-    background-color: #f1673a; /* Theme color */
+    background-color: #FA704C; /* Theme color */
     color: white;
-    border-color: #f1673a;
+    border-color: #e0562a;
 }
 .btn-order-action.btn-primary:hover {
-    background-color: #e0562a;
+    background-color: #FA704C;
     border-color: #e0562a;
 }
 .btn-order-action.btn-primary svg {
@@ -1453,12 +1453,12 @@
 /* Secondary Button (Grey) */
 .btn-order-action.btn-secondary {
     background-color: #e9ecef; /* Light grey */
-    color: #495057;
-    border-color: #ced4da;
+    color: #34495E;
+    border-color: #D9D9D9;
 }
 .btn-order-action.btn-secondary:hover {
-    background-color: #ced4da;
-    border-color: #ced4da;
+    background-color: #D9D9D9;
+    border-color: #D9D9D9;
 }
 .btn-order-action:disabled {
     opacity: 0.6;
@@ -1470,17 +1470,17 @@
 .order-details-actions .status-dropdown {
     /* Reuse styles from filter-input or define custom */
      padding: 8px 15px; /* Match button padding */
-     border: 1px solid #ccc;
+     border: 1px solid #D9D9D9;
      border-radius: 5px; /* Match button border-radius */
      font-size: 0.9em; /* Match button font size */
      background-color: white;
      cursor: pointer;
-     color: #495057; /* Match secondary button text color */
+     color: #34495E; /* Match secondary button text color */
      min-width: 120px; /* Ensure it has a reasonable width */
      box-sizing: border-box;
 }
 .order-details-actions .status-dropdown:focus {
-     border-color: #f1673a;
+     border-color: #FA704C;
      outline: none;
      box-shadow: 0 0 0 2px rgba(241, 103, 58, 0.2);
 }
@@ -1691,7 +1691,7 @@
 /* Reuse form-group, label, textarea styles for the note input */
 
 .btn-save-note { /* Style for the Save Note button */
-     background-color: #f1673a; /* Theme color */
+     background-color: #FA704C; /* Theme color */
      color: white;
      border: none;
      padding: 10px 20px;
@@ -1702,7 +1702,7 @@
      transition: background-color 0.2s ease;
 }
 .btn-save-note:hover {
-     background-color: #e0562a;
+     background-color: #FA704C;
 }
 /* Assuming form-actions in this section uses the general .form-actions style,
    ensure it allows the button to be full-width on small screens if needed,

@@ -1,4 +1,6 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
 import ShoppingCartPage from './ShoppingCartPage';
 import LoginPage from './LoginPage';
 import SignUpPage from './SignUpPage';
@@ -31,35 +33,32 @@ function App() {
   // const isAdminRoute = true; // Assume we are on an admin route for this example
   // const currentPage = isAdminRoute ? 'dashboard' : 'site'; // 'dashboard' or 'products'
   return (
-    <div className="App">
-      {/* NOTE FROM RALPH: I commented out the admin pages because I wanted to test the user pages and the admin sidebar and navbar overlaps litterally every single page and is fixed in place, not moving along with the pages */}
+    <>
+      {/* Please use the respective paths for testing and add new path when necessary. */}
+      <Routes>
+        {/* User Routes */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="about" element={<AboutPage />} />
+        <Route path="contact" element={<ContactPage />} />
+        <Route path="faq" element={<FaqPage />} />
+        <Route path="signup" element={<SignUpPage />} />
+        <Route path="login" element={<LoginPage />} />
+        <Route path="profile" element={<UserProfilePage />} />        
+        <Route path="product-detail" element={<ProductDetailPage />} />
+        <Route path="cart" element={<ShoppingCartPage />} />
+        <Route path="place-order" element={<PlaceOrderPage />} />
+        <Route path="order-history" element={<OrderHistoryPage />} />
 
-      {/* <AdminLayout pageTitle="Admin Dashboard"> */}
-        {/* <AdminDashboard />
-        <AddProductPage />
-        <AllOrdersPage />
-        <OrderDetailsPage /> */}
-        {/* AddProductPage can be conditionally rendered based on the route */}
-      {/* </AdminLayout> */}
-      <CustomerDetailsPage />
-
-
-
-      <SignUpPage />
-      <LoginPage />
-      <HomePage />
-      <ProductDetailPage />
-      <ShoppingCartPage />
-      <PlaceOrderPage />
-      <OrderHistoryPage />
-      <UserProfilePage />
-      <AboutPage />
-      <ContactPage />
-      <FaqPage />
-      {/* <AdminLayout pageTitle="Manage Products"> */}
-        {/* <ManageProductsPage /> */}
-      {/* </AdminLayout> */}
-    </div>
+        {/* Admin Routes */}
+        <Route path="admin-dashboard" element={<AdminDashboard />} />
+        <Route path="manage-products" element={<ManageProductsPage />} />
+        <Route path="add-product" element={<AddProductPage />} />
+        <Route path="all-orders" element={<AllOrdersPage />} />
+        <Route path="order-details" element={<OrderDetailsPage />} />
+        <Route path="customer-details" element={<CustomerDetailsPage />} />
+      </Routes>
+    </>
+    
   );
 }
 

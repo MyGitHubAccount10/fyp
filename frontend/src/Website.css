@@ -4,13 +4,13 @@ body { /* Apply to body if this CSS is global, or to a wrapper if component-scop
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #fff7f0;
+  background-color: #FFF0E1;
   color: #333;
 }
 
 /* --- Header Styles (Based on your updated navbar design) --- */
 header {
-  background-color: #f1673a;
+  background-color: #FA704C;
   padding: 10px 20px;
   display: flex;
   justify-content: space-between;
@@ -91,7 +91,7 @@ header {
   background-color: #fff;
   border-radius: 20px;
   padding: 6px 12px;
-  border: 1px solid #ddd;
+  border: 1px solid #D9D9D9;
 }
 .search-bar input[type="search"] {
   border: none;
@@ -103,7 +103,7 @@ header {
   width: 150px;
 }
 .search-bar input[type="search"]::placeholder {
-  color: #888;
+  color: #D9D9D9;
 }
 .search-bar button {
   background: none;
@@ -132,7 +132,7 @@ header {
 .header-separator {
   width: 1px;
   height: 20px;
-  background-color: #00000050;
+  background-color: #D9D9D9;
   margin: 0 5px;
 }
 
@@ -147,12 +147,12 @@ header {
 
 /* --- Secondary Navigation Bar Styles --- */
 .secondary-navbar {
-  background-color: #e0f2f1; /* Light teal/blue from reference image for dropdown area */
+  background-color: #E0F2F1; /* Light teal/blue from reference image for dropdown area */
   padding: 12px 20px; /* Padding for the bar */
   display: flex;
   justify-content: center; /* Center items horizontally */
   gap: 30px; /* Space between navigation items */
-  border-bottom: 1px solid #c5e0dd; /* Optional: a slightly darker border for separation */
+  border-bottom: 1px solid #B2DFDB; /* Optional: a slightly darker border for separation */
   /* This bar will naturally push subsequent content down */
   /* It is placed directly after the <header> in the HTML structure */
 }
@@ -189,7 +189,7 @@ h2 {
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #D9D9D9;
   padding: 25px 0;
   gap: 15px;
 }
@@ -307,7 +307,7 @@ h2 {
 /* --- Other Page Elements --- */
 .update-cart-btn {
   background: #fff;
-  border: 1px solid #ccc;
+  border: 1px solid #D9D9D9;
   padding: 10px 18px;
   border-radius: 5px;
   cursor: pointer;
@@ -332,7 +332,7 @@ h2 {
   margin-top: 30px;
   background: #fff;
   padding: 25px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #D9D9D9;
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
@@ -358,7 +358,7 @@ h2 {
 .cart-total .change-address-btn {
   background: none;
   border: none;
-  color: #f1673a;
+  color: #FA704C;
   text-decoration: none;
   cursor: pointer;
   font-weight: 500;
@@ -369,7 +369,7 @@ h2 {
     text-decoration: underline;
 }
 .complete-purchase-btn {
-  background: #f1673a;
+  background: #FA704C;
   color: white;
   border: none;
   padding: 15px;
@@ -407,10 +407,10 @@ h2 {
   width: 100%;
   height: 200px; /* Fixed height for consistency */
   object-fit: cover;
-  background-color: #e0e0e0;
+  background-color: #D9D9D9;
 }
 .recommended-product-content {
-  background-color: #e0f2f1;
+  background-color: #E0F2F1;
   padding: 15px;
 }
 .recommended-product-info {
@@ -422,7 +422,7 @@ h2 {
 .recommended-product-name {
   font-weight: 700;
   font-size: 1.1em;
-  color: #00695c;
+  color: #00695C;
 }
 .recommended-product-price {
   font-size: 1em;
@@ -469,7 +469,7 @@ h2 {
 
 /* --- Footer --- */
 .footer {
-  background: #f1673a;
+  background: #FA704C;
   color: white;
   display: flex;
   justify-content: space-between;
@@ -585,7 +585,7 @@ h2 {
     background-color: #f9f9f9; /* Slightly different background for summary */
     padding: 20px;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #D9D9D9;
     align-self: flex-start; /* Align to top if content is shorter */
 }
 
@@ -594,7 +594,7 @@ h2 {
     margin-bottom: 20px;
     font-size: 1.3em;
     color: #333;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #D9D9D9;
     padding-bottom: 10px;
 }
 
@@ -604,7 +604,7 @@ h2 {
 .form-section h3 {
     font-size: 1.2em;
     margin-bottom: 15px;
-    color: #f1673a; /* Theme color for section titles */
+    color: #FA704C; /* Theme color for section titles */
     padding-bottom: 5px;
     border-bottom: 1px solid #fde0d6;
 }
@@ -625,7 +625,7 @@ h2 {
 .form-group input[type="password"] { /* Added password for completeness */
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #ccc;
+    border: 1px solid #D9D9D9;
     border-radius: 4px;
     font-size: 0.95em;
     box-sizing: border-box; /* Important for width 100% */
@@ -634,7 +634,7 @@ h2 {
 .form-group input[type="email"]:focus,
 .form-group input[type="tel"]:focus,
 .form-group input[type="password"]:focus {
-    border-color: #f1673a;
+    border-color: #FA704C;
     outline: none;
     box-shadow: 0 0 0 2px rgba(241, 103, 58, 0.2);
 }
@@ -661,7 +661,7 @@ h2 {
     align-items: center;
     justify-content: center;
     padding: 12px 8px;
-    border: 2px solid #e0e0e0;
+    border: 2px solid #D9D9D9;
     border-radius: 6px;
     background-color: #fff;
     cursor: pointer;
@@ -672,14 +672,14 @@ h2 {
     color: #444;
 }
 .payment-option:hover {
-    border-color: #f1673a;
+    border-color: #FA704C;
     box-shadow: 0 0 5px rgba(241, 103, 58, 0.3);
 }
 .payment-option.selected {
-    border-color: #f1673a;
-    background-color: #fff7f0; /* Light theme color */
+    border-color: #FA704C;
+    background-color: #FFF0E1; /* Light theme color */
     box-shadow: 0 0 8px rgba(241, 103, 58, 0.5);
-    color: #f1673a;
+    color: #FA704C;
     font-weight: bold;
 }
 .payment-logo {
@@ -693,7 +693,7 @@ h2 {
     margin-top: 20px;
     padding: 15px;
     background-color: #f9f9f9;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #D9D9D9;
     border-radius: 6px;
 }
 .credit-card-form h4 {
@@ -721,7 +721,7 @@ h2 {
 }
 .summary-hr {
     border: 0;
-    border-top: 1px dashed #ccc;
+    border-top: 1px dashed #D9D9D9;
     margin: 15px 0;
 }
 .summary-line {
@@ -734,7 +734,7 @@ h2 {
     font-size: 1.15em;
     margin-top: 10px;
     padding-top: 10px;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #D9D9D9;
 }
 .summary-line strong {
     font-weight: 700;
@@ -751,7 +751,7 @@ h2 {
     margin-top: 15px;
 }
 .checkout-terms a {
-    color: #f1673a;
+    color: #FA704C;
     text-decoration: underline;
 }
 
@@ -807,7 +807,7 @@ h2 {
 
 .order-card {
     background-color: #fff;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #D9D9D9;
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.07);
     overflow: hidden; /* Ensures border-radius is respected by children */
@@ -820,7 +820,7 @@ h2 {
     padding: 15px 20px;
     cursor: pointer;
     background-color: #f9f9f9;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #D9D9D9;
     flex-wrap: wrap; /* Allow wrapping for smaller screens */
     gap: 10px; /* Gap between wrapped items */
 }
@@ -859,7 +859,7 @@ h2 {
 .order-total {
     font-weight: bold;
     font-size: 1em;
-    color: #f1673a; /* Theme color */
+    color: #FA704C; /* Theme color */
 }
 
 .details-arrow {
@@ -872,7 +872,7 @@ h2 {
 
 .order-card-details {
     padding: 20px;
-    border-top: 1px solid #e0e0e0; /* Separator if header doesn't have bottom border always */
+    border-top: 1px solid #D9D9D9; /* Separator if header doesn't have bottom border always */
     background-color: #fff;
 }
 .order-card-details p {
@@ -905,7 +905,7 @@ h2 {
     height: 60px;
     object-fit: cover;
     border-radius: 4px;
-    border: 1px solid #eee;
+    border: 1px solid #D9D9D9;
 }
 .order-item-info {
     display: flex;
@@ -930,8 +930,8 @@ h2 {
 .btn-order-action {
     padding: 8px 15px;
     border-radius: 5px;
-    border: 1px solid #f1673a;
-    background-color: #f1673a;
+    border: 1px solid #FA704C;
+    background-color: #FA704C;
     color: white;
     font-weight: 500;
     font-size: 0.85em;
@@ -944,11 +944,11 @@ h2 {
 }
 .btn-order-action.btn-secondary {
     background-color: #fff;
-    color: #f1673a;
-    border: 1px solid #f1673a;
+    color: #FA704C;
+    border: 1px solid #FA704C;
 }
 .btn-order-action.btn-secondary:hover {
-    background-color: #fff7f0;
+    background-color: #FFF0E1;
 }
 
 /* Responsive adjustments for Order History */
@@ -1013,19 +1013,19 @@ h2 {
     align-items: center;
     margin-bottom: 20px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #D9D9D9;
 }
 
 .profile-section-header h3 {
     margin: 0;
     font-size: 1.3em;
-    color: #f1673a; /* Theme color */
+    color: #FA704C; /* Theme color */
 }
 
 .btn-edit-profile, .btn-add-profile {
     background-color: transparent;
-    color: #f1673a;
-    border: 1px solid #f1673a;
+    color: #FA704C;
+    border: 1px solid #FA704C;
     padding: 6px 12px;
     border-radius: 20px;
     cursor: pointer;
@@ -1034,7 +1034,7 @@ h2 {
     transition: background-color 0.2s, color 0.2s;
 }
 .btn-edit-profile:hover, .btn-add-profile:hover {
-    background-color: #f1673a;
+    background-color: #FA704C;
     color: white;
 }
 .btn-add-profile { /* Slightly different style if needed */
@@ -1083,9 +1083,9 @@ h2 {
 }
 
 .btn-save-profile {
-    background-color: #f1673a; /* Theme color */
+    background-color: #FA704C; /* Theme color */
     color: white;
-    border: 1px solid #f1673a;
+    border: 1px solid #FA704C;
 }
 .btn-save-profile:hover {
     background-color: #e0562a;
@@ -1177,7 +1177,7 @@ h2 {
     display: flex; /* For centering image if aspect ratio is different */
     justify-content: center;
     align-items: center;
-    background-color: #ccc; /* Fallback if image doesn't load */
+    background-color: #D9D9D9; /* Fallback if image doesn't load */
 }
 
 .hero-image {
@@ -1225,8 +1225,8 @@ h2 {
     bottom: 30px; /* Adjust position as needed */
     left: 50%;
     transform: translateX(-50%);
-    background-color: #e0f2f1; /* Light teal from reference */
-    color: #00695c; /* Darker teal text from reference */
+    background-color: #E0F2F1; /* Light teal from reference */
+    color: #00695C; /* Darker teal text from reference */
     border: none;
     padding: 12px 25px;
     border-radius: 20px; /* Rounded corners */
@@ -1238,7 +1238,7 @@ h2 {
 }
 
 .hero-cta-button:hover {
-    background-color: #c5e0dd; /* Slightly darker teal on hover */
+    background-color: #B2DFDB; /* Slightly darker teal on hover */
 }
 
 /* Popular Designs Section */
@@ -1279,15 +1279,15 @@ h2 {
     height: 200px; /* Fixed height for image consistency */
     object-fit: cover; /* Cover the area, may crop */
     display: block; /* Remove extra space below image */
-    background-color: #e0e0e0; /* Placeholder background */
+    background-color: #D9D9D9; /* Placeholder background */
 }
 
 .popular-design-card-caption {
-    background-color: #e0f2f1; /* Light teal from reference */
+    background-color: #E0F2F1; /* Light teal from reference */
     padding: 15px;
     text-align: center;
     font-weight: 500;
-    color: #00695c; /* Darker teal text from reference */
+    color: #00695C; /* Darker teal text from reference */
     font-size: 0.95em;
 }
 
@@ -1378,7 +1378,7 @@ h2 {
     width: 60%; /* Adjust width as needed */
     max-width: 400px; /* Max width for very wide screens */
     height: 3px;
-    background-color: #f1673a; /* Theme orange color */
+    background-color: #FA704C; /* Theme orange color */
     margin: 0 auto 30px auto; /* Center the divider and add space below */
     border: none;
 }
@@ -1520,12 +1520,12 @@ h2 {
 
 .contact-form-input::placeholder,
 .contact-form-textarea::placeholder {
-    color: #888; /* Placeholder text color */
+    color: #D9D9D9; /* Placeholder text color */
 }
 
 .contact-form-input:focus,
 .contact-form-textarea:focus {
-    outline: 2px solid #f1673a; /* Theme color outline on focus */
+    outline: 2px solid #FA704C; /* Theme color outline on focus */
     background-color: #f0f0f0; /* Slightly lighter grey on focus */
 }
 
@@ -1540,7 +1540,7 @@ h2 {
 }
 
 .contact-submit-button {
-    background-color: #e0f2f1; /* Light teal/blue from image */
+    background-color: #E0F2F1; /* Light teal/blue from image */
     color: #000; /* Black text from image */
     border: 1px solid #000; /* Black border from image */
     padding: 12px 40px; /* Generous padding */
@@ -1552,7 +1552,7 @@ h2 {
 }
 
 .contact-submit-button:hover {
-    background-color: #c5e0dd; /* Slightly darker teal/blue on hover */
+    background-color: #B2DFDB; /* Slightly darker teal/blue on hover */
 }
 .contact-submit-button:active {
     transform: scale(0.98);
@@ -1598,7 +1598,7 @@ h2 {
 
 /* --- FAQ Page Specific Styles --- */
 .faq-page-content {
-    /* Uses global body background: #fff7f0 */
+    /* Uses global body background: #FFF0E1 */
     padding-bottom: 40px;
 }
 
@@ -1645,7 +1645,7 @@ h2 {
     width: 100%;
     max-width: 700px;
     background-color: #fff;
-    border: 1px solid #ddd;
+    border: 1px solid #D9D9D9;
     border-radius: 25px; /* Highly rounded */
     padding: 8px 15px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05);
@@ -1680,7 +1680,7 @@ h2 {
 
 .faq-sidebar {
     flex: 0 0 220px; /* Fixed width for sidebar */
-    border-right: 1px solid #eee; /* Optional separator */
+    border-right: 1px solid #D9D9D9; /* Optional separator */
     padding-right: 20px;
 }
 
@@ -1700,18 +1700,18 @@ h2 {
 
 .faq-nav-item:hover {
     background-color: #f8f9fa;
-    color: #f1673a;
+    color: #FA704C;
 }
 
 .faq-nav-item.active {
-    background-color: #fff7f0; /* Light theme color for active item */
-    color: #f1673a; /* Theme color for text */
+    background-color: #FFF0E1; /* Light theme color for active item */
+    color: #FA704C; /* Theme color for text */
     font-weight: bold;
 }
 .faq-nav-active-indicator {
     font-size: 1.2em;
     line-height: 1;
-    color: #f1673a;
+    color: #FA704C;
 }
 
 
@@ -1744,7 +1744,7 @@ h2 {
 
 .faq-divider {
     border: 0;
-    border-top: 1px solid #eee;
+    border-top: 1px solid #D9D9D9;
     margin: 20px 0;
 }
 
@@ -1791,7 +1791,7 @@ h2 {
 }
 .faq-back-link {
     display: inline-block;
-    color: #f1673a;
+    color: #FA704C;
     text-decoration: none;
     font-weight: 500;
     font-size: 0.9em;
@@ -1813,7 +1813,7 @@ h2 {
         border-right: none;
         padding-right: 0;
         margin-bottom: 20px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #D9D9D9;
         padding-bottom: 20px;
     }
     .faq-content-display {
@@ -1859,7 +1859,7 @@ h2 {
 
 /* --- Product Detail Page Specific Styles --- */
 .product-detail-page {
-    /* Uses global body background: #fff7f0 */
+    /* Uses global body background: #FFF0E1 */
     padding-top: 30px; /* Space from navbar or top of page */
     padding-bottom: 50px;
 }
@@ -1896,7 +1896,7 @@ h2 {
 
 .product-thumbnail-img:hover,
 .product-thumbnail-img.active {
-    border-color: #f1673a; /* Theme color for active/hover thumbnail */
+    border-color: #FA704C; /* Theme color for active/hover thumbnail */
 }
 
 .product-main-image-container {
@@ -1963,7 +1963,7 @@ h2 {
 
 .size-button {
     background-color: #fff;
-    border: 1px solid #ccc;
+    border: 1px solid #D9D9D9;
     border-radius: 15px; /* Rounded pill shape */
     padding: 6px 15px;
     margin-right: 8px;
@@ -1983,10 +1983,10 @@ h2 {
 .quantity-controls-detail {
     display: flex;
     align-items: center;
-    background-color: #e0f2f1; /* Light teal from image */
+    background-color: #E0F2F1; /* Light teal from image */
     border-radius: 15px; /* Pill shape */
     padding: 3px 5px;
-    border: 1px solid #b2dfdb; /* Slightly darker teal border */
+    border: 1px solid #B2DFDB; /* Slightly darker teal border */
     width: fit-content; /* Shrink to content */
 }
 .quantity-controls-detail button {
@@ -2026,7 +2026,7 @@ h2 {
 }
 
 .btn-buy-now {
-    background-color: #f1673a; /* Theme orange */
+    background-color: #FA704C; /* Theme orange */
     color: white;
 }
 .btn-buy-now:hover {
@@ -2049,7 +2049,7 @@ h2 {
     margin-top: 40px;
     margin-bottom: 20px;
     padding-bottom: 10px;
-    border-bottom: 2px solid #e0f2f1; /* Light teal border */
+    border-bottom: 2px solid #E0F2F1; /* Light teal border */
 }
 
 .product-full-description-section p {
@@ -2082,7 +2082,7 @@ h2 {
     background-color: #f0f0f0; /* Placeholder background */
 }
 .similar-product-caption {
-    background-color: #e0f2f1; /* Light teal from image */
+    background-color: #E0F2F1; /* Light teal from image */
     padding: 12px;
     font-weight: 500;
     font-size: 0.9em;

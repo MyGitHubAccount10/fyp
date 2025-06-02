@@ -25,6 +25,7 @@ import AllOrdersPage from './AllOrdersPage';
 import OrderDetailsPage from './OrderDetailsPage';
 import CustomerDetailsPage from './CustomerDetailsPage';
 import AdminSettingsPage from './AdminSettingsPage';
+import AllCustomersPage from './AllCustomersPage';
 
 
 import './AdminStyles.css'; // Ensure admin styles are imported
@@ -70,6 +71,9 @@ function App() {
         <Route path="order-details" element={<OrderDetailsPage />} />
         <Route path="customer-details" element={<CustomerDetailsPage />} />
         <Route path="admin-settings" element={<AdminSettingsPage />} />
+        <Route path="all-customers" element={<AllCustomersPage />} />
+       
+
 
       </Routes>
     </>

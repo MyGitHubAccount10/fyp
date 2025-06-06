@@ -1,4 +1,5 @@
 const express = require('express');
+const Category = require('../models/CategoryModel');
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -9,8 +10,16 @@ router.get('/:id', (req, res) => {
     res.json({message: 'GET a single category'});
 });
 
-router.post('/', (req, res) => {
-   res.json({message: 'POST a new category'});
+router.post('/', async (req, res) => {
+   const {category_name} = req.body;
+
+   try {
+    const category = await Category.create({category_name});
+    res.status(200).json(category);
+   }
+   catch (error) {
+    res.status(400).json({error: error.message});
+   }
 });
 
 router.delete('/:id', (req, res) => {

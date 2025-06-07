@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 // No need to import AdminStyles here, it's imported in AdminLayout
 import './AdminStyles.css';
-import AdminHeader from './AdminHeader'; // Assuming you have an AdminHeader component
+import AdminHeader from '../AdminHeader'; // Assuming you have an AdminHeader component
 
 // Placeholder Icons
 const PencilIcon = ({ size = 18, color = "currentColor" }) => (

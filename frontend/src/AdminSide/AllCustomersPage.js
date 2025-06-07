@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminHeader from './AdminHeader'; // Assuming you have an AdminHeader component
+import AdminHeader from '../AdminHeader'; // Assuming you have an AdminHeader component
 // import './AllCustomersPage.css'; // Optional: Use your styles or inline styling
 
 const customers = [

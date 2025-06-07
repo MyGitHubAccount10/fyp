@@ -18,20 +18,16 @@ import ShoppingCartPage from './ShoppingCartPage';
 import PlaceOrderPage from './PlaceOrderPage';
 import OrderHistoryPage from './OrderHistoryPage';
 
-import AdminDashboard from './AdminDashboard';
-import ManageProductsPage from './ManageProductsPage';
-import AddProductPage from './AddProductPage';
-import AllOrdersPage from './AllOrdersPage';
-import OrderDetailsPage from './OrderDetailsPage';
-import CustomerDetailsPage from './CustomerDetailsPage';
-import AdminSettingsPage from './AdminSettingsPage';
-import AllCustomersPage from './AllCustomersPage';
+import AdminDashboard from './AdminSide/AdminDashboard';
+import ManageProductsPage from './AdminSide/ManageProductsPage';
+import AddProductPage from './AdminSide/AddProductPage';
+import AllOrdersPage from './AdminSide/AllOrdersPage';
+import OrderDetailsPage from './AdminSide/OrderDetailsPage';
+import CustomerDetailsPage from './AdminSide/CustomerDetailsPage';
+import AdminSettingsPage from './AdminSide/AdminSettingsPage';
+import AllCustomersPage from './AdminSide/AllCustomersPage';
 
 
-import './AdminStyles.css'; // Ensure admin styles are imported
-// =======
-// import './AdminStyles.css';
-// >>>>>>> d58112eb88cb039475a106e4920ba2374c6cebe0
 
 import './index.css';
 

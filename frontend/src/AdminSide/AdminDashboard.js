@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminHeader from './AdminHeader';
+import AdminHeader from '../AdminHeader';
 // AdminStyles.css is imported in AdminLayout.js and/or App.js, so no need to import here
 
 // Placeholder Icons (reusing some from AdminSidebar/ManageProducts, adding new ones)

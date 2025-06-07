@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AdminHeader from './AdminHeader'; 
+import AdminHeader from '../AdminHeader'; 
 import './AdminStyles.css'; 
 
 // Placeholder Icons

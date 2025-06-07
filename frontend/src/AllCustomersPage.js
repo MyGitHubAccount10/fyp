@@ -1,4 +1,5 @@
 import React from 'react';
+import AdminHeader from './AdminHeader'; // Assuming you have an AdminHeader component
 // import './AllCustomersPage.css'; // Optional: Use your styles or inline styling
 
 const customers = [
@@ -32,8 +33,10 @@ const customers = [
 ];
 
 export default function AllCustomersPage() {
-  return (
+  return (<>
+          <AdminHeader />
     <div style={{ padding: '20px', backgroundColor: '#ffeede', minHeight: '100vh' }}>
+
       <h1 style={{ fontWeight: 'bold' }}>All Customers</h1>
 
       <div style={{ display: 'flex', margin: '20px 0' }}>
@@ -98,5 +101,6 @@ export default function AllCustomersPage() {
         <button style={{ padding: '5px 10px', backgroundColor: '#ccc', border: 'none' }}>{'Next >>'}</button>
       </div>
     </div>
+    </>
   );
 }

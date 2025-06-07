@@ -1,0 +1,142 @@
+/* Website.css */
+/* --- Global & Body --- */
+.Admin-body { /* Apply to body if this CSS is global, or to a wrapper if component-scoped */
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #FFF0E1;
+  color: #000000;
+}
+
+/* --- Header Styles (Based on your updated navbar design) --- */
+.Admin-header {
+  background-color: #FA704C;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #000000;
+  position: relative; /* Added for potential future absolute positioning inside, though not used now */
+  z-index: 100; /* Ensure header is above other content if secondary nav overlaps slightly during transition (not the case here) */
+}
+
+.Admin-header-left-content,
+.Admin-header-right-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* .burger-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.burger-btn svg {
+  width: 28px;
+  height: 28px;
+} */
+
+.Admin-header-logo-link .Admin-header-logo-img {
+  height: 30px;
+  vertical-align: middle;
+}
+
+.Admin-header-nav-links a {
+  color: #000000;
+  text-decoration: none;
+  margin: 0 8px;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+.Admin-header-nav-links a:hover {
+  text-decoration: underline;
+}
+
+/* Styles for the new Product dropdown toggle in header */
+.Admin-header-nav-links .product-dropdown-toggle {
+  display: inline-flex; /* Align text and arrow */
+  align-items: center;
+  gap: 4px; /* Space between "Product" and arrow */
+  cursor: pointer; /* Indicate it's clickable */
+}
+/* Ensure product dropdown toggle hover doesn't underline, if others do and it shouldn't */
+.Admin-header-nav-links .product-dropdown-toggle:hover {
+    text-decoration: underline; /* Keep consistent with other nav links, or set to none if specifically requested */
+}
+
+
+.Admin-product-arrow {
+  width: 14px; /* Arrow size */
+  height: 14px;
+  stroke: #000000; /* Arrow color */
+  stroke-width: 2.5px; /* Arrow thickness */
+  fill: none;
+  transition: transform 0.2s ease-in-out;
+  vertical-align: middle; /* Align with text */
+}
+
+.Admin-product-arrow.up {
+  transform: rotate(180deg);
+}
+
+
+
+.Admin-header-icon-link svg {
+  width: 24px;
+  height: 24px;
+  /* fill/stroke defined in SVG for black color */
+  vertical-align: middle;
+}
+.Admin-header-icon-link:hover svg {
+  opacity: 0.7;
+}
+
+.Admin-header-separator {
+  width: 1px;
+  height: 20px;
+  background-color: #000000;
+  margin: 0 5px;
+}
+
+.Admin-header-social-icons a img {
+  height: 22px;
+  width: 22px;
+  vertical-align: middle;
+}
+.header-social-icons a:not(:last-child) {
+    margin-right: 8px;
+}
+
+/* --- Secondary Navigation Bar Styles --- */
+.Admin-secondary-navbar {
+  background-color: #2C3E50; /* Light teal/blue from reference image for dropdown area */
+  padding: 12px 20px; /* Padding for the bar */
+  display: flex;
+  justify-content: center; /* Center items horizontally */
+  gap: 30px; /* Space between navigation items */
+  border-bottom: 1px solid #B2DFDB; /* Optional: a slightly darker border for separation */
+  /* This bar will naturally push subsequent content down */
+  /* It is placed directly after the <header> in the HTML structure */
+}
+
+.Admin-secondary-navbar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between icon and text */
+  color: #ffffff !important; /* Black text - !important to override generic a styles if needed */
+  text-decoration: none !important; /* ENSURE NO UNDERLINE as per request */
+  font-size: 0.9em; /* Consistent font size */
+  font-weight: 500; /* Slightly less bold than main nav, or adjust as needed */
+}
+
+.Admin-secondary-navbar-item:hover {
+  text-decoration: none !important; /* ENSURE NO UNDERLINE ON HOVER */
+  /* color: #f1673a !important; /* Optional: theme color on hover, if desired, but ensure no underline */
+}
+
+

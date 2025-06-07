@@ -1,4 +1,5 @@
 import React from 'react';
+import AdminHeader from './AdminHeader';
 // AdminStyles.css is imported in AdminLayout.js and/or App.js, so no need to import here
 
 // Placeholder Icons (reusing some from AdminSidebar/ManageProducts, adding new ones)
@@ -93,6 +94,7 @@ function AdminDashboard() {
 
     return (
         <div className="admin-dashboard-page"> {/* Page-specific class */}
+        <AdminHeader />
             <h2 className="page-title">Admin Dashboard</h2> {/* Reuse page-title class */}
 
             <div className="dashboard-stats">

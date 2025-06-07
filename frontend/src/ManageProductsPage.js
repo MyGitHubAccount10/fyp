@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 // No need to import AdminStyles here, it's imported in AdminLayout
 import './AdminStyles.css';
+import AdminHeader from './AdminHeader'; // Assuming you have an AdminHeader component
 
 // Placeholder Icons
 const PencilIcon = ({ size = 18, color = "currentColor" }) => (
@@ -143,7 +144,8 @@ function ManageProductsPage() {
     //      handleFilter();
     // }, [searchTerm, selectedCategory]); // Add dummyProducts to dependency array if it can change
 
-    return (
+    return (<>
+          <AdminHeader />
         <div className="manage-products-page"> {/* Add a class for page-specific styling */}
             <div className="page-header-section">
                 <h2 className="page-title">Create a New Product</h2> {/* Title from the image */}
@@ -270,7 +272,7 @@ function ManageProductsPage() {
                 )}
             </div>
         </div>
-    );
+    </>);
 }
 
 export default ManageProductsPage;

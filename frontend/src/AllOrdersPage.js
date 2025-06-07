@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-// AdminStyles.css is imported in AdminLayout.js and/or App.js, so no need to import here
-// import './AdminStyles.css';
+import AdminHeader from './AdminHeader'; 
+import './AdminStyles.css'; 
 
 // Placeholder Icons
 const CalendarIcon = ({ color = "currentColor", size = 18 }) => (
@@ -103,7 +103,8 @@ function AllOrdersPage() {
         // navigate(`/admin/orders/${orderId}`);
     };
 
-    return (
+    return (<>
+              <AdminHeader />
         <div className="all-orders-page"> {/* Page-specific class */}
             {/* Page Title will come from AdminLayout */}
              {/* <h2 className="page-title">All Orders</h2> */}
@@ -205,7 +206,7 @@ function AllOrdersPage() {
             </div>
 
         </div> // End Page Container
-    );
+    </>);
 }
 
 export default AllOrdersPage;

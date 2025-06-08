@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const OrderProduct = require('../models/CustomiseImgModel');
+const OrderProduct = require('../models/OrderProductModel');
 
 // Get all order products
 const getOrderProducts = async (req, res) => {

@@ -95,122 +95,124 @@ function AdminDashboard() {
     return (
         <div className="admin-dashboard-page"> {/* Page-specific class */}
         <AdminHeader />
-            <h2 className="page-title">Admin Dashboard</h2> {/* Reuse page-title class */}
+            <div style={{ padding: "20px" }}> {/* Container for padding */}
+                <h2 className="page-title">Admin Dashboard</h2> {/* Reuse page-title class */}
 
-            <div className="dashboard-stats">
-                <div className="stat-card">
-                    <div className="stat-icon icon-sales"><MoneyIcon color="white" size={30} /></div>
-                    <div className="stat-info">
-                        <div className="stat-label">Total Sales (Month)</div>
-                        <div className="stat-value">${salesData.totalSalesMonth.toLocaleString()}</div>
+                <div className="dashboard-stats">
+                    <div className="stat-card">
+                        <div className="stat-icon icon-sales"><MoneyIcon color="white" size={30} /></div>
+                        <div className="stat-info">
+                            <div className="stat-label">Total Sales (Month)</div>
+                            <div className="stat-value">${salesData.totalSalesMonth.toLocaleString()}</div>
+                        </div>
                     </div>
-                </div>
-                <div className="stat-card">
-                    <div className="stat-icon icon-new-orders"><NewStarIcon color="white" size={30} /></div>
-                    <div className="stat-info">
-                         <div className="stat-label">New Orders (Today)</div>
-                        <div className="stat-value">{salesData.newOrdersToday}</div>
+                    <div className="stat-card">
+                        <div className="stat-icon icon-new-orders"><NewStarIcon color="white" size={30} /></div>
+                        <div className="stat-info">
+                            <div className="stat-label">New Orders (Today)</div>
+                            <div className="stat-value">{salesData.newOrdersToday}</div>
+                        </div>
                     </div>
-                </div>
-                <div className="stat-card">
-                    <div className="stat-icon icon-fulfillment"><ClockIcon color="white" size={30} /></div>
-                    <div className="stat-info">
-                        <div className="stat-label">Pending Fulfillment</div>
-                        <div className="stat-value">{salesData.pendingFulfillment}</div>
+                    <div className="stat-card">
+                        <div className="stat-icon icon-fulfillment"><ClockIcon color="white" size={30} /></div>
+                        <div className="stat-info">
+                            <div className="stat-label">Pending Fulfillment</div>
+                            <div className="stat-value">{salesData.pendingFulfillment}</div>
+                        </div>
                     </div>
-                </div>
-                <div className="stat-card stat-warning"> {/* Added warning class for alert icons */}
-                    <div className="stat-icon icon-low-stock"><AlertTriangleIcon color="white" size={30} /></div>
-                    <div className="stat-info">
-                        <div className="stat-label">Low Stock Items</div>
-                        <div className="stat-value">{salesData.lowStockItems}</div>
+                    <div className="stat-card stat-warning"> {/* Added warning class for alert icons */}
+                        <div className="stat-icon icon-low-stock"><AlertTriangleIcon color="white" size={30} /></div>
+                        <div className="stat-info">
+                            <div className="stat-label">Low Stock Items</div>
+                            <div className="stat-value">{salesData.lowStockItems}</div>
+                        </div>
                     </div>
-                </div>
-                 <div className="stat-card stat-danger"> {/* Added danger class for potentially critical alerts */}
-                    <div className="stat-icon icon-out-stock"><AlertTriangleIcon color="white" size={30} /></div>
-                    <div className="stat-info">
-                        <div className="stat-label">Out of Stock Items</div>
-                        <div className="stat-value">{salesData.outOfStockItems}</div>
+                    <div className="stat-card stat-danger"> {/* Added danger class for potentially critical alerts */}
+                        <div className="stat-icon icon-out-stock"><AlertTriangleIcon color="white" size={30} /></div>
+                        <div className="stat-info">
+                            <div className="stat-label">Out of Stock Items</div>
+                            <div className="stat-value">{salesData.outOfStockItems}</div>
+                        </div>
                     </div>
+                    {/* Add more stat cards if they exist beyond the visible area */}
                 </div>
-                 {/* Add more stat cards if they exist beyond the visible area */}
-            </div>
 
-            <div className="dashboard-section quick-actions">
-                <h3 className="section-title">Quick Actions</h3>
-                <div className="quick-action-buttons">
-                    <button className="btn-quick-action btn-add-product" onClick={handleAddProduct}>
-                        <PlusCircleIcon color="white" /> Add New Product
-                    </button>
-                    <button className="btn-quick-action btn-view-orders" onClick={handleViewOrders}>
-                         <EyeIcon color="white" /> View All Orders
-                    </button>
-                    <button className="btn-quick-action btn-manage-inventory" onClick={handleManageInventory}>
-                         <HomeIcon color="white" /> Manage Inventory
-                    </button>
-                     <button className="btn-quick-action btn-review-designs" onClick={handleReviewDesigns}>
-                         <PencilIcon color="white" /> Review Custom Designs
-                    </button>
+                <div className="dashboard-section quick-actions">
+                    <h3 className="section-title">Quick Actions</h3>
+                    <div className="quick-action-buttons">
+                        <button className="btn-quick-action btn-add-product" onClick={handleAddProduct}>
+                            <PlusCircleIcon color="white" /> Add New Product
+                        </button>
+                        <button className="btn-quick-action btn-view-orders" onClick={handleViewOrders}>
+                            <EyeIcon color="white" /> View All Orders
+                        </button>
+                        <button className="btn-quick-action btn-manage-inventory" onClick={handleManageInventory}>
+                            <HomeIcon color="white" /> Manage Inventory
+                        </button>
+                        <button className="btn-quick-action btn-review-designs" onClick={handleReviewDesigns}>
+                            <PencilIcon color="white" /> Review Custom Designs
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div className="dashboard-section recent-orders">
-                 <h3 className="section-title">Recent Orders</h3>
-                 <div className="table-container"> {/* Wrap table for potential overflow */}
-                    <table className="recent-orders-table">
-                        <thead>
-                            <tr>
-                                <th>Order ID</th>
-                                <th>Customer</th>
-                                <th>Date</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {recentOrders.map(order => (
-                                <tr key={order.id}>
-                                    <td>{order.id}</td>
-                                    <td>{order.customer}</td>
-                                    <td>{order.date}</td>
-                                    <td>${order.total.toFixed(2)}</td>
-                                    <td className={getStatusClass(order.status)}>{order.status}</td>
+                <div className="dashboard-section recent-orders">
+                    <h3 className="section-title">Recent Orders</h3>
+                    <div className="table-container"> {/* Wrap table for potential overflow */}
+                        <table className="recent-orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
                                 </tr>
-                            ))}
-                             {/* Add placeholder rows if needed */}
-                             {recentOrders.length < 3 && Array.from({ length: 3 - recentOrders.length }).map((_, i) => (
-                                <tr key={`order-placeholder-${i}`}>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                </tr>
-                             ))}
-                        </tbody>
-                    </table>
-                 </div>
-                 <div className="section-footer-link">
-                    <a href="#" className="view-all-link" onClick={(e) => {e.preventDefault(); handleViewOrders();}}>
-                        View All Orders {">"}
-                    </a>
-                 </div>
+                            </thead>
+                            <tbody>
+                                {recentOrders.map(order => (
+                                    <tr key={order.id}>
+                                        <td>{order.id}</td>
+                                        <td>{order.customer}</td>
+                                        <td>{order.date}</td>
+                                        <td>${order.total.toFixed(2)}</td>
+                                        <td className={getStatusClass(order.status)}>{order.status}</td>
+                                    </tr>
+                                ))}
+                                {/* Add placeholder rows if needed */}
+                                {recentOrders.length < 3 && Array.from({ length: 3 - recentOrders.length }).map((_, i) => (
+                                    <tr key={`order-placeholder-${i}`}>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="section-footer-link">
+                        <a href="#" className="view-all-link" onClick={(e) => {e.preventDefault(); handleViewOrders();}}>
+                            View All Orders {">"}
+                        </a>
+                    </div>
+                </div>
+
+                <div className="dashboard-section sales-snapshot">
+                    <h3 className="section-title">Sales Snapshot (Last 7 Days)</h3>
+                    <div className="sales-chart-placeholder">
+                        [Sales Chart Placeholder]
+                    </div>
+                    <div className="section-footer-link">
+                        <a href="#" className="view-all-link" onClick={(e) => {e.preventDefault(); handleViewFullSales();}}>
+                            View Full Sales Report {">"}
+                        </a>
+                    </div>
+                </div>
+
+                {/* Add other dashboard sections here */}
+
             </div>
-
-            <div className="dashboard-section sales-snapshot">
-                 <h3 className="section-title">Sales Snapshot (Last 7 Days)</h3>
-                 <div className="sales-chart-placeholder">
-                    [Sales Chart Placeholder]
-                 </div>
-                  <div className="section-footer-link">
-                    <a href="#" className="view-all-link" onClick={(e) => {e.preventDefault(); handleViewFullSales();}}>
-                        View Full Sales Report {">"}
-                    </a>
-                 </div>
-            </div>
-
-             {/* Add other dashboard sections here */}
-
         </div>
     );
 }

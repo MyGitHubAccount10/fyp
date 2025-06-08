@@ -1,6 +1,11 @@
 import React from 'react';
 import AdminHeader from '../AdminHeader';
+import { useNavigate } from 'react-router-dom';
 // AdminStyles.css is imported in AdminLayout.js and/or App.js, so no need to import here
+
+
+
+
 
 // Placeholder Icons (reusing some from AdminSidebar/ManageProducts, adding new ones)
 const DashboardIcon = () => <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 3H20C20.5304 3 21.0391 3.21071 21.4142 3.58579C21.7893 3.96086 22 4.46957 22 5V19C22 19.5304 21.7893 20.0391 21.4142 20.4142C21.0391 20.7893 20.5304 21 20 21H4C3.46957 21 2.96086 20.7893 2.58579 20.4142C2.21071 20.0391 2 19.5304 2 19V5C2 4.46957 2.21071 3.96086 2.58579 3.58579C2.96086 3.21071 3.46957 3 4 3H10ZM10 3V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
@@ -52,6 +57,7 @@ const HomeIcon = ({ color = "currentColor", size = 18 }) => (
 const PencilIcon = ({ size = 18, color = "currentColor" }) => (
     <svg viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
         <path d="M17 3C17.2626 2.7374 17.5893 2.52942 17.9573 2.38285C18.3253 2.23629 18.7259 2.15325 19.1365 2.13815C19.5471 2.12304 19.9576 2.17623 20.3485 2.29581C20.7394 2.41539 21.1013 2.59878 21.4142 2.91168C21.7271 3.22458 21.9795 3.5865 22.0991 3.97744C22.2187 4.36838 22.2719 4.77888 22.2568 5.18947C22.2418 5.60006 22.1587 6.00066 22.0121 6.36867C21.8656 6.73668 21.6576 7.0634 21.395 7.326L10.35 18.36L2 22L5.64 13.65L17 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M16 5L19 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 );
 
@@ -72,6 +78,7 @@ const recentOrders = [
 ];
 
 function AdminDashboard() {
+    const navigate = useNavigate();
     // In a real application, you would fetch data here using useEffect
 
     // Function to get status class (reusing or similar to ManageProductsPage)
@@ -85,11 +92,12 @@ function AdminDashboard() {
     };
 
      // Simple handlers for quick action buttons (replace with actual routing/logic)
-     const handleAddProduct = () => { console.log("Navigate to Add New Product"); /* navigate('/admin/products/new') */ };
-     const handleViewOrders = () => { console.log("Navigate to All Orders"); /* navigate('/admin/orders') */ };
-     const handleManageInventory = () => { console.log("Navigate to Manage Inventory"); /* navigate('/admin/inventory') */ };
-     const handleReviewDesigns = () => { console.log("Navigate to Review Custom Designs"); /* navigate('/admin/custom-designs') */ };
-     const handleViewFullSales = () => { console.log("Navigate to Full Sales Report"); /* navigate('/admin/sales-reports') */ };
+     const handleAddProduct = () => { navigate('/add-product'); };
+     const handleViewOrders = () => { navigate('/all-orders'); };
+     const handleManageInventory = () => { navigate('/admin/inventory'); };
+     const handleReviewDesigns = () => { navigate('/admin/custom-designs'); };
+     const handleViewFullSales = () => { navigate('/admin/sales-reports'); };
+
 
 
     return (
@@ -141,16 +149,16 @@ function AdminDashboard() {
                     <h3 className="section-title">Quick Actions</h3>
                     <div className="quick-action-buttons">
                         <button className="btn-quick-action btn-add-product" onClick={handleAddProduct}>
-                            <PlusCircleIcon color="white" /> Add New Product
+                            <PlusCircleIcon color="#FA704C" /> Add New Product
                         </button>
                         <button className="btn-quick-action btn-view-orders" onClick={handleViewOrders}>
-                            <EyeIcon color="white" /> View All Orders
+                            <EyeIcon color="#FA704C" /> View All Orders
                         </button>
                         <button className="btn-quick-action btn-manage-inventory" onClick={handleManageInventory}>
-                            <HomeIcon color="white" /> Manage Inventory
+                            <HomeIcon color="#FA704C" /> Manage Products
                         </button>
                         <button className="btn-quick-action btn-review-designs" onClick={handleReviewDesigns}>
-                            <PencilIcon color="white" /> Review Custom Designs
+                            <PencilIcon color="#FA704C" /> Review Custom Designs
                         </button>
                     </div>
                 </div>

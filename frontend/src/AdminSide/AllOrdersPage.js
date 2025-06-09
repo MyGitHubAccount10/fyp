@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import AdminHeader from '../AdminHeader'; 
 import './AdminStyles.css'; 
+import { useNavigate } from 'react-router-dom';
 
 // Placeholder Icons
 const CalendarIcon = ({ color = "currentColor", size = 18 }) => (
@@ -95,19 +96,23 @@ function AllOrdersPage() {
             default: return '';
         }
     };
+    const navigate = useNavigate();
+
+
 
     // Handler for 'View Details' link (placeholder)
     const handleViewDetails = (orderId) => {
         console.log("Viewing details for order:", orderId);
         // In a real app, navigate to a specific order details page
         // navigate(`/admin/orders/${orderId}`);
+        navigate(`/order-details`);
     };
 
     return (<>
               <AdminHeader />
-        <div className="all-orders-page"> {/* Page-specific class */}
+        <div className="all-orders-page" style={{ paddingLeft: "100px",paddingRight:"100px" }}> {/* Page-specific class */}
             {/* Page Title will come from AdminLayout */}
-             {/* <h2 className="page-title">All Orders</h2> */}
+            <h2 className="page-title">All Orders</h2>
 
             {/* Filter Bar */}
             <div className="filter-bar">
@@ -159,6 +164,12 @@ function AllOrdersPage() {
                     Apply Filters
                 </button>
             </div>
+                        {/* Pagination Controls */}
+            <div className="pagination-controls" style={{ padding: "10px 0" }}> {/* Reusing pagination-controls style */}
+                <span style={{ marginRight: "10px" }}>Page {currentPage} of {totalPages}</span>
+                <button onClick={handlePrevPage} disabled={currentPage === 1}>{'<< Prev'}</button>
+                <button onClick={handleNextPage} disabled={currentPage === totalPages}>{'Next >>'}</button>
+            </div>
 
             {/* Orders Table */}
             <div className="orders-table-container">
@@ -197,15 +208,7 @@ function AllOrdersPage() {
                     </tbody>
                 </table>
             </div>
-
-            {/* Pagination Controls */}
-            <div className="pagination-controls"> {/* Reusing pagination-controls style */}
-                <span>Page {currentPage} of {totalPages}</span>
-                <button onClick={handlePrevPage} disabled={currentPage === 1}>{'<< Prev'}</button>
-                <button onClick={handleNextPage} disabled={currentPage === totalPages}>{'Next >>'}</button>
-            </div>
-
-        </div> // End Page Container
+        </div>
     </>);
 }
 

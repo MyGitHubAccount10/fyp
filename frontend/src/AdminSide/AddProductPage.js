@@ -1,7 +1,10 @@
+//hold
+
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 // AdminStyles.css is imported in AdminLayout.js and/or App.js, so no need to import here
 // import './AdminStyles.css';
-
+import AdminHeader from '../AdminHeader'; 
 // Placeholder Icons (reusing from AdminHeader/ManageProducts)
 const BackIcon = ({ color = "currentColor" }) => <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 19L5 12L12 5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 const PencilIcon = ({ size = 18, color = "currentColor" }) => (
@@ -12,6 +15,8 @@ const PencilIcon = ({ size = 18, color = "currentColor" }) => (
 
 
 function AddProductPage() {
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -66,9 +71,7 @@ function AddProductPage() {
 
      const handleBackToList = () => {
          console.log("Navigating back to product list");
-         // In a real app, use react-router-dom's navigate function
-         // navigate('/admin/products');
-         window.history.back(); // Simple browser back for demo
+         navigate('/admin/products');
      };
 
     const handleCancel = () => {
@@ -80,9 +83,9 @@ function AddProductPage() {
 
     return (
         <div className="add-product-page"> {/* Page-specific class */}
-
+            <AdminHeader />
             {/* Page Header Section (reusing from ManageProductsPage structure) */}
-            <div className="page-header-section">
+            <div className="page-header-section">  
                  {/* Note: The main page title "Create a New Product" will likely come from AdminLayout's pageTitle prop */}
                  {/* We only need the "Back" button here as shown in the screenshot */}
                  <div style={{flexGrow: 1}}></div> {/* Spacer to push button to right */}

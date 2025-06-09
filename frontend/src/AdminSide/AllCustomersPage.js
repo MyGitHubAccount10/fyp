@@ -35,7 +35,7 @@ const customers = [
 export default function AllCustomersPage() {
   return (<>
           <AdminHeader />
-    <div style={{ padding: '20px', backgroundColor: '#ffeede', minHeight: '100vh' }}>
+    <div style={{ paddingLeft: '100px', paddingRight: '100px', backgroundColor: '#ffeede', minHeight: '100vh' }}>
 
       <h1 style={{ fontWeight: 'bold' }}>All Customers</h1>
 

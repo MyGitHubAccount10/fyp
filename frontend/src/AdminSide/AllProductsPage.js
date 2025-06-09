@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-// No need to import AdminStyles here, it's imported in AdminLayout
-import './AdminStyles.css';
+// No need to import AdminStyles here, it's imported in AdminLayout 
 import AdminHeader from '../AdminHeader'; // Assuming you have an AdminHeader component
 
 // Placeholder Icons
@@ -146,9 +145,9 @@ function ManageProductsPage() {
 
     return (<>
           <AdminHeader />
-        <div className="manage-products-page"> {/* Add a class for page-specific styling */}
+        <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
             <div className="page-header-section">
-                <h2 className="page-title">Create a New Product</h2> {/* Title from the image */}
+                <h2 className="page-title">All Products</h2> {/* Title from the image */}
                 <button onClick={handleAddProduct} className="btn-add-new">
                     <PencilIcon size={18} color="white" />
                     Add New Product

@@ -1,33 +1,23 @@
 const express = require('express');
-const Category = require('../models/CategoryModel');
+
+const {
+    getCategories,
+    getCategory,
+    createCategory,
+    deleteCategory,
+    updateCategory
+} = require('../controllers/CategoryController');
+
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.json({message: 'GET all categories'});
-});
+router.get('/', getCategories);
 
-router.get('/:id', (req, res) => {
-    res.json({message: 'GET a single category'});
-});
+router.get('/:id', getCategory);
 
-router.post('/', async (req, res) => {
-   const {category_name} = req.body;
+router.post('/', createCategory);
 
-   try {
-    const category = await Category.create({category_name});
-    res.status(200).json(category);
-   }
-   catch (error) {
-    res.status(400).json({error: error.message});
-   }
-});
+router.delete('/:id', deleteCategory);
 
-router.delete('/:id', (req, res) => {
-    res.json({message: 'DELETE a category'});
-});
-
-router.patch('/:id', (req, res) => {
-    res.json({message: 'UPDATE a category'});
-});
+router.patch('/:id', updateCategory);
 
 module.exports = router;

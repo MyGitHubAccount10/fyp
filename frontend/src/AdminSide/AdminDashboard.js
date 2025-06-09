@@ -10,10 +10,23 @@ import { useNavigate } from 'react-router-dom';
 // Placeholder Icons (reusing some from AdminSidebar/ManageProducts, adding new ones)
 const DashboardIcon = () => <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 3H20C20.5304 3 21.0391 3.21071 21.4142 3.58579C21.7893 3.96086 22 4.46957 22 5V19C22 19.5304 21.7893 20.0391 21.4142 20.4142C21.0391 20.7893 20.5304 21 20 21H4C3.46957 21 2.96086 20.7893 2.58579 20.4142C2.21071 20.0391 2 19.5304 2 19V5C2 4.46957 2.21071 3.96086 2.58579 3.58579C2.96086 3.21071 3.46957 3 4 3H10ZM10 3V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 const MoneyIcon = ({ color = "currentColor", size = 24 }) => (
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
-        <path d="M12 1V23M17 5H9.5C8.70435 5 7.94759 5.31607 7.39194 5.87172C6.83629 6.42738 6.52022 7.18413 6.52022 7.97985C6.52022 8.77557 6.83629 9.53232 7.39194 10.0879C7.94759 10.6436 8.70435 10.9597 9.5 10.9597H14.5C15.2956 10.9597 16.0524 11.2758 16.6081 11.8315C17.1637 12.3871 17.4798 13.1439 17.4798 13.9396C17.4798 14.7353 17.1637 15.4921 16.6081 16.0477C16.0524 16.6034 15.2956 16.9195 14.5 16.9195H7" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
+  <svg
+    viewBox="0 0 24 24"
+    width={size}
+    height={size}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M12 1V23M17 5H9.5C8.7 5 7.95 5.32 7.39 5.87C6.84 6.43 6.52 7.18 6.52 7.98C6.52 8.78 6.84 9.53 7.39 10.09C7.95 10.64 8.7 10.96 9.5 10.96H14.5C15.3 10.96 16.05 11.28 16.61 11.83C17.16 12.39 17.48 13.14 17.48 13.94C17.48 14.74 17.16 15.49 16.61 16.05C16.05 16.6 15.3 16.92 14.5 16.92H7"
+      stroke={color}
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
 );
+
 const NewStarIcon = ({ color = "currentColor", size = 24 }) => (
     <svg viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
          {/* Simple star/burst shape */}
@@ -157,9 +170,14 @@ function AdminDashboard() {
                         <button className="btn-quick-action btn-manage-inventory" onClick={handleManageInventory}>
                             <HomeIcon color="#FA704C" /> Manage Products
                         </button>
-                        <button className="btn-quick-action btn-review-designs" onClick={handleReviewDesigns}>
+                        {/* <button className="btn-quick-action btn-review-designs" onClick={handleReviewDesigns}>
                             <PencilIcon color="#FA704C" /> Review Custom Designs
-                        </button>
+                        </button> */}
+                        {/* <button className="btn-quick-action btn-view-sales" onClick={handleViewFullSales}>
+                            <MoneyIcon  size={32} /> View Full Sales Report
+                        </button> */}
+
+                        
                     </div>
                 </div>
 

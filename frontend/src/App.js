@@ -19,14 +19,15 @@ import PlaceOrderPage from './PlaceOrderPage';
 import OrderHistoryPage from './OrderHistoryPage';
 
 import AdminDashboard from './AdminSide/AdminDashboard';
-import ManageProductsPage from './AdminSide/ManageProductsPage';
+import AllProductsPage from './AdminSide/AllProductsPage';
 import AddProductPage from './AdminSide/AddProductPage';
 import AllOrdersPage from './AdminSide/AllOrdersPage';
 import OrderDetailsPage from './AdminSide/OrderDetailsPage';
 import CustomerDetailsPage from './AdminSide/CustomerDetailsPage';
 import AdminSettingsPage from './AdminSide/AdminSettingsPage';
 import AllCustomersPage from './AdminSide/AllCustomersPage';
-
+import AdminProfilePage from './AdminSide/AdminProfilePage';
+ //
 
 
 import './index.css';
@@ -61,19 +62,19 @@ function App() {
 
         {/* Admin Routes */}
         <Route path="admin-dashboard" element={<AdminDashboard />} />
-        <Route path="manage-products" element={<ManageProductsPage />} />
+        <Route path="manage-products" element={<AllProductsPage />} />
         <Route path="add-product" element={<AddProductPage />} />
         <Route path="all-orders" element={<AllOrdersPage />} />
         <Route path="order-details" element={<OrderDetailsPage />} />
         <Route path="customer-details" element={<CustomerDetailsPage />} />
         <Route path="admin-settings" element={<AdminSettingsPage />} />
         <Route path="all-customers" element={<AllCustomersPage />} />
+        <Route path="admin-profile" element={<AdminProfilePage />} />
        
-
 
       </Routes>
     </>
-    
+
   );
 }
 

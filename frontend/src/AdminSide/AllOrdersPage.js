@@ -164,12 +164,40 @@ function AllOrdersPage() {
                     Apply Filters
                 </button>
             </div>
-                        {/* Pagination Controls */}
-            <div className="pagination-controls" style={{ padding: "10px 0" }}> {/* Reusing pagination-controls style */}
-                <span style={{ marginRight: "10px" }}>Page {currentPage} of {totalPages}</span>
-                <button onClick={handlePrevPage} disabled={currentPage === 1}>{'<< Prev'}</button>
-                <button onClick={handleNextPage} disabled={currentPage === totalPages}>{'Next >>'}</button>
-            </div>
+{/* Pagination Controls */}
+<div
+  className="pagination-controls"
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "16px 0",
+    flexWrap: "wrap",
+    gap: "12px",
+  }}
+>
+  <span style={{ fontSize: "16px" }}>
+    Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+  </span>
+  <div style={{ display: "flex", gap: "10px" }}>
+    <button
+      onClick={handlePrevPage}
+      disabled={currentPage === 1}
+      className="pagination-button"
+    >
+      {'<< Prev'}
+    </button>
+    <button
+      onClick={handleNextPage}
+      disabled={currentPage === totalPages}
+      className="pagination-button"
+    >
+      {'Next >>'}
+    </button>
+  </div>
+</div>
+
+
 
             {/* Orders Table */}
             <div className="orders-table-container">

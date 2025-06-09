@@ -37,7 +37,7 @@ export default function AllCustomersPage() {
           <AdminHeader />
     <div style={{ paddingLeft: '100px', paddingRight: '100px', backgroundColor: '#ffeede', minHeight: '100vh' }}>
 
-      <h1 style={{ fontWeight: 'bold' }}>All Customers</h1>
+      <h2>All Customers</h2>
 
       <div style={{ display: 'flex', margin: '20px 0' }}>
         <input

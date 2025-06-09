@@ -147,7 +147,7 @@ function ManageProductsPage() {
           <AdminHeader />
         <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
             <div className="page-header-section">
-                <h2 className="page-title">All Products</h2> {/* Title from the image */}
+                <h2>All Products</h2> {/* Title from the image */}
                 <button onClick={handleAddProduct} className="btn-add-new">
                     <PencilIcon size={18} color="white" />
                     Add New Product

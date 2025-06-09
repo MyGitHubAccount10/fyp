@@ -27,6 +27,8 @@ import CustomerDetailsPage from './AdminSide/CustomerDetailsPage';
 import AdminSettingsPage from './AdminSide/AdminSettingsPage';
 import AllCustomersPage from './AdminSide/AllCustomersPage';
 import AdminProfilePage from './AdminSide/AdminProfilePage';
+import AdminProductDetailPage from './AdminSide/AdminProductDetailPage';
+import PageNotFound from './PageNotFound';
  //
 
 
@@ -70,7 +72,10 @@ function App() {
         <Route path="admin-settings" element={<AdminSettingsPage />} />
         <Route path="all-customers" element={<AllCustomersPage />} />
         <Route path="admin-profile" element={<AdminProfilePage />} />
-       
+        <Route path="admin-product-detail" element={<AdminProductDetailPage />} />
+
+        {/* Catch-all route for 404 Not Found */}
+        <Route path="*" element={<PageNotFound />} />
 
       </Routes>
     </>

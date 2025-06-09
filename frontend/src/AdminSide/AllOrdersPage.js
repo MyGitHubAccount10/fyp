@@ -96,7 +96,7 @@ function AllOrdersPage() {
             default: return '';
         }
     };
-    const navigate = useNavigate();
+    const Navigate = useNavigate();
 
 
 
@@ -105,7 +105,7 @@ function AllOrdersPage() {
         console.log("Viewing details for order:", orderId);
         // In a real app, navigate to a specific order details page
         // navigate(`/admin/orders/${orderId}`);
-        navigate(`/order-details`);
+        Navigate(`/order-details`);
     };
 
     return (<>

@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
-// No need to import AdminStyles here, it's imported in AdminLayout 
-import AdminHeader from '../AdminHeader'; // Assuming you have an AdminHeader component
+import React, { useState, useEffect } from 'react';
+import AdminHeader from '../AdminHeader';
+import { useNavigate } from 'react-router-dom';
+
+import './AdminStyles.css'; // Importing styles directly for this component
+
+
+
 
 // Placeholder Icons
 const PencilIcon = ({ size = 18, color = "currentColor" }) => (
@@ -24,20 +29,20 @@ const CloseIcon = ({ size = 24, color = "currentColor" }) => (
 
 // Dummy product data
 const dummyProducts = [
-    { id: 1, image: '/images/placeholder-product.jpg', name: 'Pro Model Skimboard Large', sku: 'SKIM-PRO-LG-001', category: 'Skimboards', price: 350.00, stock: 25, status: 'Published' },
-    { id: 2, image: '/images/placeholder-product.jpg', name: 'Skimboard Traction Wax', sku: 'ACC-WAX-001', category: 'Accessories', price: 15.00, stock: 150, status: 'Published' },
-    { id: 3, image: '/images/placeholder-product.jpg', name: '[Placeholder]', sku: 'PLACE-001', category: 'Skimboards', price: 100.00, stock: 78, status: 'Draft' },
+    { id: 1, image: '/images/placeholder-product.jpg', name: 'Pro Model Skimboard Large',  category: 'Skimboards', price: 350.00, stock: 25, status: 'In Stock' },
+    { id: 2, image: '/images/placeholder-product.jpg', name: 'Skimboard Traction Wax',  category: 'Accessories', price: 15.00, stock: 150, status: 'In Stock' },
+    { id: 3, image: '/images/placeholder-product.jpg', name: 'White T-Shirt', category: 'T-Shirt', price: 100.00, stock: 78, status: 'In Stock' },
     // Add more dummy products if needed
 ];
 
-function ManageProductsPage() {
+function AllProductsPage() {
     const [products, setProducts] = useState(dummyProducts);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All Categories');
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(10); // Fixed number of products per page
     const [isSettingsSidebarVisible, setIsSettingsSidebarVisible] = useState(false);
-    const [editingProduct, setEditingProduct] = useState(null); // Product currently being edited in sidebar
+    const Navigate = useNavigate();
 
     // Pagination Logic
     const indexOfLastProduct = currentPage * productsPerPage;
@@ -60,8 +65,7 @@ function ManageProductsPage() {
     // Action Handlers
     const handleEditProduct = (product) => {
         console.log("Editing product:", product);
-        setEditingProduct(product);
-        setIsSettingsSidebarVisible(true);
+        Navigate('/admin-product-detail');
     };
 
     const handleDeleteProduct = (productId) => {
@@ -70,78 +74,40 @@ function ManageProductsPage() {
         if (window.confirm(`Are you sure you want to delete product ID ${productId}?`)) {
              setProducts(products.filter(p => p.id !== productId));
              console.log("Product deleted (demo).");
-             // Close sidebar if the deleted product is the one being edited
-             if(editingProduct && editingProduct.id === productId) {
-                 setIsSettingsSidebarVisible(false);
-                 setEditingProduct(null);
-             }
         }
     };
 
     const handleAddProduct = () => {
         console.log("Adding new product");
         // In a real app, open the sidebar/modal for a new product form
-        setEditingProduct({ /* Structure for a new product */ id: null, image: '', name: '', sku: '', category: '', price: 0, stock: 0, status: 'Draft' });
-        setIsSettingsSidebarVisible(true);
+        Navigate('/add-product');
     }
 
-    // Settings Sidebar Handlers
-    const handleSettingsChange = (e) => {
-        const { name, value } = e.target;
-        setEditingProduct(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSaveSettings = (e) => {
-        e.preventDefault();
-        console.log("Saving product settings:", editingProduct);
-        // In a real app, make an API call to update/create the product
-        if (editingProduct.id === null) {
-            // Logic to add new product
-             console.log("Creating new product (demo)");
-             const newProduct = { ...editingProduct, id: products.length + 1, image: editingProduct.image || '/images/placeholder-product.jpg' }; // Assign temp ID and default image
-             setProducts([...products, newProduct]);
-        } else {
-            // Logic to update existing product
-            console.log("Updating existing product (demo)");
-            setProducts(products.map(p => p.id === editingProduct.id ? editingProduct : p));
-        }
-
-        alert('Product saved (demo).');
-        setIsSettingsSidebarVisible(false);
-        setEditingProduct(null);
-    };
-
-    const handleCancelSettings = () => {
-        console.log("Cancelling settings edit.");
-        setIsSettingsSidebarVisible(false);
-        setEditingProduct(null); // Discard changes
-    };
-
     // Filter/Search Logic (basic client-side demo)
-    const handleFilter = () => {
-        console.log("Filtering with:", { searchTerm, selectedCategory });
-        // In a real app, this would likely trigger an API call with search/filter parameters
-        let filtered = dummyProducts; // Start with full list for client-side filter
+const handleFilter = () => {
+    console.log("Filtering with:", { searchTerm, selectedCategory });
+    let filtered = dummyProducts;
 
-        if (searchTerm) {
-            filtered = filtered.filter(product =>
-                product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                product.sku.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        }
+    if (searchTerm) {
+        filtered = filtered.filter(product =>
+            product.name.toLowerCase().includes(searchTerm.toLowerCase())
+            // Remove SKU check unless all products have SKU
+        );
+    }
 
-        if (selectedCategory !== 'All Categories') {
-            filtered = filtered.filter(product => product.category === selectedCategory);
-        }
+    if (selectedCategory !== 'All Categories') {
+        filtered = filtered.filter(product => product.category === selectedCategory);
+    }
 
-        setProducts(filtered);
-        setCurrentPage(1); // Reset pagination on filter/search
-    };
+    setProducts(filtered);
+    setCurrentPage(1);
+};
+
 
      // Trigger filter when search term or category changes (optional auto-filter)
-    // useEffect(() => {
-    //      handleFilter();
-    // }, [searchTerm, selectedCategory]); // Add dummyProducts to dependency array if it can change
+    useEffect(() => {
+         handleFilter();
+    }, [searchTerm, selectedCategory]); // Add dummyProducts to dependency array if it can change
 
     return (<>
           <AdminHeader />
@@ -154,124 +120,124 @@ function ManageProductsPage() {
                 </button>
             </div>
 
-            <div className="search-filter-bar">
+                {/* Filter row */}
+            <div style={{backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)', marginBottom: '20px',
+                    display: 'flex',
+                    gap: '16px',
+                    alignItems: 'center',
+                    flexWrap: 'wrap'
+                }}
+            >
                 <input
                     type="text"
-                    placeholder="Search products"
+                    placeholder="Search by name, SKU, category or status..."
                     className="search-input"
+                    style={{
+                        flex: '1 1 300px',
+                        padding: '10px',
+                        borderRadius: '6px',
+                        border: '1px solid #ccc'
+                    }}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 <select
                     className="category-select"
+                    style={{
+                        padding: '10px',
+                        borderRadius: '6px',
+                        border: '1px solid #ccc'
+                    }}
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
                 >
                     <option value="All Categories">All Categories</option>
                     <option value="Skimboards">Skimboards</option>
                     <option value="Accessories">Accessories</option>
-                    {/* Add other categories dynamically in a real app */}
                 </select>
-                {/* You can add an onClick to this button if you don't auto-filter */}
-                <button onClick={handleFilter} className="btn-filter">Filter</button>
             </div>
 
-            <div className="product-table-container">
-                <table className="product-table">
+                {/* Pagination Controls */}
+            <div
+            className="pagination-controls"
+            style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: "16px 0",
+                flexWrap: "wrap",
+                gap: "12px",
+            }}
+            >
+            <span style={{ fontSize: "16px" }}>
+                Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+            </span>
+            <div style={{ display: "flex", gap: "10px" }}>
+                <button
+                onClick={handlePrevPage}
+                disabled={currentPage === 1}
+                className="pagination-button"
+                >
+                {'<< Prev'}
+                </button>
+                <button
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className="pagination-button"
+                >
+                {'Next >>'}
+                </button>
+            </div>
+            </div>
+
+                {/* Orders Table */}
+            <div className="orders-table-container">
+                <table className="orders-table">
                     <thead>
                         <tr>
                             <th>Image</th>
                             <th>Name</th>
-                            <th>SKU</th>
                             <th>Category</th>
                             <th>Price</th>
                             <th>Stock</th>
                             <th>Status</th>
-                            <th>Action</th>
+                            <th className="action-column">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {currentProducts.map(product => (
-                            <tr key={product.id}>
-                                <td><img src={product.image} alt={product.name} className="product-image" /></td>
-                                <td className="product-name">{product.name}</td>
-                                <td>{product.sku}</td>
-                                <td>{product.category}</td>
-                                <td>${product.price.toFixed(2)}</td> {/* Format price */}
-                                <td>{product.stock}</td>
-                                <td className={`status-cell status-${product.status.toLowerCase()}`}>{product.status}</td>
-                                <td>
-                                    <div className="action-icons">
-                                        <button onClick={() => handleEditProduct(product)} title="Edit Product"><PencilIcon /></button>
-                                        <button onClick={() => handleDeleteProduct(product.id)} title="Delete Product" className="delete-btn"><TrashIcon /></button>
-                                    </div>
-                                </td>
+                        {currentProducts.length > 0 ? (
+                             currentProducts.map(product => (
+                                <tr key={product.id}>
+                                    <td><img src={product.image} alt={product.name} className="product-image" /></td>
+                                    <td>{product.name}</td>
+                                    <td>{product.category}</td>
+                                    <td>${product.price.toFixed(2)}</td>
+                                    <td>{product.stock}</td>
+                                    <td>
+                                        <span className={`status-badge ${product.status.toLowerCase()}`}>
+                                            {product.status}
+                                        </span>
+                                    </td>
+                                    <td className="action-column">
+                                        <div className="action-icons">
+                                            <button onClick={() => handleEditProduct(product)} title="Edit Product"><PencilIcon /></button>
+                                            <button onClick={() => handleDeleteProduct(product.id)} title="Delete Product" className="delete-btn"><TrashIcon /></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>No orders found.</td>
                             </tr>
-                        ))}
-                         {/* Placeholder row if products list is short */}
-                         {currentProducts.length < 3 && Array.from({ length: 3 - currentProducts.length }).map((_, i) => (
-                            <tr key={`placeholder-${i}`}>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
-                            </tr>
-                         ))}
+                        )}
                     </tbody>
                 </table>
-            </div>
-
-            <div className="pagination-controls">
-                <span>Page {currentPage} of {totalPages}</span>
-                <button onClick={handlePrevPage} disabled={currentPage === 1}>&lt;&lt; Prev</button>
-                <button onClick={handleNextPage} disabled={currentPage === totalPages}>Next &gt;&gt;</button>
-            </div>
-
-            {/* Right Product Settings Sidebar */}
-            <div className={`product-settings-sidebar ${isSettingsSidebarVisible ? 'visible' : ''}`}>
-                <div className="sidebar-header">
-                    <h3 className="sidebar-title">Product Settings</h3>
-                    <button onClick={handleCancelSettings} className="close-btn" aria-label="Close settings">
-                        <CloseIcon />
-                    </button>
-                </div>
-                {editingProduct && ( // Only show form if a product is being edited
-                    <form onSubmit={handleSaveSettings}>
-                         {/* Add other fields like Name, SKU, Price, Stock, Category if needed */}
-                        <div className="form-group">
-                            <label htmlFor="visibility">Visibility</label>
-                            <select id="visibility" name="status" value={editingProduct.status} onChange={handleSettingsChange}>
-                                <option value="Draft">Draft</option>
-                                <option value="Published">Published</option>
-                                {/* Add other statuses */}
-                            </select>
-                        </div>
-                         {/* The image shows a second visibility dropdown, possibly a placeholder or error. Replicating the first one for layout */}
-                         <div className="form-group">
-                            <label htmlFor="visibility2">Visibility</label>
-                            <select id="visibility2" name="status2" value={editingProduct.status} onChange={handleSettingsChange}> {/* Reusing status for demo */}
-                                <option value="Draft">Draft</option>
-                                <option value="Published">Published</option>
-                            </select>
-                        </div>
-
-
-                        <div className="form-actions">
-                            <button type="button" onClick={handleCancelSettings} className="btn-cancel">Cancel</button>
-                            <button type="submit" className="btn-save">
-                                <PencilIcon size={18} color="white" />
-                                Save Product
-                            </button>
-                        </div>
-                    </form>
-                )}
             </div>
         </div>
     </>);
 }
 
-export default ManageProductsPage;
+export default AllProductsPage;
+
+

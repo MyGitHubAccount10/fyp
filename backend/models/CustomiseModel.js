@@ -41,10 +41,6 @@ const customiseSchema = new Schema({
       );
     }
   },
-  customise_status: {
-    type: String,
-    required: true
-  },
   customise_date: {
     type: Date,
     required: true

@@ -35,7 +35,6 @@ const createCustomise = async (req, res) => {
         top_color,
         bottom_color,
         customise_price,
-        customise_status,
         customise_date
     } = req.body;
     
@@ -49,7 +48,6 @@ const createCustomise = async (req, res) => {
             top_color,
             bottom_color,
             customise_price,
-            customise_status,
             customise_date
         });
         res.status(200).json(customise);

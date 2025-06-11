@@ -32,8 +32,9 @@ const createProduct = async (req, res) => {
         description,
         product_price,
         warehouse_quantity,
-        product_image
     } = req.body;
+    
+    const product_image = req.file ? req.file.filename : null;
     
     try {
         const product = await Product.create({
@@ -75,15 +76,24 @@ const updateProduct = async (req, res) => {
         return res.status(404).json({error: 'Invalid product ID'});
     }
 
-    const product = await Product.findOneAndUpdate({_id: id}, {
-        ...req.body
-    });
+    try {
+        const updateProduct = {...req.body};
+        if (req.file) {
+            updateProduct.product_image = req.file.filename;
+        }
+        const product = await Product.findOneAndUpdate({_id: id}, {
+            ...updateProduct
+        });
 
     if (!product) {
         return res.status(404).json({error: 'Product not found'});
     }
 
     res.status(200).json(product);
+    }
+    catch (error) {
+        res.status(400).json({error: error.message});
+    }
 }
 
 module.exports = {

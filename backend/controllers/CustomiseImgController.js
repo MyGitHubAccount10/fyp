@@ -28,7 +28,6 @@ const getCustomiseImg = async (req, res) => {
 const createCustomiseImg = async (req, res) => {
     const {
         customise,
-        customise_img,
         x_position,
         y_position,
         width,
@@ -36,7 +35,9 @@ const createCustomiseImg = async (req, res) => {
         rotation,
         layer_order
     } = req.body;
-    
+
+    const customise_img = req.file ? req.file.filename : null;
+
     try {
         const customiseImage = await CustomiseImg.create({
             customise,
@@ -79,15 +80,24 @@ const updateCustomiseImg = async (req, res) => {
         return res.status(404).json({error: 'Invalid customised image ID'});
     }
 
-    const customiseImg = await CustomiseImg.findOneAndUpdate({_id: id}, {
-        ...req.body
-    });
+    try {
+        const updateCustomiseImg = {...req.body};
+        if (req.file) {
+            updateCustomiseImg.customise_img = req.file.filename;
+        }
+        const customiseImg = await CustomiseImg.findOneAndUpdate({_id: id}, {
+            ...updateCustomiseImg
+        });
 
-    if (!customiseImg) {
-        return res.status(404).json({error: 'Customised image not found'});
+        if (!customiseImg) {
+            return res.status(404).json({error: 'Customised image not found'});
+        }
+
+        res.status(200).json(customiseImg);
+    } 
+    catch (error) {
+        res.status(400).json({error: error.message});
     }
-
-    res.status(200).json(customiseImg);
 }
 
 module.exports = {

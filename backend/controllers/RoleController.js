@@ -21,7 +21,7 @@ const getRole = async (req, res) => {
     if (!role) {
         return res.status(404).json({error: 'Role not found'});
     }
-    res.status(200).json(product);
+    res.status(200).json(role);
 }
 
 // Create a new role

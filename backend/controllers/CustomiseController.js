@@ -35,7 +35,6 @@ const createCustomise = async (req, res) => {
         top_color,
         bottom_color,
         customise_price,
-        customise_date
     } = req.body;
     
     try {
@@ -47,8 +46,7 @@ const createCustomise = async (req, res) => {
             material,
             top_color,
             bottom_color,
-            customise_price,
-            customise_date
+            customise_price
         });
         res.status(200).json(customise);
     } 

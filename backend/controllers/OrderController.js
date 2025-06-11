@@ -31,7 +31,6 @@ const createOrder = async (req, res) => {
         status,
         payment_method,
         shipping_address,
-        order_date
     } = req.body;
     
     try {
@@ -39,8 +38,7 @@ const createOrder = async (req, res) => {
             user,
             status,
             payment_method,
-            shipping_address,
-            order_date
+            shipping_address
         });
         res.status(200).json(order);
     }

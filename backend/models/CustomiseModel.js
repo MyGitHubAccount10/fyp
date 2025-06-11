@@ -41,10 +41,6 @@ const customiseSchema = new Schema({
       );
     }
   },
-  customise_date: {
-    type: Date,
-    required: true
-  }
 }, { timestamps: true })
 
 module.exports = mongoose.model('Customise', customiseSchema)

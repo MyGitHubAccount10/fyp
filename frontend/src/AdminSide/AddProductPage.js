@@ -2,9 +2,10 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// AdminStyles.css is imported in AdminLayout.js and/or App.js, so no need to import here
-// import './AdminStyles.css';
+import './AdminStyles.css';
 import AdminHeader from '../AdminHeader'; 
+
+
 // Placeholder Icons (reusing from AdminHeader/ManageProducts)
 const BackIcon = ({ color = "currentColor" }) => <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 19L5 12L12 5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 const PencilIcon = ({ size = 18, color = "currentColor" }) => (
@@ -71,7 +72,7 @@ function AddProductPage() {
 
      const handleBackToList = () => {
          console.log("Navigating back to product list");
-         navigate('/admin/products');
+         navigate('/manage-products');
      };
 
     const handleCancel = () => {
@@ -84,13 +85,13 @@ function AddProductPage() {
     return (
         <div className="add-product-page"> {/* Page-specific class */}
             <AdminHeader />
+            <div style={{ paddingLeft: '100px', paddingRight: '100px' }}>
             {/* Page Header Section (reusing from ManageProductsPage structure) */}
-            <div className="page-header-section">  
-                 {/* Note: The main page title "Create a New Product" will likely come from AdminLayout's pageTitle prop */}
-                 {/* We only need the "Back" button here as shown in the screenshot */}
-                 <div style={{flexGrow: 1}}></div> {/* Spacer to push button to right */}
-                 <button onClick={handleBackToList} className="btn-back-to-products">
+            <div className='page-header-section'>
+                 <h2>Create a New Product</h2>{/* Spacer to push button to right */}
+                 <button className="btn-back-to-products" onClick={handleBackToList}>
                      <BackIcon color="#555" /> {/* Use a neutral color for the icon */}
+                     
                      Back to All Products
                  </button>
             </div>
@@ -103,6 +104,7 @@ function AddProductPage() {
                      {/* Card 1: Product Information */}
                     <div className="form-section-card">
                         <h3 className="section-card-title">Create a New Product</h3> {/* Title within this card, seems redundant with page title? Replicating screenshot. */}
+                        {/* Product Name Input field */}
                         <div className="form-group">
                             <label htmlFor="productName">Product Name</label>
                             <input
@@ -115,6 +117,7 @@ function AddProductPage() {
                                 required
                             />
                         </div>
+                        {/* Product Description Input field */}
                         <div className="form-group">
                             <label htmlFor="productDescription">Description</label>
                             <textarea
@@ -132,32 +135,8 @@ function AddProductPage() {
                      {/* Card 2: Product Data */}
                     <div className="form-section-card">
                         <h3 className="section-card-title">Product Data</h3>
-                        <div className="form-group">
-                            <label>Product Type</label>
-                            <div className="radio-group">
-                                <label className="radio-label">
-                                     <input
-                                        type="radio"
-                                        name="productType"
-                                        value="Select Category"
-                                        checked={formData.productType === 'Select Category'}
-                                        onChange={handleChange}
-                                    />
-                                    Select Category {/* This label text seems to correspond to the first radio button value based on image */}
-                                </label>
-                                <label className="radio-label">
-                                    <input
-                                        type="radio"
-                                        name="productType"
-                                        value="Customisable Skimboard"
-                                        checked={formData.productType === 'Customisable Skimboard'}
-                                        onChange={handleChange}
-                                    />
-                                    Customisable Skimboard
-                                </label>
-                                {/* Add other product types as needed */}
-                            </div>
-                        </div>
+
+                        {/* Price */}
                         <div className="form-group">
                             <label htmlFor="productPrice">Price</label>
                              <input
@@ -171,6 +150,7 @@ function AddProductPage() {
                                 required
                             />
                         </div>
+                        {/* Stock/Warehouse Quantity */}
                          <div className="form-group">
                             <label htmlFor="stockQuantity">Stock Quantity</label>
                              <input
@@ -184,6 +164,7 @@ function AddProductPage() {
                                 required
                             />
                         </div>
+                        {/* Low stock threshold */}
                         <div className="form-group">
                             <label htmlFor="lowStockThreshold">Low Stock Threshold</label>
                              <input
@@ -239,49 +220,9 @@ function AddProductPage() {
                  {/* Right Column: Settings Panel */}
                 <div className="add-product-sidebar-panel">
 
-                     {/* Card 4: Publish */}
+                     {/* Card 4: Category */}
                     <div className="form-section-card">
-                        <h3 className="section-card-title">Publish</h3>
-                         <div className="form-group">
-                            <label htmlFor="productStatus">Status</label>
-                            <select
-                                id="productStatus"
-                                name="status"
-                                value={formData.status}
-                                onChange={handleChange}
-                            >
-                                <option value="Draft">Draft</option>
-                                <option value="Published">Published</option>
-                                {/* Add other statuses */}
-                            </select>
-                        </div>
-                         <div className="form-group">
-                            <label htmlFor="productVisibility">Visibility</label>
-                            <select
-                                id="productVisibility"
-                                name="visibility"
-                                value={formData.visibility}
-                                onChange={handleChange}
-                            >
-                                <option value="Public">Public</option>
-                                <option value="Private">Private</option>
-                                {/* Add other visibility options */}
-                            </select>
-                        </div>
-
-                         {/* Save and Cancel Buttons */}
-                        <div className="form-actions-vertical"> {/* Use a vertical layout for buttons */}
-                            <button type="submit" className="btn-save-product">
-                                 <PencilIcon size={18} color="white" />
-                                 Save Product
-                            </button>
-                            <button type="button" onClick={handleCancel} className="btn-cancel-product">Cancel</button>
-                        </div>
-                    </div>
-
-                     {/* Card 5: Organisation */}
-                    <div className="form-section-card">
-                        <h3 className="section-card-title">Organisation</h3>
+                        <h3 className="section-card-title">Product Category</h3>
                          <div className="form-group">
                             <label htmlFor="productCategory">Category</label>
                             <select
@@ -293,17 +234,37 @@ function AddProductPage() {
                             >
                                 <option value="" disabled>Select Category</option> {/* Placeholder option */}
                                 <option value="Skimboards">Skimboards</option>
+                                <option value="T-Shirts">T-Shirts</option>
+                                <option value="Jackets">Jackets</option>
+                                <option value="Board Shorts">Board Shorts</option>
                                 <option value="Accessories">Accessories</option>
                                 {/* Add other categories dynamically */}
                             </select>
                         </div>
                     </div>
 
+
+                     {/* Card 5: Publish */}
+                    <div className="form-section-card">
+                        <h3 className="section-card-title">Upload Product</h3>
+                         {/* Save and Cancel Buttons */}
+                        <div className="form-actions-vertical"> {/* Use a vertical layout for buttons */}
+                            <button type="submit" className="btn-save-product">
+                                 <PencilIcon size={18} color="white" />
+                                 Save Product
+                            </button>
+                            <button type="button" onClick={handleCancel} className="btn-cancel-product">Cancel</button>
+                        </div>
+                    </div>
+
+
                 </div> {/* End Right Column */}
 
             </form> {/* End Form */}
 
         </div> // End Page Container
+
+        </div>
     );
 }
 

@@ -20,10 +20,6 @@ const orderSchema = new Schema({
     type: String,
     required: true
   },
-  order_date: {
-    type: Date,
-    required: true
-  }
 }, { timestamps: true })
 
 module.exports = mongoose.model('Order', orderSchema)

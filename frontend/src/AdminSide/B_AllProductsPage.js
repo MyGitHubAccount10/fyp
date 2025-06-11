@@ -66,7 +66,9 @@ function AllProductsPage() {
     // Action Handlers
     const handleEditProduct = (product) => {
         console.log("Editing product:", product);
-        Navigate('/admin-product-detail');
+        Navigate(`/edit-product`);
+        // Navigate(`/edit-product/${product.id}`);
+        
     };
 
     const handleDeleteProduct = (productId) => {

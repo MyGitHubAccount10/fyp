@@ -31,7 +31,7 @@ const CloseIcon = ({ size = 24, color = "currentColor" }) => (
 const dummyProducts = [
     { id: 1, image: '/images/placeholder-product.jpg', name: 'Pro Model Skimboard Large',  category: 'Skimboards', price: 350.00, stock: 25, status: 'In Stock' },
     { id: 2, image: '/images/placeholder-product.jpg', name: 'Skimboard Traction Wax',  category: 'Accessories', price: 15.00, stock: 150, status: 'In Stock' },
-    { id: 3, image: '/images/placeholder-product.jpg', name: 'White T-Shirt', category: 'T-Shirt', price: 100.00, stock: 78, status: 'In Stock' },
+    { id: 3, image: '/images/placeholder-product.jpg', name: 'White T-Shirt', category: 'T-Shirt', price: 100.00, stock: 0, status: 'Out of Stock' },
     // Add more dummy products if needed
 ];
 
@@ -39,6 +39,7 @@ function AllProductsPage() {
     const [products, setProducts] = useState(dummyProducts);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All Categories');
+    const [selectedStatus, setSelectedStatus] = useState('All Statuses');
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(10); // Fixed number of products per page
     const [isSettingsSidebarVisible, setIsSettingsSidebarVisible] = useState(false);
@@ -85,7 +86,7 @@ function AllProductsPage() {
 
     // Filter/Search Logic (basic client-side demo)
 const handleFilter = () => {
-    console.log("Filtering with:", { searchTerm, selectedCategory });
+    console.log("Filtering with:", { searchTerm, selectedCategory, selectedStatus });
     let filtered = dummyProducts;
 
     if (searchTerm) {
@@ -98,6 +99,9 @@ const handleFilter = () => {
     if (selectedCategory !== 'All Categories') {
         filtered = filtered.filter(product => product.category === selectedCategory);
     }
+    if (selectedStatus !== 'All Statuses') {
+        filtered = filtered.filter(product => product.status === selectedStatus);
+    }
 
     setProducts(filtered);
     setCurrentPage(1);
@@ -107,12 +111,12 @@ const handleFilter = () => {
      // Trigger filter when search term or category changes (optional auto-filter)
     useEffect(() => {
          handleFilter();
-    }, [searchTerm, selectedCategory]); // Add dummyProducts to dependency array if it can change
+    }, [searchTerm, selectedCategory, selectedStatus]); // Add dummyProducts to dependency array if it can change
 
     return (<>
           <AdminHeader />
         <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
-            <div className="page-header-section">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h2>All Products</h2> {/* Title from the image */}
                 <button onClick={handleAddProduct} className="btn-add-new">
                     <PencilIcon size={18} color="white" />
@@ -121,41 +125,84 @@ const handleFilter = () => {
             </div>
 
                 {/* Filter row */}
-            <div style={{backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)', marginBottom: '20px',
-                    display: 'flex',
-                    gap: '16px',
-                    alignItems: 'center',
-                    flexWrap: 'wrap'
-                }}
-            >
-                <input
-                    type="text"
-                    placeholder="Search by name, SKU, category or status..."
-                    className="search-input"
-                    style={{
-                        flex: '1 1 300px',
-                        padding: '10px',
-                        borderRadius: '6px',
-                        border: '1px solid #ccc'
-                    }}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <select
-                    className="category-select"
-                    style={{
-                        padding: '10px',
-                        borderRadius: '6px',
-                        border: '1px solid #ccc'
-                    }}
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                >
-                    <option value="All Categories">All Categories</option>
-                    <option value="Skimboards">Skimboards</option>
-                    <option value="Accessories">Accessories</option>
-                </select>
-            </div>
+<div
+    style={{
+        backgroundColor: 'white',
+        padding: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+        marginBottom: '20px',
+        display: 'flex',
+        gap: '10px',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+    }}
+>
+    {/* Search Input */}
+    <div style={{ flex: '1 1 300px', boxSizing: 'border-box' }}>
+        <input
+            type="text"
+            placeholder="Search by name..."
+            className="search-input"
+            style={{
+                width: '100%',
+                padding: '10px',
+                borderRadius: '6px',
+                border: '1px solid #ccc',
+                boxSizing: 'border-box',
+            }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+        />
+    </div>
+
+    {/* Category and status Filters */}
+    <div
+        style={{
+            display: 'flex',
+            flex: '2 1 400px', // take more space, but allow wrapping
+            gap: '10px',
+            flexWrap: 'wrap',
+        }}
+    >
+        <select
+            className="category-select"
+            style={{
+                flex: '1 1 150px',
+                padding: '10px',
+                borderRadius: '6px',
+                border: '1px solid #ccc'
+            }}
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+            <option value="All Categories">All Categories</option>
+            <option value="Skimboards">Skimboards</option>
+            <option value="T-Shirts">T-Shirts</option>
+            <option value="Jackets">Jackets</option>
+            <option value="Hoodies">Hoodies</option>
+            <option value="Boardshorts">Boardshorts</option>
+            <option value="Accessories">Accessories</option>
+        </select>
+
+        <select
+            className="category-select"
+            style={{
+                flex: '1 1 150px',
+                padding: '10px',
+                borderRadius: '6px',
+                border: '1px solid #ccc'
+            }}
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+        >
+            <option value="All Statuses">All Statuses</option>
+            <option value="In Stock">In Stock</option>
+            <option value="Out of Stock">Out of Stock</option>
+            <option value="Discontinued">Discontinued</option>
+        </select>
+    </div>
+</div>
 
                 {/* Pagination Controls */}
             <div

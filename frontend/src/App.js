@@ -18,16 +18,16 @@ import ShoppingCartPage from './ShoppingCartPage';
 import PlaceOrderPage from './PlaceOrderPage';
 import OrderHistoryPage from './OrderHistoryPage';
 
-import AdminDashboard from './AdminSide/AdminDashboard';
-import AllProductsPage from './AdminSide/AllProductsPage';
-import AddProductPage from './AdminSide/AddProductPage';
-import AllOrdersPage from './AdminSide/AllOrdersPage';
-import OrderDetailsPage from './AdminSide/OrderDetailsPage';
-import CustomerDetailsPage from './AdminSide/CustomerDetailsPage';
-import AdminSettingsPage from './AdminSide/AdminSettingsPage';
-import AllCustomersPage from './AdminSide/AllCustomersPage';
-import AdminProfilePage from './AdminSide/AdminProfilePage';
-import AdminProductDetailPage from './AdminSide/AdminProductDetailPage';
+import AdminDashboard from './AdminSide/A_AdminDashboard';
+import AllProductsPage from './AdminSide/B_AllProductsPage';
+import AddProductPage from './AdminSide/BB_AddProductPage';
+import AllOrdersPage from './AdminSide/C_AllOrdersPage';
+import OrderDetailsPage from './AdminSide/CC_OrderDetailsPage';
+import CustomerDetailsPage from './AdminSide/DD_CustomerDetailsPage';
+import AdminSettingsPage from './AdminSide/FAdminSettingsPage';
+import AllCustomersPage from './AdminSide/D_AllCustomersPage';
+import AdminProfilePage from './AdminSide/G_AdminProfilePage';
+import AdminProductDetailPage from './AdminSide/BBB_EditProductPage';
 import PageNotFound from './PageNotFound';
  //
 

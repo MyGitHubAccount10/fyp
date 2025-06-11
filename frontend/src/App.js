@@ -27,7 +27,7 @@ import CustomerDetailsPage from './AdminSide/DD_CustomerDetailsPage';
 import AdminSettingsPage from './AdminSide/FAdminSettingsPage';
 import AllCustomersPage from './AdminSide/D_AllCustomersPage';
 import AdminProfilePage from './AdminSide/G_AdminProfilePage';
-import AdminProductDetailPage from './AdminSide/BBB_EditProductPage';
+import EditProductPage from './AdminSide/BBB_EditProductPage';
 import PageNotFound from './PageNotFound';
  //
 
@@ -72,7 +72,7 @@ function App() {
         <Route path="admin-settings" element={<AdminSettingsPage />} />
         <Route path="all-customers" element={<AllCustomersPage />} />
         <Route path="admin-profile" element={<AdminProfilePage />} />
-        <Route path="admin-product-detail" element={<AdminProductDetailPage />} />
+        <Route path="edit-product" element={<EditProductPage />} />
 
         {/* Catch-all route for 404 Not Found */}
         <Route path="*" element={<PageNotFound />} />

@@ -50,6 +50,13 @@ function EditProductPage() {
 //   const handleCancel = () => navigate('/manage-products');
 
   return (
+
+        //To be removed when data is available
+        <div>
+            <AdminHeader />
+            <div>Need data</div>
+        </div>
+        //-----------------------------------------------
     // <div className="add-product-page">
     //   <AdminHeader />
     //   <div style={{ paddingLeft: '100px', paddingRight: '100px' }}>
@@ -142,10 +149,6 @@ function EditProductPage() {
     //   </div>
     // </div>
 
-<div>
-    <AdminHeader />
-    <div>Need data</div>
-</div>
   );
 }
 

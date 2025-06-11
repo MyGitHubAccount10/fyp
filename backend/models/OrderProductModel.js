@@ -18,12 +18,10 @@ const orderproductSchema = new Schema({
     required: true
   },
   order_unit_price: {
-    type: mongoose.Schema.Types.Decimal128,
+    type: Number,
     required: true,
     set: v => {
-      return mongoose.Schema.Types.Decimal128.fromString(
-        Number(v).toFixed(2)
-      );
+      return Number(v).toFixed(2);
     }
   }
 }, { timestamps: true })

@@ -1,70 +1,52 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 
 const category = 'Skimboards';
 
-const products = [
-  {
-    id: 1,
-    image: '/images/Candy-Camo.jpeg',
-    name: 'Candy Camo'
-  },
-  {
-    id: 2,
-    image: '/images/Carbon-Fiber-Pro.jpeg',
-    name: 'Carbon Fiber Pro'
-  },
-  {
-    id: 3,
-    image: '/images/Green-Island.jpeg',
-    name: 'Green Island'
-  },
-  {
-    id: 4,
-    image: '/images/Lime-Swirl.jpeg',
-    name: 'Lime Swirl'
-  },
-  {
-    id: 5,
-    image: '/images/MarbleFish.jpeg',
-    name: 'Marble Fish'
-  },
-  {
-    id: 6,
-    image: '/images/Marble.jpeg',
-    name: 'Marble'
-  },
-  {
-    id: 7,
-    image: '/images/PurpleCarbon.jpeg',
-    name: 'Purple Carbon'
-  },
-  {
-    id: 8,
-    image: '/images/Rasta.jpeg',
-    name: 'Rasta'
-  },
-  {
-    id: 9,
-    image: '/images/Samurai.jpeg',
-    name: 'Samurai'
-  },
-];
-
-const ProductCard = ({ image, name }) => {
+const ProductCard = ({ product }) => {
   return (
     <div className="product-card">
-      <img src={image} alt={name} className="product-image" />
+      <img src={`/images/${product.product_image}`} alt={product.product_name} className="product-image" />
       <div className="product-info">
-        <h3 className="product-name">{name}</h3>
+        <h3 className="product-name">{product.product_name}</h3>
       </div>
     </div>
   );
 };
 
 const SkimboardsPage = () => {
+  const [products, setProducts] = useState([]);
+  
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        // First get the category ID
+        const categoryResponse = await fetch('/api/category');
+        const categories = await categoryResponse.json();
+
+        const skimboardCategory = categories.find(cat => cat.category_name === category);
+
+        if (skimboardCategory) {
+          // Then get products and filter by category ID
+          const productResponse = await fetch('/api/product');
+          const json = await productResponse.json();
+          
+          if (productResponse.ok) {
+            const skimboardProducts = json.filter(product => 
+              product.category === skimboardCategory._id
+            );
+            setProducts(skimboardProducts);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
   return (
     <>
       <Header />
@@ -74,11 +56,10 @@ const SkimboardsPage = () => {
           </div>
 
           <div className="product-grid">
-            {products.map(product => (
+            {products && products.map(product => (
               <ProductCard
-                key={product.id}
-                image={product.image}
-                name={product.name}
+                key={product._id}
+                product={product}
               />
             ))}
           </div>

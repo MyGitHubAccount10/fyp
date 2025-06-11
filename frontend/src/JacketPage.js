@@ -1,40 +1,52 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 
 const category = 'Jackets';
 
-const products = [
-  {
-    id: 1,
-    image: '',
-    name: 'Choose Name',
-  },
-  {
-    id: 2,
-    image: '',
-    name: 'Choose Name',
-  },
-  {
-    id: 3,
-    image: '',
-    name: 'Choose Name',
-  }
-];
-
-const ProductCard = ({ image, name }) => {
+const ProductCard = ({ product }) => {
   return (
     <div className="product-card">
-      <img src={image} alt={name} className="product-image" />
+      <img src={`/images/${product.product_image}`} alt={product.product_name} className="product-image" />
       <div className="product-info">
-        <h3 className="product-name">{name}</h3>
+        <h3 className="product-name">{product.product_name}</h3>
       </div>
     </div>
   );
 };
 
-const JacketPage = () => {
+const JacketsPage = () => {
+  const [products, setProducts] = useState([]);
+  
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        // First get the category ID
+        const categoryResponse = await fetch('/api/category');
+        const categories = await categoryResponse.json();
+
+        const jacketsCategory = categories.find(cat => cat.category_name === category);
+
+        if (jacketsCategory) {
+          // Then get products and filter by category ID
+          const productResponse = await fetch('/api/product');
+          const json = await productResponse.json();
+          
+          if (productResponse.ok) {
+            const jacketsProducts = json.filter(product =>
+              product.category === jacketsCategory._id
+            );
+            setProducts(jacketsProducts);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
   return (
     <>
       <Header />
@@ -44,11 +56,10 @@ const JacketPage = () => {
           </div>
 
           <div className="product-grid">
-            {products.map(product => (
+            {products && products.map(product => (
               <ProductCard
-                key={product.id}
-                image={product.image}
-                name={product.name}
+                key={product._id}
+                product={product}
               />
             ))}
           </div>
@@ -57,4 +68,4 @@ const JacketPage = () => {
   );
 };
 
-export default JacketPage;
+export default JacketsPage;

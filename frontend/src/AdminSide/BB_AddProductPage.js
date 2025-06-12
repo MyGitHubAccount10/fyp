@@ -72,7 +72,7 @@ function AddProductPage() {
 
      const handleBackToList = () => {
          console.log("Navigating back to product list");
-         navigate('/manage-products');
+         navigate('/all-products');
      };
 
     const handleCancel = () => {

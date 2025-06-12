@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import AdminHeader from '../AdminHeader'; 
-import './AdminStyles.css'; 
+
 import { useNavigate } from 'react-router-dom';
 
 // Placeholder Icons

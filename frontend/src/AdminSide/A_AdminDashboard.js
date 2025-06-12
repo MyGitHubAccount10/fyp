@@ -107,7 +107,7 @@ function AdminDashboard() {
      // Simple handlers for quick action buttons (replace with actual routing/logic)
      const handleAddProduct = () => { navigate('/add-product'); };
      const handleViewOrders = () => { navigate('/all-orders'); };
-     const handleManageInventory = () => { navigate('/admin/inventory'); };
+     const handleManageInventory = () => { navigate('/all-products'); };
      const handleReviewDesigns = () => { navigate('/admin/custom-designs'); };
      const handleViewFullSales = () => { navigate('/admin/sales-reports'); };
 

@@ -36,7 +36,7 @@ const SalesReportsIcon = () => (
 );
 
 const Header = () => {
-    const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false); 
+    const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(true); 
 
     const toggleProductDropdown = (e) => {
         e.preventDefault();
@@ -87,7 +87,7 @@ const Header = () => {
                     <NavLink to="/all-customers" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
                         <CustomersIcon /> Customers
                     </NavLink>
-                    <NavLink to="/sales-reports" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
+                    <NavLink to="" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
                         <SalesReportsIcon /> Sales Reports
                     </NavLink>
                 </nav>

@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+import AdminHeader from '../AdminHeader'; 
+
+import { Navigate, useNavigate } from 'react-router-dom';
+
 
 const CustomerDetailsPage = () => {
     const [activeTab, setActiveTab] = useState('history'); // 'history' or 'activity'
@@ -45,9 +49,12 @@ const CustomerDetailsPage = () => {
     const totalOrderValue = orderHistory.reduce((sum, order) => sum + order.total, 0).toFixed(2);
 
 
+        const navigate = useNavigate();
+
+
     // Dummy handlers
     const handleBackClick = () => {
-        alert('Navigate back to Customers list');
+        navigate('/all-customers'); // Use navigate from react-router-dom to go back
     };
 
     const handleBanAccount = () => {
@@ -95,7 +102,8 @@ const CustomerDetailsPage = () => {
         // Note: This component assumes it is rendered within the main content area
         // of the admin layout (e.g., inside a div with class .admin-main-content)
         <div className="customer-details-page"> {/* Add a specific class for this page if needed for overrides */}
-        
+            <AdminHeader />
+        <div style={{paddingLeft:'100px', paddingRight:'100px'}}> {/* Main content wrapper for admin pages */}
 
             {/* Page Header Section */}
             <div className="page-header-section">
@@ -341,6 +349,7 @@ const CustomerDetailsPage = () => {
                  </div>
             </div>
 
+        </div>
         </div>
     );
 };

@@ -78,7 +78,7 @@ const Header = () => {
 
             {isProductDropdownOpen && (
                 <nav className="Admin-secondary-navbar">
-                    <NavLink to="/manage-products" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
+                    <NavLink to="/all-products" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
                         <ProductsIcon /> Products
                     </NavLink>
                     <NavLink to="/all-orders" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
@@ -87,7 +87,7 @@ const Header = () => {
                     <NavLink to="/all-customers" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
                         <CustomersIcon /> Customers
                     </NavLink>
-                    <NavLink to="" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
+                    <NavLink to="/sales-reports" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
                         <SalesReportsIcon /> Sales Reports
                     </NavLink>
                 </nav>

@@ -87,32 +87,41 @@ function AllProductsPage() {
     }
 
     // Filter/Search Logic (basic client-side demo)
-const handleFilter = () => {
-    console.log("Filtering with:", { searchTerm, selectedCategory, selectedStatus });
-    let filtered = dummyProducts;
+    const handleFilter = () => {
+        console.log("Filtering with:", { searchTerm, selectedCategory, selectedStatus });
+        let filtered = dummyProducts;
 
-    if (searchTerm) {
-        filtered = filtered.filter(product =>
-            product.name.toLowerCase().includes(searchTerm.toLowerCase())
-            // Remove SKU check unless all products have SKU
-        );
-    }
+        if (searchTerm) {
+            filtered = filtered.filter(product =>
+                product.name.toLowerCase().includes(searchTerm.toLowerCase())
+                // Remove SKU check unless all products have SKU
+            );
+        }
 
-    if (selectedCategory !== 'All Categories') {
-        filtered = filtered.filter(product => product.category === selectedCategory);
-    }
-    if (selectedStatus !== 'All Statuses') {
-        filtered = filtered.filter(product => product.status === selectedStatus);
-    }
+        if (selectedCategory !== 'All Categories') {
+            filtered = filtered.filter(product => product.category === selectedCategory);
+        }
+        if (selectedStatus !== 'All Statuses') {
+            filtered = filtered.filter(product => product.status === selectedStatus);
+        }
 
-    setProducts(filtered);
-    setCurrentPage(1);
-};
+        setProducts(filtered);
+        setCurrentPage(1);
+    };
+    // Function to get the class for product status
+    const getProductStatusClass = (status) => {
+    switch (status) {
+        case 'In Stock': return 'status-in-stock';
+        case 'Out of Stock': return 'status-out-of-stock';
+        case 'Discontinued': return 'status-discontinued'; // Assuming Discontinued exists
+        // Add other statuses as needed
+        default: return '';
+        }
+    };
 
-
-     // Trigger filter when search term or category changes (optional auto-filter)
+    // Trigger filter when search term or category changes (optional auto-filter)
     useEffect(() => {
-         handleFilter();
+        handleFilter();
     }, [searchTerm, selectedCategory, selectedStatus]); // Add dummyProducts to dependency array if it can change
 
     return (<>
@@ -263,7 +272,7 @@ const handleFilter = () => {
                                     <td>${product.price.toFixed(2)}</td>
                                     <td>{product.stock}</td>
                                     <td>
-                                        <span className={`status-badge ${product.status.toLowerCase()}`}>
+                                        <span className={getProductStatusClass(product.status)}>
                                             {product.status}
                                         </span>
                                     </td>

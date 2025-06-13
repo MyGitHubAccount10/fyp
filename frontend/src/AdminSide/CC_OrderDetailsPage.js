@@ -1,6 +1,6 @@
 // OrderDetailPage.js
 
-import React from 'react';
+import {React, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
@@ -14,6 +14,7 @@ const BackIcon = ({ color = "currentColor" }) => (
 
 function OrderDetailPage() {
   const navigate = useNavigate();
+  const [modalImage, setModalImage] = useState(null);
 
   const handleBack = () => {
     navigate('/all-orders');
@@ -38,8 +39,11 @@ function OrderDetailPage() {
       total: '$189.90',
     },
     items: [
-      { name: 'Wave Skimboard', price: 129.9, quantity: 1 },
-      { name: 'Board Shorts', price: 60.0, quantity: 1 }
+      { name: 'Wave Skimboard', price: 129.9, quantity: 1, imageUrl: 'https://d3lezz6q2gd25j.cloudfront.net/6dwy4phae1mpytb3n30xvo9fqonq' },
+      { name: 'Tropical T Shirt', price: 19.99, quantity: 2, imageUrl: 'https://d3lezz6q2gd25j.cloudfront.net/qy9r377pw26ktvxgm0avwlskao8d' },
+      { name: 'Jacket', price: 29.99, quantity: 1, imageUrl: 'https://d3lezz6q2gd25j.cloudfront.net/sg6ic0qzfwlqsmr7pxpwthmd54wr' },
+      { name: 'Board Shorts', price: 60.0, quantity: 1, imageUrl: 'https://d3lezz6q2gd25j.cloudfront.net/oy8m7wqde3rehmf7vtr7ezf3jc3s' },
+      { name: 'Accessories', price: 20.0, quantity: 1, imageUrl: 'https://d3lezz6q2gd25j.cloudfront.net/jjkr7x3pcz2gs7cnhcrrb1aju6lj' }
     ]
   };
 
@@ -50,6 +54,8 @@ function OrderDetailPage() {
     <div className="add-product-page">
             <AdminHeader />
         <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+
+
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h2>Order Details</h2> {/* Title from the image */}
                 <button onClick={handleBack} className="btn-add-new">
@@ -58,6 +64,7 @@ function OrderDetailPage() {
                 </button>
             </div>
 
+        <form className="add-product-form" >
         <div className="add-product-form-layout">
 
           {/* Left Column - Order Info */}
@@ -71,13 +78,70 @@ function OrderDetailPage() {
               <p><strong>Status:</strong> <span className="badge badge-green">{order.status}</span></p>
             </div>
 
+            {/* Image Modal Preview */}
+            {modalImage && (
+              <div
+                className="modal-overlay"
+                onClick={() => setModalImage(null)}
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  width: '100vw',
+                  height: '100vh',
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 1000
+                }}
+              >
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    backgroundColor: 'white',
+                    borderRadius: '8px',
+                    maxWidth: '25vw',
+                    maxHeight: '25vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <img
+                    src={modalImage}
+                    alt="Preview"
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '100%',
+                      objectFit: 'contain'
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Card: Order Items */}
             <div className="form-section-card">
               <h3 className="section-card-title">Items Ordered</h3>
               <div className="order-items-list">
                 {order.items.map((item, index) => (
-                  <div key={index} className="order-item-row">
-                    <div>{item.name}</div>
+                  <div key={index} className="order-item-row" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    {/* Clickable thumbnail image */}
+                      <img
+                        src={item.imageUrl}
+                        alt={item.name}
+                        onClick={() => setModalImage(item.imageUrl)}
+                        style={{
+                          width: '40px',
+                          height: '40px',
+                          objectFit: 'cover',
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                      />
+
+                    <div style={{ flex: 1 }}>{item.name}</div>
                     <div>{item.quantity} × ${item.price.toFixed(2)}</div>
                   </div>
                 ))}
@@ -88,6 +152,7 @@ function OrderDetailPage() {
                 <strong>${calculateSubtotal()}</strong>
               </div>
             </div>
+
 
           </div>
 
@@ -139,12 +204,100 @@ function OrderDetailPage() {
               <p><strong>Total:</strong> {order.payment.total}</p>
             </div>
 
+            {/* Card: Fulfillment & Tracking
+            <div className="form-section-card">
+              <h3 className="section-card-title">Fulfillment & Tracking</h3>
+              <p><strong>Tracking Number:</strong> TRKSG123456789</p>
+              <p><strong>Courier:</strong> Ninja Van</p>
+              <button
+                className="btn-add-new"
+                style={{ marginTop: '10px' }}
+                onClick={() => window.open('https://www.ninjavan.co/en-sg/tracking', '_blank')}
+              >
+                Track Package
+              </button>
+            </div> */}
+
+
           </div>
 
         </div>
-      </div>
+
+      </form>
+
+      <form className="add-product-form-layout">
+        <div className="add-product-main-column">
+          <div className="form-section-card">
+            <h3 className="section-card-title">Fulfillment & Tracking</h3>
+            <p><strong>Tracking Number:</strong> TRKSG123456789</p>
+            <p><strong>Courier:</strong> Ninja Van</p>
+            <button
+              className="btn-add-new"
+              style={{ marginTop: '10px' }}
+              onClick={() => window.open('https://www.ninjavan.co/en-sg/tracking', '_blank')}
+            >
+              Track Package
+            </button>
+          </div>
+
+
+          {/* Card: Order Notes & History */}
+          <div className="form-section-card">
+            <h3 className="section-card-title">Order Notes & History</h3>
+
+            {/* Internal Note */}
+            <div style={{ marginBottom: '12px' }}>
+              <label htmlFor="internalNote" style={{ fontWeight: 'bold' }}>Internal Note:</label>
+              <textarea
+                id="internalNote"
+                rows="3"
+                placeholder="Write a private note for internal use..."
+                style={{
+                  width: '100%',
+                  padding: '10px',
+                  marginTop: '6px',
+                  borderRadius: '6px',
+                  border: '1px solid #ccc',
+                  resize: 'vertical',
+                  boxSizing: 'border-box'
+                }}
+              ></textarea>
+              <button
+                className="btn-add-new"
+                style={{ marginTop: '8px' }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  alert("Note saved (not really, just a placeholder)");
+                }}
+              >
+                Save Note
+              </button>
+            </div>
+
+            {/* History log */}
+            <div>
+              <p style={{ fontWeight: 'bold', marginBottom: '6px' }}>Order History:</p>
+              <ul style={{ paddingLeft: '18px' }}>
+                <li>June 12, 2025 - Status changed to <strong>Shipped</strong></li>
+                <li>June 11, 2025 - Tracking number added</li>
+                <li>June 10, 2025 - Order placed</li>
+              </ul>
+            </div>
+          </div>
+
+
+
+
+
+{/* --------------------- */}
+
+        </div>
+      </form>
     </div>
-  );
+
+  </div>
+);
+
 }
 
 export default OrderDetailPage;

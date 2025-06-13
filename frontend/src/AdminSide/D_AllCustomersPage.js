@@ -124,10 +124,6 @@ const handleFilter = () => {
         <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h2>All Customers</h2> {/* Title from the image */}
-                <button onClick={handleAddUser} className="btn-add-new">
-                    <PencilIcon size={18} color="white" />
-                    Add New Customer
-                </button>
             </div>
 
                 {/* Filter row */}

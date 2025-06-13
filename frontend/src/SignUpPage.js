@@ -4,7 +4,9 @@ import Header from './Header';
 import Footer from './Footer';
 
 const SignUpPage = () => {
-  const [emailOrPhone, setEmailOrPhone] = useState('');
+  // State for separate email and phone number fields
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -12,7 +14,8 @@ const SignUpPage = () => {
   const handleSignUp = () => {
     // In a real app, you would handle the sign-up logic here
     alert(`Signing up with:
-    Email/Phone: ${emailOrPhone}
+    Email: ${email}
+    Phone: ${phone}
     Username: ${username}
     Password: ${password} (not shown for security)`);
   };
@@ -31,13 +34,22 @@ const SignUpPage = () => {
         <div style={{ flex: 1 }}>
           <h2 style={{ fontWeight: 'bold', fontSize: '2em', marginBottom: '10px' }}>Sign Up Form</h2>
           <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>Create a new account!</p>
+          {/* --- UPDATED INPUTS --- */}
           <input
-            type="text"
-            placeholder="Enter your email or phone number"
-            value={emailOrPhone}
-            onChange={e => setEmailOrPhone(e.target.value)}
+            type="email"
+            placeholder="Enter your email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
             style={{ display: 'block', width: '100%', marginBottom: '15px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
           />
+          <input
+            type="tel"
+            placeholder="Enter your phone number"
+            value={phone}
+            onChange={e => setPhone(e.target.value)}
+            style={{ display: 'block', width: '100%', marginBottom: '15px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
+          />
+          {/* --- END OF UPDATED INPUTS --- */}
           <input
             type="text"
             placeholder="Enter your username"

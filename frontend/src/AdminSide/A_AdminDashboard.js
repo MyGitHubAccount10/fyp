@@ -107,7 +107,7 @@ function AdminDashboard() {
      // Simple handlers for quick action buttons (replace with actual routing/logic)
      const handleAddProduct = () => { navigate('/add-product'); };
      const handleViewOrders = () => { navigate('/all-orders'); };
-     const handleManageInventory = () => { navigate('/admin/inventory'); };
+     const handleManageInventory = () => { navigate('/all-products'); };
      const handleReviewDesigns = () => { navigate('/admin/custom-designs'); };
      const handleViewFullSales = () => { navigate('/admin/sales-reports'); };
 
@@ -120,35 +120,36 @@ function AdminDashboard() {
                 <h2 className="page-title">Admin Dashboard</h2> {/* Reuse page-title class */}
 
                 <div className="dashboard-stats">
-                    <div className="stat-card">
+
+                    <div className="stat-card" onClick={() => navigate('/admin/sales-report')}>
                         <div className="stat-icon icon-sales"><MoneyIcon color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Total Sales (Month)</div>
                             <div className="stat-value">${salesData.totalSalesMonth.toLocaleString()}</div>
                         </div>
                     </div>
-                    <div className="stat-card">
+                    <div className="stat-card" onClick={() => navigate('/all-orders')}>
                         <div className="stat-icon icon-new-orders"><NewStarIcon color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">New Orders (Today)</div>
                             <div className="stat-value">{salesData.newOrdersToday}</div>
                         </div>
                     </div>
-                    <div className="stat-card">
+                    <div className="stat-card"  onClick={() => navigate('/all-orders')}>
                         <div className="stat-icon icon-fulfillment"><ClockIcon color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Pending Fulfillment</div>
                             <div className="stat-value">{salesData.pendingFulfillment}</div>
                         </div>
                     </div>
-                    <div className="stat-card stat-warning"> {/* Added warning class for alert icons */}
+                    <div className="stat-card stat-warning" onClick={() => navigate('/all-products')}> {/* Added warning class for alert icons */}
                         <div className="stat-icon icon-low-stock"><AlertTriangleIcon color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Low Stock Items</div>
                             <div className="stat-value">{salesData.lowStockItems}</div>
                         </div>
                     </div>
-                    <div className="stat-card stat-danger"> {/* Added danger class for potentially critical alerts */}
+                    <div className="stat-card stat-danger" onClick={() => navigate('/all-products')}> {/* Added danger class for potentially critical alerts */}
                         <div className="stat-icon icon-out-stock"><AlertTriangleIcon color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Out of Stock Items</div>

@@ -70,34 +70,32 @@ function AddProductPage() {
         // });
     };
 
-     const handleBackToList = () => {
-         console.log("Navigating back to product list");
-         navigate('/manage-products');
-     };
+    const handleBack = () => {
+        navigate('/all-orders');
+    };
 
     const handleCancel = () => {
         console.log("Cancelling product creation.");
         // In a real app, potentially show a "discard changes?" modal
-        handleBackToList(); // Go back to the list page
+        handleBack(); // Go back to the list page
     };
 
 
     return (
         <div className="add-product-page"> {/* Page-specific class */}
             <AdminHeader />
-            <div style={{ paddingLeft: '100px', paddingRight: '100px' }}>
-            {/* Page Header Section (reusing from ManageProductsPage structure) */}
-            <div className='page-header-section'>
-                 <h2>Create a New Product</h2>{/* Spacer to push button to right */}
-                 <button className="btn-back-to-products" onClick={handleBackToList}>
-                     <BackIcon color="#555" /> {/* Use a neutral color for the icon */}
-                     
-                     Back to All Products
-                 </button>
+        <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h2>Create a New Product</h2> {/* Title from the image */}
+                <button onClick={handleBack} className="btn-add-new">
+                    <BackIcon size={18} color="white" />
+                    Back to All Products
+                </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="add-product-form-layout"> {/* Use form element to wrap inputs */}
+            <form onSubmit={handleSubmit} > {/* Use form element to wrap inputs */}
 
+                <div className="add-product-form-layout">
                  {/* Left Column: Main Product Details */}
                 <div className="add-product-main-column">
 
@@ -260,9 +258,18 @@ function AddProductPage() {
 
                 </div> {/* End Right Column */}
 
+                </div>
+
             </form> {/* End Form */}
 
-        </div> // End Page Container
+        </div> 
+
+
+
+
+        <div>
+            ///
+        </div>
 
         </div>
     );

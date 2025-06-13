@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AdminHeader from '../AdminHeader';
 import { useNavigate } from 'react-router-dom';
 
-import './AdminStyles.css'; // Importing styles directly for this component
+import './AdminStyles.css'; 
 
 
 
@@ -141,7 +141,7 @@ const handleFilter = () => {
     }}
 >
     {/* Search Input */}
-    <div style={{ flex: '1 1 300px', boxSizing: 'border-box' }}>
+    <div style={{ flex: '3 1 300px', boxSizing: 'border-box' }}>
         <input
             type="text"
             placeholder="Search by name..."
@@ -162,7 +162,7 @@ const handleFilter = () => {
     <div
         style={{
             display: 'flex',
-            flex: '2 1 400px', // take more space, but allow wrapping
+            flex: '1 1 400px', // take more space, but allow wrapping
             gap: '10px',
             flexWrap: 'wrap',
         }}

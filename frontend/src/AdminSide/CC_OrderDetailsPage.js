@@ -48,16 +48,15 @@ function OrderDetailPage() {
 
   return (
     <div className="add-product-page">
-      <AdminHeader />
-
-      <div style={{ paddingLeft: '100px', paddingRight: '100px' }}>
-        <div className='page-header-section'>
-          <h2>Order Details</h2>
-          <button className="btn-back-to-products" onClick={handleBack}>
-            <BackIcon color="#555" />
-            Back to Orders
-          </button>
-        </div>
+            <AdminHeader />
+        <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <h2>Order Details</h2> {/* Title from the image */}
+                <button onClick={handleBack} className="btn-add-new">
+                    <BackIcon size={18} color="white" />
+                    Back to All Orders
+                </button>
+            </div>
 
         <div className="add-product-form-layout">
 

@@ -220,12 +220,6 @@ const adminStylesCss = `
     border-bottom: none;
 }
 
-/* Status colors (reusing or creating) */
-.recent-orders-table .status-cell.status-shipped { color: #28a745; font-weight: 500; } /* Green */
-.recent-orders-table .status-cell.status-processing { color: #ffc107; font-weight: 500; } /* Yellow */
-.recent-orders-table .status-cell.status-complete { color: #777; font-weight: normal; font-style: italic; } /* Faded */
-
-
 .sales-chart-placeholder {
     background-color: #e0e0e0; /* Grey placeholder color */
     height: 200px; /* Example height */
@@ -701,10 +695,12 @@ const adminStylesCss = `
 }
 
 /* Specific Order Status colors (reusing from Dashboard if defined, otherwise define here) */
-.orders-table .status-shipped { color: #28a745; font-weight: 500; } /* Green */
-.orders-table .status-processing { color: #ffc107; font-weight: 500; } /* Yellow */
-.orders-table .status-delivered { color: #28a745; font-weight: 500; } /* Green */
-.orders-table .status-cancelled { color: #dc3545; font-weight: 500; } /* Red */
+.status-shipped { color: #28a745; font-weight: 500; } /* Green */
+.status-processing { color: #ffc107; font-weight: 500; } /* Yellow */
+.status-delivered { color: #28a745; font-weight: 500; } /* Green */
+.status-in-stock { color: #17a2b8; font-weight: 500; } /* Info Blue */
+.status-out-of-stock { color: #dc3545; font-weight: 500; } /* Red */
+.status-cancelled { color: #dc3545; font-weight: 500; } /* Red */
 
 
 
@@ -1068,11 +1064,6 @@ const adminStylesCss = `
     color: #0056b3;
 }
 
-/* Status colors (reusing from Orders page) */
-.customer-order-history-table .status-shipped { color: #28a745; font-weight: 500; } /* Green */
-.customer-order-history-table .status-delivered { color: #28a745; font-weight: 500; } /* Green */
-.customer-order-history-table .status-processing { color: #ffc107; font-weight: 500; } /* Yellow */
-.customer-order-history-table .status-cancelled { color: #dc3545; font-weight: 500; } /* Red */
 
 
 /* Responsive adjustments for Customer Order History Table */

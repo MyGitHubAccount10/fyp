@@ -46,16 +46,17 @@ function AllProductsPage() {
     const Navigate = useNavigate();
 
     useEffect(() => {
-    fetch('http://localhost:4000/api/product') // update this URL to your real API
+    fetch('http://localhost:4000/api/product')
         .then(res => res.json())
         .then(data => {
-            setAllProducts(data);   // store original data
-            setProducts(data);      // set displayed data
+        console.log("Fetched products:", data); // ADD THIS
+        setAllProducts(data);
+        setProducts(data);
         })
         .catch(err => {
-            console.error("Failed to fetch products:", err);
+        console.error("Failed to fetch products:", err);
         });
-}, []); // ← only runs once on page load
+    }, []); // ← only runs once on page load
 
 
     // Pagination Logic
@@ -276,33 +277,51 @@ function AllProductsPage() {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentProducts.length > 0 ? (
-                             currentProducts.map(product => (
-                                <tr key={product.id}>
-                                    <td><img src={product.image} alt={product.name} className="product-image" /></td>
-                                    <td>{product.name}</td>
-                                    <td>{product.category}</td>
-                                    <td>${product.price.toFixed(2)}</td>
-                                    <td>{product.stock}</td>
-                                    <td>
-                                        <span className={getProductStatusClass(product.status)}>
-                                            {product.status}
-                                        </span>
-                                    </td>
-                                    <td className="action-column">
-                                        <div className="action-icons">
-                                            <button onClick={() => handleEditProduct(product)} title="Edit Product"><PencilIcon /></button>
-                                            <button onClick={() => handleDeleteProduct(product.id)} title="Delete Product" className="delete-btn"><TrashIcon /></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>No orders found.</td>
-                            </tr>
-                        )}
+                    {currentProducts.length > 0 ? (
+                        currentProducts.map((product, index) => (
+                        <tr key={product.id || `product-${index}`}>
+                            <td>
+                            <img
+                                src={product.image}
+                                alt={product.product_name}
+                                className="product-image"
+                                onError={(e) => (e.target.src = '/images/placeholder-product.jpg')}
+                            />
+                            </td>
+                            <td>{product.product_name}</td>
+                            <td>{product.category}</td>
+                            <td>${product.product_price}</td>
+                            <td>{product.warehouse_quantity}</td>
+                            <td>
+                            <span className={getProductStatusClass(product.status)}>
+                                {product.status}
+                            </span>
+                            </td>
+                            <td className="action-column">
+                            <div className="action-icons">
+                                <button onClick={() => handleEditProduct(product)} title="Edit Product">
+                                <PencilIcon />
+                                </button>
+                                <button
+                                onClick={() => handleDeleteProduct(product.id)}
+                                title="Delete Product"
+                                className="delete-btn"
+                                >
+                                <TrashIcon />
+                                </button>
+                            </div>
+                            </td>
+                        </tr>
+                        ))
+                    ) : (
+                        <tr>
+                        <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>
+                            No products found.
+                        </td>
+                        </tr>
+                    )}
                     </tbody>
+
                 </table>
             </div>
         </div>

@@ -4,9 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 import './AdminStyles.css'; 
 
-
-
-
 // Placeholder Icons
 const PencilIcon = ({ size = 18, color = "currentColor" }) => (
     <svg viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
@@ -27,17 +24,10 @@ const CloseIcon = ({ size = 24, color = "currentColor" }) => (
 );
 
 
-// Dummy product data
-const dummyProducts = [
-    { id: 1, image: '../AdminSide../src/public/images/AboutBanner.jpeg', name: 'Pro Model Skimboard Large',  category: 'Skimboards', price: 350.00, stock: 25, status: 'In Stock' },
-    { id: 2, image: 'backend/public/images/placeholder-product.jpg', name: 'Skimboard Traction Wax',  category: 'Accessories', price: 15.00, stock: 150, status: 'In Stock' },
-    { id: 3, image: 'backend/public/images/placeholder-product.jpg', name: 'White T-Shirt', category: 'T-Shirt', price: 100.00, stock: 0, status: 'Out of Stock' },
-    // Add more dummy products if needed
-];
-
 function AllProductsPage() {
     const [allProducts, setAllProducts] = useState([]); // Initialize with dummy data
     const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All Categories');
     const [selectedStatus, setSelectedStatus] = useState('All Statuses');
@@ -58,6 +48,17 @@ function AllProductsPage() {
         });
     }, []); // ← only runs once on page load
 
+    useEffect(() => {
+    fetch('http://localhost:4000/api/category')
+        .then(res => res.json())
+        .then(data => {
+        console.log("Fetched categories:", data); // ADD THIS
+        setCategories(data);
+        })
+        .catch(err => {
+        console.error("Failed to fetch categories:", err);
+        });
+    }, []); // ← only runs once on page load
 
     // Pagination Logic
     const indexOfLastProduct = currentPage * productsPerPage;
@@ -81,15 +82,15 @@ function AllProductsPage() {
     const handleEditProduct = (product) => {
         console.log("Editing product:", product);
         Navigate(`/edit-product`);
-        // Navigate(`/edit-product/${product.id}`);
+        // Navigate(`/edit-product/${product._id}`);
         
     };
 
     const handleDeleteProduct = (productId) => {
         console.log("Deleting product with ID:", productId);
         // In a real app, show a confirmation modal and make an API call
-        if (window.confirm(`Are you sure you want to delete product ID ${productId}?`)) {
-             setProducts(products.filter(p => p.id !== productId));
+        if (window.confirm(`Are you sure you want to delete ${productId}?`)) {
+             setProducts(products.filter(p => p._id !== productId));
              console.log("Product deleted (demo).");
         }
     };
@@ -107,7 +108,7 @@ function AllProductsPage() {
 
         if (searchTerm) {
             filtered = filtered.filter(product =>
-                product.name.toLowerCase().includes(searchTerm.toLowerCase())
+                product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
                 // Remove SKU check unless all products have SKU
             );
         }
@@ -122,6 +123,13 @@ function AllProductsPage() {
         setProducts(filtered);
         setCurrentPage(1);
     };
+
+    // Function to get the class for product status
+    const getCategory = (categoryID) => {
+        const category = categories.find(cat => cat._id === categoryID);
+        return category ? category.category_name : categoryID;
+    };
+
     // Function to get the class for product status
     const getProductStatusClass = (status) => {
     switch (status) {
@@ -202,12 +210,11 @@ function AllProductsPage() {
             onChange={(e) => setSelectedCategory(e.target.value)}
         >
             <option value="All Categories">All Categories</option>
-            <option value="Skimboards">Skimboards</option>
-            <option value="T-Shirts">T-Shirts</option>
-            <option value="Jackets">Jackets</option>
-            <option value="Hoodies">Hoodies</option>
-            <option value="Boardshorts">Boardshorts</option>
-            <option value="Accessories">Accessories</option>
+            {categories.map((category) => (
+                <option key={category._id} value={category._id}>
+                    {category.category_name}
+                </option>
+            ))}
         </select>
 
         <select
@@ -279,18 +286,18 @@ function AllProductsPage() {
                     <tbody>
                     {currentProducts.length > 0 ? (
                         currentProducts.map((product, index) => (
-                        <tr key={product.id || `product-${index}`}>
+                        <tr key={product._id}>
                             <td>
                             <img
-                                src={product.image}
+                                src={`/images/${product.product_image}`}
                                 alt={product.product_name}
                                 className="product-image"
                                 onError={(e) => (e.target.src = '/images/placeholder-product.jpg')}
                             />
                             </td>
                             <td>{product.product_name}</td>
-                            <td>{product.category}</td>
-                            <td>${product.product_price}</td>
+                            <td>{getCategory(product.category)}</td>
+                            <td>${product.product_price.toFixed(2)}</td>
                             <td>{product.warehouse_quantity}</td>
                             <td>
                             <span className={getProductStatusClass(product.status)}>
@@ -303,7 +310,7 @@ function AllProductsPage() {
                                 <PencilIcon />
                                 </button>
                                 <button
-                                onClick={() => handleDeleteProduct(product.id)}
+                                onClick={() => handleDeleteProduct(product._id)}
                                 title="Delete Product"
                                 className="delete-btn"
                                 >

@@ -93,8 +93,9 @@ function AddProductPage() {
                 </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="add-product-form-layout"> {/* Use form element to wrap inputs */}
+            <form onSubmit={handleSubmit} > {/* Use form element to wrap inputs */}
 
+                <div className="add-product-form-layout">
                  {/* Left Column: Main Product Details */}
                 <div className="add-product-main-column">
 
@@ -257,9 +258,18 @@ function AddProductPage() {
 
                 </div> {/* End Right Column */}
 
+                </div>
+
             </form> {/* End Form */}
 
-        </div> // End Page Container
+        </div> 
+
+
+
+
+        <div>
+            ///
+        </div>
 
         </div>
     );

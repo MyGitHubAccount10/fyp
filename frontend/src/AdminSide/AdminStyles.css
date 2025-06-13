@@ -42,23 +42,6 @@ const adminStylesCss = `
     fill: white; /* Ensure icon is white */
 }
 
-
-.manage-products-page .search-filter-bar {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
-}
-
-.manage-products-page .search-input {
-    flex-grow: 1; /* Allow search input to take available space */
-    padding: 10px 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 0.95em;
-    min-width: 180px; /* Ensure min-width before wrapping */
-}
-
 .manage-products-page .category-select {
     padding: 10px 15px;
     border: 1px solid #ccc;
@@ -68,39 +51,6 @@ const adminStylesCss = `
     cursor: pointer;
     min-width: 150px; /* Ensure min-width before wrapping */
 }
-
-.manage-products-page .btn-filter {
-    background-color: #17a2b8; /* Secondary action color */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.95em;
-    font-weight: 500;
-    transition: background-color 0.2s ease;
-}
-.manage-products-page .btn-filter:hover {
-    background-color: #138496;
-}
-
-
-.manage-products-page .product-table-container {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
-    overflow-x: auto; /* Allow horizontal scrolling on small screens */
-}
-
-
-.manage-products-page .product-table .status-cell {
-    font-size: 0.9em;
-    font-weight: 500;
-}
-.manage-products-page .product-table .status-published { color: #28a745; } /* Green */
-.manage-products-page .product-table .status-draft { color: #ffc107; } /* Yellow */
-/* Add other statuses like status-archived etc. */
 
 .manage-products-page .action-icons {
     display: flex;
@@ -366,14 +316,7 @@ const adminStylesCss = `
 // --------------------------------------------------------------------- */
 
 
-.btn-back-to-products:hover {
-    background-color: #ced4da;
-}
-.btn-back-to-products svg {
-    width: 16px; /* Smaller icon for button */
-    height: 16px;
-    stroke: currentColor; /* Use parent color */
-}
+
 
 
 .add-product-form-layout {
@@ -764,8 +707,6 @@ const adminStylesCss = `
 .orders-table .status-cancelled { color: #dc3545; font-weight: 500; } /* Red */
 
 
-/* Pagination styles reuse from ManageProductsPage.pagination-controls */
-/* .pagination-controls { ... } */
 
 
 /* -----------------------------*/

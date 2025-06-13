@@ -104,7 +104,7 @@ function AddProductPage() {
                         <h3 className="section-card-title">Create a New Product</h3> {/* Title within this card, seems redundant with page title? Replicating screenshot. */}
                         {/* Product Name Input field */}
                         <div className="form-group">
-                            <label htmlFor="productName">Product Name</label>
+                            <label>Product Name</label>
                             <input
                                 type="text"
                                 id="productName"
@@ -126,6 +126,15 @@ function AddProductPage() {
                                 placeholder="Detailed description of the product..."
                                 rows="4" // Adjust rows as needed
                                 required
+                                style={{
+                                    width: '100%',
+                                    padding: '10px',
+                                    marginTop: '6px',
+                                    borderRadius: '6px',
+                                    border: '1px solid #ccc',
+                                    resize: 'vertical',
+                                    boxSizing: 'border-box'
+                                    }}
                             ></textarea>
                         </div>
                     </div>

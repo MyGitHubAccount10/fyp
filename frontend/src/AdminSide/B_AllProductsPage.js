@@ -124,10 +124,10 @@ function AllProductsPage() {
         setCurrentPage(1);
     };
 
-    // Function to get the class for product status
+    // Function to get the class for product category
     const getCategory = (categoryID) => {
         const category = categories.find(cat => cat._id === categoryID);
-        return category ? category.category_name : categoryID;
+        return category && category.category_name
     };
 
     // Function to get the class for product status
@@ -210,7 +210,7 @@ function AllProductsPage() {
             onChange={(e) => setSelectedCategory(e.target.value)}
         >
             <option value="All Categories">All Categories</option>
-            {categories.map((category) => (
+            {categories.map(category => (
                 <option key={category._id} value={category._id}>
                     {category.category_name}
                 </option>

@@ -81,12 +81,6 @@ function UserDetailPage() {
             {/* Right Column - Other Info */}
             <div className="add-product-sidebar-panel">
 
-              {/* Card: Shipping Address */}
-              <div className="form-section-card">
-                <h3 className="section-card-title">Address</h3>
-                <p>{user.address}</p>
-              </div>
-
               {/* Card: Notes */}
               <div className="form-section-card">
                 <h3 className="section-card-title">Internal Note</h3>

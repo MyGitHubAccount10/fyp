@@ -238,6 +238,12 @@ function AddProductPage() {
                                 value={formData.category}
                                 onChange={handleChange}
                                 required
+                                style={{
+                                    flex: '1 1 150px',
+                                    padding: '10px',
+                                    borderRadius: '6px',
+                                    border: '1px solid #ccc'
+                    }}
                             >
                                 <option value="" disabled>Select Category</option> {/* Placeholder option */}
                                 <option value="Skimboards">Skimboards</option>

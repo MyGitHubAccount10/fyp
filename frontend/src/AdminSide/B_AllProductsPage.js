@@ -29,21 +29,34 @@ const CloseIcon = ({ size = 24, color = "currentColor" }) => (
 
 // Dummy product data
 const dummyProducts = [
-    { id: 1, image: '/images/placeholder-product.jpg', name: 'Pro Model Skimboard Large',  category: 'Skimboards', price: 350.00, stock: 25, status: 'In Stock' },
-    { id: 2, image: '/images/placeholder-product.jpg', name: 'Skimboard Traction Wax',  category: 'Accessories', price: 15.00, stock: 150, status: 'In Stock' },
-    { id: 3, image: '/images/placeholder-product.jpg', name: 'White T-Shirt', category: 'T-Shirt', price: 100.00, stock: 0, status: 'Out of Stock' },
+    { id: 1, image: '../AdminSide../src/public/images/AboutBanner.jpeg', name: 'Pro Model Skimboard Large',  category: 'Skimboards', price: 350.00, stock: 25, status: 'In Stock' },
+    { id: 2, image: 'backend/public/images/placeholder-product.jpg', name: 'Skimboard Traction Wax',  category: 'Accessories', price: 15.00, stock: 150, status: 'In Stock' },
+    { id: 3, image: 'backend/public/images/placeholder-product.jpg', name: 'White T-Shirt', category: 'T-Shirt', price: 100.00, stock: 0, status: 'Out of Stock' },
     // Add more dummy products if needed
 ];
 
 function AllProductsPage() {
-    const [products, setProducts] = useState(dummyProducts);
+    const [allProducts, setAllProducts] = useState([]); // Initialize with dummy data
+    const [products, setProducts] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All Categories');
     const [selectedStatus, setSelectedStatus] = useState('All Statuses');
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(10); // Fixed number of products per page
-    const [isSettingsSidebarVisible, setIsSettingsSidebarVisible] = useState(false);
     const Navigate = useNavigate();
+
+    useEffect(() => {
+    fetch('api/products') // update this URL to your real API
+        .then(res => res.json())
+        .then(data => {
+            setAllProducts(data);   // store original data
+            setProducts(data);      // set displayed data
+        })
+        .catch(err => {
+            console.error("Failed to fetch products:", err);
+        });
+}, []); // ← only runs once on page load
+
 
     // Pagination Logic
     const indexOfLastProduct = currentPage * productsPerPage;
@@ -89,7 +102,7 @@ function AllProductsPage() {
     // Filter/Search Logic (basic client-side demo)
     const handleFilter = () => {
         console.log("Filtering with:", { searchTerm, selectedCategory, selectedStatus });
-        let filtered = dummyProducts;
+        let filtered = allProducts;
 
         if (searchTerm) {
             filtered = filtered.filter(product =>
@@ -122,7 +135,7 @@ function AllProductsPage() {
     // Trigger filter when search term or category changes (optional auto-filter)
     useEffect(() => {
         handleFilter();
-    }, [searchTerm, selectedCategory, selectedStatus]); // Add dummyProducts to dependency array if it can change
+    }, [searchTerm, selectedCategory, selectedStatus, allProducts]); 
 
     return (<>
           <AdminHeader />

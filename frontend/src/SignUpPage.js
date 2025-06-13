@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
+import { useSignup } from "../src/hooks/useSignup"
 
 const SignUpPage = () => {
   // State for separate email and phone number fields
@@ -9,20 +10,16 @@ const SignUpPage = () => {
   const [phone, setPhone] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-
-  const handleSignUp = () => {
-    // In a real app, you would handle the sign-up logic here
-    alert(`Signing up with:
-    Email: ${email}
-    Phone: ${phone}
-    Username: ${username}
-    Password: ${password} (not shown for security)`);
-  };
+  const { signup, error, isLoading } = useSignup();
 
   const handleAlreadyHaveAccount = () => {
     // In a real app, you would navigate to the login page
     alert('Navigating to login page...');
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await signup(email, phone, username, password);
   };
 
   return (
@@ -35,51 +32,59 @@ const SignUpPage = () => {
           <h2 style={{ fontWeight: 'bold', fontSize: '2em', marginBottom: '10px' }}>Sign Up Form</h2>
           <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>Create a new account!</p>
           {/* --- UPDATED INPUTS --- */}
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            style={{ display: 'block', width: '100%', marginBottom: '15px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
-          />
-          <input
-            type="tel"
-            placeholder="Enter your phone number"
-            value={phone}
-            onChange={e => setPhone(e.target.value)}
-            style={{ display: 'block', width: '100%', marginBottom: '15px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
-          />
-          {/* --- END OF UPDATED INPUTS --- */}
-          <input
-            type="text"
-            placeholder="Enter your username"
-            value={username}
-            onChange={e => setUsername(e.target.value)}
-            style={{ display: 'block', width: '100%', marginBottom: '15px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
-          />
-          <input
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            style={{ display: 'block', width: '100%', marginBottom: '20px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
-          />
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-            <button 
-              className="update-cart-btn" 
-              onClick={handleAlreadyHaveAccount}
-              style={{ flexGrow: 1, backgroundColor: '#f0f0f0', color: '#333', border: '1px solid #ccc' }}
-            >
-              Already have an account?
-            </button>
-            <button 
-              className="complete-purchase-btn" 
-              onClick={handleSignUp}
-              style={{ flexGrow: 1, backgroundColor: '#333', color: '#fff' }}
-            >
-              Sign Up
-            </button>
-          </div>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              style={{ display: 'block', width: '100%', marginBottom: '15px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
+              required
+            />
+            <input
+              type="tel"
+              placeholder="Enter your phone number"
+              value={phone}
+              onChange={e => setPhone(e.target.value)}
+              style={{ display: 'block', width: '100%', marginBottom: '15px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
+            />
+            {/* --- END OF UPDATED INPUTS --- */}
+            <input
+              type="text"
+              placeholder="Enter your username"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              style={{ display: 'block', width: '100%', marginBottom: '15px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              style={{ display: 'block', width: '100%', marginBottom: '20px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
+              required
+            />
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+              <button
+                type="button" // Changed to type="button" to prevent form submission
+                className="update-cart-btn"
+                onClick={handleAlreadyHaveAccount}
+                style={{ flexGrow: 1, backgroundColor: '#f0f0f0', color: '#333', border: '1px solid #ccc' }}
+              >
+                Already have an account?
+              </button>
+              <button
+                type="submit"
+                className="complete-purchase-btn"
+                style={{ flexGrow: 1, backgroundColor: '#333', color: '#fff' }}
+                disabled={isLoading}
+              >
+                {isLoading ? 'Signing up...' : 'Sign Up'}
+              </button>
+            </div>
+            {error && <div className="error">{error}</div>}
+          </form>
         </div>
 
         {/* Right Column - Role Card (Identical to LoginPage) */}
@@ -87,12 +92,13 @@ const SignUpPage = () => {
           <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#e0e0e0', margin: '0 auto 20px', backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
           <p style={{ fontWeight: 'bold', fontSize: '1.1em', marginBottom: '5px' }}>User / Admin</p>
           <div style={{ marginBottom: '15px' }}>
-            <span style={{backgroundColor: '#e0e0e0', color: '#555', padding: '3px 8px', borderRadius: '4px', fontSize: '0.8em', marginRight: '5px' }}>User</span>
-            <span style={{backgroundColor: '#e0e0e0', color: '#555', padding: '3px 8px', borderRadius: '4px', fontSize: '0.8em' }}>Admin</span>
+            <span style={{ backgroundColor: '#e0e0e0', color: '#555', padding: '3px 8px', borderRadius: '4px', fontSize: '0.8em', marginRight: '5px' }}>User</span>
+            <span style={{ backgroundColor: '#e0e0e0', color: '#555', padding: '3px 8px', borderRadius: '4px', fontSize: '0.8em' }}>Admin</span>
           </div>
           <p style={{ fontSize: '0.9em', color: '#555', marginBottom: '20px' }}>Select your user role</p>
-          <button 
-            className="update-cart-btn" 
+          <button
+            type="button" // Also changed to type="button" to prevent form submission
+            className="update-cart-btn"
             style={{ marginTop: '10px', width: '100%', backgroundColor: '#333', color: '#fff', border: 'none' }}
           >
             Choose Role

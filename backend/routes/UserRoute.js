@@ -5,10 +5,14 @@ const {
     getUser,
     createUser,
     deleteUser,
-    updateUser
+    updateUser,
+    loginUser, 
+    signupUser 
 } = require('../controllers/UserController');
+const requireAuth = require('../middleware/requireAuth')
 
 const router = express.Router();
+router.use(requireAuth)
 
 router.get('/', getUsers);
 
@@ -19,5 +23,9 @@ router.post('/', createUser);
 router.delete('/:id', deleteUser);
 
 router.patch('/:id', updateUser);
+
+router.post('/login', loginUser);
+
+router.post('/signup', signupUser);
 
 module.exports = router;

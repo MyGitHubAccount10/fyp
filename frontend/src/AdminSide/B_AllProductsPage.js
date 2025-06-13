@@ -46,7 +46,7 @@ function AllProductsPage() {
     const Navigate = useNavigate();
 
     useEffect(() => {
-    fetch('api/products') // update this URL to your real API
+    fetch('http://localhost:4000/api/product') // update this URL to your real API
         .then(res => res.json())
         .then(data => {
             setAllProducts(data);   // store original data

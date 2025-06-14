@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
+import { useProductsContext } from './hooks/useProductsContext';
 
 const category = 'Accessories';
 
@@ -17,7 +18,7 @@ const ProductCard = ({ product }) => {
 };
 
 const AccessoriesPage = () => {
-  const [products, setProducts] = useState([]);
+  const { products, dispatch } = useProductsContext();
   
   useEffect(() => {
     const fetchProducts = async () => {
@@ -37,7 +38,7 @@ const AccessoriesPage = () => {
             const accessoriesProducts = json.filter(product =>
               product.category === accessoriesCategory._id
             );
-            setProducts(accessoriesProducts);
+            dispatch({ type: 'SET_PRODUCTS', payload: accessoriesProducts });
           }
         }
       } catch (error) {
@@ -45,7 +46,7 @@ const AccessoriesPage = () => {
       }
     };
     fetchProducts();
-  }, []);
+  }, [dispatch]);
 
   return (
     <>

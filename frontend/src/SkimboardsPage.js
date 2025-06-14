@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
+import { useProductsContext } from './hooks/useProductsContext';
 
 const category = 'Skimboards';
 
@@ -17,7 +18,7 @@ const ProductCard = ({ product }) => {
 };
 
 const SkimboardsPage = () => {
-  const [products, setProducts] = useState([]);
+  const { products, dispatch } = useProductsContext();
   
   useEffect(() => {
     const fetchProducts = async () => {
@@ -37,7 +38,7 @@ const SkimboardsPage = () => {
             const skimboardProducts = json.filter(product => 
               product.category === skimboardCategory._id
             );
-            setProducts(skimboardProducts);
+            dispatch({ type: 'SET_PRODUCTS', payload: skimboardProducts });
           }
         }
       } catch (error) {
@@ -45,7 +46,7 @@ const SkimboardsPage = () => {
       }
     };
     fetchProducts();
-  }, []);
+  }, [dispatch]);
 
   return (
     <>

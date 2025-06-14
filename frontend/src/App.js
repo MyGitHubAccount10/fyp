@@ -54,10 +54,10 @@ function App() {
           <Route path="boardshorts" element={<BoardShortsPage />} />
           <Route path="accessories" element={<AccessoriesPage />} />
         </Route>
+        <Route path="product/:id" element={<ProductDetailPage />} />
         <Route path="signup" element={<SignUpPage />} />
         <Route path="login" element={<LoginPage />} />
-        <Route path="profile" element={<UserProfilePage />} />        
-        <Route path="product-detail" element={<ProductDetailPage />} />
+        <Route path="profile" element={<UserProfilePage />} />
         <Route path="cart" element={<ShoppingCartPage />} />
         <Route path="place-order" element={<PlaceOrderPage />} />
         <Route path="order-history" element={<OrderHistoryPage />} />

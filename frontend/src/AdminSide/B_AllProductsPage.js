@@ -291,7 +291,7 @@ function AllProductsPage() {
                             <img
                                 src={`/images/${product.product_image}`}
                                 alt={product.product_name}
-                                className="product-image"
+                                className="admin-product-image"
                                 onError={(e) => (e.target.src = '/images/placeholder-product.jpg')}
                             />
                             </td>

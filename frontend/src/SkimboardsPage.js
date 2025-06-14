@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -8,12 +9,14 @@ const category = 'Skimboards';
 
 const ProductCard = ({ product }) => {
   return (
-    <div className="product-card">
-      <img src={`/images/${product.product_image}`} alt={product.product_name} className="product-image" />
-      <div className="product-info">
-        <h3 className="product-name">{product.product_name}</h3>
+    <Link to={`/product/${product._id}`} style={{ textDecoration: 'none' }}>
+      <div className="product-card">
+        <img src={`/images/${product.product_image}`} alt={product.product_name} className="product-image" />
+        <div className="product-info">
+          <h3 className="product-name">{product.product_name}</h3>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

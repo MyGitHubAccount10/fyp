@@ -56,22 +56,51 @@ function AddProductPage() {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Submitting Product Data:', formData);
-        // In a real application, you would send this data to your backend API
-        alert('Product saved (demo): Check console for data.');
 
-        // Optional: Reset form after submission
-        // setFormData({
-        //     name: '', description: '', productType: 'Select Category',
-        //     price: '', stockQuantity: '', lowStockThreshold: '', images: [],
-        //     status: 'Draft', visibility: 'Public', category: '',
-        // });
+        const form = new FormData();
+        form.append('name', formData.name);
+        form.append('description', formData.description);
+        form.append('productType', formData.productType);
+        form.append('price', formData.price);
+        form.append('stockQuantity', formData.stockQuantity);
+        form.append('lowStockThreshold', formData.lowStockThreshold || ''); // optional
+        form.append('status', formData.status);
+        form.append('visibility', formData.visibility);
+        form.append('category', formData.category);
+
+        // Handle images (multiple files)
+        if (formData.images && formData.images.length > 0) {
+            Array.from(formData.images).forEach((file, index) => {
+                form.append('images', file); // backend must handle multiple files as 'images'
+            });
+        }
+
+        try {
+            const response = await fetch('http://localhost:4000/api/product', {
+                method: 'POST',
+                body: form,
+            });
+
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('Product uploaded:', result);
+            alert('✅ Product successfully uploaded!');
+            navigate('/all-products'); // go back to product list
+        } catch (error) {
+            console.error('Upload failed:', error);
+            alert('❌ Failed to upload product.');
+        }
     };
 
+    // Function to handle back navigation
+
     const handleBack = () => {
-        navigate('/all-orders');
+        navigate('/all-products');
     };
 
     const handleCancel = () => {
@@ -169,19 +198,6 @@ function AddProductPage() {
                                 placeholder="e.g., 50"
                                 min="0"
                                 required
-                            />
-                        </div>
-                        {/* Low stock threshold */}
-                        <div className="form-group">
-                            <label htmlFor="lowStockThreshold">Low Stock Threshold</label>
-                             <input
-                                type="number"
-                                id="lowStockThreshold"
-                                name="lowStockThreshold"
-                                value={formData.lowStockThreshold}
-                                onChange={handleChange}
-                                placeholder="e.g., 5"
-                                min="0"
                             />
                         </div>
                     </div>

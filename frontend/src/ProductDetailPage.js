@@ -31,22 +31,17 @@ const ProductDetailPage = () => {
   useEffect(() => {
       const fetchSimilarProducts = async () => {
       try {
-        const response = await fetch('/api/category');
-        const categories = await response.json();
-        const category = categories.find(cat => cat._id === product.category);
-
-        if (category) {
           const productResponse = await fetch('/api/product');
           const json = await productResponse.json();
           
           if (productResponse.ok) {
-            const similarProducts = json.filter(product =>
-              product.category === category._id && product._id !== productId
+            const similarProducts = json.filter(p =>
+              p.category === product.category && p._id !== productId
             );
             setSimilarProducts(similarProducts);
           }
         }
-      } catch (error) {
+      catch (error) {
         console.error('Error fetching similar products:', error);
       }
     };

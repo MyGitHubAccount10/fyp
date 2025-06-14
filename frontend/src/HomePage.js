@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
+import { useProductsContext } from './hooks/useProductsContext';
 
 // Slideshow images for hero section
 const slideshowImages = [
@@ -11,10 +13,6 @@ const slideshowImages = [
     '/images/aizat2.jpeg',
     // Add more image paths here if needed for the slideshow
 ];
-
-const popularDesign1Image = '/images/Candy-Camo.jpeg'; // Placeholder
-const popularDesign2Image = '/images/Samurai.jpeg'; // Placeholder
-
 
 // SVG for hero arrows
 const LeftArrowIcon = () => (
@@ -32,6 +30,7 @@ const RightArrowIcon = () => (
 
 const HomePage = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const { products, dispatch } = useProductsContext();
 
   const nextSlide = () => {
     setCurrentSlideIndex((prevIndex) =>
@@ -44,6 +43,21 @@ const HomePage = () => {
       prevIndex === 0 ? slideshowImages.length - 1 : prevIndex - 1
     );
   };
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/product');
+        const data = await response.json();
+        if (response.ok) {
+          dispatch({ type: 'SET_PRODUCTS', payload: data });
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+    fetchProducts();
+  }, [dispatch]);
 
   return (
     <>
@@ -77,15 +91,20 @@ const HomePage = () => {
         {/* Popular Designs Section */}
         <section className="popular-designs-section container">
           <h2 className="popular-designs-title">Popular Designs</h2>
-          <div className="popular-designs-grid">
-            <div className="popular-design-card">
-              <img src={popularDesign1Image} alt="Candy Camo Skimboard" className="popular-design-card-image" />
-              <div className="popular-design-card-caption">Candy Camo</div>
-            </div>
-            <div className="popular-design-card">
-              <img src={popularDesign2Image} alt="Samurai Skimboard" className="popular-design-card-image" />
-              <div className="popular-design-card-caption">Samurai</div>
-            </div>
+          <div className="similar-products-grid">
+            {products && products.filter(product => {
+              return !products.find(other =>
+                other.category === product.category &&
+                new Date(other.createdAt) > new Date(product.createdAt)
+              );
+            }).map(product => (
+              <Link to={`/product/${product._id}`} style={{ textDecoration: 'none' }}>
+                <div className="popular-design-card" key={product._id}>
+                  <img src={`/images/${product.product_image}`} alt={product.product_name} className="popular-design-card-image" />
+                  <div className="popular-design-card-caption">{product.product_name}</div>
+                </div>
+              </Link>
+            ))}
           </div>
         </section>
       </main>

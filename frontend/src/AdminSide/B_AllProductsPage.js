@@ -137,7 +137,6 @@ function AllProductsPage() {
     switch (status) {
         case 'In Stock': return 'status-in-stock';
         case 'Out of Stock': return 'status-out-of-stock';
-        case 'Discontinued': return 'status-discontinued'; // Assuming Discontinued exists
         // Add other statuses as needed
         default: return '';
         }
@@ -348,9 +347,11 @@ function AllProductsPage() {
                             <td>${product.product_price.toFixed(2)}</td>
                             <td>{product.warehouse_quantity}</td>
                             <td>
-                            <span className={getProductStatusClass(product.status)}>
-                                {product.status}
-                            </span>
+                                {product.warehouse_quantity > 0 ? (
+                                    <span className="status-in-stock">In Stock</span>
+                                ) : (
+                                    <span className="status-out-of-stock">Out of Stock</span>
+                                )}
                             </td>
                             <td className="action-column">
                             <div className="action-icons">

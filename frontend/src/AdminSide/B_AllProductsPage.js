@@ -34,6 +34,8 @@ function AllProductsPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(10); // Fixed number of products per page
     const Navigate = useNavigate();
+    const [modalImage, setModalImage] = useState(null);
+    
 
     useEffect(() => {
     fetch('http://localhost:4000/api/product')
@@ -269,6 +271,51 @@ function AllProductsPage() {
             </div>
             </div>
 
+            
+            {/* Image Modal Preview */}
+            {modalImage && (
+              <div
+                className="modal-overlay"
+                onClick={() => setModalImage(null)}
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  width: '100vw',
+                  height: '100vh',
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 1000
+                }}
+              >
+                {/* Modal Content */}
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    backgroundColor: 'white',
+                    borderRadius: '8px',
+                    maxWidth: '25vw',
+                    maxHeight: '25vh',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <img
+                    src={modalImage}
+                    alt="Preview"
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '100%',
+                      objectFit: 'contain'
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
                 {/* Orders Table */}
             <div className="orders-table-container">
                 <table className="orders-table">
@@ -292,6 +339,7 @@ function AllProductsPage() {
                                 src={`/images/${product.product_image}`}
                                 alt={product.product_name}
                                 className="admin-product-image"
+                                onClick={() => setModalImage(`/images/${product.product_image}`)}
                                 onError={(e) => (e.target.src = '/images/placeholder-product.jpg')}
                             />
                             </td>

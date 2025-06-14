@@ -2,6 +2,9 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 const footer = () => {
+    const handleClick = () => {
+        window.scrollTo(0, 0);
+    };
     return (
         <>
         <footer className="footer">
@@ -14,9 +17,9 @@ const footer = () => {
             </div>
             <div className="footer-column">
             <strong>Customer Service</strong>
-                <NavLink to="/about">About</NavLink><br />
-                <NavLink to="/contact">Contact</NavLink><br />
-                <NavLink to="/faq">FAQ</NavLink>
+                <NavLink to="/about" onClick={handleClick}>About</NavLink><br />
+                <NavLink to="/contact" onClick={handleClick}>Contact</NavLink><br />
+                <NavLink to="/faq" onClick={handleClick}>FAQ</NavLink>
             </div>
             <div className="footer-column">
             <strong>Handcrafted in Singapore</strong>

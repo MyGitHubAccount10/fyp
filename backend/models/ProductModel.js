@@ -30,6 +30,27 @@ const productSchema = new Schema({
   product_image: {
     type: String,
     required: true
+  },
+  product_image2: {
+    type: String,
+    required: false
+  },
+  product_image3: {
+    type: String,
+    required: false
+  },
+  product_image4: {
+    type: String,
+    required: false
+  },
+  product_image5: {
+    type: String,
+    required: false
+  },
+  low_stock_threshold: {
+    type: Number,
+    default: 5, // Optional: You can allow setting a default
+    min: 0
   }
 }, { timestamps: true })
 

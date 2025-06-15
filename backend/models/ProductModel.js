@@ -47,7 +47,7 @@ const productSchema = new Schema({
     type: String,
     required: false
   },
-  low_stock_threshold: {
+  threshold: {
     type: Number,
     default: 5, // Optional: You can allow setting a default
     min: 0

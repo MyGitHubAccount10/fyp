@@ -36,7 +36,6 @@ function AllProductsPage() {
     const Navigate = useNavigate();
     const [modalImage, setModalImage] = useState(null);
     
-
     useEffect(() => {
     fetch('http://localhost:4000/api/product')
         .then(res => res.json())
@@ -118,7 +117,7 @@ const handleEditProduct = (product) => {
             filtered = filtered.filter(product => product.category === selectedCategory);
         }
         if (selectedStatus !== 'All Statuses') {
-            filtered = filtered.filter(product => product.status === selectedStatus);
+            filtered = filtered.filter(product => getStatus(product) === selectedStatus);
         }
 
         setProducts(filtered);
@@ -131,10 +130,21 @@ const handleEditProduct = (product) => {
         return category && category.category_name
     };
 
+    const getStatus = (product) => {
+        if (product.warehouse_quantity > product.threshold) {
+            return 'In Stock';
+        } else if (product.warehouse_quantity <= product.threshold) {
+            return 'Low Stock';
+        } else {
+            return 'Out of Stock';
+        }
+    };
+
     // Function to get the class for product status
     const getProductStatusClass = (status) => {
     switch (status) {
         case 'In Stock': return 'status-in-stock';
+        case 'Low Stock': return 'status-low-stock';
         case 'Out of Stock': return 'status-out-of-stock';
         // Add other statuses as needed
         default: return '';
@@ -230,8 +240,8 @@ const handleEditProduct = (product) => {
         >
             <option value="All Statuses">All Statuses</option>
             <option value="In Stock">In Stock</option>
+            <option value="Low Stock">Low Stock</option>
             <option value="Out of Stock">Out of Stock</option>
-            <option value="Discontinued">Discontinued</option>
         </select>
     </div>
 </div>
@@ -346,11 +356,9 @@ const handleEditProduct = (product) => {
                             <td>${product.product_price.toFixed(2)}</td>
                             <td>{product.warehouse_quantity}</td>
                             <td>
-                                {product.warehouse_quantity > 0 ? (
-                                    <span className="status-in-stock">In Stock</span>
-                                ) : (
-                                    <span className="status-out-of-stock">Out of Stock</span>
-                                )}
+                                <span className={getProductStatusClass(getStatus(product))}>
+                                    {getStatus(product)}
+                                </span>
                             </td>
                             <td className="action-column">
                             <div className="action-icons">

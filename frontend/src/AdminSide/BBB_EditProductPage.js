@@ -26,7 +26,7 @@ function EditProductPage() {
         productType: '',
         price: '',
         stockQuantity: '',
-        lowStockThreshold: '',
+        threshold: '',
         images: [],
         status: 'Draft',
         visibility: 'Public',
@@ -46,13 +46,13 @@ function EditProductPage() {
                     productType: data.productType || '',
                     price: data.product_price || '',
                     stockQuantity: data.warehouse_quantity || '',
-                    lowStockThreshold: data.low_stock_threshold || '', // ✅ fetch it here!
+                    threshold: data.threshold || '', // ✅ fetch it here!
                     images: [],
                     status: 'Draft',
                     visibility: 'Public',
                     category: data.category || '',
                 });
-                setExistingImageURLs([data.product_image]);
+                setExistingImageURLs([`/images/${data.product_image}`]);
             } catch (error) {
                 console.error('Failed to fetch product:', error);
                 alert('❌ Could not load product details.');
@@ -79,7 +79,7 @@ function EditProductPage() {
         form.append('productType', formData.productType);
         form.append('product_price', formData.price);
         form.append('warehouse_quantity', formData.stockQuantity);
-        form.append('lowStockThreshold', formData.lowStockThreshold || '');
+        form.append('threshold', formData.threshold || '');
         form.append('status', formData.status);
         form.append('visibility', formData.visibility);
         form.append('category', formData.category);
@@ -164,8 +164,8 @@ function EditProductPage() {
                                     <input type="number" name="stockQuantity" value={formData.stockQuantity} onChange={handleChange} min="0" required />
                                 </div>
                                 <div className="form-group">
-                                    <label>Low Stock Threshold</label>
-                                    <input type="number" name="lowStockThreshold" value={formData.lowStockThreshold} onChange={handleChange} min="0" />
+                                    <label>Threshold</label>
+                                    <input type="number" name="threshold" value={formData.threshold} onChange={handleChange} min="0" />
                                     <small className="form-text text-muted">Optional. Set a threshold for low stock alerts.</small>
                                 </div>
                             </div>

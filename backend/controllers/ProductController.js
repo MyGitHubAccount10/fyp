@@ -99,22 +99,40 @@ const updateProduct = async (req, res) => {
         return res.status(404).json({error: 'Invalid product ID'});
     }
 
+    console.log('Update request body:', req.body);
+    console.log('Update request file:', req.file);
+
     try {
-        const updateProduct = {...req.body};
+        const updateData = {};
+        
+        // Map the incoming fields to the database schema
+        if (req.body.product_name) updateData.product_name = req.body.product_name;
+        if (req.body.description) updateData.description = req.body.description;
+        if (req.body.product_price) updateData.product_price = req.body.product_price;
+        if (req.body.warehouse_quantity) updateData.warehouse_quantity = req.body.warehouse_quantity;
+        if (req.body.threshold !== undefined) updateData.threshold = req.body.threshold || 5;
+        if (req.body.category) updateData.category = req.body.category;
+        
         if (req.file) {
-            updateProduct.product_image = req.file.filename;
+            updateData.product_image = req.file.filename;
         }
-        const product = await Product.findOneAndUpdate({_id: id}, {
-            ...updateProduct
-        });
 
-    if (!product) {
-        return res.status(404).json({error: 'Product not found'});
-    }
+        console.log('Update data:', updateData);
 
-    res.status(200).json(product);
+        const product = await Product.findOneAndUpdate(
+            {_id: id}, 
+            updateData, 
+            { new: true } // Return the updated document
+        );
+
+        if (!product) {
+            return res.status(404).json({error: 'Product not found'});
+        }
+
+        res.status(200).json(product);
     }
     catch (error) {
+        console.error('Update error:', error);
         res.status(400).json({error: error.message});
     }
 }

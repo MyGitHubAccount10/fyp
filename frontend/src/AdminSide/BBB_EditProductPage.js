@@ -20,6 +20,7 @@ function EditProductPage() {
     const { id } = useParams();
     const navigate = useNavigate();
 
+    const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -35,10 +36,26 @@ function EditProductPage() {
 
     const [existingImageURLs, setExistingImageURLs] = useState([]);
 
+    // Fetch categories on component mount
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('/api/category');
+                if (response.ok) {
+                    const categoriesData = await response.json();
+                    setCategories(categoriesData);
+                }
+            } catch (error) {
+                console.error('Failed to fetch categories:', error);
+            }
+        };
+        fetchCategories();
+    }, []);
+
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const res = await fetch(`http://localhost:4000/api/product/${id}`);
+                const res = await fetch(`/api/product/${id}`);
                 const data = await res.json();
                 setFormData({
                     name: data.product_name || '',
@@ -46,7 +63,7 @@ function EditProductPage() {
                     productType: data.productType || '',
                     price: data.product_price || '',
                     stockQuantity: data.warehouse_quantity || '',
-                    threshold: data.threshold || '', // ✅ fetch it here!
+                    threshold: data.threshold || '',
                     images: [],
                     status: 'Draft',
                     visibility: 'Public',
@@ -69,40 +86,59 @@ function EditProductPage() {
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
         }
-    };
-
-    const handleSubmit = async (e) => {
+    };    const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Frontend validation
+        if (!formData.name || !formData.description || !formData.price || !formData.stockQuantity || !formData.category) {
+            alert('❌ Please fill in all required fields (Name, Description, Price, Stock Quantity, Category)');
+            return;
+        }
+        
+        console.log('Form data before submission:', formData);
+        
         const form = new FormData();
+        // Use the same field names that work for create
         form.append('product_name', formData.name);
         form.append('description', formData.description);
-        form.append('productType', formData.productType);
-        form.append('product_price', formData.price);
-        form.append('warehouse_quantity', formData.stockQuantity);
-        form.append('threshold', formData.threshold || '');
-        form.append('status', formData.status);
-        form.append('visibility', formData.visibility);
+        form.append('product_price', Number(formData.price));
+        form.append('warehouse_quantity', Number(formData.stockQuantity));
+        form.append('threshold', Number(formData.threshold) || 5);
         form.append('category', formData.category);
 
         if (formData.images && formData.images.length > 0) {
-            Array.from(formData.images).forEach(file => {
-                form.append('images', file);
-            });
+            form.append('product_image', formData.images[0]);
+        }
+
+        // Log all form data entries
+        console.log('FormData entries:');
+        for (let [key, value] of form.entries()) {
+            console.log(key, value);
         }
 
         try {
-            const res = await fetch(`http://localhost:4000/api/product/${id}`, {
-                method: 'PUT',
+            const res = await fetch(`/api/product/${id}`, {
+                method: 'PATCH', // Use PATCH instead of PUT
                 body: form,
             });
 
-            if (!res.ok) throw new Error('Update failed');
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                console.error('Server response:', {
+                    status: res.status,
+                    statusText: res.statusText,
+                    body: errorData
+                });
+                throw new Error(`Update failed: ${errorData.error || res.statusText}`);
+            }
 
+            const result = await res.json();
+            console.log('Product updated:', result);
             alert('✅ Product updated successfully!');
             navigate('/all-products');
         } catch (err) {
-            console.error(err);
-            alert('❌ Failed to update product.');
+            console.error('Update error:', err);
+            alert(`❌ Failed to update product: ${err.message}`);
         }
     };
 
@@ -205,8 +241,7 @@ function EditProductPage() {
                         {/* RIGHT COLUMN */}
                         <div className="add-product-sidebar-panel">
                             <div className="form-section-card">
-                                <h3 className="section-card-title">Product Category</h3>
-                                <div className="form-group">
+                                <h3 className="section-card-title">Product Category</h3>                                <div className="form-group">
                                     <label htmlFor="productCategory">Category</label>
                                     <select name="category" 
                                     value={formData.category} 
@@ -219,11 +254,11 @@ function EditProductPage() {
                                         border: '1px solid #ccc'
                                             }}>
                                         <option value="" disabled>Select Category</option>
-                                        <option value="Skimboards">Skimboards</option>
-                                        <option value="T-Shirts">T-Shirts</option>
-                                        <option value="Jackets">Jackets</option>
-                                        <option value="Board Shorts">Board Shorts</option>
-                                        <option value="Accessories">Accessories</option>
+                                        {categories.map((category) => (
+                                            <option key={category._id} value={category._id}>
+                                                {category.category_name}
+                                            </option>
+                                        ))}
                                     </select>
                                 </div>
                             </div>

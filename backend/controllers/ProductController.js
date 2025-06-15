@@ -37,8 +37,6 @@ const createProduct = async (req, res) => {
     price,
     stockQuantity,
     lowStockThreshold,
-    status,
-    visibility,
     category
     } = req.body; 
 

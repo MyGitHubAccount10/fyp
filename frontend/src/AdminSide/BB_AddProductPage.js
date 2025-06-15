@@ -200,6 +200,20 @@ function AddProductPage() {
                                 required
                             />
                         </div>
+                        {/* Low Stock Threshold */}
+                        <div className="form-group">
+                            <label htmlFor="lowStockThreshold">Low Stock Threshold</label>
+                            <input
+                                type="number"
+                                id="lowStockThreshold"
+                                name="lowStockThreshold"
+                                value={formData.lowStockThreshold}
+                                onChange={handleChange}
+                                placeholder="e.g., 5"
+                                min="0"
+                                required
+                            />
+                            </div>
                     </div>
 
                      {/* Card 3: Product Image */}

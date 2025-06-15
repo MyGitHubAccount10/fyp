@@ -46,7 +46,7 @@ function EditProductPage() {
                     productType: data.productType || '',
                     price: data.product_price || '',
                     stockQuantity: data.warehouse_quantity || '',
-                    lowStockThreshold: '',
+                    lowStockThreshold: data.low_stock_threshold || '', // ✅ fetch it here!
                     images: [],
                     status: 'Draft',
                     visibility: 'Public',
@@ -127,13 +127,29 @@ function EditProductPage() {
                         <div className="add-product-main-column">
                             <div className="form-section-card">
                                 <h3 className="section-card-title">Edit Product</h3>
+
+
                                 <div className="form-group">
                                     <label>Product Name</label>
                                     <input type="text" name="name" value={formData.name} onChange={handleChange} required />
                                 </div>
                                 <div className="form-group">
                                     <label>Description</label>
-                                    <textarea name="description" value={formData.description} onChange={handleChange} rows="4" required />
+                                    <textarea 
+                                    name="description" 
+                                    value={formData.description} 
+                                    onChange={handleChange} 
+                                    rows="4" 
+                                    required
+                                    style={{
+                                        width: '100%',
+                                        padding: '10px',
+                                        marginTop: '6px',
+                                        borderRadius: '6px',
+                                        border: '1px solid #ccc',
+                                        resize: 'vertical',
+                                        boxSizing: 'border-box'
+                                    }} />
                                 </div>
                             </div>
 
@@ -146,6 +162,11 @@ function EditProductPage() {
                                 <div className="form-group">
                                     <label>Stock Quantity</label>
                                     <input type="number" name="stockQuantity" value={formData.stockQuantity} onChange={handleChange} min="0" required />
+                                </div>
+                                <div className="form-group">
+                                    <label>Low Stock Threshold</label>
+                                    <input type="number" name="lowStockThreshold" value={formData.lowStockThreshold} onChange={handleChange} min="0" />
+                                    <small className="form-text text-muted">Optional. Set a threshold for low stock alerts.</small>
                                 </div>
                             </div>
 
@@ -180,7 +201,16 @@ function EditProductPage() {
                                 <h3 className="section-card-title">Product Category</h3>
                                 <div className="form-group">
                                     <label htmlFor="productCategory">Category</label>
-                                    <select name="category" value={formData.category} onChange={handleChange} required>
+                                    <select name="category" 
+                                    value={formData.category} 
+                                    onChange={handleChange} 
+                                    required
+                                    style={{
+                                        flex: '1 1 150px',
+                                        padding: '10px',
+                                        borderRadius: '6px',
+                                        border: '1px solid #ccc'
+                                            }}>
                                         <option value="" disabled>Select Category</option>
                                         <option value="Skimboards">Skimboards</option>
                                         <option value="T-Shirts">T-Shirts</option>

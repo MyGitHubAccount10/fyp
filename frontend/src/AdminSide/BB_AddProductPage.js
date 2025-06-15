@@ -1,9 +1,9 @@
 //hold
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AdminStyles.css';
-import AdminHeader from '../AdminHeader'; 
+import AdminHeader from '../AdminHeader';
 
 
 // Placeholder Icons (reusing from AdminHeader/ManageProducts)
@@ -18,10 +18,10 @@ const PencilIcon = ({ size = 18, color = "currentColor" }) => (
 function AddProductPage() {
     const navigate = useNavigate();
 
+    const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({
         name: '',
         description: '',
-        productType: 'Select Category', // Assuming 'Select Category' is the default radio option
         price: '',
         stockQuantity: '',
         lowStockThreshold: '',
@@ -29,7 +29,26 @@ function AddProductPage() {
         status: 'Draft', // Default from screenshot
         visibility: 'Public', // Default from screenshot
         category: '', // For the Organisation section dropdown
-    });
+    });    // Fetch categories on component mount
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                console.log('Fetching categories...');
+                const response = await fetch('/api/category');
+                console.log('Categories response:', response.status, response.statusText);
+                if (response.ok) {
+                    const categoriesData = await response.json();
+                    console.log('Categories loaded:', categoriesData);
+                    setCategories(categoriesData);
+                } else {
+                    console.error('Failed to fetch categories:', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('Failed to fetch categories:', error);
+            }
+        };
+        fetchCategories();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value, type, checked, files } = e.target;
@@ -45,8 +64,7 @@ function AddProductPage() {
             setFormData(prev => ({
                 ...prev,
                 [name]: files, // Store FileList object
-            }));
-        }
+            }));        }
         else {
             // Handle other input types (text, number, select, textarea)
             setFormData(prev => ({
@@ -54,37 +72,53 @@ function AddProductPage() {
                 [name]: value,
             }));
         }
-    };
-
-    const handleSubmit = async (e) => {
+    };    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const form = new FormData();
-        form.append('name', formData.name);
-        form.append('description', formData.description);
-        form.append('productType', formData.productType);
-        form.append('price', formData.price);
-        form.append('stockQuantity', formData.stockQuantity);
-        form.append('lowStockThreshold', formData.lowStockThreshold || ''); // optional
-        form.append('status', formData.status);
-        form.append('visibility', formData.visibility);
-        form.append('category', formData.category);
-
-        // Handle images (multiple files)
-        if (formData.images && formData.images.length > 0) {
-            Array.from(formData.images).forEach((file, index) => {
-                form.append('images', file); // backend must handle multiple files as 'images'
-            });
+        // Frontend validation
+        if (!formData.name || !formData.description || !formData.price || !formData.stockQuantity || !formData.category) {
+            alert('❌ Please fill in all required fields (Name, Description, Price, Stock Quantity, Category)');
+            return;
         }
 
-        try {
-            const response = await fetch('http://localhost:4000/api/product', {
+        if (!formData.images || formData.images.length === 0) {
+            alert('❌ Please select at least one product image');
+            return;
+        }
+
+        console.log('Form data before submission:', formData);
+
+        const form = new FormData();
+        form.append('name', formData.name); // Changed to match controller
+        form.append('description', formData.description);
+        form.append('price', Number(formData.price)); // Changed to match controller
+        form.append('stockQuantity', Number(formData.stockQuantity)); // Changed to match controller
+        form.append('lowStockThreshold', Number(formData.lowStockThreshold) || 5); // Changed to match controller
+        form.append('category', formData.category);
+
+        if (formData.images && formData.images.length > 0) {
+            form.append('product_image', formData.images[0]);
+            console.log('Image file:', formData.images[0]);
+            // For more images, add here as product_image2, etc.
+        }
+
+        // Log all form data entries
+        console.log('FormData entries:');
+        for (let [key, value] of form.entries()) {
+            console.log(key, value);
+        }        try {
+            const response = await fetch('/api/product', {
                 method: 'POST',
                 body: form,
-            });
-
-            if (!response.ok) {
-                throw new Error(`Server error: ${response.status}`);
+            });            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error('Server response:', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    body: errorData
+                });
+                throw new Error(`Server error (${response.status}): ${errorData.error || response.statusText || 'Unknown error'}`);
             }
 
             const result = await response.json();
@@ -93,7 +127,7 @@ function AddProductPage() {
             navigate('/all-products'); // go back to product list
         } catch (error) {
             console.error('Upload failed:', error);
-            alert('❌ Failed to upload product.');
+            alert(`❌ Failed to upload product: ${error.message}`);
         }
     };
 
@@ -261,8 +295,7 @@ function AddProductPage() {
                     <div className="form-section-card">
                         <h3 className="section-card-title">Product Category</h3>
                          <div className="form-group">
-                            <label htmlFor="productCategory">Category</label>
-                            <select
+                            <label htmlFor="productCategory">Category</label>                            <select
                                 id="productCategory"
                                 name="category"
                                 value={formData.category}
@@ -276,12 +309,11 @@ function AddProductPage() {
                     }}
                             >
                                 <option value="" disabled>Select Category</option> {/* Placeholder option */}
-                                <option value="Skimboards">Skimboards</option>
-                                <option value="T-Shirts">T-Shirts</option>
-                                <option value="Jackets">Jackets</option>
-                                <option value="Board Shorts">Board Shorts</option>
-                                <option value="Accessories">Accessories</option>
-                                {/* Add other categories dynamically */}
+                                {categories.map((category) => (
+                                    <option key={category._id} value={category._id}>
+                                        {category.category_name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                     </div>

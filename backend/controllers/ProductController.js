@@ -26,28 +26,53 @@ const getProduct = async (req, res) => {
 
 // Create a new product
 const createProduct = async (req, res) => {
+    // Debug: Log what we're receiving
+    console.log('Request body:', req.body);
+    console.log('Request file:', req.file);
+    
+    // Destructure the keys your frontend is sending (adjust these names to match frontend)
     const {
-        category,
-        product_name,
-        description,
-        product_price,
-        warehouse_quantity,
-    } = req.body;
+    name,
+    description,
+    price,
+    stockQuantity,
+    lowStockThreshold,
+    status,
+    visibility,
+    category
+    } = req.body; 
+
     
     const product_image = req.file ? req.file.filename : null;
-    
+
+    // Validation
+    if (!name || !description || !price || !stockQuantity || !category) {
+        return res.status(400).json({
+            error: 'Missing required fields: name, description, price, stockQuantity, category'
+        });
+    }
+
+    if (!product_image) {
+        return res.status(400).json({
+            error: 'Product image is required'
+        });
+    }
+
     try {
+        // Map frontend keys to backend product schema keys - only use fields that exist in schema
         const product = await Product.create({
-            category,
-            product_name,
+            product_name: name,
             description,
-            product_price,
-            warehouse_quantity,
+            product_price: price,
+            warehouse_quantity: stockQuantity,
+            category,
+            threshold: lowStockThreshold || 5, // Use lowStockThreshold for threshold field
             product_image
         });
         res.status(200).json(product);
     }
     catch (error) {
+        console.error('Database error:', error);
         res.status(400).json({error: error.message});
     }
 }

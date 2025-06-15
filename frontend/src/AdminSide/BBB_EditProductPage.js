@@ -1,155 +1,212 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
+const BackIcon = ({ color = "currentColor" }) => (
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19 12H5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M12 19L5 12L12 5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+const PencilIcon = ({ size = 18, color = "currentColor" }) => (
+    <svg viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
+        <path d="M17 3C17.26 2.74 17.59 2.53 17.96 2.38C18.33 2.24 18.73 2.15 19.14 2.14C19.55 2.12 19.96 2.18 20.35 2.30C20.74 2.42 21.10 2.60 21.41 2.91C21.73 3.22 21.98 3.59 22.10 3.98C22.22 4.37 22.27 4.78 22.26 5.19C22.24 5.60 22.16 6.00 22.01 6.37C21.87 6.74 21.66 7.06 21.40 7.33L10.35 18.36L2 22L5.64 13.65L17 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
 function EditProductPage() {
-//   const navigate = useNavigate();
-//   const location = useLocation();
-//   const existingProduct = location.state?.product || {};
+    const { id } = useParams();
+    const navigate = useNavigate();
 
-//   const [formData, setFormData] = useState({
-//     name: '',
-//     description: '',
-//     productType: 'Select Category',
-//     price: '',
-//     stockQuantity: '',
-//     lowStockThreshold: '',
-//     images: [],
-//     status: 'Draft',
-//     visibility: 'Public',
-//     category: '',
-//   });
+    const [formData, setFormData] = useState({
+        name: '',
+        description: '',
+        productType: '',
+        price: '',
+        stockQuantity: '',
+        lowStockThreshold: '',
+        images: [],
+        status: 'Draft',
+        visibility: 'Public',
+        category: '',
+    });
 
-//   useEffect(() => {
-//     if (existingProduct) {
-//       setFormData({
-//         ...formData,
-//         ...existingProduct,
-//         images: [], // Do not pre-fill file inputs
-//       });
-//     }
-//   }, [existingProduct]);
+    const [existingImageURLs, setExistingImageURLs] = useState([]);
 
-//   const handleChange = (e) => {
-//     const { name, value, type, files } = e.target;
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                const res = await fetch(`http://localhost:4000/api/product/${id}`);
+                const data = await res.json();
+                setFormData({
+                    name: data.product_name || '',
+                    description: data.description || '',
+                    productType: data.productType || '',
+                    price: data.product_price || '',
+                    stockQuantity: data.warehouse_quantity || '',
+                    lowStockThreshold: '',
+                    images: [],
+                    status: 'Draft',
+                    visibility: 'Public',
+                    category: data.category || '',
+                });
+                setExistingImageURLs([data.product_image]);
+            } catch (error) {
+                console.error('Failed to fetch product:', error);
+                alert('❌ Could not load product details.');
+            }
+        };
 
-//     setFormData((prev) => ({
-//       ...prev,
-//       [name]: type === 'file' ? files : value,
-//     }));
-//   };
+        fetchProduct();
+    }, [id]);
 
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     console.log("Edited Product Data:", formData);
-//     alert("Product updated (demo): Check console for data.");
-//     navigate('/manage-products');
-//   };
+    const handleChange = (e) => {
+        const { name, value, type, files } = e.target;
+        if (type === 'file') {
+            setFormData(prev => ({ ...prev, [name]: files }));
+        } else {
+            setFormData(prev => ({ ...prev, [name]: value }));
+        }
+    };
 
-//   const handleCancel = () => navigate('/manage-products');
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const form = new FormData();
+        form.append('product_name', formData.name);
+        form.append('description', formData.description);
+        form.append('productType', formData.productType);
+        form.append('product_price', formData.price);
+        form.append('warehouse_quantity', formData.stockQuantity);
+        form.append('lowStockThreshold', formData.lowStockThreshold || '');
+        form.append('status', formData.status);
+        form.append('visibility', formData.visibility);
+        form.append('category', formData.category);
 
-  return (
+        if (formData.images && formData.images.length > 0) {
+            Array.from(formData.images).forEach(file => {
+                form.append('images', file);
+            });
+        }
 
-        //To be removed when data is available
-        <div>
+        try {
+            const res = await fetch(`http://localhost:4000/api/product/${id}`, {
+                method: 'PUT',
+                body: form,
+            });
+
+            if (!res.ok) throw new Error('Update failed');
+
+            alert('✅ Product updated successfully!');
+            navigate('/all-products');
+        } catch (err) {
+            console.error(err);
+            alert('❌ Failed to update product.');
+        }
+    };
+
+    const handleBack = () => navigate('/all-products');
+    const handleCancel = () => handleBack();
+
+    return (
+        <div className="add-product-page">
             <AdminHeader />
-            <div>Need data</div>
+            <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h2>Edit Product</h2>
+                    <button onClick={handleBack} className="btn-add-new">
+                        <BackIcon size={18} color="white" />
+                        Back to All Products
+                    </button>
+                </div>
+
+                <form onSubmit={handleSubmit}>
+                    <div className="add-product-form-layout">
+                        {/* LEFT COLUMN */}
+                        <div className="add-product-main-column">
+                            <div className="form-section-card">
+                                <h3 className="section-card-title">Edit Product</h3>
+                                <div className="form-group">
+                                    <label>Product Name</label>
+                                    <input type="text" name="name" value={formData.name} onChange={handleChange} required />
+                                </div>
+                                <div className="form-group">
+                                    <label>Description</label>
+                                    <textarea name="description" value={formData.description} onChange={handleChange} rows="4" required />
+                                </div>
+                            </div>
+
+                            <div className="form-section-card">
+                                <h3 className="section-card-title">Product Data</h3>
+                                <div className="form-group">
+                                    <label>Price</label>
+                                    <input type="number" name="price" value={formData.price} onChange={handleChange} step="0.01" required />
+                                </div>
+                                <div className="form-group">
+                                    <label>Stock Quantity</label>
+                                    <input type="number" name="stockQuantity" value={formData.stockQuantity} onChange={handleChange} min="0" required />
+                                </div>
+                            </div>
+
+                            <div className="form-section-card">
+                                <h3 className="section-card-title">Product Image</h3>
+                                <div className="form-group">
+                                    <label>Replace Images</label>
+                                    <div className="file-upload-area">
+                                        <input type="file" name="images" multiple onChange={handleChange} className="file-input-hidden" id="imageUpload" />
+                                        <label htmlFor="imageUpload" className="file-input-label">
+                                            <span className="file-input-button">Choose Files</span>
+                                            <span className="file-input-text">
+                                                {formData.images.length > 0 ? `${formData.images.length} file(s)` : 'No file chosen'}
+                                            </span>
+                                        </label>
+                                    </div>
+                                    {existingImageURLs.length > 0 && (
+                                        <div className="preview-images">
+                                            {existingImageURLs.map((url, i) => (
+                                                <img key={i} src={url} alt="Current" style={{ maxWidth: "100px", marginTop: "10px" }} />
+                                            ))}
+                                        </div>
+                                    )}
+                                    <small className="form-text text-muted">First image will be used as the main display image.</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* RIGHT COLUMN */}
+                        <div className="add-product-sidebar-panel">
+                            <div className="form-section-card">
+                                <h3 className="section-card-title">Product Category</h3>
+                                <div className="form-group">
+                                    <label htmlFor="productCategory">Category</label>
+                                    <select name="category" value={formData.category} onChange={handleChange} required>
+                                        <option value="" disabled>Select Category</option>
+                                        <option value="Skimboards">Skimboards</option>
+                                        <option value="T-Shirts">T-Shirts</option>
+                                        <option value="Jackets">Jackets</option>
+                                        <option value="Board Shorts">Board Shorts</option>
+                                        <option value="Accessories">Accessories</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="form-section-card">
+                                <h3 className="section-card-title">Update Product</h3>
+                                <div className="form-actions-vertical">
+                                    <button type="submit" className="btn-save-product">
+                                        <PencilIcon size={18} color="white" />
+                                        Save Changes
+                                    </button>
+                                    <button type="button" onClick={handleCancel} className="btn-cancel-product">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-        //-----------------------------------------------
-    // <div className="add-product-page">
-    //   <AdminHeader />
-    //   <div style={{ paddingLeft: '100px', paddingRight: '100px' }}>
-    //     <div className="page-header-section">
-    //       <h2>Edit Product</h2>
-    //       <button className="btn-back-to-products" onClick={handleCancel}>
-    //         <BackIcon color="#555" /> Back to All Products
-    //       </button>
-    //     </div>
-
-    //     <form onSubmit={handleSubmit} className="add-product-form-layout">
-    //       <div className="add-product-main-column">
-    //         <div className="form-section-card">
-    //           <h3 className="section-card-title">Edit Product Information</h3>
-    //           <div className="form-group">
-    //             <label htmlFor="productName">Product Name</label>
-    //             <input type="text" id="productName" name="name" value={formData.name} onChange={handleChange} required />
-    //           </div>
-
-    //           <div className="form-group">
-    //             <label htmlFor="productDescription">Description</label>
-    //             <textarea id="productDescription" name="description" rows="4" value={formData.description} onChange={handleChange} required></textarea>
-    //           </div>
-    //         </div>
-
-    //         <div className="form-section-card">
-    //           <h3 className="section-card-title">Product Data</h3>
-    //           <div className="form-group">
-    //             <label htmlFor="productPrice">Price</label>
-    //             <input type="number" id="productPrice" name="price" step="0.01" value={formData.price} onChange={handleChange} required />
-    //           </div>
-
-    //           <div className="form-group">
-    //             <label htmlFor="stockQuantity">Stock Quantity</label>
-    //             <input type="number" id="stockQuantity" name="stockQuantity" value={formData.stockQuantity} onChange={handleChange} min="0" required />
-    //           </div>
-
-    //           <div className="form-group">
-    //             <label htmlFor="lowStockThreshold">Low Stock Threshold</label>
-    //             <input type="number" id="lowStockThreshold" name="lowStockThreshold" value={formData.lowStockThreshold} onChange={handleChange} min="0" />
-    //           </div>
-    //         </div>
-
-    //         <div className="form-section-card">
-    //           <h3 className="section-card-title">Update Product Image</h3>
-    //           <div className="form-group">
-    //             <label>Upload New Images (optional)</label>
-    //             <div className="file-upload-area">
-    //               <input type="file" id="productImages" name="images" multiple onChange={handleChange} className="file-input-hidden" />
-    //               <label htmlFor="productImages" className="file-input-label">
-    //                 <span className="file-input-button">Choose Files</span>
-    //                 <span className="file-input-text">
-    //                   {formData.images?.length > 0 ? `${formData.images.length} file(s) selected` : 'No File Chosen'}
-    //                 </span>
-    //               </label>
-    //             </div>
-    //             <small className="form-text text-muted">New image will replace the current one if uploaded.</small>
-    //           </div>
-    //         </div>
-    //       </div>
-
-    //       <div className="add-product-sidebar-panel">
-    //         <div className="form-section-card">
-    //           <h3 className="section-card-title">Product Category</h3>
-    //           <div className="form-group">
-    //             <label htmlFor="productCategory">Category</label>
-    //             <select id="productCategory" name="category" value={formData.category} onChange={handleChange} required>
-    //               <option value="" disabled>Select Category</option>
-    //               <option value="Skimboards">Skimboards</option>
-    //               <option value="T-Shirts">T-Shirts</option>
-    //               <option value="Jackets">Jackets</option>
-    //               <option value="Board Shorts">Board Shorts</option>
-    //               <option value="Accessories">Accessories</option>
-    //             </select>
-    //           </div>
-    //         </div>
-
-    //         <div className="form-section-card">
-    //           <h3 className="section-card-title">Save Changes</h3>
-    //           <div className="form-actions-vertical">
-    //             <button type="submit" className="btn-save-product">
-    //               <PencilIcon size={18} color="white" />
-    //               Save Changes
-    //             </button>
-    //             <button type="button" onClick={handleCancel} className="btn-cancel-product">Cancel</button>
-    //           </div>
-    //         </div>
-    //       </div>
-    //     </form>
-    //   </div>
-    // </div>
-
-  );
+    );
 }
 
 export default EditProductPage;

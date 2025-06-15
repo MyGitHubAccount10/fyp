@@ -72,7 +72,7 @@ function App() {
         <Route path="admin-settings" element={<AdminSettingsPage />} />
         <Route path="all-customers" element={<AllCustomersPage />} />
         <Route path="admin-profile" element={<AdminProfilePage />} />
-        <Route path="edit-product" element={<EditProductPage />} />
+        <Route path="/edit-product/:id" element={<EditProductPage />} />
 
         {/* Catch-all route for 404 Not Found */}
         <Route path="*" element={<PageNotFound />} />

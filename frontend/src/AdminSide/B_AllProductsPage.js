@@ -81,12 +81,11 @@ function AllProductsPage() {
     };
 
     // Action Handlers
-    const handleEditProduct = (product) => {
-        console.log("Editing product:", product);
-        Navigate(`/edit-product`);
-        // Navigate(`/edit-product/${product._id}`);
-        
-    };
+const handleEditProduct = (product) => {
+    console.log("Editing product:", product);
+    Navigate(`/edit-product/${product._id}`); // ✅ Send the ID
+};
+
 
     const handleDeleteProduct = (productId) => {
         console.log("Deleting product with ID:", productId);

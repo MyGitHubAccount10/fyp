@@ -157,7 +157,14 @@ function EditProductPage() {
                                 <h3 className="section-card-title">Product Data</h3>
                                 <div className="form-group">
                                     <label>Price</label>
-                                    <input type="number" name="price" value={formData.price} onChange={handleChange} step="0.01" required />
+                                    <input
+                                    type="number"
+                                    name="price"
+                                    value={parseFloat(formData.price || 0).toFixed(2)}
+                                    onChange={handleChange}
+                                    step="0.01"
+                                    required
+                                    />
                                 </div>
                                 <div className="form-group">
                                     <label>Stock Quantity</label>

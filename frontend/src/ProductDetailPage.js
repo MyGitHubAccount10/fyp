@@ -92,22 +92,28 @@ const ProductDetailPage = () => {
                 <div className="quantity-controls-detail">
                     <button 
                     onClick={() => handleQuantityChange(-1)}
-                    disabled={quantity === 1}
+                    disabled={quantity === 1 || product.warehouse_quantity === 0}
                     style={{ opacity: quantity === 1 ? 0.5 : 1 }}>-
                     </button>
                     <span>{quantity}</span>
                     <button 
                     onClick={() => handleQuantityChange(1)}
-                    disabled={quantity === product.warehouse_quantity}
-                    style={{ opacity: quantity === product.warehouse_quantity ? 0.5 : 1 }}>+
+                    disabled={quantity === product.warehouse_quantity || product.warehouse_quantity === 0}
+                    style={{ opacity: quantity === product.warehouse_quantity || product.warehouse_quantity === 0 ? 0.5 : 1 }}>+
                     </button>
                 </div>
               </div>
             </div>
 
             <div className="product-actions-detail">
-              <button className="btn-buy-now">Buy Now</button>
-              <button className="btn-add-to-cart-detail">Add to Cart</button>
+              <button 
+              className="btn-buy-now"
+              disabled={product.warehouse_quantity === 0}
+              style={{ opacity: product.warehouse_quantity === 0 ? 0.5 : 1 }}>Buy Now</button>
+              <button 
+              className="btn-add-to-cart-detail"
+              disabled={product.warehouse_quantity === 0}
+              style={{ opacity: product.warehouse_quantity === 0 ? 0.5 : 1 }}>Add to Cart</button>
             </div>
           </div>
         </section>

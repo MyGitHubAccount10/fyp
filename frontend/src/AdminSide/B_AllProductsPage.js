@@ -131,12 +131,13 @@ const handleEditProduct = (product) => {
     };
 
     const getStatus = (product) => {
-        if (product.warehouse_quantity > product.threshold) {
-            return 'In Stock';
-        } else if (product.warehouse_quantity <= product.threshold) {
+        if (product.warehouse_quantity === 0) {
+            return 'Out of Stock';
+        }
+        else if (product.warehouse_quantity <= product.threshold) {
             return 'Low Stock';
         } else {
-            return 'Out of Stock';
+            return 'In Stock';
         }
     };
 

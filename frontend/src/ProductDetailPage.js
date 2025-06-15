@@ -46,6 +46,7 @@ const ProductDetailPage = () => {
       }
     };
     fetchSimilarProducts();
+    setQuantity(1);
     window.scrollTo(0, 0);
   }, [product]);
 
@@ -54,7 +55,7 @@ const ProductDetailPage = () => {
   };
 
   const handleQuantityChange = (amount) => {
-    setQuantity(prevQuantity => Math.max(1, prevQuantity + amount));
+    setQuantity(prevQuantity => (prevQuantity + amount));
   };
   
   return (
@@ -73,8 +74,8 @@ const ProductDetailPage = () => {
             <h1 className="product-name-detail">{product.product_name}</h1>
             <p className="product-price-detail">${parseFloat(product.product_price).toFixed(2)}</p>
 
-            {/* <div className="product-options">
-              <div className="product-sizes">
+            <div className="product-options">
+              {/* <div className="product-sizes">
                 <span className="option-label">Size:</span>
                 {product.sizes.map(size => (
                   <button
@@ -85,16 +86,24 @@ const ProductDetailPage = () => {
                     {size}
                   </button>
                 ))}
-              </div>
+              </div> */}
               <div className="product-quantity-selector">
                 <span className="option-label">Quantity:</span>
                 <div className="quantity-controls-detail">
-                    <button onClick={() => handleQuantityChange(-1)}>-</button>
+                    <button 
+                    onClick={() => handleQuantityChange(-1)}
+                    disabled={quantity === 1}
+                    style={{ opacity: quantity === 1 ? 0.5 : 1 }}>-
+                    </button>
                     <span>{quantity}</span>
-                    <button onClick={() => handleQuantityChange(1)}>+</button>
+                    <button 
+                    onClick={() => handleQuantityChange(1)}
+                    disabled={quantity === product.warehouse_quantity}
+                    style={{ opacity: quantity === product.warehouse_quantity ? 0.5 : 1 }}>+
+                    </button>
                 </div>
               </div>
-            </div> */}
+            </div>
 
             <div className="product-actions-detail">
               <button className="btn-buy-now">Buy Now</button>

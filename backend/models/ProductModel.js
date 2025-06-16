@@ -19,9 +19,6 @@ const productSchema = new Schema({
   product_price: {
     type: Number,
     required: true,
-    set: v => {
-      return Number(v).toFixed(2);
-    }
   },
   warehouse_quantity: {
     type: Number,
@@ -31,25 +28,9 @@ const productSchema = new Schema({
     type: String,
     required: true
   },
-  product_image2: {
-    type: String,
-    required: false
-  },
-  product_image3: {
-    type: String,
-    required: false
-  },
-  product_image4: {
-    type: String,
-    required: false
-  },
-  product_image5: {
-    type: String,
-    required: false
-  },
   threshold: {
     type: Number,
-    default: 5, // Optional: You can allow setting a default
+    default: 5,
     min: 0
   }
 }, { timestamps: true })

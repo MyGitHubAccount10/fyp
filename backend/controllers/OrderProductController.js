@@ -31,6 +31,7 @@ const createOrderProduct = async (req, res) => {
         product,
         order_quantity,
         order_unit_price,
+        order_size
     } = req.body;
     
     try {
@@ -39,6 +40,7 @@ const createOrderProduct = async (req, res) => {
             product,
             order_quantity,
             order_unit_price,
+            order_size
         });
         res.status(200).json(orderProduct);
     }

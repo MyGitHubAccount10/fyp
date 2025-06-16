@@ -50,6 +50,8 @@ const ProductDetailPage = () => {
     window.scrollTo(0, 0);
   }, [product]);
 
+  const sizes = ['S', 'M', 'L'];
+
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
   };
@@ -75,9 +77,9 @@ const ProductDetailPage = () => {
             <p className="product-price-detail">${parseFloat(product.product_price).toFixed(2)}</p>
 
             <div className="product-options">
-              {/* <div className="product-sizes">
+              <div className="product-sizes">
                 <span className="option-label">Size:</span>
-                {product.sizes.map(size => (
+                {sizes.map(size => (
                   <button
                     key={size}
                     className={`size-button ${selectedSize === size ? 'selected' : ''}`}
@@ -86,7 +88,7 @@ const ProductDetailPage = () => {
                     {size}
                   </button>
                 ))}
-              </div> */}
+              </div>
               <div className="product-quantity-selector">
                 <span className="option-label">Quantity:</span>
                 <div className="quantity-controls-detail">

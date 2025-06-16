@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useCartContext } from './hooks/useCartContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 
 const ProductDetailPage = () => {
   const { productId } = useParams();
+  const navigate = useNavigate();
+  const { dispatch } = useCartContext();
   const [product, setProduct] = useState(productId);
   const [similarProducts, setSimilarProducts] = useState([]);
   const [selectedSize, setSelectedSize] = useState('');
@@ -105,13 +108,38 @@ const ProductDetailPage = () => {
               </div>
             </div>
 
-            <div className="product-actions-detail">
-              <button 
+            <div className="product-actions-detail">              <button 
               className="btn-buy-now"
+              onClick={() => {
+                dispatch({
+                  type: 'ADD_TO_CART',
+                  payload: {
+                    id: product._id,
+                    name: product.product_name,
+                    price: product.product_price,
+                    quantity: quantity,
+                    image: product.product_image
+                  }
+                });
+                navigate('/place-order');
+              }}
               disabled={product.warehouse_quantity === 0}
               style={{ opacity: product.warehouse_quantity === 0 ? 0.5 : 1 }}>Buy Now</button>
               <button 
               className="btn-add-to-cart-detail"
+              onClick={() => {
+                dispatch({
+                  type: 'ADD_TO_CART',
+                  payload: {
+                    id: product._id,
+                    name: product.product_name,
+                    price: product.product_price,
+                    quantity: quantity,
+                    image: product.product_image
+                  }
+                });
+                navigate('/cart');
+              }}
               disabled={product.warehouse_quantity === 0}
               style={{ opacity: product.warehouse_quantity === 0 ? 0.5 : 1 }}>Add to Cart</button>
             </div>

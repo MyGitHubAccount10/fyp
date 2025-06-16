@@ -86,10 +86,10 @@ function AllCustomersPage() {
         }
     };
 
-    const handleAddUser = () => {
-        console.log("Adding new user");
-        // In a real app, open the sidebar/modal for a new user form
-        Navigate('/add-user');
+    const handleAddAdmin = () => {
+        console.log("Adding new admin");
+        // In a real app, open the sidebar/modal for a new admin form
+        Navigate('/add-admin');
     }
 
     // Filter/Search Logic (basic client-side demo)
@@ -123,7 +123,12 @@ const handleFilter = () => {
           <AdminHeader />
         <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2>All Customers</h2> {/* Title from the image */}
+                <h2>All Users</h2> {/* Title from the image */}
+                <button onClick={handleAddAdmin} className="btn-add-new">
+                    <PencilIcon size={18} color="white" />
+                    Add New Admin
+                </button>
+
             </div>
 
                 {/* Filter row */}

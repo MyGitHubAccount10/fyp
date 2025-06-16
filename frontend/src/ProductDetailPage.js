@@ -11,7 +11,7 @@ const ProductDetailPage = () => {
   const { dispatch } = useCartContext();
   const [product, setProduct] = useState(productId);
   const [similarProducts, setSimilarProducts] = useState([]);
-  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
@@ -110,7 +110,8 @@ const ProductDetailPage = () => {
               </div>
             </div>
 
-            <div className="product-actions-detail">              <button 
+            <div className="product-actions-detail">              
+              <button 
               className="btn-buy-now"
               onClick={() => {
                 dispatch({
@@ -119,7 +120,9 @@ const ProductDetailPage = () => {
                     id: product._id,
                     name: product.product_name,
                     price: product.product_price,
+                    size: selectedSize,
                     quantity: quantity,
+                    warehouse_quantity: product.warehouse_quantity,
                     image: product.product_image
                   }
                 });
@@ -136,7 +139,9 @@ const ProductDetailPage = () => {
                     id: product._id,
                     name: product.product_name,
                     price: product.product_price,
+                    size: selectedSize,
                     quantity: quantity,
+                    warehouse_quantity: product.warehouse_quantity,
                     image: product.product_image
                   }
                 });

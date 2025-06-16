@@ -35,9 +35,8 @@ function AllProductsPage() {
     const [productsPerPage] = useState(10); // Fixed number of products per page
     const Navigate = useNavigate();
     const [modalImage, setModalImage] = useState(null);
-    
-    useEffect(() => {
-    fetch('http://localhost:4000/api/product')
+      useEffect(() => {
+    fetch('/api/product')
         .then(res => res.json())
         .then(data => {
         console.log("Fetched products:", data); // ADD THIS
@@ -50,7 +49,7 @@ function AllProductsPage() {
     }, []); // ← only runs once on page load
 
     useEffect(() => {
-    fetch('http://localhost:4000/api/category')
+    fetch('/api/category')
         .then(res => res.json())
         .then(data => {
         console.log("Fetched categories:", data); // ADD THIS
@@ -84,14 +83,31 @@ const handleEditProduct = (product) => {
     console.log("Editing product:", product);
     Navigate(`/edit-product/${product._id}`); // ✅ Send the ID
 };
-
-
-    const handleDeleteProduct = (productId) => {
+    const handleDeleteProduct = async (productId) => {
         console.log("Deleting product with ID:", productId);
-        // In a real app, show a confirmation modal and make an API call
-        if (window.confirm(`Are you sure you want to delete ${productId}?`)) {
-             setProducts(products.filter(p => p._id !== productId));
-             console.log("Product deleted (demo).");
+        
+        if (window.confirm(`Are you sure you want to delete this product? This action cannot be undone.`)) {
+            try {
+                const response = await fetch(`/api/product/${productId}`, {
+                    method: 'DELETE',
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(`Failed to delete product: ${errorData.error || response.statusText}`);
+                }
+
+                // Successfully deleted from API, now update local state
+                setAllProducts(prevProducts => prevProducts.filter(p => p._id !== productId));
+                setProducts(prevProducts => prevProducts.filter(p => p._id !== productId));
+                
+                console.log("Product deleted successfully from API");
+                alert("✅ Product deleted successfully!");
+                
+            } catch (error) {
+                console.error("Delete failed:", error);
+                alert(`❌ Failed to delete product: ${error.message}`);
+            }
         }
     };
 

@@ -24,12 +24,13 @@ import AllProductsPage from './AdminSide/B_AllProductsPage';
 import AddProductPage from './AdminSide/BB_AddProductPage';
 import AllOrdersPage from './AdminSide/C_AllOrdersPage';
 import OrderDetailsPage from './AdminSide/CC_OrderDetailsPage';
-import CustomerDetailsPage from './AdminSide/DD_CustomerDetailsPage';
+import CustomerDetailsPage from './AdminSide/DDD_CustomerDetailsPage';
 import AdminSettingsPage from './AdminSide/FAdminSettingsPage';
 import AllCustomersPage from './AdminSide/D_AllCustomersPage';
 import AdminProfilePage from './AdminSide/G_AdminProfilePage';
 import EditProductPage from './AdminSide/BBB_EditProductPage';
 import PageNotFound from './PageNotFound';
+import AddAdminPage from './AdminSide/DD_AddAdminPage';
  //
 
 
@@ -70,6 +71,7 @@ function App() {  return (
         <Route path="all-customers" element={<AllCustomersPage />} />
         <Route path="admin-profile" element={<AdminProfilePage />} />
         <Route path="/edit-product/:id" element={<EditProductPage />} />
+        <Route path="add-admin" element={<AddAdminPage />} />
 
         {/* Catch-all route for 404 Not Found */}        <Route path="*" element={<PageNotFound />} />
       </Routes>    </CartContextProvider>

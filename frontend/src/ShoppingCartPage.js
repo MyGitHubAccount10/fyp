@@ -96,9 +96,14 @@ function ShoppingCartPage() {
                                     </div>
                                     <div className="item-actions">
                                         <div className="quantity-controls">
-                                            <button onClick={() => handleQuantityChange(item.id, -1)}>-</button>
+                                            <button 
+                                            onClick={() => handleQuantityChange(item.id, -1)}
+                                            disabled={item.quantity === 1}
+                                            style={{ opacity: item.quantity === 1 ? 0.5 : 1 }}>-</button>
                                             <span>{item.quantity}</span>
-                                            <button onClick={() => handleQuantityChange(item.id, 1)}>+</button>
+                                            <button onClick={() => handleQuantityChange(item.id, 1)}
+                                            disabled={item.quantity === item.warehouse_quantity}
+                                            style={{ opacity: item.quantity === item.warehouse_quantity ? 0.5 : 1 }}>+</button>
                                         </div>
                                         <button className="action-btn delete-btn" onClick={() => handleDeleteItem(item.id)}>Delete</button>
                                         <button className="action-btn save-btn" onClick={() => handleSaveForLater(item.id)}>Save for later</button>

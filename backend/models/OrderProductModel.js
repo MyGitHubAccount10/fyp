@@ -20,9 +20,10 @@ const orderproductSchema = new Schema({
   order_unit_price: {
     type: Number,
     required: true,
-    set: v => {
-      return Number(v).toFixed(2);
-    }
+  },
+  order_size: {
+    type: String,
+    required: true
   }
 }, { timestamps: true })
 

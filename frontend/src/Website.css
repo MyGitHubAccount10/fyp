@@ -2171,3 +2171,52 @@ h2 {
         height: 140px;
     }
 }
+
+/* --- Add these styles to your Website.css file --- */
+
+/* This makes sure the dropdown is positioned relative to the icon container */
+.profile-dropdown-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* This creates the floating box for the dropdown */
+.profile-dropdown-box {
+    position: absolute;
+    top: calc(100% + 10px); /* Position it below the header with a small gap */
+    right: 0;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 160px;
+    z-index: 1000;
+    overflow: hidden; /* Ensures child elements conform to border-radius */
+    display: flex;
+    flex-direction: column; /* This is key to stacking the items vertically */
+    padding: 6px 0; /* Adds some padding to the top and bottom of the box */
+}
+
+/* This styles each individual link (Login, Sign Up) inside the box */
+.profile-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Adds space between the icon and the text */
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #333;
+    font-size: 1rem;
+    white-space: nowrap; /* Prevents text from wrapping */
+}
+
+/* Adds a hover effect for better user experience */
+.profile-dropdown-item:hover {
+    background-color: #f5f5f5;
+}
+
+/* Removes the default underline from the active NavLink */
+.profile-dropdown-item.active-link,
+.profile-dropdown-item:active {
+    text-decoration: none;
+}

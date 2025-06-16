@@ -7,7 +7,8 @@ const {
     deleteUser,
     updateUser,
     loginUser, 
-    signupUser 
+    signupUser,
+    updateLoggedInUser
 } = require('../controllers/UserController');
 const requireAuth = require('../middleware/requireAuth')
 
@@ -24,8 +25,10 @@ router.delete('/:id', deleteUser);
 
 router.patch('/:id', updateUser);
 
-router.post('/login', (req, res) => res.status(200).json({ message: 'Login disabled' }));
+router.post('/login', loginUser);
 
-router.post('/signup', (req, res) => res.status(200).json({ message: 'Signup disabled' }));
+router.post('/signup', createUser);
+
+router.patch('/update', requireAuth, updateLoggedInUser);
 
 module.exports = router;

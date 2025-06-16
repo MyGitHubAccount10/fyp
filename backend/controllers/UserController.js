@@ -33,7 +33,6 @@ const getUser = async (req, res) => {
 const createUser = async (req, res) => {
     const {
        username,
-       role,
        email,
        password,
        phone_number
@@ -44,12 +43,12 @@ const createUser = async (req, res) => {
            username,
            email,
            password,
-           role,
-           phone_number
+           phone_number,
+           role_id: 4001 // Automatically set role_id
        });
-       res.status(200).json(user);
-    }
-    catch (error) {
+       res.status(201).json(user);
+    } catch (error) {
+       console.error('Error creating user:', error.message); // Added detailed logging
        res.status(400).json({error: error.message});
     }
 }
@@ -93,6 +92,8 @@ const updateUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const {email, password} = req.body
 
+  console.log('Login attempt:', { email, password }); // Debugging log
+
   try {
     const user = await User.login(email, password)
 
@@ -121,6 +122,27 @@ const signupUser = async (req, res) => {
   }
 }
 
+// Update logged-in user's information
+const updateLoggedInUser = async (req, res) => {
+    const userId = req.user._id; // Extract user ID from the authenticated user
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(404).json({error: 'Invalid user ID'});
+    }
+
+    try {
+        const updatedUser = await User.findByIdAndUpdate(userId, req.body, {new: true});
+
+        if (!updatedUser) {
+            return res.status(404).json({error: 'User not found'});
+        }
+
+        res.status(200).json(updatedUser);
+    } catch (error) {
+        res.status(500).json({error: 'Failed to update user information'});
+    }
+};
+
 module.exports = {
     getUsers,
     getUser,
@@ -128,5 +150,6 @@ module.exports = {
     deleteUser,
     updateUser,
     signupUser, 
-    loginUser
+    loginUser,
+    updateLoggedInUser,
 };

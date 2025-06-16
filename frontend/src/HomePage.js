@@ -98,7 +98,7 @@ const HomePage = () => {
                 new Date(other.createdAt) > new Date(product.createdAt)
               );
             }).map(product => (
-              <Link to={`/product/${product._id}`} style={{ textDecoration: 'none' }}>
+              <Link to={`/product/${product._id}`} key={product._id} style={{ textDecoration: 'none' }}>
                 <div className="popular-design-card" key={product._id}>
                   <img src={`/images/${product.product_image}`} alt={product.product_name} className="popular-design-card-image" />
                   <div className="popular-design-card-caption">{product.product_name}</div>

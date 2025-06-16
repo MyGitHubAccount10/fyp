@@ -6,7 +6,6 @@ import Footer from './Footer';
 function UserProfilePage() {
     // --- STATE ---
     const [personalInfo, setPersonalInfo] = useState({
-        fullName: 'John Doe', // Dummy data
         email: 'john.doe@example.com', // Usually not editable or requires verification
         phoneNumber: '91234567',
     });
@@ -28,7 +27,14 @@ function UserProfilePage() {
 
     // --- Effects ---
     useEffect(() => {
-        console.log("UserProfilePage mounted. In a real app, fetch user data here.");
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            setPersonalInfo({
+                username: user.username,
+                email: user.email,
+                phoneNumber: user.phone_number,
+            });
+        }
     }, []);
 
     const handlePersonalInfoChange = (e) => {
@@ -36,11 +42,30 @@ function UserProfilePage() {
         setPersonalInfo(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSavePersonalInfo = (e) => {
+    const handleSavePersonalInfo = async (e) => {
         e.preventDefault();
-        console.log('Saving Personal Info:', personalInfo);
-        setIsEditingPersonalInfo(false);
-        alert('Personal information updated (demo).');
+        try {
+            const token = JSON.parse(localStorage.getItem('user')).token;
+            const response = await fetch('/api/user/update', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify(personalInfo),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update personal information');
+            }
+
+            const updatedUser = await response.json();
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            setIsEditingPersonalInfo(false);
+        } catch (error) {
+            console.error(error);
+            alert('An error occurred while updating your information.');
+        }
     };
 
     const handleAddressChange = (e) => {
@@ -92,8 +117,8 @@ function UserProfilePage() {
                     {isEditingPersonalInfo ? (
                         <form onSubmit={handleSavePersonalInfo} className="profile-form">
                             <div className="form-group">
-                                <label htmlFor="fullName">Full Name</label>
-                                <input type="text" id="fullName" name="fullName" value={personalInfo.fullName} onChange={handlePersonalInfoChange} required />
+                                <label htmlFor="username">Username</label>
+                                <input type="text" id="username" name="username" value={personalInfo.username} onChange={handlePersonalInfoChange} required />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="email">Email Address</label>
@@ -111,7 +136,7 @@ function UserProfilePage() {
                         </form>
                     ) : (
                         <div className="profile-display">
-                            <p><strong>Full Name:</strong> {personalInfo.fullName}</p>
+                            <p><strong>Username:</strong> {personalInfo.username}</p>
                             <p><strong>Email:</strong> {personalInfo.email}</p>
                             <p><strong>Phone:</strong> {personalInfo.phoneNumber || 'Not provided'}</p>
                         </div>

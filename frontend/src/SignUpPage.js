@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
-import { useSignup } from "../src/hooks/useSignup"
 
 const SignUpPage = () => {
   // State for separate email and phone number fields
@@ -10,7 +9,6 @@ const SignUpPage = () => {
   const [phone, setPhone] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { signup, error, isLoading } = useSignup();
 
   const handleAlreadyHaveAccount = () => {
     // In a real app, you would navigate to the login page
@@ -19,7 +17,37 @@ const SignUpPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await signup(email, phone, username, password);
+
+    const userData = {
+      email,
+      phone_number: phone,
+      username,
+      password,
+      role_id: 4001 // Automatically set role_id
+    };
+
+    try {
+      const response = await fetch('/api/user/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to sign up');
+      }
+
+      const user = await response.json();
+
+      // Save user to local storage
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // Redirect to home page
+      window.location.href = '/';
+    } catch (error) {
+      console.error(error);
+      alert('Error signing up');
+    }
   };
 
   return (
@@ -47,6 +75,7 @@ const SignUpPage = () => {
               value={phone}
               onChange={e => setPhone(e.target.value)}
               style={{ display: 'block', width: '100%', marginBottom: '15px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
+              required
             />
             {/* --- END OF UPDATED INPUTS --- */}
             <input
@@ -78,31 +107,11 @@ const SignUpPage = () => {
                 type="submit"
                 className="complete-purchase-btn"
                 style={{ flexGrow: 1, backgroundColor: '#333', color: '#fff' }}
-                disabled={isLoading}
               >
-                {isLoading ? 'Signing up...' : 'Sign Up'}
+                Sign Up
               </button>
             </div>
-            {error && <div className="error">{error}</div>}
           </form>
-        </div>
-
-        {/* Right Column - Role Card (Identical to LoginPage) */}
-        <div style={{ backgroundColor: '#fdf0e9', borderRadius: '8px', padding: '30px 20px', width: '300px', textAlign: 'center', border: '1px solid #fce5d8' }}>
-          <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#e0e0e0', margin: '0 auto 20px', backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
-          <p style={{ fontWeight: 'bold', fontSize: '1.1em', marginBottom: '5px' }}>User / Admin</p>
-          <div style={{ marginBottom: '15px' }}>
-            <span style={{ backgroundColor: '#e0e0e0', color: '#555', padding: '3px 8px', borderRadius: '4px', fontSize: '0.8em', marginRight: '5px' }}>User</span>
-            <span style={{ backgroundColor: '#e0e0e0', color: '#555', padding: '3px 8px', borderRadius: '4px', fontSize: '0.8em' }}>Admin</span>
-          </div>
-          <p style={{ fontSize: '0.9em', color: '#555', marginBottom: '20px' }}>Select your user role</p>
-          <button
-            type="button" // Also changed to type="button" to prevent form submission
-            className="update-cart-btn"
-            style={{ marginTop: '10px', width: '100%', backgroundColor: '#333', color: '#fff', border: 'none' }}
-          >
-            Choose Role
-          </button>
         </div>
       </div>
       <Footer />

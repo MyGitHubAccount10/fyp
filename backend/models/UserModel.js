@@ -5,26 +5,48 @@ const validator = require('validator')
 const Schema = mongoose.Schema
 
 const userSchema = new Schema({
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    auto: true
+  },
+  role_id: {
+    type: Number,
+    default: 4001
+  },
   username: {
     type: String,
-    required: true
-  },
-  role: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Role',
-    required: true
+    required: true,
+    validate: {
+      validator: function(v) {
+        return /^[a-zA-Z0-9]+$/.test(v);
+      },
+      message: props => `${props.value} is not a valid username!`
+    }
   },
   email: {
     type: String,
-    required: true
+    required: true,
+    validate: [validator.isEmail, 'Invalid email']
   },
   password: {
     type: String,
-    required: true
+    required: true,
+    validate: {
+      validator: function(v) {
+        return !/\s/.test(v);
+      },
+      message: 'Password cannot contain spaces'
+    }
   },
   phone_number: {
-    type: Number,
-    required: true
+    type: String,
+    required: true,
+    validate: {
+      validator: function(v) {
+        return /^[0-9]{8}$/.test(v);
+      },
+      message: 'Phone number must be 8 digits'
+    }
   }
 }, { timestamps: true })
 
@@ -68,7 +90,7 @@ userSchema.statics.login = async function(email, password) {
     throw Error('Incorrect email')
   }
 
-  const match = await bcrypt.compare(password, user.password)
+  const match = user.password.startsWith('$2b$') ? await bcrypt.compare(password, user.password) : user.password === password;
   if (!match) {
     throw Error('Incorrect password')
   }

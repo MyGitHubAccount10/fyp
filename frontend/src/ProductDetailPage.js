@@ -122,6 +122,7 @@ const ProductDetailPage = () => {
                   </div>
               </div>
               <div className="product-options">
+                <div>
                   <span className="option-label">Quantity:</span>
                   <div className="quantity-controls-detail">
                       <button
@@ -136,6 +137,7 @@ const ProductDetailPage = () => {
                       style={{ opacity: quantity === product.warehouse_quantity ? 0.5 : 1 }}>+
                       </button>
                   </div>
+                </div>
               </div>
             <div className="product-actions-detail">              
               <button 

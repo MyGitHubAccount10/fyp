@@ -1,74 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useCartContext } from './hooks/useCartContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 
-const whiteShirtImage = '/images/white-shirt.jpg';
-const blueShirtImage = '/images/blue-shirt.jpg';
-const blueShirtGonImage = '/images/blue-shirt-gon.jpg';
-
+// Updated price handling to ensure compatibility with both string and number types
 function ShoppingCartPage() {
-    // --- STATE ---
-    const initialCartItemsData = [
-        { id: 1, name: 'Normal White Shirt "Sacrilouge"', imageUrl: whiteShirtImage, stockStatus: 'In stock', size: 'empty', quantity: 1, price: 'S$246.77', dealLabel: 'Limited time Deal' },
-        { id: 2, name: 'Blue', imageUrl: blueShirtImage, stockStatus: 'In stock', size: 'M', quantity: 1, price: 'S$381.99', dealLabel: 'Limited time Deal' },
-    ];
+    const navigate = useNavigate();
+    const { cartItems, dispatch } = useCartContext();
 
-    const initialRecommendedItemsData = [
-        { id: 'rec1', name: 'Blue Shirt Gon', imageUrl: blueShirtGonImage, price: '$246.77', stockStatus: 'In stock', size: 'M' }
-    ];
+    const [subtotal, setSubtotal] = useState(0);
+    const [savedItems, setSavedItems] = useState([]);
 
-    const [cartItems, setCartItems] = useState(initialCartItemsData);
-    const [recommendedItems, setRecommendedItems] = useState(initialRecommendedItemsData);
+    useEffect(() => {
+        const calculatedSubtotal = cartItems.reduce((acc, item) => {
+            const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
+            return acc + item.quantity * itemPrice;
+        }, 0);
+        setSubtotal(calculatedSubtotal);
+    }, [cartItems]);
 
     // --- EVENT HANDLERS ---
     const handleQuantityChange = (itemId, change) => {
-        setCartItems(prevItems =>
-            prevItems.map(item =>
-                item.id === itemId ? { ...item, quantity: Math.max(1, item.quantity + change) } : item
-            )
-        );
+        const item = cartItems.find(item => item.id === itemId);
+        if (item) {
+            dispatch({
+                type: 'UPDATE_QUANTITY',
+                payload: {
+                    id: itemId,
+                    quantity: Math.max(1, item.quantity + change)
+                }
+            });
+        }
     };
 
     const handleDeleteItem = (itemId) => {
-        setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
+        dispatch({
+            type: 'REMOVE_FROM_CART',
+            payload: itemId
+        });
     };
 
     const handleSaveForLater = (itemId) => {
-        const itemToSave = cartItems.find(item => item.id === itemId);
-        if (itemToSave) {
-            setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
-            setRecommendedItems(prevRec => {
-                if (!prevRec.find(rec => rec.name === itemToSave.name)) {
-                    return [...prevRec, { ...itemToSave, id: `rec-${itemToSave.id}`, price: itemToSave.price.replace('S$', '$')}];
-                }
-                return prevRec;
+        const item = cartItems.find(item => item.id === itemId);
+        if (item) {
+            setSavedItems(prev => [...prev, item]);
+            dispatch({
+                type: 'REMOVE_FROM_CART',
+                payload: itemId
             });
-            console.log(`Saved item ${itemId} for later.`);
         }
     };
 
-    const handleShareItem = (itemId) => {
-        console.log(`Sharing item ${itemId}. Implement sharing logic here (e.g., navigator.share).`);
-    };
-
-    const handleMoveToCart = (recommendedItemId) => {
-        const itemToMove = recommendedItems.find(item => item.id === recommendedItemId);
-        if (itemToMove) {
-            setRecommendedItems(prevRec => prevRec.filter(item => item.id !== recommendedItemId));
-            setCartItems(prevCart => {
-                if (!prevCart.find(cartItem => cartItem.name === itemToMove.name)) {
-                    return [...prevCart, { ...itemToMove, id: `cart-${Date.now()}`, quantity: 1, price: itemToMove.price.replace('$', 'S$')}];
-                }
-                alert(`${itemToMove.name} is already in the cart or a similar item exists.`);
-                return prevCart;
+    const handleMoveToCart = (itemId) => {
+        const item = savedItems.find(item => item.id === itemId);
+        if (item) {
+            dispatch({
+                type: 'ADD_TO_CART',
+                payload: item
             });
-            console.log(`Moved recommended item ${recommendedItemId} to cart.`);
+            setSavedItems(prev => prev.filter(savedItem => savedItem.id !== itemId));
         }
     };
 
-    const handleDeleteRecommended = (recommendedItemId) => {
-        setRecommendedItems(prevItems => prevItems.filter(item => item.id !== recommendedItemId));
+    const handleDeleteSavedItem = (itemId) => {
+        setSavedItems(prev => prev.filter(item => item.id !== itemId));
+    };
+
+    const handleCheckout = () => {
+        navigate('/place-order');
     };
 
     // --- RENDER ---
@@ -82,70 +83,66 @@ function ShoppingCartPage() {
                     {cartItems.length === 0 ? (
                         <p>Your shopping cart is empty.</p>
                     ) : (
-                        cartItems.map(item => (
-                            <div className="cart-item" key={item.id}>
-                                <img src={item.imageUrl} alt={item.name} />
-                                <div className="item-info">
-                                    <strong>{item.name}</strong>
-                                    <span className="stock-status">{item.stockStatus}</span>
-                                    <span className="size-info">Size: {item.size}</span>
-                                </div>
-                                <div className="item-actions">
-                                    <div className="quantity-controls">
-                                        <button onClick={() => handleQuantityChange(item.id, -1)}>-</button>
-                                        <span>{item.quantity}</span>
-                                        <button onClick={() => handleQuantityChange(item.id, 1)}>+</button>
+                        cartItems.map(item => {
+                            const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
+                            const imageUrl = `/images/${item.image}`; // Updated image path
+                            return (
+                                <div className="cart-item" key={item.id}>
+                                    <img src={imageUrl} alt={item.name} />
+                                    <div className="item-info">
+                                        <strong>{item.name}</strong>
+                                        <span className="stock-status">{item.stockStatus}</span>
+                                        <span className="size-info">Size: {item.size}</span>
                                     </div>
-                                    <button className="action-btn delete-btn" onClick={() => handleDeleteItem(item.id)}>Delete</button>
-                                    <button className="action-btn save-btn" onClick={() => handleSaveForLater(item.id)}>Save for later</button>
-                                    <button className="action-btn share-btn" onClick={() => handleShareItem(item.id)}>Share</button>
+                                    <div className="item-actions">
+                                        <div className="quantity-controls">
+                                            <button onClick={() => handleQuantityChange(item.id, -1)}>-</button>
+                                            <span>{item.quantity}</span>
+                                            <button onClick={() => handleQuantityChange(item.id, 1)}>+</button>
+                                        </div>
+                                        <button className="action-btn delete-btn" onClick={() => handleDeleteItem(item.id)}>Delete</button>
+                                        <button className="action-btn save-btn" onClick={() => handleSaveForLater(item.id)}>Save for later</button>
+                                    </div>
+                                    <div className="price-tag">
+                                        <span className="item-price-display">${(item.quantity * itemPrice).toFixed(2)}</span>
+                                    </div>
                                 </div>
-                                <div className="price-tag">
-                                    {item.dealLabel && <span className="deal-label">{item.dealLabel}</span>}
-                                    <span className="item-price-display">{item.price}</span>
-                                </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
-                </div>
-
-                <button className="update-cart-btn">Update Cart</button>
-
-                <div className="payment-trust-icons">
-                    <span>○ ○ ○ ○</span>
                 </div>
 
                 <div className="cart-total">
                     <h3>Cart Total</h3>
-                    <p><span>Subtotal</span> <span>$0</span></p> {/* TODO: Calculate subtotal */}
-                    <p><span>Shipment</span> <span>Shipping to peninsula - Spain $24.53</span></p>
-                    <p className="address-line">Sent to <strong>Malaysia</strong> <button className="change-address-btn">Change Address ✎</button></p>
-                    <p className="total-row"><strong>Total</strong> <strong>$0</strong></p> {/* TODO: Calculate total */}
-                    <button className="complete-purchase-btn">Complete Purchase</button>
+                    <p><span>Subtotal</span> <span>${subtotal.toFixed(2)}</span></p>
+                    <p><span>Shipment</span> <span>Shipping to Bedok $5.00</span></p>
+                    <p className="total-row"><strong>Total</strong> <strong>${(subtotal + 5.00).toFixed(2)}</strong></p>
+                    <button className="complete-purchase-btn" onClick={handleCheckout}>Complete Purchase</button>
                 </div>
 
-                <div className="recommended">
-                    <h3>Saved for Later <span style={{ fontWeight: 'normal', color: '#777' }}>▼</span></h3>
-                    {recommendedItems.length === 0 ? (
+                <div className="saved-items">
+                    <h3>Saved for Later</h3>
+                    {savedItems.length === 0 ? (
                         <p>You have no items saved for later.</p>
                     ) : (
-                        recommendedItems.map(recItem => (
-                            <div className="recommended-product-card" key={recItem.id}>
-                                <img src={recItem.imageUrl} alt={recItem.name} className="recommended-product-image" />
-                                <div className="recommended-product-content">
-                                    <div className="recommended-product-info">
-                                        <strong className="recommended-product-name">{recItem.name}</strong>
-                                        <span className="recommended-product-price">{recItem.price}</span>
-                                        <span className="recommended-product-stock">{recItem.stockStatus}</span>
-                                        <span className="recommended-product-size">Size: {recItem.size}</span>
+                        savedItems.map(item => {
+                            const imageUrl = `/images/${item.image}`; // Updated image path
+                            return (
+                                <div className="saved-item-card" key={item.id} style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '10px', marginBottom: '10px', backgroundColor: '#f9f9f9', width: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                    <img src={imageUrl} alt={item.name} style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '4px' }} />
+                                    <div className="item-info" style={{ textAlign: 'center', marginTop: '10px' }}>
+                                        <strong style={{ fontSize: '16px', color: '#333' }}>{item.name}</strong>
+                                        <p style={{ fontSize: '14px', color: '#666' }}>In stock</p>
+                                        <p style={{ fontSize: '14px', color: '#666' }}>Size: {item.size}</p>
+                                        <p style={{ fontSize: '16px', color: '#333', fontWeight: 'bold' }}>${item.price}</p>
                                     </div>
-                                    <div className="recommended-product-actions">
-                                        <button className="btn-move-to-cart-later" onClick={() => handleMoveToCart(recItem.id)}>Move to Cart</button>
-                                        <button className="btn-delete-later" onClick={() => handleDeleteRecommended(recItem.id)}>Delete</button>
+                                    <div className="item-actions" style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                                        <button className="action-btn move-btn" onClick={() => handleMoveToCart(item.id)} style={{ backgroundColor: '#ffcc00', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', flex: '1', marginRight: '5px' }}>Move to Cart</button>
+                                        <button className="action-btn delete-btn" onClick={() => handleDeleteSavedItem(item.id)} style={{ backgroundColor: '#ff6666', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', flex: '1' }}>Delete</button>
                                     </div>
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                 </div>
             </div>

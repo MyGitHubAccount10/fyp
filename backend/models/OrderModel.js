@@ -15,10 +15,14 @@ const orderSchema = new Schema({
   payment_method: {
     type: String,
     required: true
-  },
-  shipping_address: {
+  },  shipping_address: {
     type: String,
     required: true
+  },
+  total_amount: {
+    type: Number,
+    required: true,
+    set: v => Number(v).toFixed(2)
   },
 }, { timestamps: true })
 

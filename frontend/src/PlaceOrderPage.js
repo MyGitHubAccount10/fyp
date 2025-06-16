@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuthContext } from './hooks/useAuthContext';
+import { useCartContext } from './hooks/useCartContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 
-// Payment method logos (replace with actual paths or use an icon library)
-const paypalLogo = '/images/payment-logos/paypal.png';
-const applepayLogo = '/images/payment-logos/applepay.png';
-const googlepayLogo = '/images/payment-logos/googlepay.png';
-const alipayLogo = '/images/payment-logos/alipay.png';
-const grabpayLogo = '/images/payment-logos/grabpay.png';
-const enetsLogo = '/images/payment-logos/enets.png';
-const creditcardLogo = '/images/payment-logos/creditcard.png'; // Generic credit card icon
+const paymentOptions = [
+    { id: 'paypal', name: 'PayPal', logo: '/images/payment-logos/paypal.png' },
+    { id: 'applePay', name: 'Apple Pay', logo: '/images/payment-logos/applepay.png' },
+    { id: 'googlePay', name: 'Google Pay', logo: '/images/payment-logos/googlepay.png' },
+    { id: 'aliPay', name: 'Alipay', logo: '/images/payment-logos/alipay.png' },
+    { id: 'grabPay', name: 'GrabPay', logo: '/images/payment-logos/grabpay.png' },
+    { id: 'eNETS', name: 'eNETS', logo: '/images/payment-logos/enets.png' },
+    { id: 'creditCard', name: 'Credit Card', logo: '/images/payment-logos/creditcard.png' },
+];
 
 function PlaceOrderPage() {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { user } = useAuthContext();
+    const { cartItems } = useCartContext();
+
     const [shippingDetails, setShippingDetails] = useState({
         fullName: '',
         addressLine1: '',
@@ -29,16 +38,28 @@ function PlaceOrderPage() {
         cvv: '',
         cardHolderName: ''
     });
-
     const [orderSummary, setOrderSummary] = useState({
-        items: [
-            { id: 1, name: 'Skimboard Pro Model', quantity: 1, price: 250.00 },
-            { id: 2, name: 'Board Wax', quantity: 2, price: 10.00 },
-        ],
-        subtotal: 270.00,
+        items: [],
+        subtotal: 0,
         shippingFee: 15.00,
-        total: 285.00,
+        total: 0,
     });
+
+    useEffect(() => {
+        const passedItems = location.state?.items || cartItems;
+        const calculatedSubtotal = passedItems.reduce((sum, item) => {
+            const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
+            return sum + item.quantity * itemPrice;
+        }, 0);
+        const shipping = 15.00;
+
+        setOrderSummary({
+            items: passedItems,
+            subtotal: calculatedSubtotal,
+            shippingFee: shipping,
+            total: calculatedSubtotal + shipping,
+        });
+    }, [location.state, cartItems]);
 
     const handleShippingChange = (e) => {
         const { name, value } = e.target;
@@ -54,8 +75,17 @@ function PlaceOrderPage() {
         setSelectedPaymentMethod(method);
     };
 
-    const handleSubmitOrder = (e) => {
+    const handleSubmitOrder = async (e) => {
         e.preventDefault();
+
+        // Check if user is logged in
+        if (!user) {
+            alert('You must be logged in to place an order');
+            navigate('/login');
+            return;
+        }
+
+        // Form validation
         if (!selectedPaymentMethod) {
             alert('Please select a payment method.');
             return;
@@ -70,35 +100,66 @@ function PlaceOrderPage() {
                 return;
             }
         }
-        console.log('Order Submitted:', {
-            shippingDetails,
-            paymentMethod: selectedPaymentMethod,
-            ...(selectedPaymentMethod === 'creditCard' && { cardDetails }),
-            orderSummary
-        });
-        alert(`Order placed successfully using ${selectedPaymentMethod}! (This is a demo)`);
+
+        try {
+            // Format shipping address
+            const formattedAddress = `${shippingDetails.fullName}, ${shippingDetails.addressLine1}${shippingDetails.addressLine2 ? ', ' + shippingDetails.addressLine2 : ''}, ${shippingDetails.postalCode}`;
+
+            // Create the order
+            const orderData = {
+                user: user._id,
+                status: "1", // Assuming 1 is your pending status ID
+                payment_method: selectedPaymentMethod,
+                shipping_address: formattedAddress
+            };
+
+            const orderResponse = await fetch('/api/order', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify(orderData)
+            });
+
+            if (!orderResponse.ok) {
+                throw new Error('Failed to create order');
+            }
+
+            const orderResult = await orderResponse.json();
+
+            // Create order products for each item
+            for (const item of orderSummary.items) {
+                const orderProductData = {
+                    order: orderResult._id,
+                    product: item.id,
+                    order_quantity: item.quantity,
+                    order_unit_price: (item.price * item.quantity).toFixed(2) // Total for this item
+                };
+
+                const orderProductResponse = await fetch('/api/order-product', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${user.token}`
+                    },
+                    body: JSON.stringify(orderProductData)
+                });
+
+                if (!orderProductResponse.ok) {
+                    throw new Error('Failed to create order product');
+                }
+            }
+
+            // If everything is successful
+            alert('Order placed successfully!');
+            navigate('/order-history');
+
+        } catch (error) {
+            console.error('Error placing order:', error);
+            alert('Failed to place order. Please try again.');
+        }
     };
-
-    useEffect(() => {
-        const calculatedSubtotal = orderSummary.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-        const shipping = 15.00;
-        setOrderSummary(prev => ({
-            ...prev,
-            subtotal: calculatedSubtotal,
-            shippingFee: shipping,
-            total: calculatedSubtotal + shipping
-        }));
-    }, []); // Removed orderSummary.items from dependencies to avoid loop with dummy data
-
-    const paymentOptions = [
-        { id: 'paypal', name: 'PayPal', logo: paypalLogo },
-        { id: 'applePay', name: 'Apple Pay', logo: applepayLogo },
-        { id: 'googlePay', name: 'Google Pay', logo: googlepayLogo },
-        { id: 'aliPay', name: 'Alipay', logo: alipayLogo },
-        { id: 'grabPay', name: 'GrabPay', logo: grabpayLogo },
-        { id: 'eNETS', name: 'eNETS', logo: enetsLogo },
-        { id: 'creditCard', name: 'Credit Card', logo: creditcardLogo },
-    ];
 
     return (
         <>
@@ -185,12 +246,15 @@ function PlaceOrderPage() {
                         <div className="checkout-order-summary">
                             <h3>Order Summary</h3>
                             <div className="summary-items-list">
-                                {orderSummary.items.map(item => (
-                                    <div className="summary-item" key={item.id}>
-                                        <span>{item.name} (x{item.quantity})</span>
-                                        <span>S${(item.price * item.quantity).toFixed(2)}</span>
-                                    </div>
-                                ))}
+                                {orderSummary.items.map(item => {
+                                    const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
+                                    return (
+                                        <div className="summary-item" key={item.id}>
+                                            <span>{item.name} (x{item.quantity})</span>
+                                            <span>S${(item.quantity * itemPrice).toFixed(2)}</span>
+                                        </div>
+                                    );
+                                })}
                             </div>
                             <hr className="summary-hr" />
                             <div className="summary-line">

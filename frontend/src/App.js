@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { CartContextProvider } from './context/CartContext';
 
 import HomePage from './HomePage';
 import AboutPage from './AboutPage';
@@ -34,12 +35,8 @@ import PageNotFound from './PageNotFound';
 
 import './index.css';
 
-function App() {
-  //   // Example of simple conditional rendering (replace with react-router-dom in a real app)
-  // const isAdminRoute = true; // Assume we are on an admin route for this example
-  // const currentPage = isAdminRoute ? 'dashboard' : 'site'; // 'dashboard' or 'products'
-  return (
-    <>
+function App() {  return (
+    <CartContextProvider>
       {/* Please use the respective paths for testing and add new path when necessary. */}
       <Routes>
         {/* User Routes */}
@@ -74,12 +71,8 @@ function App() {
         <Route path="admin-profile" element={<AdminProfilePage />} />
         <Route path="/edit-product/:id" element={<EditProductPage />} />
 
-        {/* Catch-all route for 404 Not Found */}
-        <Route path="*" element={<PageNotFound />} />
-
-      </Routes>
-    </>
-
+        {/* Catch-all route for 404 Not Found */}        <Route path="*" element={<PageNotFound />} />
+      </Routes>    </CartContextProvider>
   );
 }
 

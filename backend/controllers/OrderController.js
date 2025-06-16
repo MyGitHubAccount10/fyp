@@ -31,19 +31,43 @@ const createOrder = async (req, res) => {
         status,
         payment_method,
         shipping_address,
+        cart_items  // Array of items from shopping cart
     } = req.body;
     
+    // Start a transaction
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    
     try {
-        const order = await Order.create({
+        // 1. Create the order first
+        const order = await Order.create([{
             user,
             status,
             payment_method,
             shipping_address
-        });
-        res.status(200).json(order);
+        }], { session });
+
+        // 2. Create order-products for each cart item
+        for (const item of cart_items) {
+            await OrderProduct.create([{
+                order: order[0]._id,
+                product: item.productId,
+                order_quantity: item.quantity,
+                order_unit_price: item.finalTotal  // This is the total amount for this item
+            }], { session });
+        }
+
+        // If everything is successful, commit the transaction
+        await session.commitTransaction();
+        res.status(200).json(order[0]);
     }
     catch (error) {
+        // If there's an error, abort the transaction
+        await session.abortTransaction();
         res.status(400).json({error: error.message});
+    }
+    finally {
+        session.endSession();
     }
 }
 

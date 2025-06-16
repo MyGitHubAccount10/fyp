@@ -12,7 +12,7 @@ const {
 const requireAuth = require('../middleware/requireAuth')
 
 const router = express.Router();
-router.use(requireAuth)
+router.use((req, res, next) => next());
 
 router.get('/', getUsers);
 
@@ -24,8 +24,8 @@ router.delete('/:id', deleteUser);
 
 router.patch('/:id', updateUser);
 
-router.post('/login', loginUser);
+router.post('/login', (req, res) => res.status(200).json({ message: 'Login disabled' }));
 
-router.post('/signup', signupUser);
+router.post('/signup', (req, res) => res.status(200).json({ message: 'Signup disabled' }));
 
 module.exports = router;

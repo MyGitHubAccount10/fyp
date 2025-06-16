@@ -13,31 +13,65 @@ const paymentOptions = [
     { id: 'aliPay', name: 'Alipay', logo: '/images/payment-logos/alipay.png' },
     { id: 'grabPay', name: 'GrabPay', logo: '/images/payment-logos/grabpay.png' },
     { id: 'eNETS', name: 'eNETS', logo: '/images/payment-logos/enets.png' },
-    { id: 'creditCard', name: 'Credit Card', logo: '/images/payment-logos/creditcard.png' },
 ];
 
 function PlaceOrderPage() {
     const navigate = useNavigate();
     const location = useLocation();
     const { user } = useAuthContext();
-    const { cartItems } = useCartContext();
+    const { cartItems, dispatch } = useCartContext();
+
+    // Debug logging for authentication state    // Debug logging for authentication and cart state
+    useEffect(() => {
+        const logState = () => {
+            console.log('Current user state:', user);
+            console.log('Current cart items:', cartItems);
+            
+            if (cartItems && cartItems.length > 0) {
+                cartItems.forEach((item, index) => {
+                    console.log(`Cart item ${index + 1}:`, {
+                        id: item.id,
+                        product_id: item.product_id,
+                        _id: item._id,
+                        quantity: item.quantity,
+                        price: item.price,
+                        size: item.size
+                    });
+                });
+            }
+        };
+        
+        logState();
+    }, [user, cartItems]);
+
+    // Get user ID from JWT token
+    const getUserIdFromToken = (token) => {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const payload = JSON.parse(window.atob(base64));
+            return payload._id;
+        } catch (error) {
+            console.error('Error decoding token:', error);
+            return null;
+        }
+    };
+
+    useEffect(() => {
+        if (!user || !user.token) {
+            console.log('No user found, redirecting to login');
+            navigate('/login', { state: { from: location.pathname } });
+            return;
+        }
+    }, [user, navigate, location]);
 
     const [shippingDetails, setShippingDetails] = useState({
         fullName: '',
-        addressLine1: '',
-        addressLine2: '',
+        shippingAddress: '',
         postalCode: '',
-        phoneNumber: '',
-        email: '',
     });
 
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
-    const [cardDetails, setCardDetails] = useState({
-        cardNumber: '',
-        expiryDate: '',
-        cvv: '',
-        cardHolderName: ''
-    });
     const [orderSummary, setOrderSummary] = useState({
         items: [],
         subtotal: 0,
@@ -66,54 +100,66 @@ function PlaceOrderPage() {
         setShippingDetails(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleCardDetailsChange = (e) => {
-        const { name, value } = e.target;
-        setCardDetails(prev => ({ ...prev, [name]: value }));
-    };
-
     const handlePaymentMethodSelect = (method) => {
         setSelectedPaymentMethod(method);
     };
 
     const handleSubmitOrder = async (e) => {
         e.preventDefault();
+        console.log('Starting order submission...');
 
-        // Check if user is logged in
-        if (!user) {
+        // Debug logging
+        console.log('User state:', user);
+        console.log('Payment method:', selectedPaymentMethod);
+        console.log('Shipping details:', shippingDetails);
+        console.log('Order summary:', orderSummary);
+
+        if (!user || !user.token) {
+            console.log('Authentication check failed:', { user });
             alert('You must be logged in to place an order');
             navigate('/login');
             return;
         }
 
-        // Form validation
+        const userId = getUserIdFromToken(user.token);
+        if (!userId) {
+            console.log('Failed to get user ID from token');
+            alert('Authentication error. Please try logging in again.');
+            navigate('/login');
+            return;
+        }
+
         if (!selectedPaymentMethod) {
             alert('Please select a payment method.');
             return;
         }
-        if (!shippingDetails.fullName || !shippingDetails.addressLine1 || !shippingDetails.postalCode || !shippingDetails.phoneNumber || !shippingDetails.email) {
+
+        if (!shippingDetails.fullName || !shippingDetails.shippingAddress || !shippingDetails.postalCode) {
             alert('Please fill in all required shipping details.');
             return;
         }
-        if (selectedPaymentMethod === 'creditCard') {
-            if (!cardDetails.cardNumber || !cardDetails.expiryDate || !cardDetails.cvv || !cardDetails.cardHolderName) {
-                alert('Please fill in all credit card details.');
-                return;
-            }
+
+        // Validate postal code is exactly 6 digits
+        if (!/^\d{6}$/.test(shippingDetails.postalCode)) {
+            alert('Postal code must be exactly 6 digits.');
+            return;
         }
 
         try {
-            // Format shipping address
-            const formattedAddress = `${shippingDetails.fullName}, ${shippingDetails.addressLine1}${shippingDetails.addressLine2 ? ', ' + shippingDetails.addressLine2 : ''}, ${shippingDetails.postalCode}`;
-
-            // Create the order
+            // Create the order first
             const orderData = {
-                user: user._id,
-                status: "1", // Assuming 1 is your pending status ID
+                user_id: userId,
+                status_id: '684d00b7df30da21ceb3e551',
                 payment_method: selectedPaymentMethod,
-                shipping_address: formattedAddress
+                shipping_address: shippingDetails.shippingAddress,
+                postal_code: shippingDetails.postalCode,
+                order_date: new Date().toISOString(),
+                total_amount: parseFloat(orderSummary.total)
             };
 
-            const orderResponse = await fetch('/api/order', {
+            console.log('Submitting order data:', orderData);
+
+            const orderResponse = await fetch('/api/orders', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -122,22 +168,45 @@ function PlaceOrderPage() {
                 body: JSON.stringify(orderData)
             });
 
+            console.log('Order response status:', orderResponse.status);
+            const orderResult = await orderResponse.json();
+            console.log('Order response data:', orderResult);
+
             if (!orderResponse.ok) {
-                throw new Error('Failed to create order');
+                throw new Error(orderResult.error || 'Failed to create order');
             }
 
-            const orderResult = await orderResponse.json();
+            // Now create order products
+            const orderId = orderResult._id;
+            console.log('Order created with ID:', orderId);
 
-            // Create order products for each item
-            for (const item of orderSummary.items) {
+            // Process each item in the cart
+            for (const item of cartItems) {
+                console.log('Processing cart item:', item);
+
+                const itemPrice = typeof item.price === 'string' ? 
+                    parseFloat(item.price.replace(/[$,]/g, '')) : 
+                    parseFloat(item.price);                // Make sure we have valid data before creating the order product
+                const productId = item.id || item.product_id || item._id;
+                if (!productId) {
+                    console.error('Missing product ID for item:', item);
+                    throw new Error('Missing product ID for item');
+                }
+
                 const orderProductData = {
-                    order: orderResult._id,
-                    product: item.id,
-                    order_quantity: item.quantity,
-                    order_unit_price: (item.price * item.quantity).toFixed(2) // Total for this item
+                    order_id: orderId,
+                    product_id: productId,
+                    order_qty: parseInt(item.quantity, 10),
+                    order_unit_price: parseFloat(itemPrice.toFixed(2)),
+                    order_size: item.size || 'N/A'
                 };
 
-                const orderProductResponse = await fetch('/api/order-product', {
+                // Debug log
+                console.log('Cart item:', item);
+                console.log('Constructed order product data:', orderProductData);
+
+                console.log('Submitting order product data:', orderProductData);            console.log('Sending order product data:', JSON.stringify(orderProductData, null, 2));
+            const orderProductResponse = await fetch('/api/order-products', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -146,18 +215,39 @@ function PlaceOrderPage() {
                     body: JSON.stringify(orderProductData)
                 });
 
-                if (!orderProductResponse.ok) {
-                    throw new Error('Failed to create order product');
+            // Additional error handling for order products
+            if (!orderProductResponse.ok) {
+                const errorText = await orderProductResponse.text();
+                console.error('Order product response:', {
+                    status: orderProductResponse.status,
+                    statusText: orderProductResponse.statusText,
+                    body: errorText
+                });
+                try {
+                    const errorJson = JSON.parse(errorText);
+                    throw new Error(errorJson.error || 'Failed to create order product');
+                } catch (e) {
+                    throw new Error(`Failed to create order product: ${errorText}`);
                 }
             }
 
-            // If everything is successful
+                if (!orderProductResponse.ok) {
+                    const errorData = await orderProductResponse.json();
+                    throw new Error(`Failed to create order product: ${errorData.error}`);
+                }
+
+                const productResult = await orderProductResponse.json();
+                console.log('Order product created:', productResult);
+            }
+
+            // Clear cart after successful order
+            dispatch({ type: 'CLEAR_CART' });
             alert('Order placed successfully!');
             navigate('/order-history');
-
         } catch (error) {
             console.error('Error placing order:', error);
-            alert('Failed to place order. Please try again.');
+            console.error('Error details:', error.message);
+            alert(`Failed to place order: ${error.message}`);
         }
     };
 
@@ -178,24 +268,12 @@ function PlaceOrderPage() {
                                     <input type="text" id="fullName" name="fullName" value={shippingDetails.fullName} onChange={handleShippingChange} required />
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="addressLine1">Address Line 1</label>
-                                    <input type="text" id="addressLine1" name="addressLine1" value={shippingDetails.addressLine1} onChange={handleShippingChange} required placeholder="Block/House No., Street Name" />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="addressLine2">Address Line 2 (Optional)</label>
-                                    <input type="text" id="addressLine2" name="addressLine2" value={shippingDetails.addressLine2} onChange={handleShippingChange} placeholder="Unit No., Building Name" />
+                                    <label htmlFor="shippingAddress">Shipping Address</label>
+                                    <input type="text" id="shippingAddress" name="shippingAddress" value={shippingDetails.shippingAddress} onChange={handleShippingChange} required placeholder="Block/House No., Street Name, Unit No., Building Name" />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="postalCode">Postal Code</label>
                                     <input type="text" id="postalCode" name="postalCode" value={shippingDetails.postalCode} onChange={handleShippingChange} required pattern="\d{6}" title="Enter a 6-digit Singapore postal code" />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="phoneNumber">Phone Number</label>
-                                    <input type="tel" id="phoneNumber" name="phoneNumber" value={shippingDetails.phoneNumber} onChange={handleShippingChange} required pattern="[689]\d{7}" title="Enter a valid Singapore mobile or landline number (8 digits starting with 6, 8, or 9)" />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="email">Email Address</label>
-                                    <input type="email" id="email" name="email" value={shippingDetails.email} onChange={handleShippingChange} required />
                                 </div>
                             </section>
 
@@ -215,30 +293,6 @@ function PlaceOrderPage() {
                                         </button>
                                     ))}
                                 </div>
-
-                                {selectedPaymentMethod === 'creditCard' && (
-                                    <div className="credit-card-form">
-                                        <h4>Enter Credit Card Details</h4>
-                                        <div className="form-group">
-                                            <label htmlFor="cardHolderName">Cardholder Name</label>
-                                            <input type="text" id="cardHolderName" name="cardHolderName" value={cardDetails.cardHolderName} onChange={handleCardDetailsChange} required />
-                                        </div>
-                                        <div className="form-group">
-                                            <label htmlFor="cardNumber">Card Number</label>
-                                            <input type="text" id="cardNumber" name="cardNumber" value={cardDetails.cardNumber} onChange={handleCardDetailsChange} required pattern="\d{13,19}" title="Enter a valid card number (13-19 digits)" />
-                                        </div>
-                                        <div className="form-group form-group-inline">
-                                            <div>
-                                                <label htmlFor="expiryDate">Expiry Date (MM/YY)</label>
-                                                <input type="text" id="expiryDate" name="expiryDate" value={cardDetails.expiryDate} onChange={handleCardDetailsChange} required pattern="(0[1-9]|1[0-2])\/\d{2}" title="MM/YY" placeholder="MM/YY" />
-                                            </div>
-                                            <div>
-                                                <label htmlFor="cvv">CVV</label>
-                                                <input type="text" id="cvv" name="cvv" value={cardDetails.cvv} onChange={handleCardDetailsChange} required pattern="\d{3,4}" title="3 or 4 digit CVV" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
                             </section>
                         </div>
 

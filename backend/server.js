@@ -50,8 +50,8 @@ try {
 app.use('/api/category', categoryRoutes);
 app.use('/api/customiseImg', customiseImgRoutes);
 app.use('/api/customise', customiseRoutes);
-app.use('/api/orderProduct', orderProductRoutes);
-app.use('/api/order', orderRoutes);
+app.use('/api/order-products', orderProductRoutes);
+app.use('/api/orders', orderRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/role', roleRoutes);
 app.use('/api/user', userRoutes);

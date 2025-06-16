@@ -26,48 +26,65 @@ const getOrder = async (req, res) => {
 
 // Create a new order
 const createOrder = async (req, res) => {
-    const {
-        user,
-        status,
-        payment_method,
-        shipping_address,
-        cart_items  // Array of items from shopping cart
-    } = req.body;
-    
-    // Start a transaction
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    
     try {
-        // 1. Create the order first
-        const order = await Order.create([{
-            user,
-            status,
+        const {
+            user_id,
+            status_id,
             payment_method,
-            shipping_address
-        }], { session });
+            shipping_address,
+            postal_code,
+            order_date,
+            total_amount
+        } = req.body;
 
-        // 2. Create order-products for each cart item
-        for (const item of cart_items) {
-            await OrderProduct.create([{
-                order: order[0]._id,
-                product: item.productId,
-                order_quantity: item.quantity,
-                order_unit_price: item.finalTotal  // This is the total amount for this item
-            }], { session });
+        console.log('Received order data:', req.body);
+
+        // Validate required fields
+        if (!user_id || !status_id || !payment_method || !shipping_address || !postal_code) {
+            const missingFields = [];
+            if (!user_id) missingFields.push('user_id');
+            if (!status_id) missingFields.push('status_id');
+            if (!payment_method) missingFields.push('payment_method');
+            if (!shipping_address) missingFields.push('shipping_address');
+            if (!postal_code) missingFields.push('postal_code');
+            
+            return res.status(400).json({ 
+                error: 'Missing required fields', 
+                missingFields 
+            });
         }
 
-        // If everything is successful, commit the transaction
-        await session.commitTransaction();
-        res.status(200).json(order[0]);
-    }
-    catch (error) {
-        // If there's an error, abort the transaction
-        await session.abortTransaction();
-        res.status(400).json({error: error.message});
-    }
-    finally {
-        session.endSession();
+        // Validate ObjectId fields
+        if (!mongoose.Types.ObjectId.isValid(user_id)) {
+            return res.status(400).json({ error: 'Invalid user_id format' });
+        }
+        if (!mongoose.Types.ObjectId.isValid(status_id)) {
+            return res.status(400).json({ error: 'Invalid status_id format' });
+        }
+
+        // Validate postal code format
+        if (!/^\d{6}$/.test(postal_code)) {
+            return res.status(400).json({ error: 'Postal code must be exactly 6 digits' });
+        }
+
+        // Create the order with validated data
+        const order = await Order.create({
+            user_id: new mongoose.Types.ObjectId(user_id),
+            status_id: new mongoose.Types.ObjectId(status_id),
+            payment_method,
+            shipping_address,
+            postal_code,
+            order_date: new Date(order_date),
+            total_amount: parseFloat(total_amount)
+        });
+
+        res.status(200).json(order);
+    } catch (error) {
+        console.error('Order creation error:', error);
+        res.status(400).json({ 
+            error: error.message,
+            details: error.errors // Include mongoose validation errors if any
+        });
     }
 }
 

@@ -3,17 +3,17 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const orderproductSchema = new Schema({
-  order: {
+  order_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Order',
     required: true
   },
-  product: {
+  product_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',
     required: true
   },
-  order_quantity: {
+  order_qty: {
     type: Number,
     required: true
   },

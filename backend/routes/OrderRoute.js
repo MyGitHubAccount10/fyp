@@ -1,4 +1,5 @@
 const express = require('express');
+const requireAuth = require('../middleware/requireAuth');
 
 const {
     getOrders,
@@ -9,6 +10,9 @@ const {
 } = require('../controllers/OrderController');
 
 const router = express.Router();
+
+// Add authentication middleware
+router.use(requireAuth);
 
 router.get('/', getOrders);
 

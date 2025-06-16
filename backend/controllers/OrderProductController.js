@@ -25,20 +25,19 @@ const getOrderProduct = async (req, res) => {
 }
 
 // Create a new order product
-const createOrderProduct = async (req, res) => {
-    const {
-        order,
-        product,
-        order_quantity,
+const createOrderProduct = async (req, res) => {    const {
+        order_id,
+        product_id,
+        order_qty,
         order_unit_price,
         order_size
     } = req.body;
     
     try {
         const orderProduct = await OrderProduct.create({
-            order,
-            product,
-            order_quantity,
+            order_id,
+            product_id,
+            order_qty,
             order_unit_price,
             order_size
         });

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { CartContextProvider } from './context/CartContext';
+import { AuthContextProvider } from './context/AuthContext';
 
 import HomePage from './HomePage';
 import AboutPage from './AboutPage';
@@ -37,44 +38,47 @@ import AddAdminPage from './AdminSide/DD_AddAdminPage';
 import './index.css';
 
 function App() {  return (
-    <CartContextProvider>
-      {/* Please use the respective paths for testing and add new path when necessary. */}
-      <Routes>
-        {/* User Routes */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="about" element={<AboutPage />} />
-        <Route path="contact" element={<ContactPage />} />
-        <Route path="faq" element={<FaqPage />} />
-        <Route path="products">
-          <Route path='skimboards' element={<SkimboardsPage />} />
-          <Route path="t-shirts" element={<ShirtsPage />} />
-          <Route path="jackets" element={<JacketPage />} />
-          <Route path="boardshorts" element={<BoardShortsPage />} />
-          <Route path="accessories" element={<AccessoriesPage />} />
-        </Route>
-        <Route path="product/:productId" element={<ProductDetailPage />} />
-        <Route path="signup" element={<SignUpPage />} />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="profile" element={<UserProfilePage />} />
-        <Route path="cart" element={<ShoppingCartPage />} />
-        <Route path="place-order" element={<PlaceOrderPage />} />
-        <Route path="order-history" element={<OrderHistoryPage />} />
+    <AuthContextProvider>
+      <CartContextProvider>
+        {/* Please use the respective paths for testing and add new path when necessary. */}
+        <Routes>
+          {/* User Routes */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="contact" element={<ContactPage />} />
+          <Route path="faq" element={<FaqPage />} />
+          <Route path="products">
+            <Route path='skimboards' element={<SkimboardsPage />} />
+            <Route path="t-shirts" element={<ShirtsPage />} />
+            <Route path="jackets" element={<JacketPage />} />
+            <Route path="boardshorts" element={<BoardShortsPage />} />
+            <Route path="accessories" element={<AccessoriesPage />} />
+          </Route>
+          <Route path="product/:productId" element={<ProductDetailPage />} />
+          <Route path="signup" element={<SignUpPage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="profile" element={<UserProfilePage />} />
+          <Route path="cart" element={<ShoppingCartPage />} />
+          <Route path="place-order" element={<PlaceOrderPage />} />
+          <Route path="order-history" element={<OrderHistoryPage />} />
 
-        {/* Admin Routes */}
-        <Route path="admin-dashboard" element={<AdminDashboard />} />
-        <Route path="all-products" element={<AllProductsPage />} />
-        <Route path="add-product" element={<AddProductPage />} />
-        <Route path="all-orders" element={<AllOrdersPage />} />
-        <Route path="order-details" element={<OrderDetailsPage />} />
-        <Route path="customer-details" element={<CustomerDetailsPage />} />
-        <Route path="admin-settings" element={<AdminSettingsPage />} />
-        <Route path="all-customers" element={<AllCustomersPage />} />
-        <Route path="admin-profile" element={<AdminProfilePage />} />
-        <Route path="/edit-product/:id" element={<EditProductPage />} />
-        <Route path="add-admin" element={<AddAdminPage />} />
+          {/* Admin Routes */}
+          <Route path="admin-dashboard" element={<AdminDashboard />} />
+          <Route path="all-products" element={<AllProductsPage />} />
+          <Route path="add-product" element={<AddProductPage />} />
+          <Route path="all-orders" element={<AllOrdersPage />} />
+          <Route path="order-details" element={<OrderDetailsPage />} />
+          <Route path="customer-details" element={<CustomerDetailsPage />} />
+          <Route path="admin-settings" element={<AdminSettingsPage />} />
+          <Route path="all-customers" element={<AllCustomersPage />} />
+          <Route path="admin-profile" element={<AdminProfilePage />} />
+          <Route path="/edit-product/:id" element={<EditProductPage />} />
+          <Route path="add-admin" element={<AddAdminPage />} />
 
-        {/* Catch-all route for 404 Not Found */}        <Route path="*" element={<PageNotFound />} />
-      </Routes>    </CartContextProvider>
+          {/* Catch-all route for 404 Not Found */}        <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </CartContextProvider>
+    </AuthContextProvider>
   );
 }
 

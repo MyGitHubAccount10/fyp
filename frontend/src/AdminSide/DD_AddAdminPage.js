@@ -40,7 +40,7 @@ function UserDetailPage() {
       <AdminHeader />
       <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2>User Details</h2>
+          <h2>Adding Admin Details</h2>
           <button onClick={handleBack} className="btn-add-new">
             <BackIcon size={18} color="white" />
             Back to All Users

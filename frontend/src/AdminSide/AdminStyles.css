@@ -558,20 +558,8 @@ const adminStylesCss = `
          padding: 8px 12px;
      }
 }
-/* --------------------------------------*/
-/* --------------------------------------*/
-/* --------------------------------------*/
-/* --------------------------------------*/
-/* --------------------------------------*/
-/* --------------------------------------*/
-/* --------------------------------------*/
-/* --------------------------------------*/
 
 /* --- Orders Page Styles --- */
-
-
-
-
 
 .filter-bar {
     background-color: #fff;
@@ -704,26 +692,9 @@ const adminStylesCss = `
 }
 
 /* Specific Order Status colors (reusing from Dashboard if defined, otherwise define here) */
-.status-shipped { color: #28a745; font-weight: 500; } /* Green */
-.status-delivered { color: #28a745; font-weight: 500; } /* Green */
+.status-shipped, .status-delivered { color: #28a745; font-weight: 500; } /* Green */
 .status-processing { color: #ffc107; font-weight: 500; } /* Yellow */
-.status-low-stock { color: #ffc107; font-weight: 500; } /* Yellow */
-.status-in-stock { color: #17a2b8; font-weight: 500; } /* Info Blue */
-.status-out-of-stock { color: #dc3545; font-weight: 500; } /* Red */
 .status-cancelled { color: #dc3545; font-weight: 500; } /* Red */
-
-
-
-
-/* -----------------------------*/
-/* -----------------------------*/
-/* -----------------------------*/
-/* -----------------------------*/
-/* -----------------------------*/
-/* -----------------------------*/
-/* -----------------------------*/
-/* -----------------------------*/
-
 
 /* Back button style (reused from Add Product Page section) */
 .btn-back-to-products {

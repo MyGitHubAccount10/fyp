@@ -268,10 +268,22 @@ h2 {
   font-weight: 700;
   font-size: 1.1em;
 }
-.item-info .stock-status {
+.item-info {
   font-size: 0.9em;
-  color: #0e9b57;
+  color: #087842;
   font-weight: 500;
+}
+.status-in-stock { 
+    color: #087842; 
+    font-weight: 500;
+}
+.status-limited-stock { 
+    color: #84630F; 
+    font-weight: 500; 
+}
+.status-no-stock { 
+    color: #D30000; 
+    font-weight: 500; 
 }
 .item-info .size-info {
   font-size: 0.9em;
@@ -485,7 +497,7 @@ h2 {
 .recommended-product-stock,
 .recommended-product-size {
   font-size: 0.9em;
-  color: #00796b;
+  color: #0A7E8C;
 }
 .recommended-product-actions {
   display: flex;
@@ -1969,7 +1981,7 @@ h2 {
     font-size: 1.8em;
     font-weight: bold;
     color: #000000;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .product-short-description {
@@ -1980,7 +1992,7 @@ h2 {
 }
 
 .product-options {
-    margin-bottom: 25px;
+    margin-bottom: 10px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -1991,7 +2003,7 @@ h2 {
     margin-right: 10px;
     font-size: 0.95em;
     display: block; /* Make label take full width before buttons */
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .size-button {
@@ -2039,7 +2051,6 @@ h2 {
     color: #004D40;
 }
 
-
 .product-actions-detail {
     display: flex;
     gap: 15px;
@@ -2067,7 +2078,7 @@ h2 {
 }
 
 .btn-add-to-cart-detail {
-    background-color: #00796B; /* Teal color from image */
+    background-color: #0A7E8C; /* Teal color from image */
     color: white;
 }
 .btn-add-to-cart-detail:hover {
@@ -2130,20 +2141,10 @@ h2 {
         flex-direction: column-reverse; /* Main image on top, thumbs below */
         align-items: center; /* Center items when stacked */
     }
-    .product-thumbnails {
-        flex-direction: row;
-        overflow-x: auto; /* Horizontal scroll for thumbnails */
-        overflow-y: hidden;
-        max-height: none;
-        width: 100%;
-        justify-content: center; /* Center thumbnails */
-        padding: 10px 0;
-    }
-
     .product-main-image-container {
         width: 100%;
         max-width: 450px; /* Limit main image size when stacked */
-        margin-bottom: 15px;
+        margin-bottom: 10px;
     }
     .product-name-detail {
         font-size: 1.8em;

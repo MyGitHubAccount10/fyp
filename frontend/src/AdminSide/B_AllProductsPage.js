@@ -16,13 +16,6 @@ const TrashIcon = ({ size = 18, color = "currentColor" }) => (
         <path d="M8 6V4C8 3.46957 8.21071 2.96086 8.58579 2.58579C8.96086 2.21071 9.46957 2 10 2H14C14.5304 2 15.0391 2.21071 15.4142 2.58579C15.7893 2.96086 16 3.46957 16 4V6M19 6V20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22H7C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20V6H19Z" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
 );
-const CloseIcon = ({ size = 24, color = "currentColor" }) => (
-     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
-        <path d="M18 6L6 18" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M6 6L18 18" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-);
-
 
 function AllProductsPage() {
     const [allProducts, setAllProducts] = useState([]); // Initialize with dummy data
@@ -140,7 +133,6 @@ const handleEditProduct = (product) => {
         setCurrentPage(1);
     };
 
-    // Function to get the class for product category
     const getCategory = (categoryID) => {
         const category = categories.find(cat => cat._id === categoryID);
         return category && category.category_name
@@ -148,10 +140,10 @@ const handleEditProduct = (product) => {
 
     const getStatus = (product) => {
         if (product.warehouse_quantity === 0) {
-            return 'Out of Stock';
+            return 'No Stock';
         }
         else if (product.warehouse_quantity <= product.threshold) {
-            return 'Low Stock';
+            return 'Limited Stock';
         } else {
             return 'In Stock';
         }
@@ -161,8 +153,8 @@ const handleEditProduct = (product) => {
     const getProductStatusClass = (status) => {
     switch (status) {
         case 'In Stock': return 'status-in-stock';
-        case 'Low Stock': return 'status-low-stock';
-        case 'Out of Stock': return 'status-out-of-stock';
+        case 'Limited Stock': return 'status-limited-stock';
+        case 'No Stock': return 'status-no-stock';
         // Add other statuses as needed
         default: return '';
         }
@@ -257,8 +249,8 @@ const handleEditProduct = (product) => {
         >
             <option value="All Statuses">All Statuses</option>
             <option value="In Stock">In Stock</option>
-            <option value="Low Stock">Low Stock</option>
-            <option value="Out of Stock">Out of Stock</option>
+            <option value="Limited Stock">Limited Stock</option>
+            <option value="No Stock">No Stock</option>
         </select>
     </div>
 </div>

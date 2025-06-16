@@ -62,6 +62,30 @@ const ProductDetailPage = () => {
   const handleQuantityChange = (amount) => {
     setQuantity(prevQuantity => (prevQuantity + amount));
   };
+
+    const handlerStatus = () => {
+        if (product.warehouse_quantity === 0) {
+            return 'No Stock';
+        }
+        else if (product.warehouse_quantity <= product.threshold) {
+            return 'Limited Stock';
+        } else {
+            return 'In Stock';
+        }
+    };
+
+    // Function to get the class for product status
+    const handleStatusClass = (status) => {
+    switch (status) {
+        case 'In Stock': return 'status-in-stock';
+        case 'Limited Stock': return 'status-limited-stock';
+        case 'No Stock': return 'status-no-stock';
+        // Add other statuses as needed
+        default: return '';
+        }
+    };
+
+
   
   return (
     <>
@@ -78,38 +102,41 @@ const ProductDetailPage = () => {
           <div className="product-details-content">
             <h1 className="product-name-detail">{product.product_name}</h1>
             <p className="product-price-detail">${parseFloat(product.product_price).toFixed(2)}</p>
+            <p className={handleStatusClass(handlerStatus())}>
+              <strong>{handlerStatus()}</strong>
+            </p>
 
-            <div className="product-options">
-              <div className="product-sizes">
-                <span className="option-label">Size:</span>
-                {sizes.map(size => (
-                  <button
-                    key={size}
-                    className={`size-button ${selectedSize === size ? 'selected' : ''}`}
-                    onClick={() => handleSizeSelect(size)}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-              <div className="product-quantity-selector">
-                <span className="option-label">Quantity:</span>
-                <div className="quantity-controls-detail">
-                    <button 
-                    onClick={() => handleQuantityChange(-1)}
-                    disabled={quantity === 1 || product.warehouse_quantity === 0}
-                    style={{ opacity: quantity === 1 ? 0.5 : 1 }}>-
+            {product.warehouse_quantity > 0 && (
+              <>
+              <div className="product-options">
+                  <div>
+                    <span className="option-label">Size:</span>
+                    {sizes.map(size => (
+                      <button
+                        key={size}
+                        className={`size-button ${selectedSize === size ? 'selected' : ''}`}
+                        onClick={() => handleSizeSelect(size)}>
+                      {size}
                     </button>
-                    <span>{quantity}</span>
-                    <button 
-                    onClick={() => handleQuantityChange(1)}
-                    disabled={quantity === product.warehouse_quantity || product.warehouse_quantity === 0}
-                    style={{ opacity: quantity === product.warehouse_quantity || product.warehouse_quantity === 0 ? 0.5 : 1 }}>+
-                    </button>
-                </div>
+                    ))}
+                  </div>
               </div>
-            </div>
-
+              <div className="product-options">
+                  <span className="option-label">Quantity:</span>
+                  <div className="quantity-controls-detail">
+                      <button
+                      onClick={() => handleQuantityChange(-1)}
+                      disabled={quantity === 1}
+                      style={{ opacity: quantity === 1 ? 0.5 : 1 }}>-
+                      </button>
+                      <span>{quantity}</span>
+                      <button 
+                      onClick={() => handleQuantityChange(1)}
+                      disabled={quantity === product.warehouse_quantity}
+                      style={{ opacity: quantity === product.warehouse_quantity ? 0.5 : 1 }}>+
+                      </button>
+                  </div>
+              </div>
             <div className="product-actions-detail">              
               <button 
               className="btn-buy-now"
@@ -127,9 +154,7 @@ const ProductDetailPage = () => {
                   }
                 });
                 navigate('/place-order');
-              }}
-              disabled={product.warehouse_quantity === 0}
-              style={{ opacity: product.warehouse_quantity === 0 ? 0.5 : 1 }}>Buy Now</button>
+              }}>Buy Now</button>
               <button 
               className="btn-add-to-cart-detail"
               onClick={() => {
@@ -146,10 +171,11 @@ const ProductDetailPage = () => {
                   }
                 });
                 navigate('/cart');
-              }}
-              disabled={product.warehouse_quantity === 0}
-              style={{ opacity: product.warehouse_quantity === 0 ? 0.5 : 1 }}>Add to Cart</button>
-            </div>
+              }}>Add to Cart
+              </button>
+            </div> 
+            </>           
+            )}
           </div>
         </section>
 

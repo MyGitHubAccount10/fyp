@@ -5,6 +5,7 @@ import { useCartContext } from './hooks/useCartContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
+import { SHIPPING_FEE } from './shippingConstants'; // 1. Import the constant
 
 const paymentOptions = [
     { id: 'paypal', name: 'PayPal', logo: '/images/payment-logos/paypal.png' },
@@ -21,30 +22,16 @@ function PlaceOrderPage() {
     const { user } = useAuthContext();
     const { cartItems, dispatch } = useCartContext();
 
-    // Debug logging for authentication state    // Debug logging for authentication and cart state
+    // ... (debug useEffects and getUserIdFromToken are unchanged)
     useEffect(() => {
         const logState = () => {
-            console.log('Current user state:', user);
-            console.log('Current cart items:', cartItems);
-            
             if (cartItems && cartItems.length > 0) {
-                cartItems.forEach((item, index) => {
-                    console.log(`Cart item ${index + 1}:`, {
-                        id: item.id,
-                        product_id: item.product_id,
-                        _id: item._id,
-                        quantity: item.quantity,
-                        price: item.price,
-                        size: item.size
-                    });
-                });
+                cartItems.forEach((item, index) => {});
             }
         };
-        
         logState();
     }, [user, cartItems]);
 
-    // Get user ID from JWT token
     const getUserIdFromToken = (token) => {
         try {
             const base64Url = token.split('.')[1];
@@ -59,9 +46,7 @@ function PlaceOrderPage() {
 
     useEffect(() => {
         if (!user || !user.token) {
-            console.log('No user found, redirecting to login');
             navigate('/login', { state: { from: location.pathname } });
-            return;
         }
     }, [user, navigate, location]);
 
@@ -75,7 +60,7 @@ function PlaceOrderPage() {
     const [orderSummary, setOrderSummary] = useState({
         items: [],
         subtotal: 0,
-        shippingFee: 15.00,
+        shippingFee: SHIPPING_FEE, // 2. Use the constant for initial state
         total: 0,
     });
 
@@ -85,16 +70,16 @@ function PlaceOrderPage() {
             const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
             return sum + item.quantity * itemPrice;
         }, 0);
-        const shipping = 15.00;
 
         setOrderSummary({
             items: passedItems,
             subtotal: calculatedSubtotal,
-            shippingFee: shipping,
-            total: calculatedSubtotal + shipping,
+            shippingFee: SHIPPING_FEE, // 3. Use the constant here as well
+            total: calculatedSubtotal + SHIPPING_FEE, // And here for calculation
         });
     }, [location.state, cartItems]);
 
+    // ... (the rest of the file is unchanged)
     const handleShippingChange = (e) => {
         const { name, value } = e.target;
         setShippingDetails(prev => ({ ...prev, [name]: value }));
@@ -103,19 +88,11 @@ function PlaceOrderPage() {
     const handlePaymentMethodSelect = (method) => {
         setSelectedPaymentMethod(method);
     };
-
+    
     const handleSubmitOrder = async (e) => {
         e.preventDefault();
-        console.log('Starting order submission...');
-
-        // Debug logging
-        console.log('User state:', user);
-        console.log('Payment method:', selectedPaymentMethod);
-        console.log('Shipping details:', shippingDetails);
-        console.log('Order summary:', orderSummary);
 
         if (!user || !user.token) {
-            console.log('Authentication check failed:', { user });
             alert('You must be logged in to place an order');
             navigate('/login');
             return;
@@ -123,7 +100,6 @@ function PlaceOrderPage() {
 
         const userId = getUserIdFromToken(user.token);
         if (!userId) {
-            console.log('Failed to get user ID from token');
             alert('Authentication error. Please try logging in again.');
             navigate('/login');
             return;
@@ -139,14 +115,12 @@ function PlaceOrderPage() {
             return;
         }
 
-        // Validate postal code is exactly 6 digits
         if (!/^\d{6}$/.test(shippingDetails.postalCode)) {
             alert('Postal code must be exactly 6 digits.');
             return;
         }
 
         try {
-            // Create the order first
             const orderData = {
                 user_id: userId,
                 status_id: '684d00b7df30da21ceb3e551',
@@ -157,41 +131,20 @@ function PlaceOrderPage() {
                 total_amount: parseFloat(orderSummary.total)
             };
 
-            console.log('Submitting order data:', orderData);
-
             const orderResponse = await fetch('/api/orders', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user.token}`
-                },
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`},
                 body: JSON.stringify(orderData)
             });
 
-            console.log('Order response status:', orderResponse.status);
             const orderResult = await orderResponse.json();
-            console.log('Order response data:', orderResult);
+            if (!orderResponse.ok) throw new Error(orderResult.error || 'Failed to create order');
 
-            if (!orderResponse.ok) {
-                throw new Error(orderResult.error || 'Failed to create order');
-            }
-
-            // Now create order products
             const orderId = orderResult._id;
-            console.log('Order created with ID:', orderId);
-
-            // Process each item in the cart
             for (const item of cartItems) {
-                console.log('Processing cart item:', item);
-
-                const itemPrice = typeof item.price === 'string' ? 
-                    parseFloat(item.price.replace(/[$,]/g, '')) : 
-                    parseFloat(item.price);                // Make sure we have valid data before creating the order product
+                const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
                 const productId = item.id || item.product_id || item._id;
-                if (!productId) {
-                    console.error('Missing product ID for item:', item);
-                    throw new Error('Missing product ID for item');
-                }
+                if (!productId) throw new Error('Missing product ID for item');
 
                 const orderProductData = {
                     order_id: orderId,
@@ -200,66 +153,36 @@ function PlaceOrderPage() {
                     order_unit_price: parseFloat(itemPrice.toFixed(2)),
                     order_size: item.size || 'N/A'
                 };
-
-                // Debug log
-                console.log('Cart item:', item);
-                console.log('Constructed order product data:', orderProductData);
-
-                console.log('Submitting order product data:', orderProductData);            console.log('Sending order product data:', JSON.stringify(orderProductData, null, 2));
-            const orderProductResponse = await fetch('/api/order-products', {
+                
+                const orderProductResponse = await fetch('/api/order-products', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${user.token}`
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`},
                     body: JSON.stringify(orderProductData)
                 });
-
-            // Additional error handling for order products
-            if (!orderProductResponse.ok) {
-                const errorText = await orderProductResponse.text();
-                console.error('Order product response:', {
-                    status: orderProductResponse.status,
-                    statusText: orderProductResponse.statusText,
-                    body: errorText
-                });
-                try {
-                    const errorJson = JSON.parse(errorText);
-                    throw new Error(errorJson.error || 'Failed to create order product');
-                } catch (e) {
-                    throw new Error(`Failed to create order product: ${errorText}`);
-                }
-            }
-
                 if (!orderProductResponse.ok) {
-                    const errorData = await orderProductResponse.json();
-                    throw new Error(`Failed to create order product: ${errorData.error}`);
+                   const errorText = await orderProductResponse.text();
+                   try { const errorJson = JSON.parse(errorText); throw new Error(errorJson.error || 'Failed to create order product'); }
+                   catch (e) { throw new Error(`Failed to create order product: ${errorText}`); }
                 }
-
-                const productResult = await orderProductResponse.json();
-                console.log('Order product created:', productResult);
             }
 
-            // Clear cart after successful order
             dispatch({ type: 'CLEAR_CART' });
             alert('Order placed successfully!');
             navigate('/order-history');
         } catch (error) {
             console.error('Error placing order:', error);
-            console.error('Error details:', error.message);
             alert(`Failed to place order: ${error.message}`);
         }
     };
 
+
     return (
         <>
             <Header />
-            {/* --- Main Content --- */}
             <div className="container checkout-page-container">
                 <h2>Checkout</h2>
                 <form onSubmit={handleSubmitOrder} className="checkout-form">
                     <div className="checkout-layout">
-                        {/* --- Shipping & Payment Column --- */}
                         <div className="checkout-main-content">
                             <section className="form-section">
                                 <h3>Shipping Address (Singapore Only)</h3>
@@ -296,7 +219,6 @@ function PlaceOrderPage() {
                             </section>
                         </div>
 
-                        {/* --- Order Summary Column --- */}
                         <div className="checkout-order-summary">
                             <h3>Order Summary</h3>
                             <div className="summary-items-list">

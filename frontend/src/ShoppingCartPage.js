@@ -4,8 +4,8 @@ import { useCartContext } from './hooks/useCartContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
+import { SHIPPING_FEE } from './shippingConstants'; // 1. Import the constant
 
-// Updated price handling to ensure compatibility with both string and number types
 function ShoppingCartPage() {
     const navigate = useNavigate();
     const { cartItems, dispatch } = useCartContext();
@@ -21,45 +21,33 @@ function ShoppingCartPage() {
         setSubtotal(calculatedSubtotal);
     }, [cartItems]);
 
-    // --- EVENT HANDLERS ---
+    // ... (rest of the handlers are unchanged)
     const handleQuantityChange = (itemId, change) => {
         const item = cartItems.find(item => item.id === itemId);
         if (item) {
             dispatch({
                 type: 'UPDATE_QUANTITY',
-                payload: {
-                    id: itemId,
-                    quantity: Math.max(1, item.quantity + change)
-                }
+                payload: { id: itemId, quantity: Math.max(1, item.quantity + change) }
             });
         }
     };
 
     const handleDeleteItem = (itemId) => {
-        dispatch({
-            type: 'REMOVE_FROM_CART',
-            payload: itemId
-        });
+        dispatch({ type: 'REMOVE_FROM_CART', payload: itemId });
     };
 
     const handleSaveForLater = (itemId) => {
         const item = cartItems.find(item => item.id === itemId);
         if (item) {
             setSavedItems(prev => [...prev, item]);
-            dispatch({
-                type: 'REMOVE_FROM_CART',
-                payload: itemId
-            });
+            dispatch({ type: 'REMOVE_FROM_CART', payload: itemId });
         }
     };
 
     const handleMoveToCart = (itemId) => {
         const item = savedItems.find(item => item.id === itemId);
         if (item) {
-            dispatch({
-                type: 'ADD_TO_CART',
-                payload: item
-            });
+            dispatch({ type: 'ADD_TO_CART', payload: item });
             setSavedItems(prev => prev.filter(savedItem => savedItem.id !== itemId));
         }
     };
@@ -72,20 +60,18 @@ function ShoppingCartPage() {
         navigate('/place-order');
     };
 
-    // --- RENDER ---
     return (
-        <> {/* React Fragment */}
+        <>
             <Header />
             <div className="container">
                 <h2>Shopping Cart</h2>
-
                 <div className="main-cart-items">
                     {cartItems.length === 0 ? (
                         <p>Your shopping cart is empty.</p>
                     ) : (
                         cartItems.map(item => {
                             const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
-                            const imageUrl = `/images/${item.image}`; // Updated image path
+                            const imageUrl = `/images/${item.image}`;
                             return (
                                 <div className="cart-item" key={item.id}>
                                     <img src={imageUrl} alt={item.name} />
@@ -96,14 +82,9 @@ function ShoppingCartPage() {
                                     </div>
                                     <div className="item-actions">
                                         <div className="quantity-controls">
-                                            <button 
-                                            onClick={() => handleQuantityChange(item.id, -1)}
-                                            disabled={item.quantity === 1}
-                                            style={{ opacity: item.quantity === 1 ? 0.5 : 1 }}>-</button>
+                                            <button onClick={() => handleQuantityChange(item.id, -1)} disabled={item.quantity === 1} style={{ opacity: item.quantity === 1 ? 0.5 : 1 }}>-</button>
                                             <span>{item.quantity}</span>
-                                            <button onClick={() => handleQuantityChange(item.id, 1)}
-                                            disabled={item.quantity === item.warehouse_quantity}
-                                            style={{ opacity: item.quantity === item.warehouse_quantity ? 0.5 : 1 }}>+</button>
+                                            <button onClick={() => handleQuantityChange(item.id, 1)} disabled={item.quantity === item.warehouse_quantity} style={{ opacity: item.quantity === item.warehouse_quantity ? 0.5 : 1 }}>+</button>
                                         </div>
                                         <button className="action-btn delete-btn" onClick={() => handleDeleteItem(item.id)}>Delete</button>
                                         <button className="action-btn save-btn" onClick={() => handleSaveForLater(item.id)}>Save for later</button>
@@ -120,18 +101,21 @@ function ShoppingCartPage() {
                 <div className="cart-total">
                     <h3>Cart Total</h3>
                     <p><span>Subtotal</span> <span>${subtotal.toFixed(2)}</span></p>
-                    <p><span>Shipment</span> <span>Shipping to Bedok $5.00</span></p>
-                    <p className="total-row"><strong>Total</strong> <strong>${(subtotal + 5.00).toFixed(2)}</strong></p>
+                    {/* 2. Use the constant for display */}
+                    <p><span>Shipment</span> <span>Shipping to Bedok ${SHIPPING_FEE.toFixed(2)}</span></p>
+                    {/* 3. Use the constant for calculation */}
+                    <p className="total-row"><strong>Total</strong> <strong>${(subtotal + SHIPPING_FEE).toFixed(2)}</strong></p>
                     <button className="complete-purchase-btn" onClick={handleCheckout}>Complete Purchase</button>
                 </div>
 
+                {/* Saved for Later section is unchanged */}
                 <div className="saved-items">
                     <h3>Saved for Later</h3>
                     {savedItems.length === 0 ? (
                         <p>You have no items saved for later.</p>
                     ) : (
                         savedItems.map(item => {
-                            const imageUrl = `/images/${item.image}`; // Updated image path
+                            const imageUrl = `/images/${item.image}`;
                             return (
                                 <div className="saved-item-card" key={item.id} style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '10px', marginBottom: '10px', backgroundColor: '#f9f9f9', width: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                     <img src={imageUrl} alt={item.name} style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '4px' }} />

@@ -1,9 +1,13 @@
 const mongoose = require('mongoose');
 const Order = require('../models/OrderModel');
 
-// Get all orders
+// Get all orders for the logged-in user
 const getOrders = async (req, res) => {
-    const orders = await Order.find({}).sort({createdAt: -1});
+    // FIX: Get the user ID from the authenticated request
+    const user_id = req.user._id;
+
+    // FIX: Find orders that match the user_id
+    const orders = await Order.find({ user_id }).sort({createdAt: -1});
 
     res.status(200).json(orders);
 }
@@ -21,8 +25,15 @@ const getOrder = async (req, res) => {
     if (!order) {
         return res.status(404).json({error: 'Order not found'});
     }
+    // Security check: ensure the user owns this order
+    if (order.user_id.toString() !== req.user._id.toString()) {
+        return res.status(403).json({ error: 'User not authorized to view this order' });
+    }
+
     res.status(200).json(order);
 }
+
+// ... (rest of the file is unchanged)
 
 // Create a new order
 const createOrder = async (req, res) => {

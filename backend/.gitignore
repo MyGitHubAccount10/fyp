@@ -15,9 +15,6 @@
 .DS_Store
 .env
 
-#auto Pictures
-/public/images
-
 
 npm-debug.log*
 yarn-debug.log*

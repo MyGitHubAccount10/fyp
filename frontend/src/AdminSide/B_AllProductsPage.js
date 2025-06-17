@@ -308,24 +308,27 @@ const handleEditProduct = (product) => {
                 }}
               >
                 {/* Modal Content */}
+                    {/* Black Preview background */}
                 <div
                   onClick={(e) => e.stopPropagation()}
                   style={{
                     backgroundColor: 'white',
                     borderRadius: '8px',
-                    maxWidth: '25vw',
-                    maxHeight: '25vh',
+                    maxWidth: '80vw',
+                    maxHeight: '80vh',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    boxSizing: 'border-box'
                   }}
                 >
+                    {/* Image inside modal */}
                   <img
                     src={modalImage}
                     alt="Preview"
                     style={{
                       maxWidth: '100%',
-                      maxHeight: '100%',
+                      maxHeight: '80vh',
                       objectFit: 'contain'
                     }}
                   />

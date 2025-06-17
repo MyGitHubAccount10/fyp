@@ -1,3 +1,5 @@
+// App.js
+
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { CartContextProvider } from './context/CartContext';
@@ -16,10 +18,7 @@ import PlaceOrderPage from './PlaceOrderPage';
 import OrderHistoryPage from './OrderHistoryPage';
 import PageNotFound from './PageNotFound';
 
-// --- FIX: Import the new reusable CategoryPage ---
 import CategoryPage from './CategoryPage';
-
-// --- NOTE: The old category page imports (SkimboardsPage, etc.) are no longer needed. ---
 
 import AdminDashboard from './AdminSide/A_AdminDashboard';
 import AllProductsPage from './AdminSide/B_AllProductsPage';
@@ -32,6 +31,8 @@ import AllCustomersPage from './AdminSide/D_AllCustomersPage';
 import AdminProfilePage from './AdminSide/G_AdminProfilePage';
 import EditProductPage from './AdminSide/BBB_EditProductPage';
 import AddAdminPage from './AdminSide/DD_AddAdminPage';
+// +++ IMPORT THE NEW ADMIN LOGIN PAGE +++
+import AdminLoginPage from './AdminSide/AdminLoginPage';
 
 import './index.css';
 
@@ -46,7 +47,6 @@ function App() {
           <Route path="contact" element={<ContactPage />} />
           <Route path="faq" element={<FaqPage />} />
 
-          {/* --- FIX: Updated product routes to use the reusable CategoryPage --- */}
           <Route path="products">
             <Route path='skimboards' element={<CategoryPage categoryName="Skimboards" />} />
             <Route path="t-shirts" element={<CategoryPage categoryName="T-Shirts" />} />
@@ -64,6 +64,9 @@ function App() {
           <Route path="order-history" element={<OrderHistoryPage />} />
 
           {/* Admin Routes */}
+          {/* +++ ADD THE NEW ROUTE FOR THE ADMIN LOGIN PAGE +++ */}
+          <Route path="admin-login" element={<AdminLoginPage />} />
+          
           <Route path="admin-dashboard" element={<AdminDashboard />} />
           <Route path="all-products" element={<AllProductsPage />} />
           <Route path="add-product" element={<AddProductPage />} />

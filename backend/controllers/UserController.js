@@ -1,5 +1,3 @@
-// UserController.js
-
 const mongoose = require('mongoose');
 const User = require('../models/UserModel');
 const jwt = require('jsonwebtoken');
@@ -9,11 +7,13 @@ const createToken = (_id) => {
     return jwt.sign({_id}, process.env.SECRET, { expiresIn: '3d' })
 }
 
+// Unchanged
 const getUsers = async (req, res) => {
     const users = await User.find({}).sort({createdAt: -1});
     res.status(200).json(users);
 }
 
+// Unchanged
 const getUser = async (req, res) => {
     const {id} = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({error: 'Invalid user ID'});
@@ -22,11 +22,10 @@ const getUser = async (req, res) => {
     res.status(200).json(user);
 }
 
+// Unchanged (already correct from previous fix)
 const createUser = async (req, res) => {
-    // --- FIX: Accept role_id from the request body ---
     const { username, email, password, phone_number, role_id } = req.body;
     try {
-       // --- FIX: Use the role_id variable from the request ---
        const user = await User.create({ username, email, password, phone_number, role_id });
        res.status(201).json(user);
     } catch (error) {
@@ -34,6 +33,7 @@ const createUser = async (req, res) => {
     }
 }
 
+// Unchanged
 const deleteUser = async (req, res) => {
     const {id} = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({error: 'Invalid user ID'});
@@ -42,6 +42,7 @@ const deleteUser = async (req, res) => {
     res.status(200).json(user);
 }
 
+// Unchanged
 const updateUser = async (req, res) => {
     const {id} = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({error: 'Invalid user ID'});
@@ -50,31 +51,50 @@ const updateUser = async (req, res) => {
     res.status(200).json(user);
 }
 
+// --- MODIFIED: This function now populates the role information upon login ---
 const loginUser = async (req, res) => {
-  const {email, password} = req.body
+  const {email, password} = req.body;
   try {
-    const user = await User.login(email, password)
-    const token = createToken(user._id)
-    res.status(200).json({ _id: user._id, email: user.email, username: user.username, phone_number: user.phone_number, token })
+    // 1. User.login validates the email and password
+    const user = await User.login(email, password);
+
+    // 2. After validation, find the user again to populate their role
+    // This adds the role sub-document (e.g., { role_name: 'Admin' }) to the user object
+    const userWithRole = await User.findById(user._id).populate({
+      path: 'role_id', // The field in the User model to populate
+      select: 'role_name' // We only need the role's name for our checks
+    });
+
+    // 3. Create a token
+    const token = createToken(user._id);
+
+    // 4. Send the full user object, including the populated role, to the frontend
+    res.status(200).json({ 
+        _id: userWithRole._id, 
+        email: userWithRole.email, 
+        username: userWithRole.username, 
+        phone_number: userWithRole.phone_number,
+        role: userWithRole.role_id, // This will be the populated role object
+        token 
+    });
   } catch (error) {
-    res.status(400).json({error: error.message})
+    res.status(400).json({error: error.message});
   }
 }
 
+// Unchanged (already correct from previous fix)
 const signupUser = async (req, res) => {
-  // --- FIX: Destructure role_id from the request body ---
   const {email, password, username, phone_number, role_id} = req.body;
   try {
-    // --- FIX: Pass role_id to the User.signup method ---
     const user = await User.signup(email, password, username, phone_number, role_id);
-
-    const token = createToken(user._id)
-    res.status(200).json({ email: user.email, username: user.username, phone_number: user.phone_number, token })
+    const token = createToken(user._id);
+    res.status(200).json({ email: user.email, username: user.username, phone_number: user.phone_number, token });
   } catch (error) {
-    res.status(400).json({error: error.message})
+    res.status(400).json({error: error.message});
   }
 }
 
+// Unchanged
 const updateLoggedInUser = async (req, res) => {
     const userId = req.user._id;
     if (!mongoose.Types.ObjectId.isValid(userId)) return res.status(404).json({error: 'Invalid user ID'});
@@ -87,15 +107,18 @@ const updateLoggedInUser = async (req, res) => {
     }
 };
 
+// Unchanged
 const updateUserPassword = async (req, res) => {
     const userId = req.user._id;
     const { newPassword } = req.body;
+
     if (!newPassword) {
         return res.status(400).json({ error: 'New password is required.' });
     }
     if (newPassword.length < 8) {
         return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
     }
+
     try {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(newPassword, salt);

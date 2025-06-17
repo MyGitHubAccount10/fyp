@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Product = require('../models/ProductModel');
+const fs = require('fs');
+const path = require('path');
 
 // Get all products
 const getProducts = async (req, res) => {
@@ -113,6 +115,12 @@ const updateProduct = async (req, res) => {
     console.log('Update request files:', req.files);
 
     try {
+        // First, get the current product to access old image filenames
+        const currentProduct = await Product.findById(id);
+        if (!currentProduct) {
+            return res.status(404).json({error: 'Product not found'});
+        }
+
         const updateData = {};
         
         // Map the incoming fields to the database schema
@@ -123,12 +131,34 @@ const updateProduct = async (req, res) => {
         if (req.body.threshold !== undefined) updateData.threshold = req.body.threshold || 5;
         if (req.body.category) updateData.category = req.body.category;
         
-        // Handle multiple images
+        // Handle multiple images and delete old ones if new images are provided
         if (req.files && req.files.length > 0) {
             const images = req.files;
+            
+            // Store old image filenames for deletion
+            const oldImages = [];
+            if (currentProduct.product_image) oldImages.push(currentProduct.product_image);
+            if (currentProduct.product_image2) oldImages.push(currentProduct.product_image2);
+            if (currentProduct.product_image3) oldImages.push(currentProduct.product_image3);
+            
+            // Set new image filenames
             updateData.product_image = images[0].filename;
-            if (images.length > 1) updateData.product_image2 = images[1].filename;
-            if (images.length > 2) updateData.product_image3 = images[2].filename;
+            updateData.product_image2 = images.length > 1 ? images[1].filename : null;
+            updateData.product_image3 = images.length > 2 ? images[2].filename : null;
+            
+            // Delete old image files from the filesystem
+            oldImages.forEach(filename => {
+                if (filename) {
+                    const filePath = path.join(__dirname, '..', 'public', 'images', filename);
+                    fs.unlink(filePath, (err) => {
+                        if (err) {
+                            console.error(`Failed to delete old image ${filename}:`, err);
+                        } else {
+                            console.log(`Successfully deleted old image: ${filename}`);
+                        }
+                    });
+                }
+            });
         }
 
         console.log('Update data:', updateData);

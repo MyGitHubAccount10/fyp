@@ -32,6 +32,7 @@ function EditProductPage() {
     });
 
     const [existingImageURLs, setExistingImageURLs] = useState([]);
+    const [imagesToReplace, setImagesToReplace] = useState(false);
 
     // Fetch categories on component mount
     useEffect(() => {
@@ -75,17 +76,40 @@ function EditProductPage() {
         };
 
         fetchProduct();
-    }, [id]);
-
-    const handleChange = (e) => {
+    }, [id]);    const handleChange = (e) => {
         const { name, value, type, files } = e.target;
         if (type === 'file') {
             setFormData(prev => ({ ...prev, [name]: files }));
+            // Mark that images are being replaced
+            if (name === 'images' && files.length > 0) {
+                setImagesToReplace(true);
+            }
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
         }
+    };
+
+    const handleClearImages = () => {
+        setFormData(prev => ({ ...prev, images: [] }));
+        setImagesToReplace(false);
+        // Clear the file input
+        const fileInput = document.getElementById('imageUpload');
+        if (fileInput) fileInput.value = '';
     };    const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // If images are being replaced, show confirmation dialog
+        if (imagesToReplace) {
+            const confirmReplace = window.confirm(
+                "⚠️ WARNING: You are about to replace the existing product images. " +
+                "The current images will be permanently deleted from the server and cannot be recovered. " +
+                "Do you want to continue?"
+            );
+            
+            if (!confirmReplace) {
+                return; // User cancelled the operation
+            }
+        }
         
         // Frontend validation
         if (!formData.name || !formData.description || !formData.price || !formData.stockQuantity || !formData.category) {
@@ -103,7 +127,7 @@ function EditProductPage() {
         form.append('warehouse_quantity', Number(formData.stockQuantity));
         form.append('threshold', Number(formData.threshold) || 5);
         form.append('category', formData.category);        if (formData.images && formData.images.length > 0) {
-            // Send multiple images
+            // Send multiple images - this will replace ALL existing images
             for (let i = 0; i < formData.images.length && i < 3; i++) {
                 form.append('product_images', formData.images[i]);
             }
@@ -129,11 +153,12 @@ function EditProductPage() {
                     body: errorData
                 });
                 throw new Error(`Update failed: ${errorData.error || res.statusText}`);
-            }
-
-            const result = await res.json();
+            }            const result = await res.json();
             console.log('Product updated:', result);
-            alert('✅ Product updated successfully!');
+              const successMessage = imagesToReplace 
+                ? '✅ Product updated successfully! Old images have been permanently deleted and replaced with new ones.'
+                : '✅ Product updated successfully!';
+            alert(successMessage);
             navigate('/all-products');
         } catch (err) {
             console.error('Update error:', err);
@@ -210,29 +235,110 @@ function EditProductPage() {
                                     <input type="number" name="threshold" value={formData.threshold} onChange={handleChange} min="0" />
                                     <small className="form-text text-muted">Optional. Set a threshold for low stock alerts.</small>
                                 </div>
-                            </div>
-
-                            <div className="form-section-card">
+                            </div>                            <div className="form-section-card">
                                 <h3 className="section-card-title">Product Image</h3>
                                 <div className="form-group">
-                                    <label>Replace Images</label>
+                                    <label>Replace Images</label>                                    {/* Show warning banner when images will be replaced */}
+                                    {imagesToReplace && (
+                                        <div style={{
+                                            backgroundColor: '#fff3cd',
+                                            border: '1px solid #ffeaa7',
+                                            borderRadius: '4px',
+                                            padding: '12px',
+                                            marginBottom: '15px',
+                                            color: '#856404'
+                                        }}>
+                                            <strong>⚠️ Image Replacement Warning:</strong>
+                                            <br />
+                                            The current images will be permanently deleted and replaced with the new images when you save.
+                                        </div>
+                                    )}
+                                    
                                     <div className="file-upload-area">
-                                        <input type="file" name="images" multiple onChange={handleChange} className="file-input-hidden" id="imageUpload" />
+                                        <input type="file" name="images" multiple onChange={handleChange} className="file-input-hidden" id="imageUpload" accept="image/*" />
                                         <label htmlFor="imageUpload" className="file-input-label">
                                             <span className="file-input-button">Choose Files</span>
                                             <span className="file-input-text">
-                                                {formData.images.length > 0 ? `${formData.images.length} file(s)` : 'No file chosen'}
+                                                {formData.images.length > 0 ? `${formData.images.length} file(s) selected` : 'No file chosen'}
                                             </span>
                                         </label>
+                                        {formData.images.length > 0 && (
+                                            <button 
+                                                type="button" 
+                                                onClick={handleClearImages}
+                                                style={{
+                                                    marginLeft: '10px',
+                                                    padding: '8px 12px',
+                                                    backgroundColor: '#dc3545',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer',
+                                                    fontSize: '12px'
+                                                }}
+                                            >
+                                                Clear
+                                            </button>
+                                        )}
                                     </div>
-                                    {existingImageURLs.length > 0 && (
-                                        <div className="preview-images">
-                                            {existingImageURLs.map((url, i) => (
-                                                <img key={i} src={url} alt="Current" style={{ maxWidth: "100px", marginTop: "10px" }} />
-                                            ))}
+                                    
+                                    {/* Show preview of new images if any are selected */}
+                                    {formData.images.length > 0 && (
+                                        <div style={{ marginTop: '15px' }}>
+                                            <h4 style={{ color: '#007bff', fontSize: '14px', marginBottom: '10px' }}>New Images (Will Replace Current):</h4>
+                                            <div className="preview-images">
+                                                {Array.from(formData.images).map((file, i) => (
+                                                    <img 
+                                                        key={i} 
+                                                        src={URL.createObjectURL(file)} 
+                                                        alt={`New ${i + 1}`} 
+                                                        style={{ 
+                                                            maxWidth: "100px", 
+                                                            marginRight: "10px", 
+                                                            marginTop: "5px",
+                                                            border: "2px solid #007bff",
+                                                            borderRadius: "4px"
+                                                        }} 
+                                                    />
+                                                ))}
+                                            </div>
                                         </div>
                                     )}
-                                    <small className="form-text text-muted">First image will be used as the main display image.</small>
+                                    
+                                    {/* Show current images */}
+                                    {existingImageURLs.length > 0 && (
+                                        <div style={{ marginTop: '15px' }}>
+                                            <h4 style={{ 
+                                                color: imagesToReplace ? '#dc3545' : '#6c757d', 
+                                                fontSize: '14px', 
+                                                marginBottom: '10px' 
+                                            }}>
+                                                Current Images {imagesToReplace ? '(Will be deleted)' : ''}:
+                                            </h4>
+                                            <div className="preview-images">
+                                                {existingImageURLs.map((url, i) => (
+                                                    <img 
+                                                        key={i} 
+                                                        src={url} 
+                                                        alt="Current" 
+                                                        style={{ 
+                                                            maxWidth: "100px", 
+                                                            marginRight: "10px", 
+                                                            marginTop: "5px",
+                                                            opacity: imagesToReplace ? 0.5 : 1,
+                                                            border: imagesToReplace ? "2px solid #dc3545" : "1px solid #ccc",
+                                                            borderRadius: "4px"
+                                                        }} 
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}                                    <small className="form-text text-muted">
+                                        {imagesToReplace 
+                                            ? "⚠️ Selecting new images will permanently delete the current images from the server and replace them with the new ones. This action cannot be undone." 
+                                            : "First image will be used as the main display image. Select new images to replace current ones."
+                                        }
+                                    </small>
                                 </div>
                             </div>
                         </div>

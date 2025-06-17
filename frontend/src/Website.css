@@ -2408,3 +2408,33 @@ h2 {
     background: #f9f9f9;
     border-radius: 12px;
 }
+
+/* --- NEW FIX for Product Grid Alignment --- */
+
+/* This container's only job is to provide spacing and center its content. */
+.product-grid-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Horizontally centers the flex item */
+    align-items: center;     /* Vertically centers the flex item */
+    padding: 2rem;
+    min-height: 50vh;        /* Ensures space and pushes footer down */
+    width: 100%;
+}
+
+/* This is the grid itself, which now has a max-width. */
+/* The flex container above will center this whole block. */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px; /* Crucial for centering on large screens */
+}
+
+/* Specific styling for the 'no products' message */
+.no-products-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
+}

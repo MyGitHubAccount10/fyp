@@ -96,13 +96,9 @@ const HomePage = () => {
         {/* Popular Designs Section */}
         <section className="popular-designs-section container">
           <h2 className="popular-designs-title">Popular Designs</h2>
-          <div className="similar-products-grid">
-            {products && products.filter(product => {
-              return !products.find(other =>
-                other.category === product.category &&
-                new Date(other.createdAt) > new Date(product.createdAt)
-              );
-            }).map(product => (
+          <div className="popular-designs-grid">
+            {products && products.filter(product => product.warehouse_quantity > 0 &&
+            product.threshold >= product.warehouse_quantity).map(product => (
               <Link to={`/product/${product._id}`} key={product._id} style={{ textDecoration: 'none' }}>
                 <div className="popular-design-card" key={product._id}>
                   <img src={`/images/${product.product_image}`} alt={product.product_name} className="popular-design-card-image" />

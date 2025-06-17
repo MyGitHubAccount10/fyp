@@ -11,6 +11,8 @@ const ProductDetailPage = () => {
   const { dispatch } = useCartContext();
   const [product, setProduct] = useState(productId);
   const [similarProducts, setSimilarProducts] = useState([]);
+  const [selectedImage, setSelectedImage] = useState('');
+  const [productImages, setProductImages] = useState([]);
   const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
 
@@ -22,6 +24,14 @@ const ProductDetailPage = () => {
 
         if (response.ok) {
           setProduct(product);
+          const images = [
+            product.product_image,
+            product.product_image2,
+            product.product_image3
+          ].filter(Boolean); // removes undefined if any image is missing
+
+          setSelectedImage(product.product_image); // set first image as main
+          setProductImages(images); 
         }
       } catch (error) {
         console.error('Error fetching product:', error);
@@ -94,8 +104,19 @@ const ProductDetailPage = () => {
       <main className="product-detail-page container">
         <section className="product-main-info-grid">
           <div className="product-image-gallery">
+          <div className="product-thumbnails">
+            {productImages.map((img, index) => (
+              <img
+                key={index}
+                src={`/images/${img}`}
+                alt={`${product.product_name} ${index}`}
+                className={`thumbnail-image ${selectedImage === img ? 'selected-thumbnail' : ''}`}
+                onClick={() => setSelectedImage(img)}
+              />
+            ))}
+          </div>            
             <div className="product-main-image-container">
-              <img src={`/images/${product.product_image}`} alt={product.product_name} className="product-main-image" />
+              <img src={`/images/${selectedImage}`} alt={product.product_name} className="product-main-image" />
             </div>
           </div>
 

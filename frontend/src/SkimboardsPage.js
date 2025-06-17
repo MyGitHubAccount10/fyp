@@ -24,20 +24,21 @@ const SkimboardsPage = () => {
   const { products, dispatch } = useProductsContext();
   
   useEffect(() => {
-    console.log('SkimboardsPage useEffect triggered'); // Debug log
     const fetchProducts = async () => {
       try {
+        // First get the category ID
         const categoryResponse = await fetch('/api/category');
         const categories = await categoryResponse.json();
 
         const skimboardCategory = categories.find(cat => cat.category_name === category);
 
         if (skimboardCategory) {
+          // Then get products and filter by category ID
           const productResponse = await fetch('/api/product');
           const json = await productResponse.json();
 
           if (productResponse.ok) {
-            const skimboardProducts = json.filter(product => 
+            const skimboardProducts = json.filter(product =>
               product.category === skimboardCategory._id
             );
             dispatch({ type: 'SET_PRODUCTS', payload: skimboardProducts });
@@ -47,12 +48,8 @@ const SkimboardsPage = () => {
         console.error('Error fetching data:', error);
       }
     };
-
-    // Prevent redundant API calls
-    if (!products || products.length === 0) {
-      fetchProducts();
-    }
-  }, [dispatch, products]);
+    fetchProducts();
+  }, [dispatch]);
 
   return (
     <>

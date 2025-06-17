@@ -1961,6 +1961,21 @@ h2 {
     object-fit: contain; /* Show whole image, 'cover' might crop */
     display: block;
 }
+.product-thumbnails {
+  display: flex;
+  flex-direction: column; /* or row if you prefer horizontal */
+}
+
+.thumbnail-image {
+  width: 60px;
+  margin: 5px 0;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.thumbnail-image.selected-thumbnail {
+  border: 2px solid #333; /* highlight border */
+}
 
 .product-details-content {
     display: flex;

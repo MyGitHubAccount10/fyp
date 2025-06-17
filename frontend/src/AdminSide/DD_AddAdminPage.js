@@ -1,4 +1,4 @@
-// AddAdminPage.js
+// DD_AddAdminPage.js
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -12,10 +12,12 @@ const PencilIcon = ({ size = 18, color = "currentColor" }) => (
     </svg>
 );
 
+const ADMIN_ROLE_ID = '6849291d57e7f26973c9fb3e';
+
 function AddAdminPage() {
     const navigate = useNavigate();
-
     const [roles, setRoles] = useState([]);
+
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -24,18 +26,16 @@ function AddAdminPage() {
         password: '',
         confirmPassword: '',
         phoneNumber: '',
-        role: '', // For admin role selection
-        status: 'Active', // Default status
-    });    // Fetch roles on component mount
+        role: ADMIN_ROLE_ID,
+        status: 'Active',
+    });
+
     useEffect(() => {
         const fetchRoles = async () => {
             try {
-                console.log('Fetching roles...');
                 const response = await fetch('/api/role');
-                console.log('Roles response:', response.status, response.statusText);
                 if (response.ok) {
                     const rolesData = await response.json();
-                    console.log('Roles loaded:', rolesData);
                     setRoles(rolesData);
                 } else {
                     console.error('Failed to fetch roles:', response.status, response.statusText);
@@ -45,41 +45,37 @@ function AddAdminPage() {
             }
         };
         fetchRoles();
-    }, []);    const handleChange = (e) => {
+    }, []);
+
+    const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value,
-        }));    };
+        }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Frontend validation
-        if (!formData.firstName || !formData.lastName || !formData.username || !formData.email || !formData.password || !formData.role) {
+        if (!formData.username || !formData.email || !formData.password || !formData.role) {
             alert('❌ Please fill in all required fields');
             return;
         }
 
-        // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formData.email)) {
             alert('❌ Please enter a valid email address');
             return;
         }
-
-        // Password validation
         if (formData.password.length < 6) {
             alert('❌ Password must be at least 6 characters long');
             return;
         }
-
         if (formData.password !== formData.confirmPassword) {
             alert('❌ Passwords do not match');
             return;
         }
-
-        console.log('Form data before submission:', formData);
 
         try {
             const response = await fetch('/api/user', {
@@ -94,39 +90,31 @@ function AddAdminPage() {
                     email: formData.email,
                     password: formData.password,
                     phone_number: formData.phoneNumber,
-                    role: formData.role,
+                    // --- THE FIX IS HERE: The key is now 'role_id' to match the backend. ---
+                    role_id: formData.role, 
                 }),
             });
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                console.error('Server response:', {
-                    status: response.status,
-                    statusText: response.statusText,
-                    headers: Object.fromEntries(response.headers.entries()),
-                    body: errorData
-                });
                 throw new Error(`Server error (${response.status}): ${errorData.error || response.statusText || 'Unknown error'}`);
             }
 
             const result = await response.json();
-            console.log('Admin user created:', result);
             alert('✅ Admin user created successfully!');
-            navigate('/admin-users'); // Navigate back to admin users list
+            navigate('/admin-dashboard');
         } catch (error) {
             console.error('Creation failed:', error);
             alert(`❌ Failed to create admin user: ${error.message}`);
-        }    };
-
-    // Function to handle back navigation
+        }
+    };
 
     const handleBack = () => {
         navigate('/all-customers');
     };
 
     const handleCancel = () => {
-        console.log("Cancelling admin user creation.");
-        handleBack(); // Go back to the list page
+        handleBack();
     };
 
   return (
@@ -141,17 +129,11 @@ function AddAdminPage() {
           </button>
         </div>
 
-
-            <form onSubmit={handleSubmit} > {/* Use form element to wrap inputs */}
-
-                <div className="add-product-form-layout">                 {/* Left Column: Main Admin Details */}
+            <form onSubmit={handleSubmit} >
+                <div className="add-product-form-layout">
                 <div className="add-product-main-column">
-
-                     {/* Card 1: Personal Information */}
                     <div className="form-section-card">
                         <h3 className="section-card-title">Personal Information</h3>
-                        
-                        {/* First Name */}
                         <div className="form-group">
                             <label>First Name</label>
                             <input
@@ -162,10 +144,9 @@ function AddAdminPage() {
                                 onChange={handleChange}
                                 placeholder="Enter first name"
                                 required
+                                disabled
                             />
                         </div>
-
-                        {/* Last Name */}
                         <div className="form-group">
                             <label>Last Name</label>
                             <input
@@ -176,10 +157,9 @@ function AddAdminPage() {
                                 onChange={handleChange}
                                 placeholder="Enter last name"
                                 required
+                                disabled
                             />
                         </div>
-
-                        {/* Phone Number */}
                         <div className="form-group">
                             <label>Phone Number</label>
                             <input
@@ -192,12 +172,8 @@ function AddAdminPage() {
                             />
                         </div>
                     </div>
-
-                     {/* Card 2: Account Information */}
                     <div className="form-section-card">
                         <h3 className="section-card-title">Account Information</h3>
-
-                        {/* Username */}
                         <div className="form-group">
                             <label>Username</label>
                             <input
@@ -210,8 +186,6 @@ function AddAdminPage() {
                                 required
                             />
                         </div>
-
-                        {/* Email */}
                         <div className="form-group">
                             <label>Email Address</label>
                             <input
@@ -224,8 +198,6 @@ function AddAdminPage() {
                                 required
                             />
                         </div>
-
-                        {/* Password */}
                         <div className="form-group">
                             <label>Password</label>
                             <input
@@ -238,8 +210,6 @@ function AddAdminPage() {
                                 required
                             />
                         </div>
-
-                        {/* Confirm Password */}
                         <div className="form-group">
                             <label>Confirm Password</label>
                             <input
@@ -253,11 +223,8 @@ function AddAdminPage() {
                             />
                         </div>
                     </div>
-
-                </div> {/* End Left Column */}                 {/* Right Column: Settings Panel */}
+                </div>
                 <div className="add-product-sidebar-panel">
-
-                     {/* Card 4: Role Selection */}
                     <div className="form-section-card">
                         <h3 className="section-card-title">Admin Role</h3>
                          <div className="form-group">
@@ -273,7 +240,8 @@ function AddAdminPage() {
                                     padding: '10px',
                                     borderRadius: '6px',
                                     border: '1px solid #ccc'
-                    }}
+                                }}
+                                disabled
                             >
                                 <option value="" disabled>Select Role</option>
                                 {roles.map((role) => (
@@ -284,8 +252,6 @@ function AddAdminPage() {
                             </select>
                         </div>
                     </div>
-
-                     {/* Card 5: Account Status */}
                     <div className="form-section-card">
                         <h3 className="section-card-title">Account Status</h3>
                         <div className="form-group">
@@ -301,17 +267,15 @@ function AddAdminPage() {
                                     borderRadius: '6px',
                                     border: '1px solid #ccc'
                                 }}
+                                disabled
                             >
                                 <option value="Active">Active</option>
                                 <option value="Inactive">Inactive</option>
                             </select>
                         </div>
                     </div>
-
-                     {/* Card 6: Create Admin */}
                     <div className="form-section-card">
                         <h3 className="section-card-title">Create Admin User</h3>
-                         {/* Save and Cancel Buttons */}
                         <div className="form-actions-vertical">
                             <button type="submit" className="btn-save-product">
                                  <PencilIcon size={18} color="white" />
@@ -320,13 +284,9 @@ function AddAdminPage() {
                             <button type="button" onClick={handleCancel} className="btn-cancel-product">Cancel</button>
                         </div>
                     </div>
-
-                </div> {/* End Right Column */}
-
                 </div>
-
-            </form> {/* End Form */}
-
+                </div>
+            </form>
         </div> 
 
         <div>

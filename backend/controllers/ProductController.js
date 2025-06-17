@@ -95,12 +95,46 @@ const deleteProduct = async (req, res) => {
         return res.status(404).json({error: 'Invalid product ID'});
     }
 
-    const product = await Product.findByIdAndDelete({_id: id});
+    try {
+        // First, find the product to get its image filenames
+        const product = await Product.findById(id);
 
-    if (!product) {
-        return res.status(404).json({error: 'Product not found'});
+        if (!product) {
+            return res.status(404).json({error: 'Product not found'});
+        }
+
+        // Collect all image filenames that need to be deleted
+        const imagesToDelete = [];
+        if (product.product_image) imagesToDelete.push(product.product_image);
+        if (product.product_image2) imagesToDelete.push(product.product_image2);
+        if (product.product_image3) imagesToDelete.push(product.product_image3);
+
+        // Delete the product from database
+        await Product.findByIdAndDelete({_id: id});
+
+        // Delete the associated image files from the filesystem
+        imagesToDelete.forEach(filename => {
+            if (filename) {
+                const filePath = path.join(__dirname, '..', 'public', 'images', filename);
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        console.error(`Failed to delete image file ${filename}:`, err);
+                    } else {
+                        console.log(`Successfully deleted image file: ${filename}`);
+                    }
+                });
+            }
+        });
+
+        res.status(200).json({
+            message: 'Product and associated images deleted successfully',
+            deletedProduct: product,
+            deletedImages: imagesToDelete
+        });
+    } catch (error) {
+        console.error('Delete product error:', error);
+        res.status(400).json({error: error.message});
     }
-    res.status(200).json(product);
 }
 
 // Update a product

@@ -263,6 +263,7 @@ h2 {
   flex-direction: column;
   gap: 4px;
   min-width: 150px;
+  margin-bottom: 10px;
 }
 .item-info strong {
   font-weight: 700;
@@ -274,15 +275,15 @@ h2 {
   font-weight: 500;
 }
 .status-in-stock { 
-    color: #087842; 
+    color: #087842;
     font-weight: 500;
 }
 .status-limited-stock { 
-    color: #84630F; 
+    color: #995C00;
     font-weight: 500; 
 }
 .status-no-stock { 
-    color: #D30000; 
+    color: #990000;
     font-weight: 500; 
 }
 .item-info .size-info {
@@ -290,6 +291,7 @@ h2 {
   color: #555;
 }
 .item-actions {
+  margin-top: 10px;  
   flex: 3;
   display: flex;
   align-items: center;

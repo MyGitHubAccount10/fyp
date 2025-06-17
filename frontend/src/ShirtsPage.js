@@ -20,11 +20,10 @@ const ProductCard = ({ product }) => {
   );
 };
 
-const TShirtsPage = () => {
+const ShirtsPage = () => {
   const { products, dispatch } = useProductsContext();
-
+  
   useEffect(() => {
-    console.log('ShirtsPage useEffect triggered'); // Debug log
     const fetchProducts = async () => {
       try {
         // First get the category ID
@@ -42,19 +41,15 @@ const TShirtsPage = () => {
             const tShirtProducts = json.filter(product =>
               product.category === tShirtCategory._id
             );
-            dispatch({ type: 'SET_PRODUCTS', payload: tShirtProducts});
+            dispatch({ type: 'SET_PRODUCTS', payload: tShirtProducts });
           }
         }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-
-    // Prevent redundant API calls
-    if (!products || products.length === 0) {
-      fetchProducts();
-    }
-  }, [dispatch, products]);
+    fetchProducts();
+  }, [dispatch]);
 
   return (
     <>
@@ -77,4 +72,4 @@ const TShirtsPage = () => {
   );
 };
 
-export default TShirtsPage;
+export default ShirtsPage;

@@ -15,13 +15,21 @@ const userRoutes = require('./routes/UserRoute');
 
 const app = express();
 
-// Enable CORS
-app.use(cors());
+// Enable CORS with specific options
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 
 app.use(express.json());
 app.use(express.static('public'));
+
+// Request logging middleware
 app.use((req, res, next) => {
-  console.log(req.path, req.method);
+  console.log(`${req.method} ${req.path}`, {
+    body: req.body,
+    headers: req.headers
+  });
   next();
 });
 

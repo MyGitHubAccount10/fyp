@@ -3,11 +3,11 @@ import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 
-function UserProfilePage() {
-    // --- STATE ---
+function UserProfilePage() {    // --- STATE ---
     const [personalInfo, setPersonalInfo] = useState({
-        email: 'john.doe@example.com', // Usually not editable or requires verification
-        phoneNumber: '91234567',
+        username: '',
+        email: '',
+        phoneNumber: '', // We'll keep this as phoneNumber in state but send as phone_number
     });
     const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
 
@@ -23,17 +23,20 @@ function UserProfilePage() {
         currentPassword: '',
         newPassword: '',
         confirmNewPassword: '',
-    });
-
-    // --- Effects ---
+    });    // --- Effects ---
     useEffect(() => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-            setPersonalInfo({
-                username: user.username,
-                email: user.email,
-                phoneNumber: user.phone_number,
-            });
+        try {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (user) {
+                console.log('Loaded user data:', user); // Debug log
+                setPersonalInfo({
+                    username: user.username || '',
+                    email: user.email || '',
+                    phoneNumber: user.phone_number || '',
+                });
+            }
+        } catch (error) {
+            console.error('Error loading user data:', error);
         }
     }, []);
 
@@ -42,31 +45,65 @@ function UserProfilePage() {
         setPersonalInfo(prev => ({ ...prev, [name]: value }));
     };
 
+    // --- FIX START: Corrected handleSavePersonalInfo function ---
     const handleSavePersonalInfo = async (e) => {
         e.preventDefault();
+        
+        const userData = JSON.parse(localStorage.getItem('user'));
+        if (!userData || !userData.token) {
+            alert('Authentication error. Please log in again.');
+            return;
+        }
+
         try {
-            const token = JSON.parse(localStorage.getItem('user')).token;
+            const updatedData = {
+                email: personalInfo.email,
+                phone_number: personalInfo.phoneNumber,
+            };
+
             const response = await fetch('/api/user/update', {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
+                    Authorization: `Bearer ${userData.token}`,
                 },
-                body: JSON.stringify(personalInfo),
+                body: JSON.stringify(updatedData),
             });
 
             if (!response.ok) {
-                throw new Error('Failed to update personal information');
+                const errorResult = await response.json();
+                throw new Error(errorResult.error || 'Failed to update user information');
             }
 
-            const updatedUser = await response.json();
-            localStorage.setItem('user', JSON.stringify(updatedUser));
-            setIsEditingPersonalInfo(false);
+            const updatedFields = await response.json();
+
+            // Merge the updated fields with the existing user data to preserve the token
+            const newUserData = {
+                ...userData,
+                ...updatedFields
+            };
+            
+            // Update localStorage with the complete, merged user data
+            localStorage.setItem('user', JSON.stringify(newUserData));
+            
+            // Update the component's state
+            setPersonalInfo((prevInfo) => ({
+                ...prevInfo,
+                email: newUserData.email,
+                phoneNumber: newUserData.phone_number,
+            }));
+
+            setIsEditingPersonalInfo(false); // Close the form on success
+            alert('Personal information updated successfully!'); // Give success feedback
+
         } catch (error) {
-            console.error(error);
-            alert('An error occurred while updating your information.');
+            console.error('Error saving personal info:', error);
+            alert(`Failed to save personal information: ${error.message}`);
+        } finally {
+            console.log('Save personal info operation completed.');
         }
     };
+    // --- FIX END ---
 
     const handleAddressChange = (e) => {
         const { name, value } = e.target;
@@ -114,20 +151,44 @@ function UserProfilePage() {
                             <button onClick={() => setIsEditingPersonalInfo(true)} className="btn-edit-profile">Edit</button>
                         )}
                     </div>
-                    {isEditingPersonalInfo ? (
-                        <form onSubmit={handleSavePersonalInfo} className="profile-form">
+                    {isEditingPersonalInfo ? (                        
+                        <form onSubmit={handleSavePersonalInfo} className="profile-form">                            
                             <div className="form-group">
                                 <label htmlFor="username">Username</label>
-                                <input type="text" id="username" name="username" value={personalInfo.username} onChange={handlePersonalInfoChange} required />
+                                <input 
+                                    type="text" 
+                                    id="username" 
+                                    name="username" 
+                                    value={personalInfo.username} 
+                                    disabled 
+                                    title="Username cannot be changed"
+                                    className="disabled-input"
+                                />
+                                <small className="form-text text-muted">Contact support to change your username.</small>
                             </div>
                             <div className="form-group">
                                 <label htmlFor="email">Email Address</label>
-                                <input type="email" id="email" name="email" value={personalInfo.email} readOnly disabled title="Email cannot be changed here." />
-                                <small className="form-text text-muted">Contact support to change your email address.</small>
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    name="email" 
+                                    value={personalInfo.email} 
+                                    onChange={handlePersonalInfoChange}
+                                    required 
+                                />
                             </div>
                             <div className="form-group">
                                 <label htmlFor="phoneNumber">Phone Number</label>
-                                <input type="tel" id="phoneNumber" name="phoneNumber" value={personalInfo.phoneNumber} onChange={handlePersonalInfoChange} pattern="[689]\d{7}" title="Enter a valid Singapore mobile or landline number" />
+                                <input 
+                                    type="tel" 
+                                    id="phoneNumber" 
+                                    name="phoneNumber" 
+                                    value={personalInfo.phoneNumber} 
+                                    onChange={handlePersonalInfoChange} 
+                                    pattern="[689]\d{7}" 
+                                    title="Enter a valid Singapore mobile or landline number" 
+                                    required
+                                />
                             </div>
                             <div className="form-actions">
                                 <button type="submit" className="btn-save-profile">Save Changes</button>

@@ -51,10 +51,10 @@ const userSchema = new Schema({
 }, { timestamps: true })
 
 // static signup method
-userSchema.statics.signup = async function(email, password) {
+userSchema.statics.signup = async function(email, password, username, phone_number) {
 
   // validation
-  if (!email || !password) {
+  if (!email || !password || !username || !phone_number) {
     throw Error('All fields must be filled')
   }
   if (!validator.isEmail(email)) {
@@ -62,6 +62,12 @@ userSchema.statics.signup = async function(email, password) {
   }
   if (!validator.isStrongPassword(password)) {
     throw Error('Password not strong enough')
+  }
+  if (!/^[a-zA-Z0-9]+$/.test(username)) {
+    throw Error('Username must contain only letters and numbers')
+  }
+  if (!/^[0-9]{8}$/.test(phone_number)) {
+    throw Error('Phone number must be 8 digits')
   }
 
   const exists = await this.findOne({ email })
@@ -73,7 +79,12 @@ userSchema.statics.signup = async function(email, password) {
   const salt = await bcrypt.genSalt(10)
   const hash = await bcrypt.hash(password, salt)
 
-  const user = await this.create({ email, password: hash })
+  const user = await this.create({ 
+    email, 
+    password: hash,
+    username,
+    phone_number
+  })
 
   return user
 }

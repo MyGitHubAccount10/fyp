@@ -45,19 +45,24 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('/api/product');
-        const data = await response.json();
-        if (response.ok) {
-          dispatch({ type: 'SET_PRODUCTS', payload: data });
+        console.log('HomePage useEffect triggered'); // Debug log
+        const fetchProducts = async () => {
+            try {
+                const response = await fetch('/api/product');
+                const data = await response.json();
+                if (response.ok) {
+                    dispatch({ type: 'SET_PRODUCTS', payload: data });
+                }
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        };
+
+        // Prevent redundant API calls
+        if (!products || products.length === 0) {
+            fetchProducts();
         }
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
-    fetchProducts();
-  }, [dispatch]);
+    }, [dispatch, products]);
 
   return (
     <>

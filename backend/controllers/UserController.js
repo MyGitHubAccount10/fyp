@@ -92,7 +92,7 @@ const updateUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const {email, password} = req.body
 
-  console.log('Login attempt:', { email, password }); // Debugging log
+  console.log('Login attempt for email:', email);
 
   try {
     const user = await User.login(email, password)
@@ -100,7 +100,14 @@ const loginUser = async (req, res) => {
     // create a token
     const token = createToken(user._id)
 
-    res.status(200).json({email, token})
+    // Send the complete user data (except password)
+    res.status(200).json({
+      _id: user._id,
+      email: user.email,
+      username: user.username,
+      phone_number: user.phone_number,
+      token
+    })
   } catch (error) {
     res.status(400).json({error: error.message})
   }
@@ -108,15 +115,20 @@ const loginUser = async (req, res) => {
 
 // signup a user
 const signupUser = async (req, res) => {
-  const {email, password} = req.body
+  const {email, password, username, phone_number} = req.body
 
   try {
-    const user = await User.signup(email, password)
+    const user = await User.signup(email, password, username, phone_number)
 
     // create a token
     const token = createToken(user._id)
 
-    res.status(200).json({email, token})
+    res.status(200).json({
+      email: user.email,
+      username: user.username,
+      phone_number: user.phone_number,
+      token
+    })
   } catch (error) {
     res.status(400).json({error: error.message})
   }
@@ -125,19 +137,31 @@ const signupUser = async (req, res) => {
 // Update logged-in user's information
 const updateLoggedInUser = async (req, res) => {
     const userId = req.user._id; // Extract user ID from the authenticated user
+    console.log('Updating user:', userId, 'with data:', req.body); // Debug log
+    console.log('Request body:', req.body); // Log the request body
+    console.log('Authenticated user ID:', userId); // Log the user ID extracted from the token
 
     if (!mongoose.Types.ObjectId.isValid(userId)) {
         return res.status(404).json({error: 'Invalid user ID'});
     }
 
     try {
-        const updatedUser = await User.findByIdAndUpdate(userId, req.body, {new: true});
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { email: req.body.email, phone_number: req.body.phone_number },
+            { new: true, runValidators: true }
+        );
 
         if (!updatedUser) {
             return res.status(404).json({error: 'User not found'});
         }
 
-        res.status(200).json(updatedUser);
+        // Return only the necessary fields
+        res.status(200).json({
+            email: updatedUser.email,
+            username: updatedUser.username,
+            phone_number: updatedUser.phone_number
+        });
     } catch (error) {
         res.status(500).json({error: 'Failed to update user information'});
     }

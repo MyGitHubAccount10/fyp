@@ -7,11 +7,6 @@ import HomePage from './HomePage';
 import AboutPage from './AboutPage';
 import ContactPage from './ContactPage';
 import FaqPage from './FaqPage';
-import SkimboardsPage from './SkimboardsPage';
-import ShirtsPage from './ShirtsPage';
-import JacketPage from './JacketPage';
-import BoardShortsPage from './BoardShortsPage';
-import AccessoriesPage from './AccessoriesPage';
 import SignUpPage from './SignUpPage';
 import LoginPage from './LoginPage';
 import UserProfilePage from './UserProfilePage';
@@ -19,6 +14,12 @@ import ProductDetailPage from './ProductDetailPage';
 import ShoppingCartPage from './ShoppingCartPage';
 import PlaceOrderPage from './PlaceOrderPage';
 import OrderHistoryPage from './OrderHistoryPage';
+import PageNotFound from './PageNotFound';
+
+// --- FIX: Import the new reusable CategoryPage ---
+import CategoryPage from './CategoryPage';
+
+// --- NOTE: The old category page imports (SkimboardsPage, etc.) are no longer needed. ---
 
 import AdminDashboard from './AdminSide/A_AdminDashboard';
 import AllProductsPage from './AdminSide/B_AllProductsPage';
@@ -30,30 +31,30 @@ import AdminSettingsPage from './AdminSide/FAdminSettingsPage';
 import AllCustomersPage from './AdminSide/D_AllCustomersPage';
 import AdminProfilePage from './AdminSide/G_AdminProfilePage';
 import EditProductPage from './AdminSide/BBB_EditProductPage';
-import PageNotFound from './PageNotFound';
 import AddAdminPage from './AdminSide/DD_AddAdminPage';
- //
-
 
 import './index.css';
 
-function App() {  return (
+function App() {
+  return (
     <AuthContextProvider>
       <CartContextProvider>
-        {/* Please use the respective paths for testing and add new path when necessary. */}
         <Routes>
           {/* User Routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="about" element={<AboutPage />} />
           <Route path="contact" element={<ContactPage />} />
           <Route path="faq" element={<FaqPage />} />
+
+          {/* --- FIX: Updated product routes to use the reusable CategoryPage --- */}
           <Route path="products">
-            <Route path='skimboards' element={<SkimboardsPage />} />
-            <Route path="t-shirts" element={<ShirtsPage />} />
-            <Route path="jackets" element={<JacketPage />} />
-            <Route path="boardshorts" element={<BoardShortsPage />} />
-            <Route path="accessories" element={<AccessoriesPage />} />
+            <Route path='skimboards' element={<CategoryPage categoryName="Skimboards" />} />
+            <Route path="t-shirts" element={<CategoryPage categoryName="T-Shirts" />} />
+            <Route path="jackets" element={<CategoryPage categoryName="Jackets" />} />
+            <Route path="boardshorts" element={<CategoryPage categoryName="Board Shorts" />} />
+            <Route path="accessories" element={<CategoryPage categoryName="Accessories" />} />
           </Route>
+
           <Route path="product/:productId" element={<ProductDetailPage />} />
           <Route path="signup" element={<SignUpPage />} />
           <Route path="login" element={<LoginPage />} />
@@ -75,7 +76,8 @@ function App() {  return (
           <Route path="/edit-product/:id" element={<EditProductPage />} />
           <Route path="add-admin" element={<AddAdminPage />} />
 
-          {/* Catch-all route for 404 Not Found */}        <Route path="*" element={<PageNotFound />} />
+          {/* Catch-all route for 404 Not Found */}
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
       </CartContextProvider>
     </AuthContextProvider>

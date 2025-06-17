@@ -23,10 +23,17 @@ const productSchema = new Schema({
   warehouse_quantity: {
     type: Number,
     required: true
-  },
-  product_image: {
+  },  product_image: {
     type: String,
     required: true
+  },
+  product_image2: {
+    type: String,
+    required: false
+  },
+  product_image3: {
+    type: String,
+    required: false
   },
   threshold: {
     type: Number,

@@ -28,7 +28,7 @@ const getProduct = async (req, res) => {
 const createProduct = async (req, res) => {
     // Debug: Log what we're receiving
     console.log('Request body:', req.body);
-    console.log('Request file:', req.file);
+    console.log('Request files:', req.files);
     
     // Destructure the keys your frontend is sending (adjust these names to match frontend)
     const {
@@ -41,7 +41,11 @@ const createProduct = async (req, res) => {
     } = req.body; 
 
     
-    const product_image = req.file ? req.file.filename : null;
+    // Handle multiple images
+    const images = req.files || [];
+    const product_image = images.length > 0 ? images[0].filename : null;
+    const product_image2 = images.length > 1 ? images[1].filename : null;
+    const product_image3 = images.length > 2 ? images[2].filename : null;
 
     // Validation
     if (!name || !description || !price || !stockQuantity || !category) {
@@ -52,13 +56,13 @@ const createProduct = async (req, res) => {
 
     if (!product_image) {
         return res.status(400).json({
-            error: 'Product image is required'
+            error: 'At least one product image is required'
         });
     }
 
     try {
         // Map frontend keys to backend product schema keys - only use fields that exist in schema
-        const product = await Product.create({
+        const productData = {
             product_name: name,
             description,
             product_price: price,
@@ -66,7 +70,13 @@ const createProduct = async (req, res) => {
             category,
             threshold: lowStockThreshold || 5, // Use lowStockThreshold for threshold field
             product_image
-        });
+        };
+
+        // Add additional images if they exist
+        if (product_image2) productData.product_image2 = product_image2;
+        if (product_image3) productData.product_image3 = product_image3;
+
+        const product = await Product.create(productData);
         res.status(200).json(product);
     }
     catch (error) {
@@ -100,7 +110,7 @@ const updateProduct = async (req, res) => {
     }
 
     console.log('Update request body:', req.body);
-    console.log('Update request file:', req.file);
+    console.log('Update request files:', req.files);
 
     try {
         const updateData = {};
@@ -113,8 +123,12 @@ const updateProduct = async (req, res) => {
         if (req.body.threshold !== undefined) updateData.threshold = req.body.threshold || 5;
         if (req.body.category) updateData.category = req.body.category;
         
-        if (req.file) {
-            updateData.product_image = req.file.filename;
+        // Handle multiple images
+        if (req.files && req.files.length > 0) {
+            const images = req.files;
+            updateData.product_image = images[0].filename;
+            if (images.length > 1) updateData.product_image2 = images[1].filename;
+            if (images.length > 2) updateData.product_image3 = images[2].filename;
         }
 
         console.log('Update data:', updateData);

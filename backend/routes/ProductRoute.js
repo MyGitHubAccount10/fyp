@@ -23,10 +23,10 @@ router.get('/', getProducts);
 
 router.get('/:id', getProduct);
 
-router.post('/', upload.single('product_image'), createProduct);
+router.post('/', upload.array('product_images', 3), createProduct);
 
 router.delete('/:id', deleteProduct);
 
-router.patch('/:id', upload.single('product_image'), updateProduct);
+router.patch('/:id', upload.array('product_images', 3), updateProduct);
 
 module.exports = router;

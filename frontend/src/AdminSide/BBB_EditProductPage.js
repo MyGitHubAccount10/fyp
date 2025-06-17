@@ -24,13 +24,10 @@ function EditProductPage() {
     const [formData, setFormData] = useState({
         name: '',
         description: '',
-        productType: '',
         price: '',
         stockQuantity: '',
         threshold: '',
         images: [],
-        status: 'Draft',
-        visibility: 'Public',
         category: '',
     });
 
@@ -60,16 +57,17 @@ function EditProductPage() {
                 setFormData({
                     name: data.product_name || '',
                     description: data.description || '',
-                    productType: data.productType || '',
                     price: data.product_price || '',
                     stockQuantity: data.warehouse_quantity || '',
                     threshold: data.threshold || '',
                     images: [],
-                    status: 'Draft',
-                    visibility: 'Public',
                     category: data.category || '',
                 });
-                setExistingImageURLs([`/images/${data.product_image}`]);
+                setExistingImageURLs([
+                    `/images/${data.product_image}`,
+                    ...(data.product_image2 ? [`/images/${data.product_image2}`] : []),
+                    ...(data.product_image3 ? [`/images/${data.product_image3}`] : [])
+                ]);
             } catch (error) {
                 console.error('Failed to fetch product:', error);
                 alert('❌ Could not load product details.');
@@ -104,10 +102,11 @@ function EditProductPage() {
         form.append('product_price', Number(formData.price));
         form.append('warehouse_quantity', Number(formData.stockQuantity));
         form.append('threshold', Number(formData.threshold) || 5);
-        form.append('category', formData.category);
-
-        if (formData.images && formData.images.length > 0) {
-            form.append('product_image', formData.images[0]);
+        form.append('category', formData.category);        if (formData.images && formData.images.length > 0) {
+            // Send multiple images
+            for (let i = 0; i < formData.images.length && i < 3; i++) {
+                form.append('product_images', formData.images[i]);
+            }
         }
 
         // Log all form data entries

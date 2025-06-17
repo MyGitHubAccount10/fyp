@@ -1,4 +1,3 @@
-//hold
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -58,13 +57,16 @@ function AddProductPage() {
             setFormData(prev => ({
                  ...prev,
                  productType: value,
-             }));
-        } else if (type === 'file') {
-            // Handle file inputs
+             }));        } else if (type === 'file') {
+            // Handle file inputs - limit to 3 files
+            const fileArray = Array.from(files).slice(0, 3);
+            const limitedFiles = new DataTransfer();
+            fileArray.forEach(file => limitedFiles.items.add(file));
+            
             setFormData(prev => ({
                 ...prev,
-                [name]: files, // Store FileList object
-            }));        }
+                [name]: limitedFiles.files, // Store limited FileList object
+            }));}
         else {
             // Handle other input types (text, number, select, textarea)
             setFormData(prev => ({
@@ -94,12 +96,12 @@ function AddProductPage() {
         form.append('price', Number(formData.price)); // Changed to match controller
         form.append('stockQuantity', Number(formData.stockQuantity)); // Changed to match controller
         form.append('lowStockThreshold', Number(formData.lowStockThreshold) || 5); // Changed to match controller
-        form.append('category', formData.category);
-
-        if (formData.images && formData.images.length > 0) {
-            form.append('product_image', formData.images[0]);
-            console.log('Image file:', formData.images[0]);
-            // For more images, add here as product_image2, etc.
+        form.append('category', formData.category);        if (formData.images && formData.images.length > 0) {
+            // Send multiple images
+            for (let i = 0; i < formData.images.length && i < 3; i++) {
+                form.append('product_images', formData.images[i]);
+            }
+            console.log('Image files:', Array.from(formData.images).slice(0, 3));
         }
 
         // Log all form data entries
@@ -272,17 +274,25 @@ function AddProductPage() {
                                             ? `${formData.images.length} file(s) selected`
                                             : 'No File Chosen'}
                                     </span>
-                                </label>
-                                 {/* Display selected file names if needed */}
-                                 {/* {formData.images && formData.images.length > 0 && (
-                                     <div className="selected-file-names">
-                                         {Array.from(formData.images).map((file, index) => (
-                                            <span key={file.name}>{file.name}{index < formData.images.length - 1 ? ', ' : ''}</span>
+                                </label>                                 {/* Display selected file names */}
+                                 {formData.images && formData.images.length > 0 && (
+                                     <div className="selected-file-names" style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
+                                         <strong>Selected files:</strong>
+                                         {Array.from(formData.images).slice(0, 3).map((file, index) => (
+                                            <div key={file.name} style={{ marginLeft: '10px' }}>
+                                                {index + 1}. {file.name} 
+                                                {index === 0 && <span style={{ color: '#007bff' }}> (Main image)</span>}
+                                            </div>
                                          ))}
+                                         {formData.images.length > 10 && (
+                                             <div style={{ marginLeft: '10px', color: '#ff6b6b' }}>
+                                                 Note: Only first 10 images will be uploaded
+                                             </div>
+                                         )}
                                      </div>
-                                 )} */}
+                                 )}
                             </div>
-                            <small className="form-text text-muted">First image selected will be the main display image.</small> {/* Reusing text-muted class */}
+                            <small className="form-text text-muted">You can select up to 3 images. The first image will be the main display image.</small>{/* Reusing text-muted class */}
                         </div>
                      </div>
 
@@ -340,9 +350,6 @@ function AddProductPage() {
             </form> {/* End Form */}
 
         </div> 
-
-
-
 
         <div>
             ///

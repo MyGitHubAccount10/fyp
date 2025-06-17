@@ -9,59 +9,69 @@ const ProductDetailPage = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
   const { dispatch } = useCartContext();
-  const [product, setProduct] = useState(productId);
+  
+  // --- FIX 1: Initialize product state as null, not with the ID string ---
+  const [product, setProduct] = useState(null);
+  
   const [similarProducts, setSimilarProducts] = useState([]);
   const [selectedImage, setSelectedImage] = useState('');
   const [productImages, setProductImages] = useState([]);
   const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
 
+  // This effect fetches the main product data. It is already correct.
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await fetch(`/api/product/${productId}`);
-        const product = await response.json();
+        const productData = await response.json();
 
         if (response.ok) {
-          setProduct(product);
+          setProduct(productData);
           const images = [
-            product.product_image,
-            product.product_image2,
-            product.product_image3
-          ].filter(Boolean); // removes undefined if any image is missing
+            productData.product_image,
+            productData.product_image2,
+            productData.product_image3
+          ].filter(Boolean);
 
-          setSelectedImage(product.product_image); // set first image as main
-          setProductImages(images); 
+          setSelectedImage(productData.product_image);
+          setProductImages(images);
         }
       } catch (error) {
         console.error('Error fetching product:', error);
       }
     };
     fetchProduct();
-    
   }, [productId]);
 
+  // This effect fetches similar products AFTER the main product has loaded.
   useEffect(() => {
+    // --- FIX 3: Add a guard clause to prevent running if product is not yet loaded ---
+    if (product) {
       const fetchSimilarProducts = async () => {
-      try {
+        try {
           const productResponse = await fetch('/api/product');
           const json = await productResponse.json();
           
           if (productResponse.ok) {
-            const similarProducts = json.filter(p =>
+            const similar = json.filter(p =>
               p.category === product.category && p._id !== productId
             );
-            setSimilarProducts(similarProducts);
+            setSimilarProducts(similar);
           }
+        } catch (error) {
+          console.error('Error fetching similar products:', error);
         }
-      catch (error) {
-        console.error('Error fetching similar products:', error);
-      }
-    };
-    fetchSimilarProducts();
+      };
+      fetchSimilarProducts();
+    }
+    
+    // Reset quantity and scroll to top when the product changes
     setQuantity(1);
     window.scrollTo(0, 0);
-  }, [product]);
+
+    // --- FIX 2: Add productId to the dependency array to remove the warning ---
+  }, [product, productId]);
 
   const sizes = ['S', 'M', 'L'];
 
@@ -70,51 +80,57 @@ const ProductDetailPage = () => {
   };
 
   const handleQuantityChange = (amount) => {
-    setQuantity(prevQuantity => (prevQuantity + amount));
+    setQuantity(prevQuantity => Math.max(1, prevQuantity + amount));
   };
 
-    const handlerStatus = () => {
-        if (product.warehouse_quantity === 0) {
-            return 'No Stock';
-        }
-        else if (product.warehouse_quantity <= product.threshold) {
-            return 'Limited Stock';
-        } else {
-            return 'In Stock';
-        }
-    };
+  // --- FIX 4: Add a loading state to prevent the page from crashing ---
+  if (!product) {
+    return (
+      <>
+        <Header />
+        <div style={{ textAlign: 'center', padding: '5rem' }}>Loading product...</div>
+        <Footer />
+      </>
+    );
+  }
 
-    // Function to get the class for product status
-    const handleStatusClass = (status) => {
+  // These functions are now safe to use because we know 'product' is loaded.
+  const handlerStatus = () => {
+    if (product.warehouse_quantity === 0) {
+        return 'No Stock';
+    } else if (product.warehouse_quantity <= product.threshold) {
+        return 'Limited Stock';
+    } else {
+        return 'In Stock';
+    }
+  };
+
+  const handleStatusClass = (status) => {
     switch (status) {
         case 'In Stock': return 'status-in-stock';
         case 'Limited Stock': return 'status-limited-stock';
         case 'No Stock': return 'status-no-stock';
-        // Add other statuses as needed
         default: return '';
-        }
-    };
+    }
+  };
 
-
-  
   return (
     <>
       <Header />
-      {/* --- MAIN PRODUCT DETAIL PAGE CONTENT --- */}
       <main className="product-detail-page container">
         <section className="product-main-info-grid">
           <div className="product-image-gallery">
-          <div className="product-thumbnails">
-            {productImages.map((img, index) => (
-              <img
-                key={index}
-                src={`/images/${img}`}
-                alt={`${product.product_name} ${index}`}
-                className={`thumbnail-image ${selectedImage === img ? 'selected-thumbnail' : ''}`}
-                onClick={() => setSelectedImage(img)}
-              />
-            ))}
-          </div>            
+            <div className="product-thumbnails">
+              {productImages.map((img, index) => (
+                <img
+                  key={index}
+                  src={`/images/${img}`}
+                  alt={`${product.product_name} thumbnail ${index + 1}`}
+                  className={`thumbnail-image ${selectedImage === img ? 'selected-thumbnail' : ''}`}
+                  onClick={() => setSelectedImage(img)}
+                />
+              ))}
+            </div>            
             <div className="product-main-image-container">
               <img src={`/images/${selectedImage}`} alt={product.product_name} className="product-main-image" />
             </div>
@@ -129,75 +145,58 @@ const ProductDetailPage = () => {
 
             {product.warehouse_quantity > 0 && (
               <>
-              <div className="product-options">
+                <div className="product-options">
+                    <div>
+                      <span className="option-label">Size:</span>
+                      {sizes.map(size => (
+                        <button
+                          key={size}
+                          className={`size-button ${selectedSize === size ? 'selected' : ''}`}
+                          onClick={() => handleSizeSelect(size)}>
+                        {size}
+                      </button>
+                      ))}
+                    </div>
+                </div>
+                <div className="product-options">
                   <div>
-                    <span className="option-label">Size:</span>
-                    {sizes.map(size => (
-                      <button
-                        key={size}
-                        className={`size-button ${selectedSize === size ? 'selected' : ''}`}
-                        onClick={() => handleSizeSelect(size)}>
-                      {size}
-                    </button>
-                    ))}
-                  </div>
-              </div>
-              <div className="product-options">
-                <div>
-                  <span className="option-label">Quantity:</span>
-                  <div className="quantity-controls-detail">
-                      <button
-                      onClick={() => handleQuantityChange(-1)}
-                      disabled={quantity === 1}
-                      style={{ opacity: quantity === 1 ? 0.5 : 1 }}>-
-                      </button>
-                      <span>{quantity}</span>
-                      <button 
-                      onClick={() => handleQuantityChange(1)}
-                      disabled={quantity === product.warehouse_quantity}
-                      style={{ opacity: quantity === product.warehouse_quantity ? 0.5 : 1 }}>+
-                      </button>
+                    <span className="option-label">Quantity:</span>
+                    <div className="quantity-controls-detail">
+                        <button
+                        onClick={() => handleQuantityChange(-1)}
+                        disabled={quantity === 1}>-
+                        </button>
+                        <span>{quantity}</span>
+                        <button 
+                        onClick={() => handleQuantityChange(1)}
+                        disabled={quantity >= product.warehouse_quantity}>+
+                        </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            <div className="product-actions-detail">              
-              <button 
-              className="btn-buy-now"
-              onClick={() => {
-                dispatch({
-                  type: 'ADD_TO_CART',
-                  payload: {
-                    id: product._id,
-                    name: product.product_name,
-                    price: product.product_price,
-                    size: selectedSize,
-                    quantity: quantity,
-                    warehouse_quantity: product.warehouse_quantity,
-                    image: product.product_image
-                  }
-                });
-                navigate('/place-order');
-              }}>Buy Now</button>
-              <button 
-              className="btn-add-to-cart-detail"
-              onClick={() => {
-                dispatch({
-                  type: 'ADD_TO_CART',
-                  payload: {
-                    id: product._id,
-                    name: product.product_name,
-                    price: product.product_price,
-                    size: selectedSize,
-                    quantity: quantity,
-                    warehouse_quantity: product.warehouse_quantity,
-                    image: product.product_image
-                  }
-                });
-                navigate('/cart');
-              }}>Add to Cart
-              </button>
-            </div> 
-            </>           
+                <div className="product-actions-detail">              
+                  <button 
+                    className="btn-buy-now"
+                    onClick={() => {
+                      dispatch({
+                        type: 'ADD_TO_CART',
+                        payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
+                      });
+                      navigate('/place-order');
+                    }}>Buy Now
+                  </button>
+                  <button 
+                    className="btn-add-to-cart-detail"
+                    onClick={() => {
+                      dispatch({
+                        type: 'ADD_TO_CART',
+                        payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
+                      });
+                      navigate('/cart');
+                    }}>Add to Cart
+                  </button>
+                </div> 
+              </>           
             )}
           </div>
         </section>
@@ -210,11 +209,11 @@ const ProductDetailPage = () => {
         <section className="similar-products-section">
           <h2 className="section-title-detail">Similar Products</h2>
           <div className="similar-products-grid">
-            {similarProducts.map(product => (
-              <Link to={`/product/${product._id}`} style={{ textDecoration: 'none' }}>
-                <div className="similar-product-card" key={product._id}>
-                  <img src={`/images/${product.product_image}`} alt={product.product_name} className="similar-product-image" />
-                  <div className="similar-product-caption">{product.product_name}</div>
+            {similarProducts.map(p => (
+              <Link to={`/product/${p._id}`} key={p._id} style={{ textDecoration: 'none' }}>
+                <div className="similar-product-card">
+                  <img src={`/images/${p.product_image}`} alt={p.product_name} className="similar-product-image" />
+                  <div className="similar-product-caption">{p.product_name}</div>
                 </div>
               </Link>
             ))}

@@ -5,7 +5,6 @@ import Header from './Header';
 import Footer from './Footer';
 import { useProductsContext } from './hooks/useProductsContext';
 
-// This is the reusable ProductCard component
 const ProductCard = ({ product }) => {
   return (
     <Link to={`/product/${product._id}`} style={{ textDecoration: 'none' }}>
@@ -19,17 +18,15 @@ const ProductCard = ({ product }) => {
   );
 };
 
-// This is our new, reusable CategoryPage component
 const CategoryPage = ({ categoryName }) => {
   const { products, dispatch } = useProductsContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // 1. Immediately start loading and clear old products from view
     setLoading(true);
     setError(null);
-    dispatch({ type: 'SET_PRODUCTS', payload: [] }); // Clear previous products
+    dispatch({ type: 'SET_PRODUCTS', payload: [] });
 
     const fetchProducts = async () => {
       try {
@@ -42,9 +39,7 @@ const CategoryPage = ({ categoryName }) => {
           const allProducts = await productResponse.json();
 
           if (productResponse.ok) {
-            const categoryProducts = allProducts.filter(product =>
-              product.category === currentCategory._id
-            );
+            const categoryProducts = allProducts.filter(product => product.category === currentCategory._id);
             dispatch({ type: 'SET_PRODUCTS', payload: categoryProducts });
           } else {
              throw new Error('Failed to fetch products');
@@ -56,18 +51,36 @@ const CategoryPage = ({ categoryName }) => {
         console.error('Error fetching data:', err);
         setError(err.message);
       } finally {
-        setLoading(false); // 2. Stop loading when fetch is complete (or fails)
+        setLoading(false);
       }
     };
 
     fetchProducts();
 
-    // 3. Cleanup function: This runs when you navigate away from the page.
-    // This is good practice to clear the context to prevent flashing old content.
     return () => {
       dispatch({ type: 'SET_PRODUCTS', payload: [] });
     };
-  }, [dispatch, categoryName]); // Re-run effect if categoryName or dispatch function changes
+  }, [dispatch, categoryName]);
+
+  const renderContent = () => {
+    if (loading) {
+      return <p>Loading products...</p>;
+    }
+    if (error) {
+      return <p style={{ color: 'red' }}>Error: {error}</p>;
+    }
+    if (products && products.length > 0) {
+      return (
+        <div className="product-grid">
+          {products.map(product => (
+            <ProductCard key={product._id} product={product} />
+          ))}
+        </div>
+      );
+    }
+    // This is now returned directly if there are no products
+    return <p className="no-products-message">No products found in this category.</p>;
+  };
 
   return (
     <>
@@ -76,21 +89,11 @@ const CategoryPage = ({ categoryName }) => {
         <h1 className="title">{categoryName}</h1>
       </div>
       
-      <div className="product-grid-container" style={{padding: '2rem'}}>
-        {loading && <p style={{textAlign: 'center'}}>Loading products...</p>}
-        {error && <p style={{textAlign: 'center', color: 'red'}}>Error: {error}</p>}
-        {!loading && !error && (
-            <div className="product-grid">
-                {products && products.length > 0 ? (
-                    products.map(product => (
-                        <ProductCard key={product._id} product={product} />
-                    ))
-                ) : (
-                    <p style={{textAlign: 'center'}}>No products found in this category.</p>
-                )}
-            </div>
-        )}
+      {/* This container will now correctly center its direct child */}
+      <div className="product-grid-container">
+        {renderContent()}
       </div>
+
       <Footer />
     </>
   );

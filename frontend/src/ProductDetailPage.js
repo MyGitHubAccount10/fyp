@@ -164,12 +164,14 @@ const ProductDetailPage = () => {
                     <div className="quantity-controls-detail">
                         <button
                         onClick={() => handleQuantityChange(-1)}
-                        disabled={quantity === 1}>-
+                        disabled={quantity === 1}>
+                        <span style={{ opacity: quantity === 1 ? 0.5 : 1 }}>-</span>
                         </button>
                         <span>{quantity}</span>
                         <button 
                         onClick={() => handleQuantityChange(1)}
-                        disabled={quantity >= product.warehouse_quantity}>+
+                        disabled={quantity >= product.warehouse_quantity}>
+                        <span style={{ opacity: quantity === product.warehouse_quantity ? 0.5 : 1 }}>+</span>
                         </button>
                     </div>
                   </div>

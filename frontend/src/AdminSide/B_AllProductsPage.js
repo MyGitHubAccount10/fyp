@@ -390,8 +390,7 @@ const handleEditProduct = (product) => {
                   }}
                 >
                   <CloseIcon size={20} />
-                </button>
-
+                </button>                
                 {/* Modal Content */}
                 <div
                   onClick={(e) => e.stopPropagation()}
@@ -399,8 +398,8 @@ const handleEditProduct = (product) => {
                     position: 'relative',
                     backgroundColor: 'white',
                     borderRadius: '8px',
-                    maxWidth: '90vw',
-                    maxHeight: '90vh',
+                    width: '70vw',
+                    height: '70vh',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
@@ -409,70 +408,86 @@ const handleEditProduct = (product) => {
                     boxSizing: 'border-box'
                   }}
                 >
-                  {/* Product Name */}
-                  <h3 style={{ margin: '0 0 15px 0', textAlign: 'center', color: '#333' }}>
-                    {currentProduct.product_name}
-                  </h3>
-
-                  {/* Image Container */}
-                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    {/* Previous Button */}
-                    {getProductImages(currentProduct).length > 1 && (
+                  {/* Navigation Buttons - Fixed Position */}
+                  {getProductImages(currentProduct).length > 1 && (
+                    <>
+                      {/* Previous Button */}
                       <button
                         onClick={goToPreviousImage}
                         style={{
                           position: 'absolute',
-                          left: '-50px',
+                          left: '20px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
                           background: 'rgba(0, 0, 0, 0.7)',
                           border: 'none',
                           borderRadius: '50%',
-                          width: '40px',
-                          height: '40px',
+                          width: '50px',
+                          height: '50px',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           cursor: 'pointer',
-                          zIndex: 1001
+                          zIndex: 1002,
+                          transition: 'background-color 0.2s'
                         }}
+                        onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.9)'}
+                        onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.7)'}
                       >
-                        <ChevronLeftIcon size={20} />
+                        <ChevronLeftIcon size={24} />
                       </button>
-                    )}
 
+                      {/* Next Button */}
+                      <button
+                        onClick={goToNextImage}
+                        style={{
+                          position: 'absolute',
+                          right: '20px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          background: 'rgba(0, 0, 0, 0.7)',
+                          border: 'none',
+                          borderRadius: '50%',
+                          width: '50px',
+                          height: '50px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          zIndex: 1002,
+                          transition: 'background-color 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.9)'}
+                        onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.7)'}
+                      >
+                        <ChevronRightIcon size={24} />
+                      </button>
+                    </>
+                  )}
+
+                  {/* Product Name */}
+                  <h3 style={{ margin: '0 0 15px 0', textAlign: 'center', color: '#333' }}>
+                    {currentProduct.product_name}
+                  </h3>                  {/* Image Container */}
+                  <div style={{ 
+                    flex: 1,
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    width: '100%',
+                    minHeight: '0'
+                  }}>
                     {/* Image */}
                     <img
                       src={modalImage}
                       alt={`${currentProduct.product_name} - Image ${currentImageIndex + 1}`}
                       style={{
-                        maxWidth: '70vw',
-                        maxHeight: '70vh',
+                        maxWidth: '100%',
+                        maxHeight: '100%',
                         objectFit: 'contain',
                         borderRadius: '4px'
                       }}
                     />
-
-                    {/* Next Button */}
-                    {getProductImages(currentProduct).length > 1 && (
-                      <button
-                        onClick={goToNextImage}
-                        style={{
-                          position: 'absolute',
-                          right: '-50px',
-                          background: 'rgba(0, 0, 0, 0.7)',
-                          border: 'none',
-                          borderRadius: '50%',
-                          width: '40px',
-                          height: '40px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          cursor: 'pointer',
-                          zIndex: 1001
-                        }}
-                      >
-                        <ChevronRightIcon size={20} />
-                      </button>
-                    )}
                   </div>
 
                   {/* Image Indicators */}

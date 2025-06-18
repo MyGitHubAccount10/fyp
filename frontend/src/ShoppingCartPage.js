@@ -51,12 +51,12 @@ function ShoppingCartPage() {
         const item = savedItems.find(item => item.id === itemId && item.size === size);
         if (item) {
             dispatch({ type: 'ADD_TO_CART', payload: item });
-            setSavedItems(prev => prev.filter(savedItem => savedItem.id !== itemId && savedItem.size !== size));
+            setSavedItems(prev => prev.filter(savedItem => savedItem.id !== itemId || savedItem.size !== size));
         }
     };
 
     const handleDeleteSavedItem = (itemId, size) => {
-        setSavedItems(prev => prev.filter(item => item.id !== itemId && item.size !== size));
+        setSavedItems(prev => prev.filter(item => item.id !== itemId || item.size !== size));
     };
 
     const handleCheckout = () => {

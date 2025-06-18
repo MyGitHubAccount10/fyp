@@ -10,12 +10,12 @@ export const cartReducer = (state, action) => {
                 cartItems: action.payload
             };
         case 'ADD_TO_CART':
-            const existingItem = state.cartItems.find(item => item.id === action.payload.id);
+            const existingItem = state.cartItems.find(item => item.id === action.payload.id && item.size === action.payload.size);
             if (existingItem) {
                 return {
                     ...state,
                     cartItems: state.cartItems.map(item =>
-                        item.id === action.payload.id
+                        item.id === action.payload.id && item.size === action.payload.size
                             ? { ...item, quantity: item.quantity + action.payload.quantity }
                             : item
                     )

@@ -92,8 +92,16 @@ const ProductDetailPage = () => {
     setSelectedSize(size);
     // Recalculate available stock when size changes
     if (product) {
-      setStock(product.warehouse_quantity);
-      setQuantity(1); // Reset quantity when size changes
+      const totalQuantity = cartItems.reduce((total, item) => {
+        if (item.id === product._id) {
+          return total + item.quantity;
+        }
+        return total;
+      }, 0);
+      
+      // Deduct the total quantity in cart from the warehouse quantity to get available stock
+      setStock(product.warehouse_quantity - totalQuantity);
+      setQuantity(1); // Reset quantity to 1 for the newly selected product/size or initial load
     }
   };
 

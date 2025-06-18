@@ -17,6 +17,24 @@ const TrashIcon = ({ size = 18, color = "currentColor" }) => (
     </svg>
 );
 
+const ChevronLeftIcon = ({ size = 24, color = "white" }) => (
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
+        <path d="M15 18L9 12L15 6" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+const ChevronRightIcon = ({ size = 24, color = "white" }) => (
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
+        <path d="M9 18L15 12L9 6" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
+const CloseIcon = ({ size = 24, color = "white" }) => (
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
+        <path d="M18 6L6 18M6 6L18 18" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+);
+
 function AllProductsPage() {
     const [allProducts, setAllProducts] = useState([]); // Initialize with dummy data
     const [products, setProducts] = useState([]);
@@ -28,6 +46,8 @@ function AllProductsPage() {
     const [productsPerPage] = useState(10); // Fixed number of products per page
     const Navigate = useNavigate();
     const [modalImage, setModalImage] = useState(null);
+    const [currentProduct, setCurrentProduct] = useState(null);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
       useEffect(() => {
     fetch('/api/product')
         .then(res => res.json())
@@ -165,6 +185,50 @@ const handleEditProduct = (product) => {
         handleFilter();
     }, [searchTerm, selectedCategory, selectedStatus, allProducts]); 
 
+    // Helper function to get all images from a product
+    const getProductImages = (product) => {
+        const images = [];
+        if (product.product_image) images.push(product.product_image);
+        if (product.product_image2) images.push(product.product_image2);
+        if (product.product_image3) images.push(product.product_image3);
+        return images;
+    };
+
+    // Function to open image preview modal
+    const openImagePreview = (product, imageIndex = 0) => {
+        setCurrentProduct(product);
+        setCurrentImageIndex(imageIndex);
+        const images = getProductImages(product);
+        if (images.length > 0) {
+            setModalImage(`/images/${images[imageIndex]}`);
+        }
+    };
+
+    // Function to navigate to previous image
+    const goToPreviousImage = () => {
+        if (!currentProduct) return;
+        const images = getProductImages(currentProduct);
+        const newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
+        setCurrentImageIndex(newIndex);
+        setModalImage(`/images/${images[newIndex]}`);
+    };
+
+    // Function to navigate to next image
+    const goToNextImage = () => {
+        if (!currentProduct) return;
+        const images = getProductImages(currentProduct);
+        const newIndex = currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
+        setCurrentImageIndex(newIndex);
+        setModalImage(`/images/${images[newIndex]}`);
+    };
+
+    // Function to close modal
+    const closeModal = () => {
+        setModalImage(null);
+        setCurrentProduct(null);
+        setCurrentImageIndex(0);
+    };
+
     return (<>
           <AdminHeader />
         <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
@@ -288,50 +352,160 @@ const handleEditProduct = (product) => {
             </div>
             </div>
 
-            
-            {/* Image Modal Preview */}
-            {modalImage && (
+              {/* Image Modal Preview */}
+            {modalImage && currentProduct && (
               <div
                 className="modal-overlay"
-                onClick={() => setModalImage(null)}
+                onClick={closeModal}
                 style={{
                   position: 'fixed',
                   top: 0,
                   left: 0,
                   width: '100vw',
                   height: '100vh',
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  backgroundColor: 'rgba(0, 0, 0, 0.8)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   zIndex: 1000
                 }}
               >
-                {/* Modal Content */}
-                    {/* Black Preview background */}
-                <div
-                  onClick={(e) => e.stopPropagation()}
+                {/* Close Button */}
+                <button
+                  onClick={closeModal}
                   style={{
-                    backgroundColor: 'white',
-                    borderRadius: '8px',
-                    maxWidth: '80vw',
-                    maxHeight: '80vh',
+                    position: 'absolute',
+                    top: '20px',
+                    right: '20px',
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '40px',
+                    height: '40px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    cursor: 'pointer',
+                    zIndex: 1001
+                  }}
+                >
+                  <CloseIcon size={20} />
+                </button>
+
+                {/* Modal Content */}
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    position: 'relative',
+                    backgroundColor: 'white',
+                    borderRadius: '8px',
+                    maxWidth: '90vw',
+                    maxHeight: '90vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '20px',
                     boxSizing: 'border-box'
                   }}
                 >
-                    {/* Image inside modal */}
-                  <img
-                    src={modalImage}
-                    alt="Preview"
-                    style={{
-                      maxWidth: '100%',
-                      maxHeight: '80vh',
-                      objectFit: 'contain'
-                    }}
-                  />
+                  {/* Product Name */}
+                  <h3 style={{ margin: '0 0 15px 0', textAlign: 'center', color: '#333' }}>
+                    {currentProduct.product_name}
+                  </h3>
+
+                  {/* Image Container */}
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    {/* Previous Button */}
+                    {getProductImages(currentProduct).length > 1 && (
+                      <button
+                        onClick={goToPreviousImage}
+                        style={{
+                          position: 'absolute',
+                          left: '-50px',
+                          background: 'rgba(0, 0, 0, 0.7)',
+                          border: 'none',
+                          borderRadius: '50%',
+                          width: '40px',
+                          height: '40px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          zIndex: 1001
+                        }}
+                      >
+                        <ChevronLeftIcon size={20} />
+                      </button>
+                    )}
+
+                    {/* Image */}
+                    <img
+                      src={modalImage}
+                      alt={`${currentProduct.product_name} - Image ${currentImageIndex + 1}`}
+                      style={{
+                        maxWidth: '70vw',
+                        maxHeight: '70vh',
+                        objectFit: 'contain',
+                        borderRadius: '4px'
+                      }}
+                    />
+
+                    {/* Next Button */}
+                    {getProductImages(currentProduct).length > 1 && (
+                      <button
+                        onClick={goToNextImage}
+                        style={{
+                          position: 'absolute',
+                          right: '-50px',
+                          background: 'rgba(0, 0, 0, 0.7)',
+                          border: 'none',
+                          borderRadius: '50%',
+                          width: '40px',
+                          height: '40px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          zIndex: 1001
+                        }}
+                      >
+                        <ChevronRightIcon size={20} />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Image Indicators */}
+                  {getProductImages(currentProduct).length > 1 && (
+                    <div style={{ 
+                      display: 'flex', 
+                      gap: '8px', 
+                      marginTop: '15px',
+                      alignItems: 'center'
+                    }}>
+                      {getProductImages(currentProduct).map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            setCurrentImageIndex(index);
+                            setModalImage(`/images/${getProductImages(currentProduct)[index]}`);
+                          }}
+                          style={{
+                            width: '10px',
+                            height: '10px',
+                            borderRadius: '50%',
+                            border: 'none',
+                            backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc',
+                            cursor: 'pointer',
+                            transition: 'background-color 0.2s'
+                          }}
+                        />
+                      ))}
+                      <span style={{ marginLeft: '10px', fontSize: '12px', color: '#666' }}>
+                        {currentImageIndex + 1} of {getProductImages(currentProduct).length}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -354,12 +528,11 @@ const handleEditProduct = (product) => {
                     {currentProducts.length > 0 ? (
                         currentProducts.map((product, index) => (
                         <tr key={product._id}>
-                            <td>
-                            <img
+                            <td>                            <img
                                 src={`/images/${product.product_image}`}
                                 alt={product.product_name}
                                 className="admin-product-image"
-                                onClick={() => setModalImage(`/images/${product.product_image}`)}
+                                onClick={() => openImagePreview(product, 0)}
                                 onError={(e) => (e.target.src = '/images/placeholder-product.jpg')}
                             />
                             </td>

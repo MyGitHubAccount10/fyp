@@ -38,13 +38,17 @@ const ProductDetailPage = () => {
           setSelectedImage(productData.product_image);
           setProductImages(images);
 
-          // Calculate available stock
-          const itemInCart = cartItems.find(item => item.id === productData._id && item.size === selectedSize);
-          const currentQuantityInCart = itemInCart ? itemInCart.quantity : 0;
-          setStock(productData.warehouse_quantity - currentQuantityInCart);
+          // Calculate total quantity of this product in the cart, across all sizes
+          const totalQuantity = cartItems.reduce((total, item) => {
+            if (item.id === productData._id) {
+              return total + item.quantity;
+            }
+            return total;
+          }, 0);
 
-          // Reset quantity to 1 if the current quantity in cart exceeds warehouse quantity
-          setQuantity(1);
+          // Deduct the total quantity in cart from the warehouse quantity to get available stock
+          setStock(productData.warehouse_quantity - totalQuantity);
+          setQuantity(1); // Reset quantity to 1 for the newly selected product/size or initial load
         }
       } catch (error) {
         console.error('Error fetching product:', error);
@@ -198,7 +202,7 @@ const ProductDetailPage = () => {
                     onClick={() => {
                       dispatch({
                         type: 'ADD_TO_CART',
-                        payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
+                        payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: stock, image: product.product_image }
                       });
                       navigate('/place-order');
                     }}>Buy Now
@@ -208,7 +212,7 @@ const ProductDetailPage = () => {
                     onClick={() => {
                       dispatch({
                         type: 'ADD_TO_CART',
-                        payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
+                        payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: stock, image: product.product_image }
                       });
                       navigate('/cart');
                     }}>Add to Cart

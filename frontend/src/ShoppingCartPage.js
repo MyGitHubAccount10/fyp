@@ -22,38 +22,41 @@ function ShoppingCartPage() {
     }, [cartItems]);
 
     // ... (rest of the handlers are unchanged)
-    const handleQuantityChange = (itemId, change) => {
-        const item = cartItems.find(item => item.id === itemId);
+    const handleQuantityChange = (itemId, size, change) => {
+        const item = cartItems.find(item => item.id === itemId && item.size === size);
         if (item) {
+            cartItems
+            .filter(cartItem => cartItem.id === itemId)
+            .reduce((acc, cartItem) => acc + cartItem.quantity, 0);
             dispatch({
                 type: 'UPDATE_QUANTITY',
-                payload: { id: itemId, quantity: Math.max(1, item.quantity + change) }
+                payload: { id: itemId, size: size, quantity: Math.max(1, item.quantity + change) }
             });
         }
     };
 
-    const handleDeleteItem = (itemId) => {
-        dispatch({ type: 'REMOVE_FROM_CART', payload: itemId });
+    const handleDeleteItem = (itemId, size) => {
+        dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, size: size } });
     };
 
-    const handleSaveForLater = (itemId) => {
-        const item = cartItems.find(item => item.id === itemId);
+    const handleSaveForLater = (itemId, size) => {
+        const item = cartItems.find(item => item.id === itemId && item.size === size);
         if (item) {
             setSavedItems(prev => [...prev, item]);
-            dispatch({ type: 'REMOVE_FROM_CART', payload: itemId });
+            dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, size: size } });
         }
     };
 
-    const handleMoveToCart = (itemId) => {
-        const item = savedItems.find(item => item.id === itemId);
+    const handleMoveToCart = (itemId, size) => {
+        const item = savedItems.find(item => item.id === itemId && item.size === size);
         if (item) {
             dispatch({ type: 'ADD_TO_CART', payload: item });
-            setSavedItems(prev => prev.filter(savedItem => savedItem.id !== itemId));
+            setSavedItems(prev => prev.filter(savedItem => savedItem.id !== itemId && savedItem.size !== size));
         }
     };
 
-    const handleDeleteSavedItem = (itemId) => {
-        setSavedItems(prev => prev.filter(item => item.id !== itemId));
+    const handleDeleteSavedItem = (itemId, size) => {
+        setSavedItems(prev => prev.filter(item => item.id !== itemId && item.size !== size));
     };
 
     const handleCheckout = () => {
@@ -82,19 +85,24 @@ function ShoppingCartPage() {
                                     <div className="item-actions">
                                         <div className="quantity-controls">
                                             <button 
-                                            onClick={() => handleQuantityChange(item.id, -1)} 
+                                            onClick={() => handleQuantityChange(item.id, item.size, -1)} 
                                             disabled={item.quantity === 1}>
                                             <span style={{ opacity: item.quantity === 1 ? 0.5 : 1 }}>-</span>
                                             </button>
                                             <span>{item.quantity}</span>
                                             <button 
-                                            onClick={() => handleQuantityChange(item.id, 1)} 
-                                            disabled={item.quantity === item.warehouse_quantity}>
-                                            <span style={{ opacity: item.quantity === item.warehouse_quantity ? 0.5 : 1 }}>+</span>
+                                            onClick={() => handleQuantityChange(item.id, item.size, 1)} 
+                                            disabled={cartItems
+                                                    .filter(cartItem => cartItem.id === item.id)
+                                                    .reduce((acc, cartItem) => acc + cartItem.quantity, 0) === item.warehouse_quantity}>
+                                            <span style={{ opacity: 
+                                                cartItems
+                                                    .filter(cartItem => cartItem.id === item.id)
+                                                    .reduce((acc, cartItem) => acc + cartItem.quantity, 0) === item.warehouse_quantity ? 0.5 : 1 }}>+</span>
                                             </button>
                                         </div>
-                                        <button className="action-btn delete-btn" onClick={() => handleDeleteItem(item.id)}>Delete</button>
-                                        <button className="action-btn save-btn" onClick={() => handleSaveForLater(item.id)}>Save for later</button>
+                                        <button className="action-btn delete-btn" onClick={() => handleDeleteItem(item.id, item.size)}>Delete</button>
+                                        <button className="action-btn save-btn" onClick={() => handleSaveForLater(item.id, item.size)}>Save for later</button>
                                     </div>
                                     <div className="price-tag">
                                         <span className="item-price-display">${(item.quantity * itemPrice).toFixed(2)}</span>
@@ -133,8 +141,8 @@ function ShoppingCartPage() {
                                         <p style={{ fontSize: '16px', color: '#333', fontWeight: 'bold' }}>${item.price}</p>
                                     </div>
                                     <div className="item-actions" style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                                        <button className="action-btn move-btn" onClick={() => handleMoveToCart(item.id)} style={{ backgroundColor: '#ffcc00', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', flex: '1', marginRight: '5px' }}>Move to Cart</button>
-                                        <button className="action-btn delete-btn" onClick={() => handleDeleteSavedItem(item.id)} style={{ backgroundColor: '#ff6666', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', flex: '1' }}>Delete</button>
+                                        <button className="action-btn move-btn" onClick={() => handleMoveToCart(item.id, item.size)} style={{ backgroundColor: '#ffcc00', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', flex: '1', marginRight: '5px' }}>Move to Cart</button>
+                                        <button className="action-btn delete-btn" onClick={() => handleDeleteSavedItem(item.id, item.size)} style={{ backgroundColor: '#ff6666', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', flex: '1' }}>Delete</button>
                                     </div>
                                 </div>
                             );

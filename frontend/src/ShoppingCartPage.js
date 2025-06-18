@@ -94,11 +94,11 @@ function ShoppingCartPage() {
                                             onClick={() => handleQuantityChange(item.id, item.size, 1)} 
                                             disabled={cartItems
                                                     .filter(cartItem => cartItem.id === item.id)
-                                                    .reduce((acc, cartItem) => acc + cartItem.quantity, 0) === item.warehouse_quantity}>
+                                                    .reduce((acc, cartItem) => acc + cartItem.quantity, 0) >= item.warehouse_quantity}>
                                             <span style={{ opacity: 
                                                 cartItems
                                                     .filter(cartItem => cartItem.id === item.id)
-                                                    .reduce((acc, cartItem) => acc + cartItem.quantity, 0) === item.warehouse_quantity ? 0.5 : 1 }}>+</span>
+                                                    .reduce((acc, cartItem) => acc + cartItem.quantity, 0) >= item.warehouse_quantity ? 0.5 : 1 }}>+</span>
                                             </button>
                                         </div>
                                         <button className="action-btn delete-btn" onClick={() => handleDeleteItem(item.id, item.size)}>Delete</button>

@@ -92,9 +92,7 @@ const ProductDetailPage = () => {
     setSelectedSize(size);
     // Recalculate available stock when size changes
     if (product) {
-      const itemInCart = cartItems.find(item => item.id === product._id && item.size === size);
-      const currentQuantityInCart = itemInCart ? itemInCart.quantity : 0;
-      setStock(product.warehouse_quantity - currentQuantityInCart);
+      setStock(product.warehouse_quantity);
       setQuantity(1); // Reset quantity when size changes
     }
   };
@@ -202,7 +200,7 @@ const ProductDetailPage = () => {
                     onClick={() => {
                       dispatch({
                         type: 'ADD_TO_CART',
-                        payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: stock, image: product.product_image }
+                        payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
                       });
                       navigate('/place-order');
                     }}>Buy Now
@@ -212,7 +210,7 @@ const ProductDetailPage = () => {
                     onClick={() => {
                       dispatch({
                         type: 'ADD_TO_CART',
-                        payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: stock, image: product.product_image }
+                        payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
                       });
                       navigate('/cart');
                     }}>Add to Cart

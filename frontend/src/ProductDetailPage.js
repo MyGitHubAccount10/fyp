@@ -8,8 +8,8 @@ import Footer from './Footer';
 const ProductDetailPage = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
-  const { dispatch } = useCartContext();
-  
+  const { cartItems, dispatch } = useCartContext();
+
   // --- FIX 1: Initialize product state as null, not with the ID string ---
   const [product, setProduct] = useState(null);
   
@@ -18,6 +18,7 @@ const ProductDetailPage = () => {
   const [productImages, setProductImages] = useState([]);
   const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
+  const [stock, setStock] = useState(0);
 
   // This effect fetches the main product data. It is already correct.
   useEffect(() => {
@@ -36,13 +37,21 @@ const ProductDetailPage = () => {
 
           setSelectedImage(productData.product_image);
           setProductImages(images);
+
+          // Calculate available stock
+          const itemInCart = cartItems.find(item => item.id === productData._id && item.size === selectedSize);
+          const currentQuantityInCart = itemInCart ? itemInCart.quantity : 0;
+          setStock(productData.warehouse_quantity - currentQuantityInCart);
+
+          // Reset quantity to 1 if the current quantity in cart exceeds warehouse quantity
+          setQuantity(1);
         }
       } catch (error) {
         console.error('Error fetching product:', error);
       }
     };
     fetchProduct();
-  }, [productId]);
+  }, [productId, cartItems, selectedSize]);
 
   // This effect fetches similar products AFTER the main product has loaded.
   useEffect(() => {
@@ -77,10 +86,17 @@ const ProductDetailPage = () => {
 
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
+    // Recalculate available stock when size changes
+    if (product) {
+      const itemInCart = cartItems.find(item => item.id === product._id && item.size === size);
+      const currentQuantityInCart = itemInCart ? itemInCart.quantity : 0;
+      setStock(product.warehouse_quantity - currentQuantityInCart);
+      setQuantity(1); // Reset quantity when size changes
+    }
   };
 
   const handleQuantityChange = (amount) => {
-    setQuantity(prevQuantity => Math.max(1, prevQuantity + amount));
+    setQuantity(prevQuantity => Math.max(1, Math.min(prevQuantity + amount, stock))); // Limit quantity by availableStock
   };
 
   // --- FIX 4: Add a loading state to prevent the page from crashing ---
@@ -96,9 +112,9 @@ const ProductDetailPage = () => {
 
   // These functions are now safe to use because we know 'product' is loaded.
   const handlerStatus = () => {
-    if (product.warehouse_quantity === 0) {
+    if (stock === 0) {
         return 'No Stock';
-    } else if (product.warehouse_quantity <= product.threshold) {
+    } else if (stock <= product.threshold) {
         return 'Limited Stock';
     } else {
         return 'In Stock';
@@ -143,7 +159,7 @@ const ProductDetailPage = () => {
               <strong>{handlerStatus()}</strong>
             </p>
 
-            {product.warehouse_quantity > 0 && (
+            {stock > 0 && (
               <>
                 <div className="product-options">
                     <div>
@@ -170,8 +186,8 @@ const ProductDetailPage = () => {
                         <span>{quantity}</span>
                         <button 
                         onClick={() => handleQuantityChange(1)}
-                        disabled={quantity >= product.warehouse_quantity}>
-                        <span style={{ opacity: quantity === product.warehouse_quantity ? 0.5 : 1 }}>+</span>
+                        disabled={quantity >= stock}>
+                        <span style={{ opacity: quantity === stock ? 0.5 : 1 }}>+</span>
                         </button>
                     </div>
                   </div>

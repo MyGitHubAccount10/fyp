@@ -2,9 +2,11 @@
 
 import React, { useState } from 'react';
 import '../Website.css';
-// --- FIX: Import the AdminHeader instead of the regular Header ---
 import AdminHeader from '../AdminHeader';
 import Footer from '../Footer';
+
+// --- FIX: Define the specific Role ID for an Admin user ---
+const ADMIN_ROLE_ID = '6849291d57e7f26973c9fb3e';
 
 const AdminLoginPage = () => {
   const [email, setEmail] = useState('');
@@ -35,16 +37,19 @@ const AdminLoginPage = () => {
         throw new Error(user.error || 'Failed to log in');
       }
 
-      // This logic will need to be re-enabled when you turn auth back on
-      // For now, we'll simulate a successful login
-      if (user) { // A simple check to see if we got a user object back
-        // In a real scenario, you'd check: user.role.role_name === 'Admin'
+      // --- FIX: Replaced the simulation with the REAL admin role check ---
+      // This checks if the user exists, has a role, and if that role's ID matches the required Admin ID.
+      if (user && user.role && user.role._id === ADMIN_ROLE_ID) {
+        // SUCCESS: The user is a confirmed admin.
         
-        // This part is disabled as auth is off, but kept for future reference
-        // localStorage.setItem('user', JSON.stringify(user));
+        // This part can be re-enabled when you turn on auth fully.
+        // It's good practice to keep it here.
+        localStorage.setItem('user', JSON.stringify(user));
         
+        // Redirect to the admin dashboard
         window.location.href = '/admin-dashboard';
       } else {
+        // FAILURE: The user is a customer or something went wrong.
         throw new Error('Access Denied. You do not have permission to log in here.');
       }
 
@@ -58,7 +63,6 @@ const AdminLoginPage = () => {
 
   return (
     <>
-      {/* --- FIX: Use AdminHeader and pass a prop to hide the nav links --- */}
       <AdminHeader showNav={false} />
 
       <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>

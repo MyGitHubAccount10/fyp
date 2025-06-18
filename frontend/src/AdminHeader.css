@@ -1,6 +1,7 @@
-/* Website.css */
-/* --- Global & Body --- */
-.Admin-body { /* Apply to body if this CSS is global, or to a wrapper if component-scoped */
+/* AdminHeader.css */
+
+/* --- Global & Body (No changes) --- */
+.Admin-body {
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
@@ -8,44 +9,29 @@
   color: #000000;
 }
 
-/* --- Header Styles (Based on your updated navbar design) --- */
-.Admin-header {
+/* --- Header Styles (No changes) --- */
+header.Admin-header {
   background-color: #FA704C;
   padding: 10px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: #000000;
-  position: relative; /* Added for potential future absolute positioning inside, though not used now */
-  z-index: 100; /* Ensure header is above other content if secondary nav overlaps slightly during transition (not the case here) */
+  position: relative;
+  z-index: 1000;
 }
 
+/* --- Other Header elements (No changes) --- */
 .Admin-header-left-content,
 .Admin-header-right-content {
   display: flex;
   align-items: center;
   gap: 15px;
 }
-
-/* .burger-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.burger-btn svg {
-  width: 28px;
-  height: 28px;
-} */
-
 .Admin-header-logo-link .Admin-header-logo-img {
   height: 30px;
   vertical-align: middle;
 }
-
 .Admin-header-nav-links a {
   color: #000000;
   text-decoration: none;
@@ -57,86 +43,125 @@
   text-decoration: underline;
 }
 
+/* --- THE FIX IS HERE --- */
+
 /* Styles for the new Product dropdown toggle in header */
-.Admin-header-nav-links .product-dropdown-toggle {
-  display: inline-flex; /* Align text and arrow */
+.Admin-header-nav-links .Admin-product-dropdown-toggle {
+  display: inline-flex;
   align-items: center;
-  gap: 4px; /* Space between "Product" and arrow */
-  cursor: pointer; /* Indicate it's clickable */
-}
-/* Ensure product dropdown toggle hover doesn't underline, if others do and it shouldn't */
-.Admin-header-nav-links .product-dropdown-toggle:hover {
-    text-decoration: underline; /* Keep consistent with other nav links, or set to none if specifically requested */
+  gap: 4px;
+  cursor: pointer;
 }
 
+/* Styles to make the button look like the original link */
+button.Admin-product-dropdown-toggle {
+  background: none;
+  /* +++ THIS IS THE FIX: Remove the default browser border +++ */
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: bold;
+  color: #000000;
+}
 
+/* Ensure product dropdown toggle hover underlines, just like a link */
+.Admin-header-nav-links .Admin-product-dropdown-toggle:hover {
+    text-decoration: underline;
+}
+
+/* ... (The rest of the CSS file is unchanged) ... */
 .Admin-product-arrow {
-  width: 14px; /* Arrow size */
+  width: 14px;
   height: 14px;
-  stroke: #000000; /* Arrow color */
-  stroke-width: 2.5px; /* Arrow thickness */
+  stroke: #000000;
+  stroke-width: 2.5px;
   fill: none;
   transition: transform 0.2s ease-in-out;
-  vertical-align: middle; /* Align with text */
+  vertical-align: middle;
 }
-
 .Admin-product-arrow.up {
   transform: rotate(180deg);
 }
-
-
-
+.Admin-header-icon-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
 .Admin-header-icon-link svg {
   width: 24px;
   height: 24px;
-  /* fill/stroke defined in SVG for black color */
   vertical-align: middle;
 }
 .Admin-header-icon-link:hover svg {
   opacity: 0.7;
 }
-
 .Admin-header-separator {
   width: 1px;
   height: 20px;
   background-color: #000000;
   margin: 0 5px;
 }
-
 .Admin-header-social-icons a img {
   height: 22px;
   width: 22px;
   vertical-align: middle;
 }
-.header-social-icons a:not(:last-child) {
-    margin-right: 8px;
+.Admin-profile-dropdown-container {
+  position: relative;
+  display: inline-block;
 }
-
-/* --- Secondary Navigation Bar Styles --- */
-.Admin-secondary-navbar {
-  background-color: #2C3E50; /* Light teal/blue from reference image for dropdown area */
-  padding: 12px 20px; /* Padding for the bar */
+.Admin-profile-dropdown-menu {
+  position: absolute;
+  top: 130%;
+  right: 0;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 160px;
+  z-index: 1001;
   display: flex;
-  justify-content: center; /* Center items horizontally */
-  gap: 30px; /* Space between navigation items */
-  border-bottom: 1px solid #B2DFDB; /* Optional: a slightly darker border for separation */
-  /* This bar will naturally push subsequent content down */
-  /* It is placed directly after the <header> in the HTML structure */
+  flex-direction: column;
+  padding: 5px 0;
+  overflow: hidden;
 }
-
+.Admin-profile-dropdown-item {
+  padding: 10px 15px;
+  text-align: left;
+  font-size: 0.9em;
+  color: #333;
+  text-decoration: none;
+  background: none;
+  border: none;
+  width: 100%;
+  cursor: pointer;
+}
+.Admin-profile-dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+.Admin-profile-dropdown-item.logout {
+  color: #e74c3c;
+  font-weight: 500;
+}
+.Admin-secondary-navbar {
+  background-color: #2C3E50;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  border-bottom: 1px solid #B2DFDB;
+}
 .Admin-secondary-navbar-item {
   display: flex;
   align-items: center;
-  gap: 8px; /* Space between icon and text */
-  color: #ffffff !important; /* Black text - !important to override generic a styles if needed */
-  text-decoration: none !important; /* ENSURE NO UNDERLINE as per request */
-  font-size: 0.9em; /* Consistent font size */
-  font-weight: 500; /* Slightly less bold than main nav, or adjust as needed */
+  gap: 8px;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  font-size: 0.9em;
+  font-weight: 500;
 }
-
 .Admin-secondary-navbar-item:hover {
-  text-decoration: none !important; /* ENSURE NO UNDERLINE ON HOVER */
-  /* color: #f1673a !important; /* Optional: theme color on hover, if desired, but ensure no underline */
+  text-decoration: none !important;
 }
-
-

@@ -1,8 +1,9 @@
 // src/AdminSide/AdminLoginPage.js
 
 import React, { useState } from 'react';
-import '../Website.css'; // You can use the same base styles
-import Header from '../Header'; // You might want a different, simpler header later
+import '../Website.css';
+// --- FIX: Import the AdminHeader instead of the regular Header ---
+import AdminHeader from '../AdminHeader';
 import Footer from '../Footer';
 
 const AdminLoginPage = () => {
@@ -22,7 +23,6 @@ const AdminLoginPage = () => {
     };
 
     try {
-      // We use the same login endpoint as regular users
       const response = await fetch('/api/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -32,26 +32,25 @@ const AdminLoginPage = () => {
       const user = await response.json();
 
       if (!response.ok) {
-        // If the server returns an error (e.g., wrong password), display it
         throw new Error(user.error || 'Failed to log in');
       }
 
-      // --- CRITICAL ADMIN CHECK ---
-      // Check if the user object includes the role and if that role is 'Admin'
-      // This assumes your API returns the role name. See the backend note below.
-      if (user && user.role && user.role.role_name === 'Admin') {
-        // SUCCESS: The user is an admin.
-        localStorage.setItem('user', JSON.stringify(user));
-        // Redirect to the admin dashboard
+      // This logic will need to be re-enabled when you turn auth back on
+      // For now, we'll simulate a successful login
+      if (user) { // A simple check to see if we got a user object back
+        // In a real scenario, you'd check: user.role.role_name === 'Admin'
+        
+        // This part is disabled as auth is off, but kept for future reference
+        // localStorage.setItem('user', JSON.stringify(user));
+        
         window.location.href = '/admin-dashboard';
       } else {
-        // FAILURE: The user is not an admin or role data is missing.
         throw new Error('Access Denied. You do not have permission to log in here.');
       }
 
     } catch (err) {
       console.error(err);
-      setError(err.message); // Display the specific error
+      setError(err.message);
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +58,9 @@ const AdminLoginPage = () => {
 
   return (
     <>
-      <Header />
+      {/* --- FIX: Use AdminHeader and pass a prop to hide the nav links --- */}
+      <AdminHeader showNav={false} />
+
       <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
         <div style={{ flex: 1, maxWidth: '450px' }}>
           <h2 style={{ fontWeight: 'bold', fontSize: '2em', marginBottom: '10px', textAlign: 'center' }}>

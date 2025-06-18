@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
-import './AdminHeader.css'; // Assuming this path is correct for your project structure
+// src/AdminHeader.js
 
-// Assume images are in public/images/ directory relative to your server's root
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import './AdminHeader.css';
+
+// ... (No changes to icons or logo constants) ...
 const logoImage = '/images/this-side-up-logo.png';
-
-// Simple SVG Icons for secondary navigation (black color is set via CSS or inline fill)
 const ProductsIcon = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 16V8a2 2 0 0 0-1-1.73L13 3.27a2 2 0 0 0-2 0L4 6.27A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z" />
@@ -35,59 +35,100 @@ const SalesReportsIcon = () => (
   </svg>
 );
 
-const Header = () => {
-    const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(true); 
+// --- FIX: Accept props, with a default value for showNav ---
+const Header = ({ showNav = true }) => {
+    const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(true);
+    const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+    
+    const navigate = useNavigate();
+    const dropdownRef = useRef(null);
 
-    const toggleProductDropdown = (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsProfileDropdownOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, [dropdownRef]);
+
+    const toggleProductDropdown = () => {
         setIsProductDropdownOpen(!isProductDropdownOpen);
+    };
+
+    const handleLogout = () => {
+        setIsProfileDropdownOpen(false);
+        navigate('/admin-login');
     };
     
     return (
         <>
-            <header>
-            <div className="Admin-header-left-content">
-                <Link to="/admin-dashboard" className="Admin-header-logo-link">
-                    <img src={logoImage} alt="This Side Up Logo" className="Admin-header-logo-img" />
-                </Link>
-            </div>
-            <div>
-                <nav className="Admin-header-nav-links">
-                    <a href="#" onClick={toggleProductDropdown} className="Admin-product-dropdown-toggle">
-                        ADMIN
-                        <svg className={`Admin-product-arrow ${isProductDropdownOpen ? 'up' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <polyline points="6 9 12 15 18 9" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></polyline>
-                        </svg>
-                    </a>
-                </nav>
-            </div>
-            <div className="Admin-header-right-content">
-                <Link to="/admin-profile" aria-label="User Account" className="Admin-header-icon-link" title="User Account">
-                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                </Link>
-                <span className="Admin-header-separator"></span>
-                <div className="Admin-header-social-icons">
-                    <a href="#" aria-label="Instagram" title="Instagram"><img src="https://img.icons8.com/ios-glyphs/30/000000/instagram-new.png" alt="Instagram" /></a>
-                    <a href="#" aria-label="TikTok" title="TikTok"><img src="https://img.icons8.com/ios-glyphs/30/000000/tiktok.png" alt="TikTok" /></a>
+            <header className="Admin-header">
+                <div className="Admin-header-left-content">
+                    <Link to="/admin-dashboard" className="Admin-header-logo-link">
+                        <img src={logoImage} alt="This Side Up Logo" className="Admin-header-logo-img" />
+                    </Link>
                 </div>
-            </div>
+
+                {/* --- FIX: Conditionally render the central and right navigation elements --- */}
+                {showNav && (
+                    <>
+                        <nav className="Admin-header-nav-links">
+                            <button onClick={toggleProductDropdown} className="Admin-product-dropdown-toggle">
+                                ADMIN
+                                <svg className={`Admin-product-arrow ${isProductDropdownOpen ? 'up' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <polyline points="6 9 12 15 18 9" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></polyline>
+                                </svg>
+                            </button>
+                        </nav>
+                        <div className="Admin-header-right-content">
+                            <div className="Admin-profile-dropdown-container" ref={dropdownRef}>
+                                <button 
+                                    onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                                    aria-label="User Account" 
+                                    className="Admin-header-icon-link" 
+                                    title="User Account"
+                                >
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                        <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                    </svg>
+                                </button>
+                                {isProfileDropdownOpen && (
+                                    <div className="Admin-profile-dropdown-menu">
+                                        <Link to="/admin-profile" className="Admin-profile-dropdown-item" onClick={() => setIsProfileDropdownOpen(false)}>
+                                            Profile
+                                        </Link>
+                                        <button onClick={handleLogout} className="Admin-profile-dropdown-item logout">
+                                            Logout
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                            <span className="Admin-header-separator"></span>
+                            <div className="Admin-header-social-icons">
+                                <a href="https://www.instagram.com" aria-label="Instagram" title="Instagram"><img src="https://img.icons8.com/ios-glyphs/30/000000/instagram-new.png" alt="Instagram" /></a>
+                                <a href="https://www.tiktok.com" aria-label="TikTok" title="TikTok"><img src="https://img.icons8.com/ios-glyphs/30/000000/tiktok.png" alt="TikTok" /></a>
+                            </div>
+                        </div>
+                    </>
+                )}
             </header>
 
-            {isProductDropdownOpen && (
+            {/* --- FIX: Conditionally render the entire secondary navigation bar --- */}
+            {showNav && isProductDropdownOpen && (
                 <nav className="Admin-secondary-navbar">
-                    <NavLink to="/all-products" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
+                    <NavLink to="/all-products" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}>
                         <ProductsIcon /> Products
                     </NavLink>
-                    <NavLink to="/all-orders" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
+                    <NavLink to="/all-orders" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}>
                         <OrdersIcon /> Orders
                     </NavLink>
-                    <NavLink to="/all-customers" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
+                    <NavLink to="/all-customers" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}>
                         <CustomersIcon /> Customers
                     </NavLink>
-                    <NavLink to="" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}> {/* Added Link and onClick to close */}
+                    <NavLink to="/sales-reports" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}>
                         <SalesReportsIcon /> Sales Reports
                     </NavLink>
                 </nav>

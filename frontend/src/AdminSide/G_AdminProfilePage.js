@@ -1,8 +1,10 @@
 // src/AdminSide/G_AdminProfilePage.js
 
+// ✅ FIX: 'useEffect' is now included in the import from 'react'.
 import React, { useState, useEffect } from 'react';
-import '../Website.css'; // Assuming common styles are in Website.css
+import '../Website.css';
 import AdminHeader from '../AdminHeader';
+import Footer from '../Footer';
 
 // --- Icons for password toggle ---
 const EyeIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
@@ -17,22 +19,18 @@ function AdminProfilePage() {
         phoneNumber: '',
     });
     const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
-
-    // ✅ 1. ADDED: State for the shipping address feature
     const [shippingAddress, setShippingAddress] = useState('');
     const [isEditingAddress, setIsEditingAddress] = useState(false);
-
     const [passwordChange, setPasswordChange] = useState({
         newPassword: '',
         confirmNewPassword: '',
     });
-
     const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false);
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
     useEffect(() => {
         try {
-            const user = JSON.parse(localStorage.getItem('user'));
+            const user = JSON.parse(localStorage.getItem('admin_user'));
             if (user) {
                 setPersonalInfo({
                     firstName: user.first_name || '',
@@ -41,11 +39,10 @@ function AdminProfilePage() {
                     email: user.email || '',
                     phoneNumber: user.phone_number || '',
                 });
-                // ✅ 2. ADDED: Populate shipping address from localStorage
                 setShippingAddress(user.shipping_address || 'No address provided.');
             }
         } catch (error) {
-            console.error('Error loading user data:', error);
+            console.error('Error loading admin user data:', error);
         }
     }, []);
 
@@ -56,35 +53,66 @@ function AdminProfilePage() {
 
     const handleSavePersonalInfo = async (e) => {
         e.preventDefault();
-        // ... (This handler is complete and correct)
-    };
-
-    // ✅ 3. ADDED: Handler to save the shipping address
-    const handleSaveAddress = async (e) => {
-        e.preventDefault();
-        const userData = JSON.parse(localStorage.getItem('user'));
+        const userData = JSON.parse(localStorage.getItem('admin_user'));
         if (!userData || !userData.token) {
             alert('Authentication error. Please log in again.');
             return;
         }
+        try {
+            const updatedData = { 
+                first_name: personalInfo.firstName,
+                last_name: personalInfo.lastName,
+                email: personalInfo.email, 
+                phone_number: personalInfo.phoneNumber 
+            };
+            const response = await fetch('/api/user/update', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userData.token}` },
+                body: JSON.stringify(updatedData),
+            });
+            if (!response.ok) {
+                const errorResult = await response.json();
+                throw new Error(errorResult.error || 'Failed to update user information');
+            }
+            const updatedFields = await response.json();
+            const newUserData = { ...userData, ...updatedFields };
+            localStorage.setItem('admin_user', JSON.stringify(newUserData));
+            setPersonalInfo({
+                firstName: newUserData.first_name,
+                lastName: newUserData.last_name,
+                username: newUserData.username,
+                email: newUserData.email,
+                phoneNumber: newUserData.phone_number,
+            });
+            setIsEditingPersonalInfo(false);
+            alert('Personal information updated successfully!');
+        } catch (error) {
+            console.error('Error saving personal info:', error);
+            alert(`Failed to save personal information: ${error.message}`);
+        }
+    };
 
+    const handleSaveAddress = async (e) => {
+        e.preventDefault();
+        const userData = JSON.parse(localStorage.getItem('admin_user'));
+        if (!userData || !userData.token) {
+            alert('Authentication error. Please log in again.');
+            return;
+        }
         try {
             const response = await fetch('/api/user/update', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userData.token}` },
                 body: JSON.stringify({ shipping_address: shippingAddress }),
             });
-
             if (!response.ok) {
                 const errorResult = await response.json();
                 throw new Error(errorResult.error || 'Failed to update address');
             }
             const updatedFields = await response.json();
             const newUserData = { ...userData, ...updatedFields };
-            localStorage.setItem('user', JSON.stringify(newUserData));
-            
+            localStorage.setItem('admin_user', JSON.stringify(newUserData));
             setShippingAddress(newUserData.shipping_address);
-            
             setIsEditingAddress(false);
             alert('Shipping address updated successfully!');
         } catch (error) {
@@ -99,7 +127,36 @@ function AdminProfilePage() {
     };
 
     const handleChangePassword = async (e) => {
-        // ... (This handler is complete and correct)
+        e.preventDefault();
+        if (passwordChange.newPassword !== passwordChange.confirmNewPassword) {
+            alert("New passwords do not match.");
+            return;
+        }
+        if (passwordChange.newPassword.length < 8) {
+            alert("New password must be at least 8 characters long.");
+            return;
+        }
+        const userData = JSON.parse(localStorage.getItem('admin_user'));
+        if (!userData || !userData.token) {
+            alert('Authentication error. Please log in again.');
+            return;
+        }
+        try {
+            const response = await fetch('/api/user/update-password', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userData.token}` },
+                body: JSON.stringify({ newPassword: passwordChange.newPassword }),
+            });
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to update password.');
+            }
+            alert('Password updated successfully!');
+            setPasswordChange({ newPassword: '', confirmNewPassword: '' });
+        } catch (error) {
+            console.error('Error changing password:', error);
+            alert(`Error: ${error.message}`);
+        }
     };
 
     return (
@@ -107,7 +164,6 @@ function AdminProfilePage() {
             <AdminHeader />
             <div className="container user-profile-container">
                 <h2>Admin Profile</h2>
-
                 <div className="profile-section">
                     <div className="profile-section-header">
                         <h3>Personal Information</h3>
@@ -143,15 +199,13 @@ function AdminProfilePage() {
                         </form>
                     ) : (
                         <div className="profile-display">
-                            <p><strong>Name:</strong>{personalInfo.firstName} {personalInfo.lastName}</p>
-                            <p><strong>Username:</strong>{personalInfo.username}</p>
-                            <p><strong>Email:</strong>{personalInfo.email}</p>
-                            <p><strong>Phone:</strong>{personalInfo.phoneNumber || 'Not provided'}</p>
+                            <p><strong>Name:</strong> {personalInfo.firstName} {personalInfo.lastName}</p>
+                            <p><strong>Username:</strong> {personalInfo.username}</p>
+                            <p><strong>Email:</strong> {personalInfo.email}</p>
+                            <p><strong>Phone:</strong> {personalInfo.phoneNumber || 'Not provided'}</p>
                         </div>
                     )}
                 </div>
-
-                {/* ✅ 4. ADDED: Shipping Address section */}
                 <div className="profile-section">
                     <div className="profile-section-header">
                         <h3>Shipping Address</h3>
@@ -174,7 +228,6 @@ function AdminProfilePage() {
                         </div>
                     )}
                 </div>
-
                 <div className="profile-section">
                     <div className="profile-section-header">
                         <h3>Change Password</h3>
@@ -205,6 +258,7 @@ function AdminProfilePage() {
                     </form>
                 </div>
             </div>
+            <Footer />
         </>
     );
 }

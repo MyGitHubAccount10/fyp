@@ -1,10 +1,11 @@
 // src/AdminHeader.js
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+import { useAdminLogout } from '../src/hooks/useAdminLogout'; // Make sure this path is correct
 import './AdminHeader.css';
 
-// ... (No changes to icons or logo constants) ...
+// ✅ FIX: The full JSX for the icons is provided, not placeholder comments.
 const logoImage = '/images/this-side-up-logo.png';
 const ProductsIcon = () => (
   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -35,12 +36,12 @@ const SalesReportsIcon = () => (
   </svg>
 );
 
-// --- FIX: Accept props, with a default value for showNav ---
-const Header = ({ showNav = true }) => {
+
+const AdminHeader = ({ showNav = true }) => {
     const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(true);
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
     
-    const navigate = useNavigate();
+    const { logout } = useAdminLogout();
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -59,20 +60,24 @@ const Header = ({ showNav = true }) => {
 
     const handleLogout = () => {
         setIsProfileDropdownOpen(false);
-        navigate('/admin-login');
+        logout();
     };
     
     return (
         <>
-        {/* --- Conditionally render only for Admin login page --- */}
             <header className="Admin-header">
                 <div className="Admin-header-left-content">
-                    <Link to="/admin-dashboard" className="Admin-header-logo-link">
-                        <img src={logoImage} alt="This Side Up Logo" className="Admin-header-logo-img" />
-                    </Link>
+                    {showNav ? (
+                        <Link to="/admin-dashboard" className="Admin-header-logo-link">
+                            <img src={logoImage} alt="This Side Up Logo" className="Admin-header-logo-img" />
+                        </Link>
+                    ) : (
+                        <div className="Admin-header-logo-link" style={{ cursor: 'default' }}>
+                            <img src={logoImage} alt="This Side Up Logo" className="Admin-header-logo-img" />
+                        </div>
+                    )}
                 </div>
 
-                {/* --- Conditionally render only for Admin pages  --- */}
                 {showNav && (
                     <>
                         <nav className="Admin-header-nav-links">
@@ -117,7 +122,6 @@ const Header = ({ showNav = true }) => {
                 )}
             </header>
 
-            {/* --- FIX: Conditionally render the entire secondary navigation bar --- */}
             {showNav && isProductDropdownOpen && (
                 <nav className="Admin-secondary-navbar">
                     <NavLink to="/all-products" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}>
@@ -138,4 +142,4 @@ const Header = ({ showNav = true }) => {
     )
 };
 
-export default Header;
+export default AdminHeader;

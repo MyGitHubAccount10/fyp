@@ -7,13 +7,35 @@ const validator = require('validator');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  // --- FIX: Removed the redundant user_id field. MongoDB's default _id is sufficient. ---
-  
-  // --- FIX: Correctly define role_id as a reference to the Role collection. ---
   role_id: {
-    type: mongoose.Schema.Types.ObjectId, // It's an ObjectId, not a Number
-    ref: 'Role', // This links it to your Role model
-    required: true // A user must have a role
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Role',
+    required: true
+  },
+  // --- ADDED: first_name, last_name, and shipping_address fields with validation ---
+  first_name: {
+    type: String,
+    required: true,
+    validate: {
+      validator: function(v) {
+        return /^[A-Z][a-zA-Z]*$/.test(v);
+      },
+      message: 'First name must start with a capital letter and contain no spaces, numbers, or special characters.'
+    }
+  },
+  last_name: {
+    type: String,
+    required: true,
+    validate: {
+      validator: function(v) {
+        return /^[A-Z][a-zA-Z]*$/.test(v);
+      },
+      message: 'Last name must start with a capital letter and contain no spaces, numbers, or special characters.'
+    }
+  },
+  shipping_address: {
+    type: String,
+    required: true
   },
   username: {
     type: String,
@@ -52,13 +74,11 @@ const userSchema = new Schema({
   }
 }, { timestamps: true });
 
-// --- FIX: Update static signup method to accept and use role_id ---
-// 1. Add `role_id` to the function parameters
-userSchema.statics.signup = async function(email, password, username, phone_number, role_id) {
+// --- MODIFIED: Update static signup method to accept and use the new fields ---
+userSchema.statics.signup = async function(email, password, username, phone_number, role_id, first_name, last_name, shipping_address) {
 
   // validation
-  // +++ ADDED: Validate that a role_id was provided +++
-  if (!email || !password || !username || !phone_number || !role_id) {
+  if (!email || !password || !username || !phone_number || !role_id || !first_name || !last_name || !shipping_address) {
     throw Error('All fields must be filled');
   }
   if (!validator.isEmail(email)) {
@@ -73,6 +93,7 @@ userSchema.statics.signup = async function(email, password, username, phone_numb
   if (!/^[0-9]{8}$/.test(phone_number)) {
     throw Error('Phone number must be 8 digits');
   }
+  // The schema will handle name validation, but we can check here for early exit if needed.
 
   const exists = await this.findOne({ email });
 
@@ -83,13 +104,15 @@ userSchema.statics.signup = async function(email, password, username, phone_numb
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(password, salt);
 
-  // 2. Add the `role_id` to the object being created
-  const user = await this.create({ 
+  const user = await this.create({
+    first_name,
+    last_name,
+    shipping_address,
     email, 
     password: hash,
     username,
     phone_number,
-    role_id // <-- The fix is here!
+    role_id
   });
 
   return user;

@@ -22,7 +22,7 @@ const getUser = async (req, res) => {
     res.status(200).json(user);
 }
 
-// Unchanged (already correct from previous fix)
+// Unchanged
 const createUser = async (req, res) => {
     const { username, email, password, phone_number, role_id } = req.body;
     try {
@@ -51,44 +51,50 @@ const updateUser = async (req, res) => {
     res.status(200).json(user);
 }
 
-// --- MODIFIED: This function now populates the role information upon login ---
+// MODIFIED: loginUser now also returns the new fields
 const loginUser = async (req, res) => {
   const {email, password} = req.body;
   try {
-    // 1. User.login validates the email and password
     const user = await User.login(email, password);
 
-    // 2. After validation, find the user again to populate their role
-    // This adds the role sub-document (e.g., { role_name: 'Admin' }) to the user object
     const userWithRole = await User.findById(user._id).populate({
-      path: 'role_id', // The field in the User model to populate
-      select: 'role_name' // We only need the role's name for our checks
+      path: 'role_id',
+      select: 'role_name'
     });
 
-    // 3. Create a token
     const token = createToken(user._id);
 
-    // 4. Send the full user object, including the populated role, to the frontend
-    res.status(200).json({ 
-        _id: userWithRole._id, 
-        email: userWithRole.email, 
-        username: userWithRole.username, 
+    res.status(200).json({
+        _id: userWithRole._id,
+        email: userWithRole.email,
+        username: userWithRole.username,
         phone_number: userWithRole.phone_number,
-        role: userWithRole.role_id, // This will be the populated role object
-        token 
+        first_name: userWithRole.first_name, // <-- ADDED
+        last_name: userWithRole.last_name,   // <-- ADDED
+        shipping_address: userWithRole.shipping_address, // <-- ADDED
+        role: userWithRole.role_id,
+        token
     });
   } catch (error) {
     res.status(400).json({error: error.message});
   }
 }
 
-// Unchanged (already correct from previous fix)
+// MODIFIED: signupUser now handles and returns the new fields
 const signupUser = async (req, res) => {
-  const {email, password, username, phone_number, role_id} = req.body;
+  const {email, password, username, phone_number, role_id, first_name, last_name, shipping_address} = req.body;
   try {
-    const user = await User.signup(email, password, username, phone_number, role_id);
+    const user = await User.signup(email, password, username, phone_number, role_id, first_name, last_name, shipping_address);
     const token = createToken(user._id);
-    res.status(200).json({ email: user.email, username: user.username, phone_number: user.phone_number, token });
+    res.status(200).json({
+        email: user.email,
+        username: user.username,
+        phone_number: user.phone_number,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        shipping_address: user.shipping_address,
+        token
+    });
   } catch (error) {
     res.status(400).json({error: error.message});
   }
@@ -133,6 +139,7 @@ const updateUserPassword = async (req, res) => {
     }
 };
 
+// --- FIX: This is the corrected, complete export block ---
 module.exports = {
     getUsers,
     getUser,

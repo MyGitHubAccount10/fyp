@@ -27,7 +27,6 @@ const CloseIcon = ({ size = 24, color = "currentColor" }) => (
     </svg>
 );
 
-
   // <tr key={user.id}>
   //     <td>{user.role}</td>
   //     <td>{user.username}</td>
@@ -35,21 +34,68 @@ const CloseIcon = ({ size = 24, color = "currentColor" }) => (
   //     <td>{user.password}</td>
   //     <td>{user.phone}</td>
   // </tr>
-// Dummy user data
-const dummyUsers = [
-    { id: 1, role: 'Customer', username: 'johndoe', email: 'johndoe@example.com', password: 'password123', phone: '123-456-7890' },
-    { id: 2, role: 'Customer', username: 'janedoe', email: 'janedoe@example.com', password: 'password123', phone: '123-456-7890' },
-    { id: 3, role: 'Admin', username: 'admin', email: 'admin@example.com', password: 'admin123', phone: '123-456-7890' },
-    // Add more dummy users if needed
-];
 
 function AllCustomersPage() {
-    const [users, setUsers] = useState(dummyUsers);
+    const [users, setUsers] = useState([]);
+    const [allUsers, setAllUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedRole, setSelectedRole] = useState('All Roles');
     const [currentPage, setCurrentPage] = useState(1);
     const [usersPerPage] = useState(10); // Fixed number of users per page
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const Navigate = useNavigate();
+
+    // Fetch users from API
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch('http://localhost:4000/api/user');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch users');
+                }
+                const userData = await response.json();
+                
+                // Populate role information for each user
+                const usersWithRoles = await Promise.all(
+                    userData.map(async (user) => {
+                        try {
+                            const roleResponse = await fetch(`http://localhost:4000/api/role/${user.role_id}`);
+                            if (roleResponse.ok) {
+                                const roleData = await roleResponse.json();
+                                return {
+                                    ...user,
+                                    role_name: roleData.role_name
+                                };
+                            }
+                            return {
+                                ...user,
+                                role_name: 'Unknown'
+                            };
+                        } catch (error) {
+                            console.error('Error fetching role:', error);
+                            return {
+                                ...user,
+                                role_name: 'Unknown'
+                            };
+                        }
+                    })
+                );
+                
+                setAllUsers(usersWithRoles);
+                setUsers(usersWithRoles);
+                setError('');
+            } catch (error) {
+                console.error('Error fetching users:', error);
+                setError('Failed to load users');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUsers();
+    }, []);
 
     // Pagination Logic
     const indexOfLastUser = currentPage * usersPerPage;
@@ -75,14 +121,26 @@ function AllCustomersPage() {
         Navigate(`/customer-details`);
         // Navigate(`/edit-user/${user.id}`);
 
-    };
-
-    const handleDeleteUser = (userId) => {
+    };    const handleDeleteUser = (userId) => {
         console.log("Deleting user with ID:", userId);
         // In a real app, show a confirmation modal and make an API call
         if (window.confirm(`Are you sure you want to ban this user ID ${userId}?`)) {
-             setUsers(users.filter(u => u.id !== userId));
-             console.log("User banned (demo).");
+            // Make API call to delete user
+            fetch(`http://localhost:4000/api/user/${userId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.ok) {
+                    setUsers(users.filter(u => u._id !== userId));
+                    setAllUsers(allUsers.filter(u => u._id !== userId));
+                    console.log("User banned successfully.");
+                } else {
+                    console.error("Failed to ban user");
+                }
+            })
+            .catch(error => {
+                console.error("Error banning user:", error);
+            });
         }
     };
 
@@ -95,41 +153,46 @@ function AllCustomersPage() {
     // Filter/Search Logic (basic client-side demo)
 const handleFilter = () => {
     console.log("Filtering with:", { searchTerm, selectedRole });
-    let filtered = dummyUsers;
+    let filtered = allUsers;
 
     if (searchTerm) {
         filtered = filtered.filter(user =>
-            user.name.toLowerCase().includes(searchTerm.toLowerCase())
-            // Remove SKU check unless all products have SKU
+            user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.email.toLowerCase().includes(searchTerm.toLowerCase())
         );
     }
 
-
     if (selectedRole !== 'All Roles') {
-        filtered = filtered.filter(user => user.role === selectedRole);
+        filtered = filtered.filter(user => user.role_name === selectedRole);
     }
 
     setUsers(filtered);
     setCurrentPage(1);
-};
-
-
-     // Trigger filter when search term or category changes (optional auto-filter)
+};     // Trigger filter when search term or category changes (optional auto-filter)
     useEffect(() => {
-         handleFilter();
-    }, [searchTerm, selectedRole]); // Add dummyProducts to dependency array if it can change
+         if (allUsers.length > 0) {
+             handleFilter();
+         }
+    }, [searchTerm, selectedRole, allUsers]); // Add allUsers to dependency array
 
-    return (<>
-          <AdminHeader />
-        <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2>All Users</h2> {/* Title from the image */}
-                <button onClick={handleAddAdmin} className="btn-add-new">
-                    <PencilIcon size={18} color="white" />
-                    Add New Admin
-                </button>
-
-            </div>
+    return (
+        <>
+            <AdminHeader />
+            <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+                {loading && <div style={{ textAlign: 'center', padding: '20px' }}>Loading users...</div>}
+                {error && <div style={{ textAlign: 'center', padding: '20px', color: 'red' }}>{error}</div>}
+                
+                {!loading && !error && (
+                    <>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h2>All Users</h2> {/* Title from the image */}
+                            <button onClick={handleAddAdmin} className="btn-add-new">
+                                <PencilIcon size={18} color="white" />
+                                Add New Admin
+                            </button>
+                        </div>
 
                 {/* Filter row */}
 <div
@@ -144,12 +207,11 @@ const handleFilter = () => {
         alignItems: 'center',
         flexWrap: 'wrap',
     }}
->
-    {/* Search Input */}
+>    {/* Search Input */}
     <div style={{ flex: '3 1 100px', boxSizing: 'border-box' }}>
         <input
             type="text"
-            placeholder="Search by name..."
+            placeholder="Search by name, username, or email..."
             className="search-input"
             style={{
                 width: '100%',
@@ -223,48 +285,57 @@ const handleFilter = () => {
                 {'Next >>'}
                 </button>
             </div>
-            </div>
-
-                {/* Orders Table */}
+            </div>                {/* Users Table */}
             <div className="orders-table-container">
                 <table className="orders-table">
                     <thead>
                         <tr>
+                            <th>ID</th>
                             <th>Role</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
                             <th>Username</th>
                             <th>Email</th>
-                            <th>Password</th>
-                            <th>Phone</th>
+                            <th>Phone Number</th>
+                            <th>Shipping Address</th>
+                            <th>Created At</th>
                             <th className="action-column">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {currentUsers.length > 0 ? (
                              currentUsers.map(user => (
-                                <tr key={user.id}>
-                                    <td>{user.role}</td>
+                                <tr key={user._id}>
+                                    <td>{user._id}</td>
+                                    <td>{user.role_name}</td>
+                                    <td>{user.first_name}</td>
+                                    <td>{user.last_name}</td>
                                     <td>{user.username}</td>
                                     <td>{user.email}</td>
-                                    <td>{user.password}</td>
-                                    <td>{user.phone}</td>
+                                    <td>{user.phone_number}</td>
+                                    <td style={{ maxWidth: '200px', wordBreak: 'break-word' }}>{user.shipping_address}</td>
+                                    <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                                     <td className="action-column">
                                         <div className="action-icons">
                                             <button onClick={() => handleEditUser(user)} title="Edit User"><PencilIcon /></button>
-                                            <button onClick={() => handleDeleteUser(user.id)} title="Delete User" className="delete-btn"><BanIcon /></button>
+                                            <button onClick={() => handleDeleteUser(user._id)} title="Delete User" className="delete-btn"><BanIcon /></button>
                                         </div>
                                     </td>
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>No users found.</td>
+                                <td colSpan="10" style={{ textAlign: 'center', padding: '20px' }}>No users found.</td>
                             </tr>
                         )}
                     </tbody>
                 </table>
             </div>
-        </div>
-    </>);
+                </>
+                )}
+            </div>
+        </>
+    );
 }
 
 export default AllCustomersPage;

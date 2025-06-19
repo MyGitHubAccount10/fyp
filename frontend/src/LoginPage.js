@@ -15,30 +15,31 @@ const LoginPage = () => {
     const userData = {
       email,
       password
-    };
-
-    try {
+    };    try {
       setIsLoading(true);
-      const response = await fetch('/api/user/login', {
+      setError(null); // Clear previous errors
+      
+      const response = await fetch('http://localhost:4000/api/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData)
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Failed to log in');
+        // Use server error message if available
+        throw new Error(data.error || `HTTP error! status: ${response.status}`);
       }
 
-      const user = await response.json();
-
       // Save user to local storage
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('user', JSON.stringify(data));
 
       // Redirect to home page
       window.location.href = '/';
     } catch (error) {
-      console.error(error);
-      setError('Error logging in');
+      console.error('Login error:', error);
+      setError(error.message || 'Network error - please check your connection');
     } finally {
       setIsLoading(false);
     }

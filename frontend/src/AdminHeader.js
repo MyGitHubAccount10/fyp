@@ -64,6 +64,7 @@ const Header = ({ showNav = true }) => {
     
     return (
         <>
+        {/* --- Conditionally render only for Admin login page --- */}
             <header className="Admin-header">
                 <div className="Admin-header-left-content">
                     <Link to="/admin-dashboard" className="Admin-header-logo-link">
@@ -71,7 +72,7 @@ const Header = ({ showNav = true }) => {
                     </Link>
                 </div>
 
-                {/* --- FIX: Conditionally render the central and right navigation elements --- */}
+                {/* --- Conditionally render only for Admin pages  --- */}
                 {showNav && (
                     <>
                         <nav className="Admin-header-nav-links">

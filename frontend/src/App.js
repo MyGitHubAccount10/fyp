@@ -3,9 +3,9 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { CartContextProvider } from './context/CartContext';
-// --- FIX: REMOVED the AuthContextProvider import ---
-// import { AuthContextProvider } from './context/AuthContext';
 
+// --- Page Imports ---
+// User-facing pages
 import HomePage from './HomePage';
 import AboutPage from './AboutPage';
 import ContactPage from './ContactPage';
@@ -18,30 +18,33 @@ import ShoppingCartPage from './ShoppingCartPage';
 import PlaceOrderPage from './PlaceOrderPage';
 import OrderHistoryPage from './OrderHistoryPage';
 import PageNotFound from './PageNotFound';
-
 import CategoryPage from './CategoryPage';
 
+// Admin-facing pages
+import AdminLoginPage from './AdminSide/AdminLoginPage';
 import AdminDashboard from './AdminSide/A_AdminDashboard';
 import AllProductsPage from './AdminSide/B_AllProductsPage';
 import AddProductPage from './AdminSide/BB_AddProductPage';
+import EditProductPage from './AdminSide/BBB_EditProductPage';
 import AllOrdersPage from './AdminSide/C_AllOrdersPage';
 import OrderDetailsPage from './AdminSide/CC_OrderDetailsPage';
-import CustomerDetailsPage from './AdminSide/DDD_CustomerDetailsPage';
-import AdminSettingsPage from './AdminSide/FAdminSettingsPage';
 import AllCustomersPage from './AdminSide/D_AllCustomersPage';
-import AdminProfilePage from './AdminSide/G_AdminProfilePage';
-import EditProductPage from './AdminSide/BBB_EditProductPage';
+import CustomerDetailsPage from './AdminSide/DDD_CustomerDetailsPage';
 import AddAdminPage from './AdminSide/DD_AddAdminPage';
-import AdminLoginPage from './AdminSide/AdminLoginPage';
+import AdminSettingsPage from './AdminSide/FAdminSettingsPage';
+import AdminProfilePage from './AdminSide/G_AdminProfilePage';
+
+// ✅ 1. Import the new protected route component
+import AdminProtectedRoute from './AdminProtectedRoute'; // Make sure this path is correct
 
 import './index.css';
 
 function App() {
   return (
-    // --- FIX: REMOVED the AuthContextProvider wrapper ---
     <CartContextProvider>
       <Routes>
-        {/* User Routes */}
+        {/* --- User Routes --- */}
+        {/* These routes are accessible to everyone */}
         <Route path="/" element={<HomePage />} />
         <Route path="about" element={<AboutPage />} />
         <Route path="contact" element={<ContactPage />} />
@@ -63,21 +66,26 @@ function App() {
         <Route path="place-order" element={<PlaceOrderPage />} />
         <Route path="order-history" element={<OrderHistoryPage />} />
 
-        {/* Admin Routes */}
+        {/* --- Admin Routes --- */}
+        {/* The admin login page is public, so it is NOT wrapped */}
         <Route path="admin-login" element={<AdminLoginPage />} />
-        <Route path="admin-dashboard" element={<AdminDashboard />} />
-        <Route path="all-products" element={<AllProductsPage />} />
-        <Route path="add-product" element={<AddProductPage />} />
-        <Route path="all-orders" element={<AllOrdersPage />} />
-        <Route path="order-details" element={<OrderDetailsPage />} />
-        <Route path="customer-details" element={<CustomerDetailsPage />} />
-        <Route path="admin-settings" element={<AdminSettingsPage />} />
-        <Route path="all-customers" element={<AllCustomersPage />} />
-        <Route path="admin-profile" element={<AdminProfilePage />} />
-        <Route path="/edit-product/:id" element={<EditProductPage />} />
-        <Route path="add-admin" element={<AddAdminPage />} />
 
-        {/* Catch-all route for 404 Not Found */}
+        {/* ✅ 2. Wrap all other admin routes inside the AdminProtectedRoute component. */}
+        {/* This acts as a gatekeeper, checking for the correct admin role. */}
+        <Route path="admin-dashboard" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
+        <Route path="all-products" element={<AdminProtectedRoute><AllProductsPage /></AdminProtectedRoute>} />
+        <Route path="add-product" element={<AdminProtectedRoute><AddProductPage /></AdminProtectedRoute>} />
+        <Route path="edit-product/:id" element={<AdminProtectedRoute><EditProductPage /></AdminProtectedRoute>} />
+        <Route path="all-orders" element={<AdminProtectedRoute><AllOrdersPage /></AdminProtectedRoute>} />
+        <Route path="order-details" element={<AdminProtectedRoute><OrderDetailsPage /></AdminProtectedRoute>} />
+        <Route path="all-customers" element={<AdminProtectedRoute><AllCustomersPage /></AdminProtectedRoute>} />
+        <Route path="customer-details" element={<AdminProtectedRoute><CustomerDetailsPage /></AdminProtectedRoute>} />
+        <Route path="add-admin" element={<AdminProtectedRoute><AddAdminPage /></AdminProtectedRoute>} />
+        <Route path="admin-settings" element={<AdminProtectedRoute><AdminSettingsPage /></AdminProtectedRoute>} />
+        <Route path="admin-profile" element={<AdminProtectedRoute><AdminProfilePage /></AdminProtectedRoute>} />
+
+        {/* --- Catch-all 404 Route --- */}
+        {/* This should always be the last route */}
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </CartContextProvider>

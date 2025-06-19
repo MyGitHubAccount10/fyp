@@ -117,7 +117,7 @@ function ShoppingCartPage() {
                     <h3>Cart Total</h3>
                     <p><span>Subtotal</span> <span>${subtotal.toFixed(2)}</span></p>
                     {/* 2. Use the constant for display */}
-                    <p><span>Shipment</span> <span>Shipping to Bedok ${SHIPPING_FEE.toFixed(2)}</span></p>
+                    <p><span>Shipment</span> <span>${SHIPPING_FEE.toFixed(2)}</span></p>
                     {/* 3. Use the constant for calculation */}
                     <p className="total-row"><strong>Total</strong> <strong>${(subtotal + SHIPPING_FEE).toFixed(2)}</strong></p>
                     <button className="complete-purchase-btn" onClick={handleCheckout}>Complete Purchase</button>

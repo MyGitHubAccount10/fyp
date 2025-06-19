@@ -6,21 +6,19 @@ import Footer from './Footer';
 function UserProfilePage() {
     // --- STATE ---
     const [personalInfo, setPersonalInfo] = useState({
+        // MODIFIED: Added firstName and lastName
+        firstName: '',
+        lastName: '',
         username: '',
         email: '',
         phoneNumber: '',
     });
     const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
 
-    const [shippingAddress, setShippingAddress] = useState({
-        addressLine1: '123 Somerset Road',
-        addressLine2: '#05-10 Condo Name',
-        postalCode: '238165',
-        isDefault: true,
-    });
+    // MODIFIED: State is now a single string for the full shipping address
+    const [shippingAddress, setShippingAddress] = useState('');
     const [isEditingAddress, setIsEditingAddress] = useState(false);
 
-    // --- MODIFIED: State for password change no longer needs currentPassword ---
     const [passwordChange, setPasswordChange] = useState({
         newPassword: '',
         confirmNewPassword: '',
@@ -31,17 +29,23 @@ function UserProfilePage() {
         try {
             const user = JSON.parse(localStorage.getItem('user'));
             if (user) {
+                // MODIFIED: Populate all personal info fields from localStorage
                 setPersonalInfo({
+                    firstName: user.first_name || '',
+                    lastName: user.last_name || '',
                     username: user.username || '',
                     email: user.email || '',
                     phoneNumber: user.phone_number || '',
                 });
+                // MODIFIED: Populate shipping address from localStorage
+                setShippingAddress(user.shipping_address || 'No address provided.');
             }
         } catch (error) {
             console.error('Error loading user data:', error);
         }
     }, []);
 
+    // --- Handlers ---
     const handlePersonalInfoChange = (e) => {
         const { name, value } = e.target;
         setPersonalInfo(prev => ({ ...prev, [name]: value }));
@@ -55,7 +59,13 @@ function UserProfilePage() {
             return;
         }
         try {
-            const updatedData = { email: personalInfo.email, phone_number: personalInfo.phoneNumber };
+            // MODIFIED: Include first_name and last_name in the update
+            const updatedData = {
+                first_name: personalInfo.firstName,
+                last_name: personalInfo.lastName,
+                email: personalInfo.email,
+                phone_number: personalInfo.phoneNumber
+            };
             const response = await fetch('/api/user/update', {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userData.token}` },
@@ -66,9 +76,19 @@ function UserProfilePage() {
                 throw new Error(errorResult.error || 'Failed to update user information');
             }
             const updatedFields = await response.json();
+            // Update localStorage with the fresh data from the server
             const newUserData = { ...userData, ...updatedFields };
             localStorage.setItem('user', JSON.stringify(newUserData));
-            setPersonalInfo((prevInfo) => ({ ...prevInfo, email: newUserData.email, phoneNumber: newUserData.phone_number }));
+            
+            // Sync component state
+            setPersonalInfo({
+                firstName: newUserData.first_name,
+                lastName: newUserData.last_name,
+                username: newUserData.username,
+                email: newUserData.email,
+                phoneNumber: newUserData.phone_number,
+            });
+
             setIsEditingPersonalInfo(false);
             alert('Personal information updated successfully!');
         } catch (error) {
@@ -77,15 +97,40 @@ function UserProfilePage() {
         }
     };
 
-    const handleAddressChange = (e) => {
-        const { name, value } = e.target;
-        setShippingAddress(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSaveAddress = (e) => {
+    // MODIFIED: handleSaveAddress is now a fully functional async function
+    const handleSaveAddress = async (e) => {
         e.preventDefault();
-        setIsEditingAddress(false);
-        alert('Shipping address updated (demo).');
+        const userData = JSON.parse(localStorage.getItem('user'));
+        if (!userData || !userData.token) {
+            alert('Authentication error. Please log in again.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/user/update', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userData.token}` },
+                body: JSON.stringify({ shipping_address: shippingAddress }),
+            });
+
+            if (!response.ok) {
+                const errorResult = await response.json();
+                throw new Error(errorResult.error || 'Failed to update address');
+            }
+            const updatedFields = await response.json();
+            // Update localStorage
+            const newUserData = { ...userData, ...updatedFields };
+            localStorage.setItem('user', JSON.stringify(newUserData));
+            
+            // Sync component state from the updated local storage
+            setShippingAddress(newUserData.shipping_address);
+            
+            setIsEditingAddress(false);
+            alert('Shipping address updated successfully!');
+        } catch (error) {
+            console.error('Error saving address:', error);
+            alert(`Failed to save shipping address: ${error.message}`);
+        }
     };
 
     const handlePasswordFormChange = (e) => {
@@ -93,10 +138,8 @@ function UserProfilePage() {
         setPasswordChange(prev => ({ ...prev, [name]: value }));
     };
 
-    // --- MODIFIED: This function now handles the password change API call ---
     const handleChangePassword = async (e) => {
         e.preventDefault();
-
         if (passwordChange.newPassword !== passwordChange.confirmNewPassword) {
             alert("New passwords do not match.");
             return;
@@ -105,30 +148,23 @@ function UserProfilePage() {
             alert("New password must be at least 8 characters long.");
             return;
         }
-
         const userData = JSON.parse(localStorage.getItem('user'));
         if (!userData || !userData.token) {
             alert('Authentication error. Please log in again.');
             return;
         }
-
         try {
             const response = await fetch('/api/user/update-password', {
                 method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${userData.token}`,
-                },
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userData.token}` },
                 body: JSON.stringify({ newPassword: passwordChange.newPassword }),
             });
-
             const result = await response.json();
             if (!response.ok) {
                 throw new Error(result.error || 'Failed to update password.');
             }
-
             alert('Password updated successfully!');
-            setPasswordChange({ newPassword: '', confirmNewPassword: '' }); // Clear fields on success
+            setPasswordChange({ newPassword: '', confirmNewPassword: '' });
         } catch (error) {
             console.error('Error changing password:', error);
             alert(`Error: ${error.message}`);
@@ -148,6 +184,15 @@ function UserProfilePage() {
                     </div>
                     {isEditingPersonalInfo ? (
                         <form onSubmit={handleSavePersonalInfo} className="profile-form">
+                            {/* MODIFIED: Added First Name and Last Name inputs */}
+                            <div className="form-group">
+                                <label htmlFor="firstName">First Name</label>
+                                <input type="text" id="firstName" name="firstName" value={personalInfo.firstName} onChange={handlePersonalInfoChange} required />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="lastName">Last Name</label>
+                                <input type="text" id="lastName" name="lastName" value={personalInfo.lastName} onChange={handlePersonalInfoChange} required />
+                            </div>
                             <div className="form-group">
                                 <label htmlFor="username">Username</label>
                                 <input type="text" id="username" name="username" value={personalInfo.username} disabled title="Username cannot be changed" className="disabled-input" />
@@ -168,6 +213,8 @@ function UserProfilePage() {
                         </form>
                     ) : (
                         <div className="profile-display">
+                            {/* MODIFIED: Display First Name and Last Name */}
+                            <p><strong>Name:</strong> {personalInfo.firstName} {personalInfo.lastName}</p>
                             <p><strong>Username:</strong> {personalInfo.username}</p>
                             <p><strong>Email:</strong> {personalInfo.email}</p>
                             <p><strong>Phone:</strong> {personalInfo.phoneNumber || 'Not provided'}</p>
@@ -181,18 +228,11 @@ function UserProfilePage() {
                         {!isEditingAddress && <button onClick={() => setIsEditingAddress(true)} className="btn-edit-profile">Edit</button>}
                     </div>
                     {isEditingAddress ? (
+                        // MODIFIED: Form now has a single input for the full address
                         <form onSubmit={handleSaveAddress} className="profile-form">
                             <div className="form-group">
-                                <label htmlFor="addressLine1">Address Line 1</label>
-                                <input type="text" id="addressLine1" name="addressLine1" value={shippingAddress.addressLine1} onChange={handleAddressChange} required placeholder="Block/House No., Street Name" />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="addressLine2">Address Line 2 (Optional)</label>
-                                <input type="text" id="addressLine2" name="addressLine2" value={shippingAddress.addressLine2} onChange={handleAddressChange} placeholder="Unit No., Building Name" />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="postalCode">Postal Code</label>
-                                <input type="text" id="postalCode" name="postalCode" value={shippingAddress.postalCode} onChange={handleAddressChange} required pattern="\d{6}" title="Enter a 6-digit Singapore postal code" />
+                                <label htmlFor="shippingAddress">Full Shipping Address</label>
+                                <input type="text" id="shippingAddress" name="shippingAddress" value={shippingAddress} onChange={(e) => setShippingAddress(e.target.value)} required placeholder="Block/House No., Street, Unit, Postal Code" />
                             </div>
                             <div className="form-actions">
                                 <button type="submit" className="btn-save-profile">Save Address</button>
@@ -200,10 +240,9 @@ function UserProfilePage() {
                             </div>
                         </form>
                     ) : (
+                        // MODIFIED: Displays the single shipping address string
                         <div className="profile-display address-display">
-                            <p>{shippingAddress.addressLine1}</p>
-                            {shippingAddress.addressLine2 && <p>{shippingAddress.addressLine2}</p>}
-                            <p>Singapore {shippingAddress.postalCode}</p>
+                            <p>{shippingAddress}</p>
                         </div>
                     )}
                 </div>
@@ -212,7 +251,6 @@ function UserProfilePage() {
                     <div className="profile-section-header">
                         <h3>Change Password</h3>
                     </div>
-                    {/* --- MODIFIED: Form no longer has "Current Password" --- */}
                     <form onSubmit={handleChangePassword} className="profile-form">
                         <div className="form-group">
                             <label htmlFor="newPassword">New Password</label>

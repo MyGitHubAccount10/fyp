@@ -2587,3 +2587,54 @@ h2 {
     gap: 15px;
   }
 }
+
+
+
+
+
+
+/* src/Website.css */
+
+/* --- ADD THIS BLOCK FOR PASSWORD VISIBILITY TOGGLE --- */
+
+/* Hide the default password reveal icon from browsers (Chrome, Edge, etc.) */
+input[type="password"]::-webkit-reveal,
+input[type="password"]::-webkit-clear-button {
+    display: none !important;
+}
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none !important;
+}
+
+/* Wrapper to position the button inside the input field area */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Style our custom icon button */
+.password-toggle-btn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666; /* Set a default color for the icon */
+}
+
+.password-toggle-btn:focus {
+  outline: none;
+}
+
+/* Ensure input text doesn't flow underneath our custom button */
+.password-input-wrapper input {
+  padding-right: 45px !important; /* Add space on the right for the icon */
+}

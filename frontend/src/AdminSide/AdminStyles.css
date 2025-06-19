@@ -755,3 +755,106 @@ if (typeof document !== 'undefined') {
   document.head.appendChild(style);
 } */
 
+
+
+/* src/AdminSide/AdminStyles.css */
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  /* Make space for the button on the right so text doesn't go under it */
+  padding-right: 45px; 
+}
+
+.password-toggle-btn {
+  /* Position the button absolutely within the relative wrapper */
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  /* Style the button to be invisible */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Optional: remove the blue outline on the button when clicked */
+.password-toggle-btn:focus {
+  outline: none;
+}
+
+
+
+
+
+
+
+
+
+
+/* src/AdminSide/AdminStyles.css */
+
+/* --- ADD THIS BLOCK TO HIDE THE DEFAULT BROWSER PASSWORD ICON --- */
+
+/* For WebKit browsers like Chrome, Safari, Edge */
+input[type="password"]::-webkit-reveal,
+input[type="password"]::-webkit-clear-button {
+    display: none !important;
+}
+
+/* For legacy Microsoft Edge */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none !important;
+}
+
+/* ----------------------------------------------------------------- */
+
+
+/* 
+  Ensure you still have the styles for our custom button from the last step.
+  They should look like this:
+*/
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  /* Make space for the button on the right so text doesn't go under it */
+  padding-right: 45px; 
+}
+
+.password-toggle-btn {
+  /* Position the button absolutely within the relative wrapper */
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  /* Style the button to be invisible */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle-btn:focus {
+  outline: none;
+}

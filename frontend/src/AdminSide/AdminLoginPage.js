@@ -5,7 +5,10 @@ import '../Website.css';
 import AdminHeader from '../AdminHeader';
 import Footer from '../Footer';
 
-// --- FIX: Define the specific Role ID for an Admin user ---
+// --- Icons for password toggle ---
+const EyeIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
+const EyeOffIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>;
+
 const ADMIN_ROLE_ID = '6849291d57e7f26973c9fb3e';
 
 const AdminLoginPage = () => {
@@ -13,16 +16,16 @@ const AdminLoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  
+  // State for password visibility
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
 
-    const userData = {
-      email,
-      password
-    };
+    const userData = { email, password };
 
     try {
       const response = await fetch('/api/user/login', {
@@ -32,27 +35,14 @@ const AdminLoginPage = () => {
       });
 
       const user = await response.json();
+      if (!response.ok) throw new Error(user.error || 'Failed to log in');
 
-      if (!response.ok) {
-        throw new Error(user.error || 'Failed to log in');
-      }
-
-      // --- FIX: Replaced the simulation with the REAL admin role check ---
-      // This checks if the user exists, has a role, and if that role's ID matches the required Admin ID.
       if (user && user.role && user.role._id === ADMIN_ROLE_ID) {
-        // SUCCESS: The user is a confirmed admin.
-        
-        // This part can be re-enabled when you turn on auth fully.
-        // It's good practice to keep it here.
         localStorage.setItem('user', JSON.stringify(user));
-        
-        // Redirect to the admin dashboard
         window.location.href = '/admin-dashboard';
       } else {
-        // FAILURE: The user is a customer or something went wrong.
         throw new Error('Access Denied. You do not have permission to log in here.');
       }
-
     } catch (err) {
       console.error(err);
       setError(err.message);
@@ -64,7 +54,6 @@ const AdminLoginPage = () => {
   return (
     <>
       <AdminHeader showNav={false} />
-
       <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
         <div style={{ flex: 1, maxWidth: '450px' }}>
           <h2 style={{ fontWeight: 'bold', fontSize: '2em', marginBottom: '10px', textAlign: 'center' }}>
@@ -83,14 +72,25 @@ const AdminLoginPage = () => {
               style={{ display: 'block', width: '100%', marginBottom: '15px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
               required
             />
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              style={{ display: 'block', width: '100%', marginBottom: '20px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
-              required
-            />
+            
+            {/* --- MODIFIED: Password Input with Toggle --- */}
+            <div className="password-input-wrapper" style={{ marginBottom: '20px' }}>
+                <input
+                  type={isPasswordVisible ? 'text' : 'password'}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' }}
+                  required
+                />
+                <button
+                    type="button"
+                    className="password-toggle-btn"
+                    onClick={() => setIsPasswordVisible(prev => !prev)}
+                >
+                    {isPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
+                </button>
+            </div>
             
             <button
               type="submit"

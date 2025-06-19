@@ -3,10 +3,13 @@ import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 
+// --- Icons for password toggle ---
+const EyeIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
+const EyeOffIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>;
+
 function UserProfilePage() {
     // --- STATE ---
     const [personalInfo, setPersonalInfo] = useState({
-        // MODIFIED: Added firstName and lastName
         firstName: '',
         lastName: '',
         username: '',
@@ -15,7 +18,6 @@ function UserProfilePage() {
     });
     const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false);
 
-    // MODIFIED: State is now a single string for the full shipping address
     const [shippingAddress, setShippingAddress] = useState('');
     const [isEditingAddress, setIsEditingAddress] = useState(false);
 
@@ -24,12 +26,14 @@ function UserProfilePage() {
         confirmNewPassword: '',
     });
 
+    const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false);
+    const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+
     // --- Effects ---
     useEffect(() => {
         try {
             const user = JSON.parse(localStorage.getItem('user'));
             if (user) {
-                // MODIFIED: Populate all personal info fields from localStorage
                 setPersonalInfo({
                     firstName: user.first_name || '',
                     lastName: user.last_name || '',
@@ -37,7 +41,6 @@ function UserProfilePage() {
                     email: user.email || '',
                     phoneNumber: user.phone_number || '',
                 });
-                // MODIFIED: Populate shipping address from localStorage
                 setShippingAddress(user.shipping_address || 'No address provided.');
             }
         } catch (error) {
@@ -59,7 +62,6 @@ function UserProfilePage() {
             return;
         }
         try {
-            // MODIFIED: Include first_name and last_name in the update
             const updatedData = {
                 first_name: personalInfo.firstName,
                 last_name: personalInfo.lastName,
@@ -76,11 +78,9 @@ function UserProfilePage() {
                 throw new Error(errorResult.error || 'Failed to update user information');
             }
             const updatedFields = await response.json();
-            // Update localStorage with the fresh data from the server
             const newUserData = { ...userData, ...updatedFields };
             localStorage.setItem('user', JSON.stringify(newUserData));
             
-            // Sync component state
             setPersonalInfo({
                 firstName: newUserData.first_name,
                 lastName: newUserData.last_name,
@@ -97,7 +97,6 @@ function UserProfilePage() {
         }
     };
 
-    // MODIFIED: handleSaveAddress is now a fully functional async function
     const handleSaveAddress = async (e) => {
         e.preventDefault();
         const userData = JSON.parse(localStorage.getItem('user'));
@@ -105,7 +104,6 @@ function UserProfilePage() {
             alert('Authentication error. Please log in again.');
             return;
         }
-
         try {
             const response = await fetch('/api/user/update', {
                 method: 'PATCH',
@@ -118,11 +116,9 @@ function UserProfilePage() {
                 throw new Error(errorResult.error || 'Failed to update address');
             }
             const updatedFields = await response.json();
-            // Update localStorage
             const newUserData = { ...userData, ...updatedFields };
             localStorage.setItem('user', JSON.stringify(newUserData));
             
-            // Sync component state from the updated local storage
             setShippingAddress(newUserData.shipping_address);
             
             setIsEditingAddress(false);
@@ -184,7 +180,6 @@ function UserProfilePage() {
                     </div>
                     {isEditingPersonalInfo ? (
                         <form onSubmit={handleSavePersonalInfo} className="profile-form">
-                            {/* MODIFIED: Added First Name and Last Name inputs */}
                             <div className="form-group">
                                 <label htmlFor="firstName">First Name</label>
                                 <input type="text" id="firstName" name="firstName" value={personalInfo.firstName} onChange={handlePersonalInfoChange} required />
@@ -208,12 +203,11 @@ function UserProfilePage() {
                             </div>
                             <div className="form-actions">
                                 <button type="submit" className="btn-save-profile">Save Changes</button>
-                                <button type="button" onClick={() => { setIsEditingPersonalInfo(false); }} className="btn-cancel-profile">Cancel</button>
+                                <button type="button" onClick={() => setIsEditingPersonalInfo(false)} className="btn-cancel-profile">Cancel</button>
                             </div>
                         </form>
                     ) : (
                         <div className="profile-display">
-                            {/* MODIFIED: Display First Name and Last Name */}
                             <p><strong>Name:</strong> {personalInfo.firstName} {personalInfo.lastName}</p>
                             <p><strong>Username:</strong> {personalInfo.username}</p>
                             <p><strong>Email:</strong> {personalInfo.email}</p>
@@ -228,7 +222,6 @@ function UserProfilePage() {
                         {!isEditingAddress && <button onClick={() => setIsEditingAddress(true)} className="btn-edit-profile">Edit</button>}
                     </div>
                     {isEditingAddress ? (
-                        // MODIFIED: Form now has a single input for the full address
                         <form onSubmit={handleSaveAddress} className="profile-form">
                             <div className="form-group">
                                 <label htmlFor="shippingAddress">Full Shipping Address</label>
@@ -236,11 +229,10 @@ function UserProfilePage() {
                             </div>
                             <div className="form-actions">
                                 <button type="submit" className="btn-save-profile">Save Address</button>
-                                <button type="button" onClick={() => { setIsEditingAddress(false); }} className="btn-cancel-profile">Cancel</button>
+                                <button type="button" onClick={() => setIsEditingAddress(false)} className="btn-cancel-profile">Cancel</button>
                             </div>
                         </form>
                     ) : (
-                        // MODIFIED: Displays the single shipping address string
                         <div className="profile-display address-display">
                             <p>{shippingAddress}</p>
                         </div>
@@ -254,12 +246,37 @@ function UserProfilePage() {
                     <form onSubmit={handleChangePassword} className="profile-form">
                         <div className="form-group">
                             <label htmlFor="newPassword">New Password</label>
-                            <input type="password" id="newPassword" name="newPassword" value={passwordChange.newPassword} onChange={handlePasswordFormChange} required minLength="8" />
+                            <div className="password-input-wrapper">
+                                <input
+                                    type={isNewPasswordVisible ? 'text' : 'password'}
+                                    id="newPassword"
+                                    name="newPassword"
+                                    value={passwordChange.newPassword}
+                                    onChange={handlePasswordFormChange}
+                                    required
+                                    minLength="8"
+                                />
+                                <button type="button" className="password-toggle-btn" onClick={() => setIsNewPasswordVisible(p => !p)}>
+                                    {isNewPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
+                                </button>
+                            </div>
                             <small className="form-text text-muted">Must be at least 8 characters long.</small>
                         </div>
                         <div className="form-group">
                             <label htmlFor="confirmNewPassword">Confirm New Password</label>
-                            <input type="password" id="confirmNewPassword" name="confirmNewPassword" value={passwordChange.confirmNewPassword} onChange={handlePasswordFormChange} required />
+                            <div className="password-input-wrapper">
+                                <input
+                                    type={isConfirmPasswordVisible ? 'text' : 'password'}
+                                    id="confirmNewPassword"
+                                    name="confirmNewPassword"
+                                    value={passwordChange.confirmNewPassword}
+                                    onChange={handlePasswordFormChange}
+                                    required
+                                />
+                                <button type="button" className="password-toggle-btn" onClick={() => setIsConfirmPasswordVisible(p => !p)}>
+                                    {isConfirmPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
+                                </button>
+                            </div>
                         </div>
                         <div className="form-actions">
                             <button type="submit" className="btn-save-profile">Update Password</button>

@@ -5,6 +5,8 @@ const {
     getUser,
     createUser,
     deleteUser,
+    banUser,
+    unbanUser,
     updateUser,
     loginUser,
     signupUser,
@@ -23,6 +25,10 @@ router.patch('/update', requireAuth, updateLoggedInUser);
 
 // 2. Add the new route for updating the password
 router.patch('/update-password', requireAuth, updateUserPassword);
+
+// Ban/Unban routes
+router.patch('/:id/ban', banUser);
+router.patch('/:id/unban', unbanUser);
 
 // Generic routes with parameters come last
 router.get('/', getUsers);

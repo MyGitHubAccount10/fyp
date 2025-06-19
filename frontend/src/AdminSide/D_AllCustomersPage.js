@@ -113,33 +113,41 @@ function AllCustomersPage() {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
         }
-    };
-
-    // Action Handlers
+    };    // Action Handlers
     const handleEditUser = (user) => {
         console.log("Editing user:", user);
-        Navigate(`/customer-details`);
-        // Navigate(`/edit-user/${user.id}`);
-
-    };    const handleDeleteUser = (userId) => {
-        console.log("Deleting user with ID:", userId);
-        // In a real app, show a confirmation modal and make an API call
-        if (window.confirm(`Are you sure you want to ban this user ID ${userId}?`)) {
-            // Make API call to delete user
-            fetch(`http://localhost:4000/api/user/${userId}`, {
-                method: 'DELETE'
+        Navigate(`/customer-details/${user._id}`);
+    };    const handleBanUser = (userId, currentStatus) => {
+        const action = currentStatus === 'banned' ? 'unban' : 'ban';
+        const actionText = currentStatus === 'banned' ? 'unban' : 'ban';
+        
+        console.log(`${actionText} user with ID:`, userId);
+        
+        if (window.confirm(`Are you sure you want to ${actionText} this user?`)) {
+            // Make API call to ban/unban user
+            fetch(`http://localhost:4000/api/user/${userId}/${action}`, {
+                method: 'PATCH'
             })
-            .then(response => {
-                if (response.ok) {
-                    setUsers(users.filter(u => u._id !== userId));
-                    setAllUsers(allUsers.filter(u => u._id !== userId));
-                    console.log("User banned successfully.");
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    // Update the user status in the state
+                    const newStatus = currentStatus === 'banned' ? 'active' : 'banned';
+                    
+                    setUsers(users.map(u => 
+                        u._id === userId ? { ...u, status: newStatus } : u
+                    ));
+                    setAllUsers(allUsers.map(u => 
+                        u._id === userId ? { ...u, status: newStatus } : u
+                    ));
+                    
+                    console.log(`User ${actionText}ned successfully.`);
                 } else {
-                    console.error("Failed to ban user");
+                    console.error(`Failed to ${actionText} user`);
                 }
             })
             .catch(error => {
-                console.error("Error banning user:", error);
+                console.error(`Error ${actionText}ning user:`, error);
             });
         }
     };
@@ -288,8 +296,7 @@ const handleFilter = () => {
             </div>                {/* Users Table */}
             <div className="orders-table-container">
                 <table className="orders-table">
-                    <thead>
-                        <tr>
+                    <thead>                        <tr>
                             <th>ID</th>
                             <th>Role</th>
                             <th>First Name</th>
@@ -298,14 +305,14 @@ const handleFilter = () => {
                             <th>Email</th>
                             <th>Phone Number</th>
                             <th>Shipping Address</th>
+                            <th>Status</th>
                             <th>Created At</th>
                             <th className="action-column">Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {currentUsers.length > 0 ? (
-                             currentUsers.map(user => (
-                                <tr key={user._id}>
+                        {currentUsers.length > 0 ? (                             currentUsers.map(user => (
+                                <tr key={user._id} style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>
                                     <td>{user._id}</td>
                                     <td>{user.role_name}</td>
                                     <td>{user.first_name}</td>
@@ -314,18 +321,28 @@ const handleFilter = () => {
                                     <td>{user.email}</td>
                                     <td>{user.phone_number}</td>
                                     <td style={{ maxWidth: '200px', wordBreak: 'break-word' }}>{user.shipping_address}</td>
+                                    <td>
+                                        <span className={`badge ${user.status === 'banned' ? 'badge-red' : 'badge-green'}`}>
+                                            {user.status || 'active'}
+                                        </span>
+                                    </td>
                                     <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                                     <td className="action-column">
                                         <div className="action-icons">
                                             <button onClick={() => handleEditUser(user)} title="Edit User"><PencilIcon /></button>
-                                            <button onClick={() => handleDeleteUser(user._id)} title="Delete User" className="delete-btn"><BanIcon /></button>
+                                            <button 
+                                                onClick={() => handleBanUser(user._id, user.status)} 
+                                                title={user.status === 'banned' ? 'Unban User' : 'Ban User'} 
+                                                className={user.status === 'banned' ? 'unban-btn' : 'delete-btn'}
+                                            >
+                                                <BanIcon />
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
-                            ))
-                        ) : (
+                            ))                        ) : (
                             <tr>
-                                <td colSpan="10" style={{ textAlign: 'center', padding: '20px' }}>No users found.</td>
+                                <td colSpan="11" style={{ textAlign: 'center', padding: '20px' }}>No users found.</td>
                             </tr>
                         )}
                     </tbody>

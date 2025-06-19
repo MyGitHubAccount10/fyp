@@ -71,6 +71,11 @@ const userSchema = new Schema({
       },
       message: 'Phone number must be 8 digits'
     }
+  },
+  status: {
+    type: String,
+    enum: ['active', 'banned'],
+    default: 'active'
   }
 }, { timestamps: true });
 

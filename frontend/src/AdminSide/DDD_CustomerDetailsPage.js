@@ -1,7 +1,7 @@
 // UserDetailPage.js
 
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
@@ -14,26 +14,95 @@ const BackIcon = ({ color = "currentColor" }) => (
 
 function UserDetailPage() {
   const navigate = useNavigate();
+  const { userId } = useParams();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [notes, setNotes] = useState('');
+  const [recentOrders, setRecentOrders] = useState([]);
+
+  // Fetch user data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        
+        // Fetch user details
+        const userResponse = await fetch(`http://localhost:4000/api/user/${userId}`);
+        if (!userResponse.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        const userData = await userResponse.json();
+        
+        // Fetch role information
+        const roleResponse = await fetch(`http://localhost:4000/api/role/${userData.role_id}`);
+        let roleName = 'Unknown';
+        if (roleResponse.ok) {
+          const roleData = await roleResponse.json();
+          roleName = roleData.role_name;
+        }
+          // Fetch user's orders (this might not work if orders API requires auth)
+        // For now, we'll skip orders or implement a separate admin endpoint
+        setRecentOrders([]); // Set empty for now
+        
+        setUser({
+          ...userData,
+          role_name: roleName
+        });
+        setNotes(''); // Initialize notes (you might want to store this in user data)
+        setError('');
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        setError('Failed to load user data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userId) {
+      fetchUserData();
+    }
+  }, [userId]);
 
   const handleBack = () => {
     navigate('/all-customers');
   };
 
-  // Dummy user data (replace with real data)
-  const user = {
-    id: 'U00123',
-    name: 'Jane Doe',
-    email: 'jane@example.com',
-    phone: '+65 9876 5432',
-    createdAt: 'March 2, 2024',
-    status: 'Active',
-    address: '456 Marina Bay Sands, Tower 2, Singapore 018956',
-    recentOrders: [
-      { id: 'ORD123', date: 'June 1, 2025', total: '$89.90', status: 'Delivered' },
-      { id: 'ORD124', date: 'May 18, 2025', total: '$129.50', status: 'Shipped' },
-    ],
-    notes: 'Frequent buyer. Eligible for loyalty rewards.'
+  const handleSaveNote = async (e) => {
+    e.preventDefault();
+    // Here you would typically save the note to your backend
+    alert("Note saved (functionality to be implemented in backend)");
   };
+
+  if (loading) {
+    return (
+      <div className="add-product-page">
+        <AdminHeader />
+        <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+          <div style={{ textAlign: 'center', padding: '50px' }}>Loading user details...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !user) {
+    return (
+      <div className="add-product-page">
+        <AdminHeader />
+        <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+          <div style={{ textAlign: 'center', padding: '50px', color: 'red' }}>
+            {error || 'User not found'}
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <button onClick={handleBack} className="btn-add-new">
+              <BackIcon size={18} color="white" />
+              Back to All Users
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="add-product-page">
@@ -51,42 +120,46 @@ function UserDetailPage() {
           <div className="add-product-form-layout">
 
             {/* Left Column - User Info */}
-            <div className="add-product-main-column">
-
-              {/* Card: User Summary */}
+            <div className="add-product-main-column">              {/* Card: User Summary */}
               <div className="form-section-card">
                 <h3 className="section-card-title">User Summary</h3>
-                <p><strong>User ID:</strong> {user.id}</p>
-                <p><strong>Name:</strong> {user.name}</p>
+                <p><strong>User ID:</strong> {user._id}</p>
+                <p><strong>Name:</strong> {user.first_name} {user.last_name}</p>
+                <p><strong>Username:</strong> {user.username}</p>
                 <p><strong>Email:</strong> {user.email}</p>
-                <p><strong>Phone:</strong> {user.phone}</p>
-                <p><strong>Joined:</strong> {user.createdAt}</p>
-                <p><strong>Status:</strong> <span className="badge badge-green">{user.status}</span></p>
+                <p><strong>Phone:</strong> {user.phone_number}</p>
+                <p><strong>Role:</strong> {user.role_name}</p>
+                <p><strong>Status:</strong> <span className={`badge ${user.status === 'banned' ? 'badge-red' : 'badge-green'}`}>{user.status || 'active'}</span></p>
+                <p><strong>Joined:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
+                <p><strong>Shipping Address:</strong> {user.shipping_address}</p>
               </div>
 
               {/* Card: Recent Orders */}
               <div className="form-section-card">
                 <h3 className="section-card-title">Recent Orders</h3>
-                <ul style={{ paddingLeft: '18px' }}>
-                  {user.recentOrders.map((order, index) => (
-                    <li key={index}>
-                      <strong>{order.id}</strong> – {order.date} – {order.total} – <span className="badge badge-gray">{order.status}</span>
-                    </li>
-                  ))}
-                </ul>
+                {recentOrders.length > 0 ? (
+                  <ul style={{ paddingLeft: '18px' }}>
+                    {recentOrders.map((order, index) => (
+                      <li key={index}>
+                        <strong>{order._id}</strong> – {new Date(order.createdAt).toLocaleDateString()} – ${order.total_amount?.toFixed(2) || 'N/A'} – <span className="badge badge-gray">{order.status || 'Pending'}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No recent orders found.</p>
+                )}
               </div>
 
             </div>
 
             {/* Right Column - Other Info */}
-            <div className="add-product-sidebar-panel">
-
-              {/* Card: Notes */}
+            <div className="add-product-sidebar-panel">              {/* Card: Notes */}
               <div className="form-section-card">
                 <h3 className="section-card-title">Internal Note</h3>
                 <textarea
                   rows="4"
-                  defaultValue={user.notes}
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
                   placeholder="Write a private note for internal use..."
                   style={{
                     width: '100%',
@@ -95,15 +168,11 @@ function UserDetailPage() {
                     border: '1px solid #ccc',
                     resize: 'vertical',
                     boxSizing: 'border-box'
-                  }}
-                />
+                  }}                />
                 <button
                   className="btn-add-new"
                   style={{ marginTop: '8px' }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    alert("Note saved (not really, just a placeholder)");
-                  }}
+                  onClick={handleSaveNote}
                 >
                   Save Note
                 </button>

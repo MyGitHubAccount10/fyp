@@ -59,6 +59,34 @@ const deleteUser = async (req, res) => {
     res.status(200).json(user);
 }
 
+const banUser = async (req, res) => {
+    const {id} = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({error: 'Invalid user ID'});
+    
+    const user = await User.findByIdAndUpdate(
+        {_id: id}, 
+        {status: 'banned'}, 
+        {new: true}
+    );
+    
+    if (!user) return res.status(404).json({error: 'User not found'});
+    res.status(200).json({message: 'User banned successfully', user});
+}
+
+const unbanUser = async (req, res) => {
+    const {id} = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({error: 'Invalid user ID'});
+    
+    const user = await User.findByIdAndUpdate(
+        {_id: id}, 
+        {status: 'active'}, 
+        {new: true}
+    );
+    
+    if (!user) return res.status(404).json({error: 'User not found'});
+    res.status(200).json({message: 'User unbanned successfully', user});
+}
+
 const updateUser = async (req, res) => {
     const {id} = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({error: 'Invalid user ID'});
@@ -145,6 +173,8 @@ module.exports = {
     getUser,
     createUser,
     deleteUser,
+    banUser,
+    unbanUser,
     updateUser,
     signupUser,
     loginUser,

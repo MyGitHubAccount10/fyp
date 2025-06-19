@@ -1,4 +1,3 @@
-
 /* // The CSS is included as a string within the JS file
 const adminStylesCss = `
 --- Admin Global & Body --- */
@@ -489,6 +488,60 @@ const adminStylesCss = `
      background-color: #ced4da;
 }
 
+
+/* Status Badges */
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75em;
+  font-weight: 500;
+  text-transform: capitalize;
+  min-width: 60px;
+  text-align: center;
+}
+
+.badge-green {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.badge-red {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.badge-gray {
+  background-color: #e2e3e5;
+  color: #383d41;
+  border: 1px solid #d6d8db;
+}
+
+/* Unban Button */
+.unban-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unban-btn:hover {
+  background-color: #218838;
+}
+
+.unban-btn svg {
+  width: 16px;
+  height: 16px;
+}
 
 /* Responsive adjustments for Add Product Page (within existing media queries) */
 @media (max-width: 992px) {

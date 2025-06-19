@@ -71,15 +71,14 @@ function App() {
         <Route path="admin-login" element={<AdminLoginPage />} />
 
         {/* ✅ 2. Wrap all other admin routes inside the AdminProtectedRoute component. */}
-        {/* This acts as a gatekeeper, checking for the correct admin role. */}
-        <Route path="admin-dashboard" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
+        {/* This acts as a gatekeeper, checking for the correct admin role. */}        <Route path="admin-dashboard" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
         <Route path="all-products" element={<AdminProtectedRoute><AllProductsPage /></AdminProtectedRoute>} />
         <Route path="add-product" element={<AdminProtectedRoute><AddProductPage /></AdminProtectedRoute>} />
         <Route path="edit-product/:id" element={<AdminProtectedRoute><EditProductPage /></AdminProtectedRoute>} />
         <Route path="all-orders" element={<AdminProtectedRoute><AllOrdersPage /></AdminProtectedRoute>} />
         <Route path="order-details" element={<AdminProtectedRoute><OrderDetailsPage /></AdminProtectedRoute>} />
         <Route path="all-customers" element={<AdminProtectedRoute><AllCustomersPage /></AdminProtectedRoute>} />
-        <Route path="customer-details" element={<AdminProtectedRoute><CustomerDetailsPage /></AdminProtectedRoute>} />
+        <Route path="customer-details/:userId" element={<AdminProtectedRoute><CustomerDetailsPage /></AdminProtectedRoute>} />
         <Route path="add-admin" element={<AdminProtectedRoute><AddAdminPage /></AdminProtectedRoute>} />
         <Route path="admin-settings" element={<AdminProtectedRoute><AdminSettingsPage /></AdminProtectedRoute>} />
         <Route path="admin-profile" element={<AdminProtectedRoute><AdminProfilePage /></AdminProtectedRoute>} />

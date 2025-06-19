@@ -6,6 +6,7 @@ import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 import { SHIPPING_FEE } from './shippingConstants';
+import { GST_RATE } from './taxConstants'; // Import the GST rate
 
 const paymentOptions = [
     { id: 'paypal', name: 'PayPal', logo: '/images/payment-logos/paypal.png' },
@@ -22,7 +23,6 @@ function PlaceOrderPage() {
     const { user } = useAuthContext();
     const { cartItems, dispatch } = useCartContext();
 
-    // MODIFIED: State to hold user and shipping info
     const [shippingDetails, setShippingDetails] = useState({
         firstName: '',
         lastName: '',
@@ -31,15 +31,19 @@ function PlaceOrderPage() {
         shippingAddress: '',
     });
 
+    // ✅ FIX: Re-added the state declaration that was accidentally omitted
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+
+    // MODIFIED: State now includes GST
     const [orderSummary, setOrderSummary] = useState({
         items: [],
         subtotal: 0,
         shippingFee: SHIPPING_FEE,
+        gst: 0,
         total: 0,
     });
-    
-    // --- (getUserIdFromToken function is unchanged) ---
+
+    // ✅ FIX: Re-added the function definition that was accidentally omitted
     const getUserIdFromToken = (token) => {
         try {
             const base64Url = token.split('.')[1];
@@ -52,14 +56,13 @@ function PlaceOrderPage() {
         }
     };
 
-    // MODIFIED: useEffect to populate user details into the form
+    // useEffect to pre-populate user details into the form
     useEffect(() => {
         if (!user || !user.token) {
             navigate('/login', { state: { from: location.pathname } });
             return;
         }
 
-        // Pre-populate the form with data from the logged-in user context/localStorage
         const userData = JSON.parse(localStorage.getItem('user'));
         if (userData) {
             setShippingDetails({
@@ -72,6 +75,7 @@ function PlaceOrderPage() {
         }
     }, [user, navigate, location]);
 
+    // useEffect to calculate order summary, now with GST
     useEffect(() => {
         const passedItems = location.state?.items || cartItems;
         const calculatedSubtotal = passedItems.reduce((sum, item) => {
@@ -79,15 +83,18 @@ function PlaceOrderPage() {
             return sum + item.quantity * itemPrice;
         }, 0);
 
+        const calculatedGst = calculatedSubtotal * GST_RATE;
+        const calculatedTotal = calculatedSubtotal + SHIPPING_FEE + calculatedGst;
+
         setOrderSummary({
             items: passedItems,
             subtotal: calculatedSubtotal,
             shippingFee: SHIPPING_FEE,
-            total: calculatedSubtotal + SHIPPING_FEE,
+            gst: calculatedGst,
+            total: calculatedTotal,
         });
     }, [location.state, cartItems]);
     
-    // MODIFIED: Only shippingAddress is editable now
     const handleShippingChange = (e) => {
         setShippingDetails(prev => ({ ...prev, shippingAddress: e.target.value }));
     };
@@ -116,21 +123,19 @@ function PlaceOrderPage() {
             return;
         }
 
-        // MODIFIED: Validation now only checks for shippingAddress
         if (!shippingDetails.shippingAddress) {
             alert('Please fill in your shipping address.');
             return;
         }
 
         try {
-            // MODIFIED: Order data no longer includes postal_code
             const orderData = {
                 user_id: userId,
                 status_id: '684d00b7df30da21ceb3e551', // 'Pending' status
                 payment_method: selectedPaymentMethod,
                 shipping_address: shippingDetails.shippingAddress,
                 order_date: new Date().toISOString(),
-                total_amount: parseFloat(orderSummary.total)
+                total_amount: parseFloat(orderSummary.total) // This total now includes GST
             };
 
             const orderResponse = await fetch('/api/orders', {
@@ -183,7 +188,6 @@ function PlaceOrderPage() {
                         <div className="checkout-main-content">
                             <section className="form-section">
                                 <h3>Shipping Details (Singapore Only)</h3>
-                                {/* MODIFIED: Form fields updated as per your request */}
                                 <div className="form-group">
                                     <label htmlFor="firstName">First Name</label>
                                     <input type="text" id="firstName" name="firstName" value={shippingDetails.firstName} disabled className="disabled-input" />
@@ -227,13 +231,13 @@ function PlaceOrderPage() {
 
                         <div className="checkout-order-summary">
                             <h3>Order Summary</h3>
-                            {/* ... (Order summary JSX is unchanged) ... */}
                             <div className="summary-items-list">
                                 {orderSummary.items.map(item => {
                                     const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
+                                    const uniqueKey = `${item.id || item.product_id}-${item.size}`;
                                     return (
-                                        <div className="summary-item" key={item.id || item.product_id}>
-                                            <span>{item.name} (x{item.quantity})</span>
+                                        <div className="summary-item" key={uniqueKey}>
+                                            <span>{item.name} (Size: {item.size}, x{item.quantity})</span>
                                             <span>S${(item.quantity * itemPrice).toFixed(2)}</span>
                                         </div>
                                     );
@@ -247,6 +251,10 @@ function PlaceOrderPage() {
                             <div className="summary-line">
                                 <span>Shipping (Singapore)</span>
                                 <span>S${orderSummary.shippingFee.toFixed(2)}</span>
+                            </div>
+                            <div className="summary-line">
+                                <span>GST ({(GST_RATE * 100).toFixed(0)}%)</span>
+                                <span>S${orderSummary.gst.toFixed(2)}</span>
                             </div>
                             <hr className="summary-hr" />
                             <div className="summary-line total-summary-line">

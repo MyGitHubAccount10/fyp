@@ -4,13 +4,15 @@ import { useCartContext } from './hooks/useCartContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
-import { SHIPPING_FEE } from './shippingConstants'; // 1. Import the constant
+import { SHIPPING_FEE } from './shippingConstants';
+import { GST_RATE } from './taxConstants'; // 1. Import the GST rate
 
 function ShoppingCartPage() {
     const navigate = useNavigate();
     const { cartItems, dispatch } = useCartContext();
 
     const [subtotal, setSubtotal] = useState(0);
+    const [gst, setGst] = useState(0); // 2. Add state for GST
     const [savedItems, setSavedItems] = useState([]);
 
     useEffect(() => {
@@ -18,8 +20,13 @@ function ShoppingCartPage() {
             const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
             return acc + item.quantity * itemPrice;
         }, 0);
+        
+        const calculatedGst = calculatedSubtotal * GST_RATE; // 3. Calculate GST based on subtotal
+
         setSubtotal(calculatedSubtotal);
-    }, [cartItems]);
+        setGst(calculatedGst); // 4. Set the GST state
+
+    }, [cartItems]); // This effect re-runs whenever cart items change
 
     // ... (rest of the handlers are unchanged)
     const handleQuantityChange = (itemId, size, change) => {
@@ -76,7 +83,7 @@ function ShoppingCartPage() {
                             const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
                             const imageUrl = `/images/${item.image}`;
                             return (
-                                <div className="cart-item" key={item.id}>
+                                <div className="cart-item" key={`${item.id}-${item.size}`}>
                                     <img src={imageUrl} alt={item.name} />
                                     <div className="item-info">
                                         <strong>{item.name}</strong>
@@ -113,13 +120,15 @@ function ShoppingCartPage() {
                     )}
                 </div>
 
+                {/* --- MODIFIED: Cart Total Section --- */}
                 <div className="cart-total">
                     <h3>Cart Total</h3>
                     <p><span>Subtotal</span> <span>${subtotal.toFixed(2)}</span></p>
-                    {/* 2. Use the constant for display */}
                     <p><span>Shipment</span> <span>${SHIPPING_FEE.toFixed(2)}</span></p>
-                    {/* 3. Use the constant for calculation */}
-                    <p className="total-row"><strong>Total</strong> <strong>${(subtotal + SHIPPING_FEE).toFixed(2)}</strong></p>
+                    {/* 5. Display the calculated GST */}
+                    <p><span>GST ({(GST_RATE * 100).toFixed(0)}%)</span> <span>${gst.toFixed(2)}</span></p>
+                    {/* 6. Update the total to include GST */}
+                    <p className="total-row"><strong>Total</strong> <strong>${(subtotal + SHIPPING_FEE + gst).toFixed(2)}</strong></p>
                     <button className="complete-purchase-btn" onClick={handleCheckout}>Complete Purchase</button>
                 </div>
 
@@ -132,7 +141,7 @@ function ShoppingCartPage() {
                         savedItems.map(item => {
                             const imageUrl = `/images/${item.image}`;
                             return (
-                                <div className="saved-item-card" key={item.id} style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '10px', marginBottom: '10px', backgroundColor: '#f9f9f9', width: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <div className="saved-item-card" key={`${item.id}-${item.size}`} style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '10px', marginBottom: '10px', backgroundColor: '#f9f9f9', width: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                     <img src={imageUrl} alt={item.name} style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '4px' }} />
                                     <div className="item-info" style={{ textAlign: 'center', marginTop: '10px' }}>
                                         <strong style={{ fontSize: '16px', color: '#333' }}>{item.name}</strong>

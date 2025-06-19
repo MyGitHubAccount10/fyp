@@ -20,10 +20,31 @@ const getUser = async (req, res) => {
     res.status(200).json(user);
 }
 
+// --- MODIFIED: This function now accepts all fields from the admin creation form ---
 const createUser = async (req, res) => {
-    const { username, email, password, phone_number, role_id } = req.body;
+    const { 
+        first_name, 
+        last_name, 
+        username, 
+        email, 
+        shipping_address,
+        password, 
+        phone_number, 
+        role_id 
+    } = req.body;
+
+    // Use the comprehensive .signup static method which already handles hashing and validation
     try {
-       const user = await User.create({ username, email, password, phone_number, role_id });
+       const user = await User.signup(
+            email, 
+            password, 
+            username, 
+            phone_number, 
+            role_id, 
+            first_name, 
+            last_name, 
+            shipping_address
+        );
        res.status(201).json(user);
     } catch (error) {
        res.status(400).json({error: error.message});
@@ -46,28 +67,19 @@ const updateUser = async (req, res) => {
     res.status(200).json(user);
 }
 
+// ... (All other controller functions remain unchanged)
+
 const loginUser = async (req, res) => {
   const {email, password} = req.body;
   try {
     const user = await User.login(email, password);
-
-    const userWithRole = await User.findById(user._id).populate({
-      path: 'role_id',
-      select: 'role_name'
-    });
-
+    const userWithRole = await User.findById(user._id).populate({ path: 'role_id', select: 'role_name' });
     const token = createToken(user._id);
-
-    res.status(200).json({
-        _id: userWithRole._id,
-        email: userWithRole.email,
-        username: userWithRole.username,
-        phone_number: userWithRole.phone_number,
-        first_name: userWithRole.first_name,
-        last_name: userWithRole.last_name,
-        shipping_address: userWithRole.shipping_address,
-        role: userWithRole.role_id,
-        token
+    res.status(200).json({ 
+        _id: userWithRole._id, email: userWithRole.email, username: userWithRole.username, 
+        phone_number: userWithRole.phone_number, first_name: userWithRole.first_name, 
+        last_name: userWithRole.last_name, shipping_address: userWithRole.shipping_address, 
+        role: userWithRole.role_id, token 
     });
   } catch (error) {
     res.status(400).json({error: error.message});
@@ -79,56 +91,32 @@ const signupUser = async (req, res) => {
   try {
     const user = await User.signup(email, password, username, phone_number, role_id, first_name, last_name, shipping_address);
     const token = createToken(user._id);
-    res.status(200).json({
-        email: user.email,
-        username: user.username,
-        phone_number: user.phone_number,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        shipping_address: user.shipping_address,
-        token
+    res.status(200).json({ 
+        email: user.email, username: user.username, phone_number: user.phone_number, 
+        first_name: user.first_name, last_name: user.last_name, 
+        shipping_address: user.shipping_address, token 
     });
   } catch (error) {
     res.status(400).json({error: error.message});
   }
 }
 
-// --- THIS IS THE CORRECTLY UPDATED FUNCTION ---
 const updateLoggedInUser = async (req, res) => {
     const userId = req.user._id;
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-        return res.status(404).json({error: 'Invalid user ID'});
-    }
-
+    if (!mongoose.Types.ObjectId.isValid(userId)) { return res.status(404).json({error: 'Invalid user ID'}); }
     const updateFields = {};
     if (req.body.first_name) updateFields.first_name = req.body.first_name;
     if (req.body.last_name) updateFields.last_name = req.body.last_name;
     if (req.body.email) updateFields.email = req.body.email;
     if (req.body.phone_number) updateFields.phone_number = req.body.phone_number;
     if (req.body.shipping_address) updateFields.shipping_address = req.body.shipping_address;
-
-    if (Object.keys(updateFields).length === 0) {
-        return res.status(400).json({ error: 'No valid fields provided for update.' });
-    }
-
+    if (Object.keys(updateFields).length === 0) { return res.status(400).json({ error: 'No valid fields provided for update.' }); }
     try {
-        const updatedUser = await User.findByIdAndUpdate(
-            userId,
-            { $set: updateFields },
-            { new: true, runValidators: true }
-        );
-
-        if (!updatedUser) {
-            return res.status(404).json({error: 'User not found'});
-        }
-
-        res.status(200).json({
-            username: updatedUser.username,
-            email: updatedUser.email,
-            phone_number: updatedUser.phone_number,
-            first_name: updatedUser.first_name,
-            last_name: updatedUser.last_name,
-            shipping_address: updatedUser.shipping_address,
+        const updatedUser = await User.findByIdAndUpdate(userId, { $set: updateFields }, { new: true, runValidators: true });
+        if (!updatedUser) { return res.status(404).json({error: 'User not found'}); }
+        res.status(200).json({ 
+            username: updatedUser.username, email: updatedUser.email, phone_number: updatedUser.phone_number,
+            first_name: updatedUser.first_name, last_name: updatedUser.last_name, shipping_address: updatedUser.shipping_address,
         });
     } catch (error) {
         res.status(500).json({error: 'Failed to update user information: ' + error.message});
@@ -138,21 +126,13 @@ const updateLoggedInUser = async (req, res) => {
 const updateUserPassword = async (req, res) => {
     const userId = req.user._id;
     const { newPassword } = req.body;
-
-    if (!newPassword) {
-        return res.status(400).json({ error: 'New password is required.' });
-    }
-    if (newPassword.length < 8) {
-        return res.status(400).json({ error: 'Password must be at least 8 characters long.' });
-    }
-
+    if (!newPassword) { return res.status(400).json({ error: 'New password is required.' }); }
+    if (newPassword.length < 8) { return res.status(400).json({ error: 'Password must be at least 8 characters long.' }); }
     try {
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(newPassword, salt);
         const updatedUser = await User.findByIdAndUpdate(userId, { password: hash });
-        if (!updatedUser) {
-            return res.status(404).json({ error: 'User not found' });
-        }
+        if (!updatedUser) { return res.status(404).json({ error: 'User not found' }); }
         res.status(200).json({ message: 'Password updated successfully' });
     } catch (error) {
         console.error('Error updating password:', error);
@@ -160,7 +140,6 @@ const updateUserPassword = async (req, res) => {
     }
 };
 
-// --- THIS IS THE CORRECT, COMPLETE EXPORT BLOCK ---
 module.exports = {
     getUsers,
     getUser,

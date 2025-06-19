@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
+// ... (Icons are unchanged) ...
 const BackIcon = ({ color = "currentColor" }) => <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 19L5 12L12 5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 const PencilIcon = ({ size = 18, color = "currentColor" }) => (
     <svg viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
@@ -23,6 +24,7 @@ function AddAdminPage() {
         lastName: '',
         username: '',
         email: '',
+        shippingAddress: '',
         password: '',
         confirmPassword: '',
         phoneNumber: '',
@@ -47,6 +49,16 @@ function AddAdminPage() {
         fetchRoles();
     }, []);
 
+    // --- Validation Function from SignUpPage ---
+    const validatePassword = (pass) => {
+        if (pass.length < 8) return 'Password must be at least 8 characters long.';
+        if (!/[A-Z]/.test(pass)) return 'Password must contain at least one uppercase letter.';
+        if (!/[a-z]/.test(pass)) return 'Password must contain at least one lowercase letter.';
+        if (!/[0-9]/.test(pass)) return 'Password must contain at least one number.';
+        if (!/[!@#$%^&*]/.test(pass)) return 'Password must contain a special character (e.g., !@#$%^&*).';
+        return '';
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -58,20 +70,38 @@ function AddAdminPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.username || !formData.email || !formData.password || !formData.role) {
+        // Name validation
+        const nameRegex = /^[A-Z][a-zA-Z]*$/;
+        if (!nameRegex.test(formData.firstName)) {
+            alert('❌ First Name must start with a capital letter and contain no spaces, numbers, or special characters.');
+            return;
+        }
+        if (!nameRegex.test(formData.lastName)) {
+            alert('❌ Last Name must start with a capital letter and contain no spaces, numbers, or special characters.');
+            return;
+        }
+
+        // General fields check
+        if (!formData.username || !formData.email || !formData.password || !formData.role || !formData.shippingAddress) {
             alert('❌ Please fill in all required fields');
             return;
         }
 
+        // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(formData.email)) {
             alert('❌ Please enter a valid email address');
             return;
         }
-        if (formData.password.length < 6) {
-            alert('❌ Password must be at least 6 characters long');
+
+        // MODIFIED: Replaced simple length check with the robust password validation function
+        const passwordError = validatePassword(formData.password);
+        if (passwordError) {
+            alert(`❌ ${passwordError}`);
             return;
         }
+        
+        // Password confirmation check
         if (formData.password !== formData.confirmPassword) {
             alert('❌ Passwords do not match');
             return;
@@ -88,9 +118,9 @@ function AddAdminPage() {
                     last_name: formData.lastName,
                     username: formData.username,
                     email: formData.email,
+                    shipping_address: formData.shippingAddress,
                     password: formData.password,
                     phone_number: formData.phoneNumber,
-                    // --- THE FIX IS HERE: The key is now 'role_id' to match the backend. ---
                     role_id: formData.role, 
                 }),
             });
@@ -100,9 +130,8 @@ function AddAdminPage() {
                 throw new Error(`Server error (${response.status}): ${errorData.error || response.statusText || 'Unknown error'}`);
             }
 
-            const result = await response.json();
             alert('✅ Admin user created successfully!');
-            navigate('/admin-dashboard');
+            navigate('/all-customers'); // Navigate to user list to see the new admin
         } catch (error) {
             console.error('Creation failed:', error);
             alert(`❌ Failed to create admin user: ${error.message}`);
@@ -144,7 +173,6 @@ function AddAdminPage() {
                                 onChange={handleChange}
                                 placeholder="Enter first name"
                                 required
-                                disabled
                             />
                         </div>
                         <div className="form-group">
@@ -157,7 +185,6 @@ function AddAdminPage() {
                                 onChange={handleChange}
                                 placeholder="Enter last name"
                                 required
-                                disabled
                             />
                         </div>
                         <div className="form-group">
@@ -199,6 +226,18 @@ function AddAdminPage() {
                             />
                         </div>
                         <div className="form-group">
+                            <label>Shipping Address</label>
+                            <input
+                                type="text"
+                                id="shippingAddress"
+                                name="shippingAddress"
+                                value={formData.shippingAddress}
+                                onChange={handleChange}
+                                placeholder="Enter shipping address"
+                                required
+                            />
+                        </div>
+                        <div className="form-group">
                             <label>Password</label>
                             <input
                                 type="password"
@@ -206,7 +245,8 @@ function AddAdminPage() {
                                 name="password"
                                 value={formData.password}
                                 onChange={handleChange}
-                                placeholder="Enter password (min 6 characters)"
+                                // MODIFIED: Updated placeholder
+                                placeholder="Enter password"
                                 required
                             />
                         </div>
@@ -225,30 +265,14 @@ function AddAdminPage() {
                     </div>
                 </div>
                 <div className="add-product-sidebar-panel">
+                    {/* ... (Sidebar is unchanged) ... */}
                     <div className="form-section-card">
                         <h3 className="section-card-title">Admin Role</h3>
                          <div className="form-group">
                             <label htmlFor="adminRole">Assign Role</label>
-                            <select
-                                id="adminRole"
-                                name="role"
-                                value={formData.role}
-                                onChange={handleChange}
-                                required
-                                style={{
-                                    flex: '1 1 150px',
-                                    padding: '10px',
-                                    borderRadius: '6px',
-                                    border: '1px solid #ccc'
-                                }}
-                                disabled
-                            >
+                            <select id="adminRole" name="role" value={formData.role} onChange={handleChange} required style={{ flex: '1 1 150px', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} disabled >
                                 <option value="" disabled>Select Role</option>
-                                {roles.map((role) => (
-                                    <option key={role._id} value={role._id}>
-                                        {role.role_name}
-                                    </option>
-                                ))}
+                                {roles.map((role) => (<option key={role._id} value={role._id}>{role.role_name}</option>))}
                             </select>
                         </div>
                     </div>
@@ -256,19 +280,7 @@ function AddAdminPage() {
                         <h3 className="section-card-title">Account Status</h3>
                         <div className="form-group">
                             <label htmlFor="adminStatus">Status</label>
-                            <select
-                                id="adminStatus"
-                                name="status"
-                                value={formData.status}
-                                onChange={handleChange}
-                                style={{
-                                    flex: '1 1 150px',
-                                    padding: '10px',
-                                    borderRadius: '6px',
-                                    border: '1px solid #ccc'
-                                }}
-                                disabled
-                            >
+                            <select id="adminStatus" name="status" value={formData.status} onChange={handleChange} style={{ flex: '1 1 150px', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} disabled>
                                 <option value="Active">Active</option>
                                 <option value="Inactive">Inactive</option>
                             </select>
@@ -288,11 +300,6 @@ function AddAdminPage() {
                 </div>
             </form>
         </div> 
-
-        <div>
-            ///
-        </div>
-
         </div>
     );
 }

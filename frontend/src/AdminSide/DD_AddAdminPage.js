@@ -7,8 +7,9 @@ import AdminHeader from '../AdminHeader';
 
 const BackIcon = (props) => <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M12 19L5 12 12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 const PencilIcon = (props) => <svg {...props} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17 3c.262-.263.59-.51.958-.656a3.69 3.69 0 013.178.656c.624.625.928 1.47.914 2.32-.014.85-.318 1.695-.914 2.32L10.35 18.36 2 22l3.64-8.35L17 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
-const EyeIcon = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
-const EyeOffIcon = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>;
+// --- CORRECTED ICON DEFINITIONS ---
+const EyeIcon = ({ size = 20, ...props }) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
+const EyeOffIcon = ({ size = 20, ...props }) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>;
 
 const ADMIN_ROLE_ID = '6849291d57e7f26973c9fb3e';
 
@@ -113,8 +114,7 @@ function AddAdminPage() {
     const handleBack = () => navigate('/all-customers');
     const handleCancel = () => handleBack();
 
-    const inputStyle = { width: '100%', padding: '8px 12px', border: '1px solid #ccc', borderRadius: '4px' };
-    const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
+    // ✅ REFACTORED: Removed inline styles for inputs, now using CSS classes.
     const errorMessageStyle = { color: '#e74c3c', fontSize: '0.875em', marginTop: '5px', marginBottom: '0' };
     const formGroupStyle = { marginBottom: '15px' };
 
@@ -144,12 +144,12 @@ function AddAdminPage() {
                     <h3 className="section-card-title">Personal Information</h3>
                     <div className="form-group" style={{...formGroupStyle, marginBottom: errors.fullName ? '5px' : '15px'}}>
                       <label>Full Name</label>
-                      <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} onBlur={handleBlur} placeholder="Enter full name" style={errors.fullName ? errorInputStyle : inputStyle}/>
+                      <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} onBlur={handleBlur} placeholder="Enter full name" className={errors.fullName ? 'input-error' : ''}/>
                       {errors.fullName && <p style={errorMessageStyle}>{errors.fullName}</p>}
                     </div>
                     <div className="form-group" style={{...formGroupStyle, marginBottom: errors.phoneNumber ? '5px' : '15px'}}>
                       <label>Phone Number</label>
-                      <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} onBlur={handleBlur} placeholder="Enter 8-digit phone number" style={errors.phoneNumber ? errorInputStyle : inputStyle}/>
+                      <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} onBlur={handleBlur} placeholder="Enter 8-digit phone number" className={errors.phoneNumber ? 'input-error' : ''}/>
                       {errors.phoneNumber && <p style={errorMessageStyle}>{errors.phoneNumber}</p>}
                     </div>
                   </div>
@@ -157,32 +157,36 @@ function AddAdminPage() {
                     <h3 className="section-card-title">Account Information</h3>
                     <div className="form-group" style={{...formGroupStyle, marginBottom: errors.username ? '5px' : '15px'}}>
                       <label>Username</label>
-                      <input type="text" name="username" value={formData.username} onChange={handleChange} onBlur={handleBlur} placeholder="Enter username" style={errors.username ? errorInputStyle : inputStyle} />
+                      <input type="text" name="username" value={formData.username} onChange={handleChange} onBlur={handleBlur} placeholder="Enter username" className={errors.username ? 'input-error' : ''} />
                       {errors.username && <p style={errorMessageStyle}>{errors.username}</p>}
                     </div>
                     <div className="form-group" style={{...formGroupStyle, marginBottom: errors.email ? '5px' : '15px'}}>
                       <label>Email Address</label>
-                      <input type="email" name="email" value={formData.email} onChange={handleChange} onBlur={handleBlur} placeholder="Enter email address" style={errors.email ? errorInputStyle : inputStyle}/>
+                      <input type="email" name="email" value={formData.email} onChange={handleChange} onBlur={handleBlur} placeholder="Enter email address" className={errors.email ? 'input-error' : ''}/>
                       {errors.email && <p style={errorMessageStyle}>{errors.email}</p>}
                     </div>
                     <div className="form-group" style={{...formGroupStyle, marginBottom: errors.shippingAddress ? '5px' : '15px'}}>
                       <label>Shipping Address</label>
-                      <input type="text" name="shippingAddress" value={formData.shippingAddress} onChange={handleChange} onBlur={handleBlur} placeholder="Enter shipping address" style={errors.shippingAddress ? errorInputStyle : inputStyle}/>
+                      <input type="text" name="shippingAddress" value={formData.shippingAddress} onChange={handleChange} onBlur={handleBlur} placeholder="Enter shipping address" className={errors.shippingAddress ? 'input-error' : ''}/>
                       {errors.shippingAddress && <p style={errorMessageStyle}>{errors.shippingAddress}</p>}
                     </div>
                     <div className="form-group" style={{...formGroupStyle, marginBottom: errors.password ? '5px' : '15px'}}>
                       <label>Password</label>
                       <div className="password-input-wrapper">
-                        <input type={isPasswordVisible ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} onBlur={handleBlur} placeholder="Enter password" style={errors.password ? errorInputStyle : inputStyle}/>
-                        <button type="button" className="password-toggle-btn" onClick={() => setIsPasswordVisible(p => !p)}>{isPasswordVisible ? <EyeOffIcon size={20}/> : <EyeIcon size={20}/>}</button>
+                        <input type={isPasswordVisible ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} onBlur={handleBlur} placeholder="Enter password" className={errors.password ? 'input-error' : ''}/>
+                        <button type="button" className="password-toggle-btn" onClick={() => setIsPasswordVisible(p => !p)}>
+                            {isPasswordVisible ? <EyeOffIcon size={20}/> : <EyeIcon size={20}/>}
+                        </button>
                       </div>
                       {errors.password && <p style={errorMessageStyle}>{errors.password}</p>}
                     </div>
                     <div className="form-group" style={{...formGroupStyle, marginBottom: errors.confirmPassword ? '5px' : '15px'}}>
                       <label>Confirm Password</label>
                       <div className="password-input-wrapper">
-                        <input type={isConfirmPasswordVisible ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} onBlur={handleBlur} placeholder="Confirm password" style={errors.confirmPassword ? errorInputStyle : inputStyle}/>
-                        <button type="button" className="password-toggle-btn" onClick={() => setIsConfirmPasswordVisible(p => !p)}>{isConfirmPasswordVisible ? <EyeOffIcon size={20}/> : <EyeIcon size={20}/>}</button>
+                        <input type={isConfirmPasswordVisible ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} onBlur={handleBlur} placeholder="Confirm password" className={errors.confirmPassword ? 'input-error' : ''}/>
+                        <button type="button" className="password-toggle-btn" onClick={() => setIsConfirmPasswordVisible(p => !p)}>
+                            {isConfirmPasswordVisible ? <EyeOffIcon size={20}/> : <EyeIcon size={20}/>}
+                        </button>
                       </div>
                       {errors.confirmPassword && <p style={errorMessageStyle}>{errors.confirmPassword}</p>}
                     </div>

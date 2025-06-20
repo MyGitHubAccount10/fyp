@@ -5,17 +5,52 @@ import Header from './Header';
 import Footer from './Footer';
 import { useProductsContext } from './hooks/useProductsContext';
 
+// MODIFIED: ProductCard now indicates stock status
 const ProductCard = ({ product }) => {
-  return (
-    <Link to={`/product/${product._id}`} style={{ textDecoration: 'none' }}>
-      <div className="product-card">
-        <img src={`/images/${product.product_image}`} alt={product.product_name} className="product-image" />
-        <div className="product-info">
-          <h3 className="product-name">{product.product_name}</h3>
-        </div>
+  const isAvailable = product.warehouse_quantity > 0;
+
+  // The visual content of the card
+  const cardInnerContent = (
+    <div className="product-card" style={{ position: 'relative', opacity: isAvailable ? 1 : 0.6 }}>
+      <img src={`/images/${product.product_image}`} alt={product.product_name} className="product-image" />
+      <div className="product-info">
+        <h3 className="product-name">{product.product_name}</h3>
       </div>
-    </Link>
+      {!isAvailable && (
+        <div style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          backgroundColor: 'rgba(0, 0, 0, 0.6)',
+          color: 'white',
+          padding: '8px 16px',
+          borderRadius: '5px',
+          fontWeight: 'bold',
+          textAlign: 'center',
+          pointerEvents: 'none' // Ensures the text itself isn't interactive
+        }}>
+          Out of Stock
+        </div>
+      )}
+    </div>
   );
+
+  // Conditionally wrap with a Link to make it non-clickable when unavailable
+  if (isAvailable) {
+    return (
+      <Link to={`/product/${product._id}`} style={{ textDecoration: 'none' }}>
+        {cardInnerContent}
+      </Link>
+    );
+  } else {
+    // Render as a simple, non-interactive div
+    return (
+      <div>
+        {cardInnerContent}
+      </div>
+    );
+  }
 };
 
 const CategoryPage = ({ categoryName }) => {

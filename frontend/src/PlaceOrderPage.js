@@ -148,6 +148,11 @@ function PlaceOrderPage() {
             if (!orderResponse.ok) throw new Error(orderResult.error || 'Failed to create order');
 
             const orderId = orderResult._id;
+            
+            // 🧠 NOTE: This loop creates order items one by one. If an item in the middle of the cart fails (e.g., out of stock),
+            // the previous items are already committed to the database. A more robust solution would use a backend transaction
+            // to process the entire cart in one atomic operation. This implementation adds error checking to stop the process
+            // as soon as a failure is detected.
             for (const item of cartItems) {
                 const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
                 const productId = item.id || item.product_id || item._id;
@@ -161,11 +166,19 @@ function PlaceOrderPage() {
                     order_size: item.size || 'N/A'
                 };
                 
-                await fetch('/api/order-products', {
+                // MODIFIED: Capture and check the response of the fetch call
+                const orderProductResponse = await fetch('/api/order-products', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`},
                     body: JSON.stringify(orderProductData)
                 });
+
+                // ✅ 1. Check if the response was successful
+                if (!orderProductResponse.ok) {
+                    const errorResult = await orderProductResponse.json();
+                    // ✅ 2. Throw an error with the specific message from the backend
+                    throw new Error(errorResult.error || 'Failed to add an item to the order.');
+                }
             }
 
             dispatch({ type: 'CLEAR_CART' });

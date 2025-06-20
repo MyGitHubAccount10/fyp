@@ -53,8 +53,7 @@ function OrderDetailPage() {
   return (
     <div className="add-product-page">
             <AdminHeader />
-        <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
-
+        <div className="manage-products-page">
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h2>Order Details</h2> {/* Title from the image */}

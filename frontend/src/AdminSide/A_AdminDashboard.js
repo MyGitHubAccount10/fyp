@@ -116,7 +116,7 @@ function AdminDashboard() {
     return (
         <div className="admin-dashboard-page"> {/* Page-specific class */}
         <AdminHeader />
-            <div style={{ padding: "20px" }}> {/* Container for padding */}
+            <div className="manage-products-page"> {/* Container for padding */}
                 <h2 className="page-title">Admin Dashboard</h2> {/* Reuse page-title class */}
 
                 <div className="dashboard-stats">

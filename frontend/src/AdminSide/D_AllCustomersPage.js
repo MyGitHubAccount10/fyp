@@ -210,7 +210,7 @@ const handleFilter = () => {
     return (
         <>
             <AdminHeader />
-            <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+            <div className="manage-products-page">
                 {loading && <div style={{ textAlign: 'center', padding: '20px' }}>Loading users...</div>}
                 {error && <div style={{ textAlign: 'center', padding: '20px', color: 'red' }}>{error}</div>}
                 

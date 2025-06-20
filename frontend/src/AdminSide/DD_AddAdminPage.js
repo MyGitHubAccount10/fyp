@@ -212,7 +212,7 @@ function AddAdminPage() {
   return (
     <div className="add-product-page">
       <AdminHeader />
-      <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+      <div className="manage-products-page">
         {/* Show loading state while checking permissions */}
         {currentUserRole === null ? (
           <div style={{ textAlign: 'center', padding: '50px' }}>

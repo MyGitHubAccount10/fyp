@@ -78,7 +78,7 @@ function UserDetailPage() {
     return (
       <div className="add-product-page">
         <AdminHeader />
-        <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+        <div className="manage-products-page">
           <div style={{ textAlign: 'center', padding: '50px' }}>Loading user details...</div>
         </div>
       </div>
@@ -89,7 +89,7 @@ function UserDetailPage() {
     return (
       <div className="add-product-page">
         <AdminHeader />
-        <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+        <div className="manage-products-page">
           <div style={{ textAlign: 'center', padding: '50px', color: 'red' }}>
             {error || 'User not found'}
           </div>
@@ -107,7 +107,7 @@ function UserDetailPage() {
   return (
     <div className="add-product-page">
       <AdminHeader />
-      <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+      <div className="manage-products-page">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2>User Details</h2>
           <button onClick={handleBack} className="btn-add-new">

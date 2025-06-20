@@ -149,7 +149,7 @@ function AddProductPage() {
     return (
         <div className="add-product-page"> {/* Page-specific class */}
             <AdminHeader />
-        <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+        <div className="manage-products-page">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h2>Create a New Product</h2> {/* Title from the image */}
                 <button onClick={handleBack} className="btn-add-new">
@@ -348,13 +348,7 @@ function AddProductPage() {
                 </div>
 
             </form> {/* End Form */}
-
         </div> 
-
-        <div>
-            ///
-        </div>
-
         </div>
     );
 }

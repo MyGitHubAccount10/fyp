@@ -190,7 +190,7 @@ function AllProductsPage() {
 
     return (<>
         <AdminHeader />
-        <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
+        <div className="manage-products-page">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h2>All Products</h2>
                 <button onClick={handleAddProduct} className="btn-add-new">

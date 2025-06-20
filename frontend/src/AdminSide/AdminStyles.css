@@ -13,6 +13,11 @@ const adminStylesCss = `
 
 
 /* --- Page Specific: Manage Products --- */
+.manage-products-page {
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-bottom: 20px;
+}
 .manage-products-page .page-header-section {
     display: flex;
     justify-content: space-between;

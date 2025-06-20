@@ -110,8 +110,7 @@ function AllOrdersPage() {
 
     return (<>
               <AdminHeader />
-        <div style={{ paddingLeft: "100px",paddingRight:"100px" }}> {/* Page-specific class */}
-            {/* Page Title will come from AdminLayout */}
+        <div className='manage-products-page'>
             <h2 >All Orders</h2>
 
             {/* Filter Bar */}

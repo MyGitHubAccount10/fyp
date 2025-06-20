@@ -5,15 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
-// --- ICONS ---
-const BackIcon = ({ color = "currentColor" }) => <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M12 19L5 12L12 5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
-const PencilIcon = ({ size = 18, color = "currentColor" }) => (
-    <svg viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
-        <path d="M17 3C17.2626 2.7374 17.5893 2.52942 17.9573 2.38285C18.3253 2.23629 18.7259 2.15325 19.1365 2.13815C19.5471 2.12304 19.9576 2.17623 20.3485 2.29581C20.7394 2.41539 21.1013 2.59878 21.4142 2.91168C21.7271 3.22458 21.9795 3.5865 22.0991 3.97744C22.2187 4.36838 22.2719 4.77888 22.2568 5.18947C22.2418 5.60006 22.1587 6.00066 22.0121 6.36867C21.8656 6.73668 21.6576 7.0634 21.395 7.326L10.35 18.36L2 22L5.64 13.65L17 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-);
-const EyeIcon = ({ size = 20, color = "#666" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
-const EyeOffIcon = ({ size = 20, color = "#666" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>;
+const BackIcon = (props) => <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M12 19L5 12 12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+const PencilIcon = (props) => <svg {...props} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17 3c.262-.263.59-.51.958-.656a3.69 3.69 0 013.178.656c.624.625.928 1.47.914 2.32-.014.85-.318 1.695-.914 2.32L10.35 18.36 2 22l3.64-8.35L17 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+const EyeIcon = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
+const EyeOffIcon = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>;
 
 const ADMIN_ROLE_ID = '6849291d57e7f26973c9fb3e';
 
@@ -21,361 +16,204 @@ function AddAdminPage() {
     const navigate = useNavigate();
     const [roles, setRoles] = useState([]);
     const [currentUserRole, setCurrentUserRole] = useState(null);
-
-    // ✅ FIX: The formData state declaration is now included.
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        username: '',
-        email: '',
-        shippingAddress: '',
-        password: '',
-        confirmPassword: '',
-        phoneNumber: '',
-        role: ADMIN_ROLE_ID,
-        status: 'Active',
-    });
-
-    // State for password visibility toggle
+    const [formData, setFormData] = useState({ fullName: '', username: '', email: '', shippingAddress: '', password: '', confirmPassword: '', phoneNumber: '', role: ADMIN_ROLE_ID });
+    const [errors, setErrors] = useState({});
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
-    // Get current user role from localStorage
     useEffect(() => {
         try {
             const adminUser = JSON.parse(localStorage.getItem('admin_user'));
-            if (adminUser && adminUser.role) {
-                setCurrentUserRole(adminUser.role.role_name);
-            }
-        } catch (error) {
-            console.error('Error loading admin user role:', error);
-        }
+            if (adminUser && adminUser.role) setCurrentUserRole(adminUser.role.role_name);
+        } catch (error) { console.error('Error loading admin user role:', error); }
     }, []);
 
-    // Check if current user is Super Admin
-    const isSuperAdmin = currentUserRole === 'Super Admin' || currentUserRole === 'Super-Admin';    useEffect(() => {
+    const isSuperAdmin = currentUserRole === 'Super Admin' || currentUserRole === 'Super-Admin';
+
+    useEffect(() => {
         const fetchRoles = async () => {
             try {
                 const response = await fetch('/api/role');
                 if (response.ok) {
                     const rolesData = await response.json();
-                    
-                    // Filter roles based on current user permissions
-                    let availableRoles = rolesData;
-                    if (!isSuperAdmin) {
-                        // Regular admins can only create customers
-                        availableRoles = rolesData.filter(role => 
-                            role.role_name === 'Customer' || role.role_name === 'customer'
-                        );
-                    }
-                    // Super admins can create any role
-                    
+                    let availableRoles = isSuperAdmin ? rolesData : rolesData.filter(role => role.role_name === 'Customer');
                     setRoles(availableRoles);
-                    
-                    // Set default role based on permissions
                     if (availableRoles.length > 0) {
-                        if (!isSuperAdmin) {
-                            // Default to Customer for regular admins
-                            const customerRole = availableRoles.find(role => 
-                                role.role_name === 'Customer' || role.role_name === 'customer'
-                            );
-                            if (customerRole) {
-                                setFormData(prev => ({ ...prev, role: customerRole._id }));
-                            }
-                        } else {
-                            // Default to Admin for super admins
-                            const adminRole = availableRoles.find(role => role._id === ADMIN_ROLE_ID);
-                            if (adminRole) {
-                                setFormData(prev => ({ ...prev, role: ADMIN_ROLE_ID }));
-                            }
-                        }
+                        const defaultRole = !isSuperAdmin ? availableRoles.find(role => role.role_name === 'Customer') : availableRoles.find(role => role._id === ADMIN_ROLE_ID);
+                        if (defaultRole) setFormData(prev => ({ ...prev, role: defaultRole._id }));
                     }
-                } else {
-                    console.error('Failed to fetch roles:', response.status, response.statusText);
                 }
-            } catch (error) {
-                console.error('Failed to fetch roles:', error);
-            }
+            } catch (error) { console.error('Failed to fetch roles:', error); }
         };
-        
-        if (currentUserRole !== null) {
-            fetchRoles();
-        }
+        if (currentUserRole !== null) fetchRoles();
     }, [currentUserRole, isSuperAdmin]);
-
-    const validatePassword = (pass) => {
-        if (pass.length < 8) return 'Password must be at least 8 characters long.';
-        if (!/[A-Z]/.test(pass)) return 'Password must contain at least one uppercase letter.';
-        if (!/[a-z]/.test(pass)) return 'Password must contain at least one lowercase letter.';
-        if (!/[0-9]/.test(pass)) return 'Password must contain at least one number.';
-        if (!/[!@#$%^&*]/.test(pass)) return 'Password must contain a special character (e.g., !@#$%^&*).';
-        return '';
+    
+    const validateField = (name, value) => {
+      let error = '';
+      switch (name) {
+        case 'fullName': if (!value) error = 'Full Name is required.'; else if (!/^[a-zA-Z\s]*$/.test(value)) error = 'Full Name must only contain letters and spaces.'; break;
+        case 'username': if (!value) error = 'Username is required.'; else if (!/^[a-zA-Z0-9]+$/.test(value)) error = 'Username must contain only letters and numbers.'; break;
+        case 'email': if (!value) error = 'Email is required.'; else if (!/^\S+@\S+\.\S+$/.test(value)) error = 'Please enter a valid email format.'; break;
+        case 'phoneNumber': if (!value) error = 'Phone number is required.'; else if (!/^\d{8}$/.test(value)) error = 'Phone number must be exactly 8 digits.'; break;
+        case 'shippingAddress': if (!value) error = 'Shipping address is required.'; break;
+        case 'password':
+          if (value.length < 8) error = 'Password must be at least 8 characters long.';
+          else if (!/[A-Z]/.test(value)) error = 'Must contain one uppercase letter.';
+          else if (!/[a-z]/.test(value)) error = 'Must contain one lowercase letter.';
+          else if (!/[0-9]/.test(value)) error = 'Must contain one number.';
+          else if (!/[!@#$%^&*]/.test(value)) error = 'Must contain a special character.';
+          break;
+        case 'confirmPassword': if (!value) error = 'Please confirm the password.'; else if (formData.password !== value) error = 'Passwords do not match.'; break;
+        default: break;
+      }
+      setErrors(prev => ({ ...prev, [name]: error }));
+      return error;
     };
-
-    // ✅ FIX: The handleChange function definition is now included.
+    
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value,
-        }));
-    };    const handleSubmit = async (e) => {
+        setFormData(prev => ({ ...prev, [name]: value }));
+        if (errors[name]) validateField(name, value);
+    };
+
+    const handleBlur = (e) => {
+      const { name, value } = e.target;
+      validateField(name, value);
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Check if user has permission to create the selected role
-        const selectedRole = roles.find(role => role._id === formData.role);
-        if (!selectedRole) {
-            alert('❌ Please select a valid role');
+        let validationErrors = {};
+        Object.keys(formData).forEach(key => {
+            const error = validateField(key, formData[key]);
+            if(error) validationErrors[key] = error;
+        });
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            alert('❌ Please fix the errors before submitting.');
             return;
         }
-
-        // Permission validation
-        if (!isSuperAdmin && (selectedRole.role_name === 'Admin' || selectedRole.role_name === 'Super Admin' || selectedRole.role_name === 'Super-Admin')) {
-            alert('❌ Only Super Admins can create Admin or Super Admin users. Regular Admins can only create Customer accounts.');
-            return;
-        }
-
-        // Name validation
-        const nameRegex = /^[A-Z][a-zA-Z]*$/;
-        if (!nameRegex.test(formData.firstName)) {
-            alert('❌ First Name must start with a capital letter and contain no spaces, numbers, or special characters.');
-            return;
-        }
-        if (!nameRegex.test(formData.lastName)) {
-            alert('❌ Last Name must start with a capital letter and contain no spaces, numbers, or special characters.');
-            return;
-        }
-
-        // General fields check
-        if (!formData.username || !formData.email || !formData.password || !formData.role || !formData.shippingAddress) {
-            alert('❌ Please fill in all required fields');
-            return;
-        }
-
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.email)) {
-            alert('❌ Please enter a valid email address');
-            return;
-        }
-
-        const passwordError = validatePassword(formData.password);
-        if (passwordError) {
-            alert(`❌ ${passwordError}`);
-            return;
-        }
-        
-        if (formData.password !== formData.confirmPassword) {
-            alert('❌ Passwords do not match');
-            return;
-        }
-
         try {
             const response = await fetch('/api/user', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    first_name: formData.firstName,
-                    last_name: formData.lastName,
-                    username: formData.username,
-                    email: formData.email,
-                    shipping_address: formData.shippingAddress,
-                    password: formData.password,
-                    phone_number: formData.phoneNumber,
-                    role_id: formData.role, 
-                }),
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ full_name: formData.fullName, username: formData.username, email: formData.email, shipping_address: formData.shippingAddress, password: formData.password, phone_number: formData.phoneNumber, role_id: formData.role }),
             });
-
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(`Server error (${response.status}): ${errorData.error || response.statusText || 'Unknown error'}`);            }
-
-            const selectedRole = roles.find(role => role._id === formData.role);
-            const userType = selectedRole ? selectedRole.role_name : 'User';
-            alert(`✅ ${userType} account created successfully!`);
+                throw new Error(`Server error (${response.status}): ${errorData.error || 'Unknown error'}`);
+            }
+            const createdUser = roles.find(r => r._id === formData.role)?.role_name || 'User';
+            alert(`✅ ${createdUser} account created successfully!`);
             navigate('/all-customers');
         } catch (error) {
-            console.error('Creation failed:', error);
             alert(`❌ Failed to create user account: ${error.message}`);
         }
     };
+    
+    const handleBack = () => navigate('/all-customers');
+    const handleCancel = () => handleBack();
 
-    const handleBack = () => {
-        navigate('/all-customers');
-    };
+    const inputStyle = { width: '100%', padding: '8px 12px', border: '1px solid #ccc', borderRadius: '4px' };
+    const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
+    const errorMessageStyle = { color: '#e74c3c', fontSize: '0.875em', marginTop: '5px', marginBottom: '0' };
+    const formGroupStyle = { marginBottom: '15px' };
 
-    const handleCancel = () => {
-        handleBack();
-    };
   return (
     <div className="add-product-page">
       <AdminHeader />
       <div className="manage-products-page">
-        {/* Show loading state while checking permissions */}
-        {currentUserRole === null ? (
+        {currentUserRole === null ? ( <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div> ) :
+         !isSuperAdmin && !roles.some(r => r.role_name === 'Customer') ? (
           <div style={{ textAlign: 'center', padding: '50px' }}>
-            Loading...
-          </div>
-        ) : !isSuperAdmin && roles.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '50px' }}>
-            <h2>Access Restricted</h2>
-            <p style={{ color: '#666', margin: '20px 0' }}>
-              You don't have permission to create new users.
-            </p>
-            <button onClick={handleBack} className="btn-add-new">
-              <BackIcon size={18} color="white" />
-              Back to All Users
-            </button>
+            <h2>Access Restricted</h2> <p>You don't have permission to create new users.</p>
+            <button onClick={handleBack} className="btn-add-new"><BackIcon size={18} /> Back to All Users</button>
           </div>
         ) : (
           <>
             <div className="title-row">
               <div>
                 <h2>{isSuperAdmin ? 'Add New User' : 'Add New Customer'}</h2>
-                {currentUserRole && (
-                  <p style={{ color: '#666', fontSize: '14px', margin: '5px 0' }}>
-                    Logged in as: <strong>{currentUserRole}</strong>
-                    {!isSuperAdmin && (
-                      <span style={{ color: '#f1673a', fontStyle: 'italic' }}>
-                        {' '}(Can only create Customer accounts)
-                      </span>
-                    )}
-                    {isSuperAdmin && (
-                      <span style={{ color: '#28a745', fontStyle: 'italic' }}>
-                        {' '}(Can create all user types)
-                      </span>
-                    )}
-                  </p>
-                )}
+                <p style={{ color: '#666', fontSize: '14px', margin: '5px 0' }}>Logged in as: <strong>{currentUserRole}</strong></p>
               </div>
-              <button onClick={handleBack} className="btn-add-new">
-                <BackIcon size={18} color="white" />
-                Back to All Users
-              </button>
+              <button onClick={handleBack} className="btn-add-new"><BackIcon size={18} /> Back to All Users</button>
             </div>
-
-            <form onSubmit={handleSubmit} >
-                <div className="add-product-form-layout">
+            <form onSubmit={handleSubmit} noValidate>
+              <div className="add-product-form-layout">
                 <div className="add-product-main-column">
-                    <div className="form-section-card">
-                        <h3 className="section-card-title">Personal Information</h3>
-                        <div className="form-group">
-                            <label>First Name</label>
-                            <input type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="Enter first name" required />
-                        </div>
-                        <div className="form-group">
-                            <label>Last Name</label>
-                            <input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Enter last name" required />
-                        </div>
-                        <div className="form-group">
-                            <label>Phone Number</label>
-                            <input type="tel" id="phoneNumber" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder="Enter phone number" />
-                        </div>
+                  <div className="form-section-card">
+                    <h3 className="section-card-title">Personal Information</h3>
+                    <div className="form-group" style={{...formGroupStyle, marginBottom: errors.fullName ? '5px' : '15px'}}>
+                      <label>Full Name</label>
+                      <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} onBlur={handleBlur} placeholder="Enter full name" style={errors.fullName ? errorInputStyle : inputStyle}/>
+                      {errors.fullName && <p style={errorMessageStyle}>{errors.fullName}</p>}
                     </div>
-                    <div className="form-section-card">
-                        <h3 className="section-card-title">Account Information</h3>
-                        <div className="form-group">
-                            <label>Username</label>
-                            <input type="text" id="username" name="username" value={formData.username} onChange={handleChange} placeholder="Enter username" required />
-                        </div>
-                        <div className="form-group">
-                            <label>Email Address</label>
-                            <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter email address" required />
-                        </div>
-                        <div className="form-group">
-                            <label>Shipping Address</label>
-                            <input type="text" id="shippingAddress" name="shippingAddress" value={formData.shippingAddress} onChange={handleChange} placeholder="Enter shipping address" required />
-                        </div>
-                        
-                        <div className="form-group">
-                            <label>Password</label>
-                            <div className="password-input-wrapper">
-                                <input
-                                    type={isPasswordVisible ? 'text' : 'password'}
-                                    id="password"
-                                    name="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    placeholder="Enter password"
-                                    required
-                                />
-                                <button
-                                    type="button"
-                                    className="password-toggle-btn"
-                                    onClick={() => setIsPasswordVisible(prev => !prev)}
-                                >
-                                    {isPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="form-group">
-                            <label>Confirm Password</label>
-                            <div className="password-input-wrapper">
-                                <input
-                                    type={isConfirmPasswordVisible ? 'text' : 'password'}
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    value={formData.confirmPassword}
-                                    onChange={handleChange}
-                                    placeholder="Confirm password"
-                                    required
-                                />
-                                 <button
-                                    type="button"
-                                    className="password-toggle-btn"
-                                    onClick={() => setIsConfirmPasswordVisible(prev => !prev)}
-                                >
-                                    {isConfirmPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
-                                </button>
-                            </div>
-                        </div>
+                    <div className="form-group" style={{...formGroupStyle, marginBottom: errors.phoneNumber ? '5px' : '15px'}}>
+                      <label>Phone Number</label>
+                      <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} onBlur={handleBlur} placeholder="Enter 8-digit phone number" style={errors.phoneNumber ? errorInputStyle : inputStyle}/>
+                      {errors.phoneNumber && <p style={errorMessageStyle}>{errors.phoneNumber}</p>}
                     </div>
-                </div>                <div className="add-product-sidebar-panel">
-                    <div className="form-section-card">
-                        <h3 className="section-card-title">{isSuperAdmin ? 'User Role' : 'Customer Account'}</h3>
-                         <div className="form-group">
-                            <label htmlFor="adminRole">Assign Role</label>
-                            <select 
-                                id="adminRole" 
-                                name="role" 
-                                value={formData.role} 
-                                onChange={handleChange} 
-                                required 
-                                style={{ flex: '1 1 150px', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} 
-                                disabled={!isSuperAdmin && roles.length === 1}
-                            >
-                                <option value="" disabled>Select Role</option>
-                                {roles.map((role) => (
-                                    <option key={role._id} value={role._id}>{role.role_name}</option>
-                                ))}
-                            </select>
-                            {!isSuperAdmin && (
-                                <p style={{ fontSize: '12px', color: '#666', margin: '5px 0 0 0', fontStyle: 'italic' }}>
-                                    Regular Admins can only create Customer accounts
-                                </p>
-                            )}
-                        </div>
-                    </div>                
-                    <div className="form-section-card">
-                        <h3 className="section-card-title">{isSuperAdmin ? 'Create User Account' : 'Create Customer Account'}</h3>
-                        <div className="form-actions-vertical">
-                            <button type="submit" className="btn-save-product">
-                                 <PencilIcon size={18} color="white" />
-                                 {isSuperAdmin ? 'Create User' : 'Create Customer'}
-                            </button>
-                            <button type="button" onClick={handleCancel} className="btn-cancel-product">Cancel</button>
-                        </div>
-                    </div>                </div>
+                  </div>
+                  <div className="form-section-card">
+                    <h3 className="section-card-title">Account Information</h3>
+                    <div className="form-group" style={{...formGroupStyle, marginBottom: errors.username ? '5px' : '15px'}}>
+                      <label>Username</label>
+                      <input type="text" name="username" value={formData.username} onChange={handleChange} onBlur={handleBlur} placeholder="Enter username" style={errors.username ? errorInputStyle : inputStyle} />
+                      {errors.username && <p style={errorMessageStyle}>{errors.username}</p>}
+                    </div>
+                    <div className="form-group" style={{...formGroupStyle, marginBottom: errors.email ? '5px' : '15px'}}>
+                      <label>Email Address</label>
+                      <input type="email" name="email" value={formData.email} onChange={handleChange} onBlur={handleBlur} placeholder="Enter email address" style={errors.email ? errorInputStyle : inputStyle}/>
+                      {errors.email && <p style={errorMessageStyle}>{errors.email}</p>}
+                    </div>
+                    <div className="form-group" style={{...formGroupStyle, marginBottom: errors.shippingAddress ? '5px' : '15px'}}>
+                      <label>Shipping Address</label>
+                      <input type="text" name="shippingAddress" value={formData.shippingAddress} onChange={handleChange} onBlur={handleBlur} placeholder="Enter shipping address" style={errors.shippingAddress ? errorInputStyle : inputStyle}/>
+                      {errors.shippingAddress && <p style={errorMessageStyle}>{errors.shippingAddress}</p>}
+                    </div>
+                    <div className="form-group" style={{...formGroupStyle, marginBottom: errors.password ? '5px' : '15px'}}>
+                      <label>Password</label>
+                      <div className="password-input-wrapper">
+                        <input type={isPasswordVisible ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} onBlur={handleBlur} placeholder="Enter password" style={errors.password ? errorInputStyle : inputStyle}/>
+                        <button type="button" className="password-toggle-btn" onClick={() => setIsPasswordVisible(p => !p)}>{isPasswordVisible ? <EyeOffIcon size={20}/> : <EyeIcon size={20}/>}</button>
+                      </div>
+                      {errors.password && <p style={errorMessageStyle}>{errors.password}</p>}
+                    </div>
+                    <div className="form-group" style={{...formGroupStyle, marginBottom: errors.confirmPassword ? '5px' : '15px'}}>
+                      <label>Confirm Password</label>
+                      <div className="password-input-wrapper">
+                        <input type={isConfirmPasswordVisible ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} onBlur={handleBlur} placeholder="Confirm password" style={errors.confirmPassword ? errorInputStyle : inputStyle}/>
+                        <button type="button" className="password-toggle-btn" onClick={() => setIsConfirmPasswordVisible(p => !p)}>{isConfirmPasswordVisible ? <EyeOffIcon size={20}/> : <EyeIcon size={20}/>}</button>
+                      </div>
+                      {errors.confirmPassword && <p style={errorMessageStyle}>{errors.confirmPassword}</p>}
+                    </div>
+                  </div>
                 </div>
+                <div className="add-product-sidebar-panel">
+                  <div className="form-section-card">
+                    <h3 className="section-card-title">User Role</h3>
+                    <div className="form-group">
+                      <label htmlFor="role">Assign Role</label>
+                      <select id="role" name="role" value={formData.role} onChange={handleChange} disabled={!isSuperAdmin}>
+                        {roles.map((role) => (<option key={role._id} value={role._id}>{role.role_name}</option>))}
+                      </select>
+                      {!isSuperAdmin && (<p style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>Only Super Admins can change roles.</p>)}
+                    </div>
+                  </div>
+                  <div className="form-section-card">
+                    <h3 className="section-card-title">Create Account</h3>
+                    <div className="form-actions-vertical">
+                      <button type="submit" className="btn-save-product"><PencilIcon size={18} /> {isSuperAdmin ? 'Create User' : 'Create Customer'}</button>
+                      <button type="button" onClick={handleCancel} className="btn-cancel-product">Cancel</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </form>
-            </>
+          </>
         )}
-        </div> 
-        </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 export default AddAdminPage;

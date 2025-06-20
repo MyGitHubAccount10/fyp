@@ -20,6 +20,7 @@ const ADMIN_ROLE_ID = '6849291d57e7f26973c9fb3e';
 function AddAdminPage() {
     const navigate = useNavigate();
     const [roles, setRoles] = useState([]);
+    const [currentUserRole, setCurrentUserRole] = useState(null);
 
     // ✅ FIX: The formData state declaration is now included.
     const [formData, setFormData] = useState({
@@ -39,13 +40,56 @@ function AddAdminPage() {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
+    // Get current user role from localStorage
     useEffect(() => {
+        try {
+            const adminUser = JSON.parse(localStorage.getItem('admin_user'));
+            if (adminUser && adminUser.role) {
+                setCurrentUserRole(adminUser.role.role_name);
+            }
+        } catch (error) {
+            console.error('Error loading admin user role:', error);
+        }
+    }, []);
+
+    // Check if current user is Super Admin
+    const isSuperAdmin = currentUserRole === 'Super Admin' || currentUserRole === 'Super-Admin';    useEffect(() => {
         const fetchRoles = async () => {
             try {
                 const response = await fetch('/api/role');
                 if (response.ok) {
                     const rolesData = await response.json();
-                    setRoles(rolesData);
+                    
+                    // Filter roles based on current user permissions
+                    let availableRoles = rolesData;
+                    if (!isSuperAdmin) {
+                        // Regular admins can only create customers
+                        availableRoles = rolesData.filter(role => 
+                            role.role_name === 'Customer' || role.role_name === 'customer'
+                        );
+                    }
+                    // Super admins can create any role
+                    
+                    setRoles(availableRoles);
+                    
+                    // Set default role based on permissions
+                    if (availableRoles.length > 0) {
+                        if (!isSuperAdmin) {
+                            // Default to Customer for regular admins
+                            const customerRole = availableRoles.find(role => 
+                                role.role_name === 'Customer' || role.role_name === 'customer'
+                            );
+                            if (customerRole) {
+                                setFormData(prev => ({ ...prev, role: customerRole._id }));
+                            }
+                        } else {
+                            // Default to Admin for super admins
+                            const adminRole = availableRoles.find(role => role._id === ADMIN_ROLE_ID);
+                            if (adminRole) {
+                                setFormData(prev => ({ ...prev, role: ADMIN_ROLE_ID }));
+                            }
+                        }
+                    }
                 } else {
                     console.error('Failed to fetch roles:', response.status, response.statusText);
                 }
@@ -53,8 +97,11 @@ function AddAdminPage() {
                 console.error('Failed to fetch roles:', error);
             }
         };
-        fetchRoles();
-    }, []);
+        
+        if (currentUserRole !== null) {
+            fetchRoles();
+        }
+    }, [currentUserRole, isSuperAdmin]);
 
     const validatePassword = (pass) => {
         if (pass.length < 8) return 'Password must be at least 8 characters long.';
@@ -72,10 +119,21 @@ function AddAdminPage() {
             ...prev,
             [name]: value,
         }));
-    };
-
-    const handleSubmit = async (e) => {
+    };    const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Check if user has permission to create the selected role
+        const selectedRole = roles.find(role => role._id === formData.role);
+        if (!selectedRole) {
+            alert('❌ Please select a valid role');
+            return;
+        }
+
+        // Permission validation
+        if (!isSuperAdmin && (selectedRole.role_name === 'Admin' || selectedRole.role_name === 'Super Admin' || selectedRole.role_name === 'Super-Admin')) {
+            alert('❌ Only Super Admins can create Admin or Super Admin users. Regular Admins can only create Customer accounts.');
+            return;
+        }
 
         // Name validation
         const nameRegex = /^[A-Z][a-zA-Z]*$/;
@@ -132,14 +190,15 @@ function AddAdminPage() {
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(`Server error (${response.status}): ${errorData.error || response.statusText || 'Unknown error'}`);
-            }
+                throw new Error(`Server error (${response.status}): ${errorData.error || response.statusText || 'Unknown error'}`);            }
 
-            alert('✅ Admin user created successfully!');
+            const selectedRole = roles.find(role => role._id === formData.role);
+            const userType = selectedRole ? selectedRole.role_name : 'User';
+            alert(`✅ ${userType} account created successfully!`);
             navigate('/all-customers');
         } catch (error) {
             console.error('Creation failed:', error);
-            alert(`❌ Failed to create admin user: ${error.message}`);
+            alert(`❌ Failed to create user account: ${error.message}`);
         }
     };
 
@@ -150,18 +209,52 @@ function AddAdminPage() {
     const handleCancel = () => {
         handleBack();
     };
-
   return (
     <div className="add-product-page">
       <AdminHeader />
       <div className="manage-products-page" style={{ paddingLeft: "100px", paddingRight: "100px" }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2>Add New Admin User</h2>
-          <button onClick={handleBack} className="btn-add-new">
-            <BackIcon size={18} color="white" />
-            Back to All Users
-          </button>
-        </div>
+        {/* Show loading state while checking permissions */}
+        {currentUserRole === null ? (
+          <div style={{ textAlign: 'center', padding: '50px' }}>
+            Loading...
+          </div>
+        ) : !isSuperAdmin && roles.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '50px' }}>
+            <h2>Access Restricted</h2>
+            <p style={{ color: '#666', margin: '20px 0' }}>
+              You don't have permission to create new users.
+            </p>
+            <button onClick={handleBack} className="btn-add-new">
+              <BackIcon size={18} color="white" />
+              Back to All Users
+            </button>
+          </div>
+        ) : (
+          <>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <h2>{isSuperAdmin ? 'Add New User' : 'Add New Customer'}</h2>
+                {currentUserRole && (
+                  <p style={{ color: '#666', fontSize: '14px', margin: '5px 0' }}>
+                    Logged in as: <strong>{currentUserRole}</strong>
+                    {!isSuperAdmin && (
+                      <span style={{ color: '#f1673a', fontStyle: 'italic' }}>
+                        {' '}(Can only create Customer accounts)
+                      </span>
+                    )}
+                    {isSuperAdmin && (
+                      <span style={{ color: '#28a745', fontStyle: 'italic' }}>
+                        {' '}(Can create all user types)
+                      </span>
+                    )}
+                  </p>
+                )}
+              </div>
+              <button onClick={handleBack} className="btn-add-new">
+                <BackIcon size={18} color="white" />
+                Back to All Users
+              </button>
+            </div>
 
             <form onSubmit={handleSubmit} >
                 <div className="add-product-form-layout">
@@ -240,16 +333,30 @@ function AddAdminPage() {
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className="add-product-sidebar-panel">
+                </div>                <div className="add-product-sidebar-panel">
                     <div className="form-section-card">
-                        <h3 className="section-card-title">Admin Role</h3>
+                        <h3 className="section-card-title">{isSuperAdmin ? 'User Role' : 'Customer Account'}</h3>
                          <div className="form-group">
                             <label htmlFor="adminRole">Assign Role</label>
-                            <select id="adminRole" name="role" value={formData.role} onChange={handleChange} required style={{ flex: '1 1 150px', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} disabled >
+                            <select 
+                                id="adminRole" 
+                                name="role" 
+                                value={formData.role} 
+                                onChange={handleChange} 
+                                required 
+                                style={{ flex: '1 1 150px', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} 
+                                disabled={!isSuperAdmin && roles.length === 1}
+                            >
                                 <option value="" disabled>Select Role</option>
-                                {roles.map((role) => (<option key={role._id} value={role._id}>{role.role_name}</option>))}
+                                {roles.map((role) => (
+                                    <option key={role._id} value={role._id}>{role.role_name}</option>
+                                ))}
                             </select>
+                            {!isSuperAdmin && (
+                                <p style={{ fontSize: '12px', color: '#666', margin: '5px 0 0 0', fontStyle: 'italic' }}>
+                                    Regular Admins can only create Customer accounts
+                                </p>
+                            )}
                         </div>
                     </div>
                     <div className="form-section-card">
@@ -261,20 +368,20 @@ function AddAdminPage() {
                                 <option value="Inactive">Inactive</option>
                             </select>
                         </div>
-                    </div>
-                    <div className="form-section-card">
-                        <h3 className="section-card-title">Create Admin User</h3>
+                    </div>                    <div className="form-section-card">
+                        <h3 className="section-card-title">{isSuperAdmin ? 'Create User Account' : 'Create Customer Account'}</h3>
                         <div className="form-actions-vertical">
                             <button type="submit" className="btn-save-product">
                                  <PencilIcon size={18} color="white" />
-                                 Create Admin User
+                                 {isSuperAdmin ? 'Create User' : 'Create Customer'}
                             </button>
                             <button type="button" onClick={handleCancel} className="btn-cancel-product">Cancel</button>
                         </div>
-                    </div>
-                </div>
+                    </div>                </div>
                 </div>
             </form>
+            </>
+        )}
         </div> 
         </div>
     );

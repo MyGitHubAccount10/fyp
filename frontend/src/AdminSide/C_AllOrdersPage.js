@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminHeader from '../AdminHeader'; 
-
 import { useNavigate } from 'react-router-dom';
 
 // Placeholder Icons
@@ -13,46 +12,79 @@ const CalendarIcon = ({ color = "currentColor", size = 18 }) => (
     </svg>
 );
 
-// Dummy order data
-const dummyOrders = [
-    { id: 'TSU-1001', date: '2023-10-26 14:30', customer: 'John Doe', total: 175.50, paymentStatus: 'Paid', orderStatus: 'Shipped' },
-    { id: 'TSU-1002', date: '2023-10-26 14:30', customer: 'Jane Smith', total: 89.99, paymentStatus: 'Paid', orderStatus: 'Processing' },
-    { id: 'TSU-1003', date: '2023-10-26 14:30', customer: 'Mike Brown', total: 210.10, paymentStatus: 'Pending', orderStatus: 'Pending Payment' },
-    { id: 'TSU-1004', date: '2023-10-25 11:00', customer: 'Alice Wonderland', total: 55.00, paymentStatus: 'Cancelled', orderStatus: 'Cancelled' },
-    { id: 'TSU-1005', date: '2023-10-25 09:15', customer: 'Bob The Builder', total: 300.00, paymentStatus: 'Paid', orderStatus: 'Delivered' },
-    { id: 'TSU-1006', date: '2023-10-24 18:00', customer: 'Charlie Chaplin', total: 120.75, paymentStatus: 'Paid', orderStatus: 'Shipped' },
-    { id: 'TSU-1007', date: '2023-10-24 10:30', customer: 'David Bowie', total: 99.00, paymentStatus: 'Pending', orderStatus: 'Processing' },
-     // Add more dummy orders to test pagination
-     ...Array.from({ length: 15 }).map((_, i) => ({ // Add 15 more orders
-         id: `TSU-10${i + 8 < 100 ? '0' : ''}${i + 8}`,
-         date: `2023-10-${23 - Math.floor(i/3)} 0${(i%3)+1}:00`,
-         customer: `Dummy Customer ${i + 1}`,
-         total: (i + 1) * 10 + 0.50,
-         paymentStatus: i % 2 === 0 ? 'Paid' : 'Pending',
-         orderStatus: i % 3 === 0 ? 'Delivered' : (i % 3 === 1 ? 'Shipped' : 'Processing'),
-     }))
-];
-
 function AllOrdersPage() {
+    const [orders, setOrders] = useState([]);
+    const [allOrders, setAllOrders] = useState([]);
+    const [availableStatuses, setAvailableStatuses] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState('All Statuses');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [ordersPerPage] = useState(10); // Fixed number of orders per page
+    const [loading, setLoading] = useState(true);    const [error, setError] = useState('');
+    const Navigate = useNavigate();
 
-    // Filtered orders based on current filters (client-side demo)
-    const filteredOrders = dummyOrders.filter(order => {
+    // Fetch orders from API
+    useEffect(() => {
+        const fetchOrders = async () => {
+            try {
+                setLoading(true);
+                
+                // Get admin user token
+                const adminUser = JSON.parse(localStorage.getItem('admin_user'));
+                if (!adminUser || !adminUser.token) {
+                    throw new Error('No admin user found');
+                }
+
+                // Fetch orders
+                const response = await fetch('http://localhost:4000/api/order/admin/all', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${adminUser.token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch orders');
+                }
+                
+                const orderData = await response.json();
+                setOrders(orderData);
+                setAllOrders(orderData);
+
+                // Extract unique statuses from orders
+                const statuses = [...new Set(orderData.map(order => order.status_id?.status_name).filter(Boolean))];
+                setAvailableStatuses(statuses);
+                
+                setError('');
+            } catch (error) {
+                console.error('Error fetching orders:', error);
+                setError('Failed to load orders. Please try again.');
+                setOrders([]);
+                setAllOrders([]);
+                setAvailableStatuses([]);
+            } finally {
+                setLoading(false);
+            }
+        };        fetchOrders();
+    }, []);
+
+    // Filtered orders based on current filters
+    const filteredOrders = allOrders.filter(order => {
         const matchesSearch = searchTerm.toLowerCase() === '' ||
-                              order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                              order.customer.toLowerCase().includes(searchTerm.toLowerCase());
+                              order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                              (order.user_id && 
+                               (order.user_id.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                order.user_id.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                order.user_id.email?.toLowerCase().includes(searchTerm.toLowerCase())));
 
-        const matchesStatus = selectedStatus === 'All Statuses' || order.orderStatus === selectedStatus;
-
-        // Basic date filtering (assuming date strings are comparable)
-        const matchesStartDate = startDate === '' || new Date(order.date).getTime() >= new Date(startDate).getTime();
-        const matchesEndDate = endDate === '' || new Date(order.date).getTime() <= new Date(endDate).getTime();
-
+        const orderStatus = order.status_id?.status_name || 'Unknown';
+        const matchesStatus = selectedStatus === 'All Statuses' || orderStatus === selectedStatus;        // Basic date filtering
+        const orderDate = new Date(order.order_date || order.createdAt);
+        const matchesStartDate = startDate === '' || orderDate >= new Date(startDate);
+        const matchesEndDate = endDate === '' || orderDate <= new Date(endDate);
 
         return matchesSearch && matchesStatus && matchesStartDate && matchesEndDate;
     });
@@ -61,15 +93,9 @@ function AllOrdersPage() {
     const indexOfLastOrder = currentPage * ordersPerPage;
     const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
     const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
-    const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
-
-    const handleApplyFilters = () => {
+    const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);    const handleApplyFilters = () => {
         console.log("Applying filters:", { searchTerm, selectedStatus, startDate, endDate });
-        // In a real app, this would trigger an API call with these parameters
         setCurrentPage(1); // Reset to first page on new filter
-        // The filtering logic above already updates filteredOrders,
-        // so no need to set state here if doing client-side filtering.
-        // If doing server-side, you'd fetch data here.
     };
 
     const handleNextPage = () => {
@@ -82,23 +108,20 @@ function AllOrdersPage() {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
         }
-    };
-
-     // Function to get order status class (reusing from Dashboard)
+    };     // Function to get order status class
     const getOrderStatusClass = (status) => {
         switch (status) {
             case 'Shipped': return 'status-shipped';
             case 'Processing': return 'status-processing';
-            case 'Delivered': return 'status-delivered'; // Assuming Delivered exists
-            case 'Cancelled': return 'status-cancelled'; // Assuming Cancelled exists
-            case 'Pending Payment': return 'status-pending'; // Assuming Pending Payment exists
-            // Add other statuses as needed
-            default: return '';
+            case 'Delivered': return 'status-delivered';
+            case 'Cancelled': return 'status-cancelled';
+            case 'Pending Payment': return 'status-pending';
+            case 'Pending': return 'status-pending';
+            case 'Completed': return 'status-delivered';
+            case 'In Transit': return 'status-shipped';
+            default: return 'status-processing';
         }
     };
-    const Navigate = useNavigate();
-
-
 
     // Handler for 'View Details' link (placeholder)
     const handleViewDetails = (orderId) => {
@@ -121,19 +144,15 @@ function AllOrdersPage() {
                     className="filter-input search-input" // Reuse search-input style if applicable
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <select
+                />                <select
                     className="filter-input status-select"
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
                 >
                     <option value="All Statuses">All Statuses</option>
-                    <option value="Shipped">Shipped</option>
-                    <option value="Processing">Processing</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Cancelled">Cancelled</option>
-                    <option value="Pending Payment">Pending Payment</option>
-                    {/* Add other statuses dynamically */}
+                    {availableStatuses.map(status => (
+                        <option key={status} value={status}>{status}</option>
+                    ))}
                 </select>
 
                 {/* Date Inputs */}
@@ -156,12 +175,25 @@ function AllOrdersPage() {
                          // placeholder="dd/mm/yy"
                         className="date-input"
                     />
-                 </div>
-
-
-                <button onClick={handleApplyFilters} className="btn-apply-filters">
+                 </div>                <button onClick={handleApplyFilters} className="btn-apply-filters">
                     Apply Filters
                 </button>
+            </div>
+
+            {/* Orders Summary */}
+            <div className="orders-summary" style={{ margin: '20px 0', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+                <h3 style={{ margin: '0 0 10px 0', fontSize: '1.2em', color: '#333' }}>Orders Overview</h3>
+                <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
+                    <div>
+                        <strong>Total Orders:</strong> <span style={{ color: '#007bff' }}>{allOrders.length}</span>
+                    </div>
+                    <div>
+                        <strong>Filtered Results:</strong> <span style={{ color: '#28a745' }}>{filteredOrders.length}</span>
+                    </div>
+                    <div>
+                        <strong>Current Page:</strong> <span style={{ color: '#6c757d' }}>{currentOrders.length}</span>
+                    </div>
+                </div>
             </div>
 {/* Pagination Controls */}
 <div
@@ -200,36 +232,53 @@ function AllOrdersPage() {
 
             {/* Orders Table */}
             <div className="orders-table-container">
-                <table className="orders-table">
-                    <thead>
+                <table className="orders-table">                    <thead>
                         <tr>
                             <th>Order ID</th>
                             <th>Date</th>
                             <th>Customer</th>
                             <th>Total</th>
-                            <th>Payment Status</th>
+                            <th>Payment Method</th>
                             <th>Order Status</th>
                             <th>Actions</th>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {currentOrders.length > 0 ? (
+                    </thead><tbody>
+                        {loading ? (
+                            <tr>
+                                <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>Loading orders...</td>
+                            </tr>
+                        ) : error ? (
+                            <tr>
+                                <td colSpan="7" style={{ textAlign: 'center', padding: '20px', color: 'red' }}>{error}</td>
+                            </tr>                        ) : currentOrders.length > 0 ? (
                              currentOrders.map(order => (
-                                <tr key={order.id}>
-                                    <td>#{order.id}</td> {/* Add # as in image */}
-                                    <td>{order.date}</td>
-                                    <td>{order.customer}</td>
-                                    <td>${order.total.toFixed(2)}</td> {/* Format price */}
-                                    <td>{order.paymentStatus}</td>
-                                    <td className={getOrderStatusClass(order.orderStatus)}>{order.orderStatus}</td>
+                                <tr key={order._id}>
+                                    <td>#{order._id.slice(-8)}</td> {/* Display last 8 characters of ID */}
+                                    <td>{new Date(order.order_date || order.createdAt).toLocaleDateString('en-US', {
+                                        year: 'numeric',
+                                        month: 'short', 
+                                        day: '2-digit',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    })}</td>
+                                    <td>{order.user_id ? `${order.user_id.first_name} ${order.user_id.last_name}` : 'Unknown Customer'}</td>
+                                    <td>${parseFloat(order.total_amount || 0).toFixed(2)}</td>
+                                    <td>{order.payment_method || 'N/A'}</td>
+                                    <td className={getOrderStatusClass(order.status_id?.status_name || 'Processing')}>
+                                        {order.status_id?.status_name || 'Processing'}
+                                    </td>
                                     <td>
-                                        <button onClick={() => handleViewDetails(order.id)} className="link-button">View Details</button>
+                                        <button onClick={() => handleViewDetails(order._id)} className="link-button">View Details</button>
                                     </td>
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>No orders found.</td>
+                                <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>
+                                    {filteredOrders.length === 0 && allOrders.length > 0 
+                                        ? 'No orders match your current filters.' 
+                                        : 'No orders found in the system.'}
+                                </td>
                             </tr>
                         )}
                     </tbody>

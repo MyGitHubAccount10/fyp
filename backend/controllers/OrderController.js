@@ -1,6 +1,19 @@
 const mongoose = require('mongoose');
 const Order = require('../models/OrderModel');
 
+// Get all orders for admin (new function)
+const getAllOrders = async (req, res) => {
+    try {
+        const orders = await Order.find({})
+            .populate('user_id', 'first_name last_name email username')
+            .populate('status_id', 'status_name')
+            .sort({createdAt: -1});
+        res.status(200).json(orders);
+    } catch (error) {
+        res.status(400).json({error: error.message});
+    }
+}
+
 // Get all orders for the logged-in user
 const getOrders = async (req, res) => {
     const user_id = req.user._id;
@@ -105,6 +118,7 @@ const updateOrder = async (req, res) => {
 }
 
 module.exports = {
+    getAllOrders,
     getOrders,
     getOrder,
     createOrder,

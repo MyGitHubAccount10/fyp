@@ -2,6 +2,7 @@ const express = require('express');
 const requireAuth = require('../middleware/requireAuth');
 
 const {
+    getAllOrders,
     getOrders,
     getOrder,
     createOrder,
@@ -13,6 +14,9 @@ const router = express.Router();
 
 // Add authentication middleware
 router.use(requireAuth);
+
+// Admin route to get all orders
+router.get('/admin/all', getAllOrders);
 
 router.get('/', getOrders);
 

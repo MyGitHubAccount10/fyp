@@ -237,7 +237,7 @@ const handleFilter = () => {
                             </div>
                             <button onClick={handleAddAdmin} className="btn-add-new">
                                 <PencilIcon size={18} color="white" />
-                                Add New Customer
+                                Add New User
                             </button>
                         </div>
 

@@ -37,25 +37,27 @@ function OrderHistoryPage() {
                             const itemsResponse = await fetch(`/api/order-products/by-order/${order._id}`, {
                                 headers: { 'Authorization': `Bearer ${user.token}` }
                             });
-                            if (!itemsResponse.ok) throw new Error('Failed to fetch order items');
+                            if (!itemsResponse.ok) throw new Error(`Failed to fetch items for order ${order._id}`);
                             const itemsData = await itemsResponse.json();
 
-                            const itemsWithProductDetails = await Promise.all(
-                                itemsData.map(async (item) => {
-                                    const productResponse = await fetch(`/api/product/${item.product_id}`);
-                                    const productData = productResponse.ok ? await productResponse.json() : { product_name: 'Product not found', product_image: 'default.jpg' };
-                                    return { ...item, ...productData };
-                                })
-                            );
+                            // ✅ FIX: The data mapping now correctly reads from the 'product_image' field
+                            // that your backend is providing, instead of a non-existent 'images' array.
+                            const formattedItems = itemsData.map(item => ({
+                                ...item,
+                                // Safely access populated product data, with fallbacks
+                                product_name: item.product_id ? item.product_id.product_name : 'Product Not Found',
+                                // Use the 'product_image' field directly, with a fallback
+                                product_image: item.product_id ? item.product_id.product_image : 'default.jpg'
+                            }));
 
                             return {
                                 ...order,
                                 status: statusData.status_name,
-                                items: itemsWithProductDetails
+                                items: formattedItems
                             };
                         } catch (err) {
                             console.error(`Failed to process details for order ${order._id}:`, err);
-                            return { ...order, status: 'Error', items: [] };
+                            return { ...order, status: 'Error loading details', items: [] };
                         }
                     })
                 );
@@ -82,6 +84,7 @@ function OrderHistoryPage() {
             case 'delivered': return 'status-delivered';
             case 'shipped': return 'status-shipped';
             case 'processing': return 'status-processing';
+            case 'pending': return 'status-placed';
             case 'order placed': return 'status-placed';
             case 'cancelled': return 'status-cancelled';
             default: return '';
@@ -103,36 +106,36 @@ function OrderHistoryPage() {
                         {orders.map(order => (
                             <div className="order-card" key={order._id}>
                                 <div className="order-card-header" onClick={() => toggleOrderDetails(order._id)} role="button" tabIndex="0" aria-expanded={expandedOrderId === order._id}>
-                                    {/* --- NEW LAYOUT: Left section for status and total --- */}
                                     <div className="order-info-left">
                                         <span className={`order-status ${getStatusClass(order.status)}`}>{order.status}</span>
                                         <span className="order-total">S${order.total_amount.toFixed(2)}</span>
                                     </div>
-                                    {/* --- NEW LAYOUT: Center section for ID and date --- */}
                                     <div className="order-info-center">
                                         <span className="order-id">Order ID: {order._id}</span>
                                         <span className="order-date">Date: {new Date(order.createdAt).toLocaleDateString()}</span>
                                     </div>
-                                    {/* --- NEW LAYOUT: Right section for arrow --- */}
                                     <div className="order-info-right">
                                         <span className={`details-arrow ${expandedOrderId === order._id ? 'expanded' : ''}`}>▲</span>
                                     </div>
                                 </div>
                                 {expandedOrderId === order._id && (
                                     <div className="order-card-details">
-                                        <p><strong>Shipping Address:</strong> {order.shipping_address}, Singapore {order.postal_code}</p>
+                                        <p><strong>Shipping Address:</strong> {order.shipping_address}</p>
                                         <strong>Items:</strong>
                                         <ul className="order-items-list">
-                                            {order.items.map(item => (
-                                                <li key={item._id} className="order-item-detail">
-                                                    <img src={`/images/${item.product_image}`} alt={item.product_name} className="order-item-image" />
-                                                    <div className="order-item-info">
-                                                        <span>{item.product_name} (Qty: {item.order_qty}, Size: {item.order_size || 'N/A'})</span>
-                                                        {/* --- FIX: Price now multiplies by quantity --- */}
-                                                        <span>S${(item.order_unit_price * item.order_qty).toFixed(2)}</span>
-                                                    </div>
-                                                </li>
-                                            ))}
+                                            {order.items && order.items.length > 0 ? (
+                                                order.items.map(item => (
+                                                    <li key={item._id} className="order-item-detail">
+                                                        <img src={`/images/${item.product_image}`} alt={item.product_name} className="order-item-image" />
+                                                        <div className="order-item-info">
+                                                            <span>{item.product_name} (Qty: {item.order_qty}, Size: {item.order_size || 'N/A'})</span>
+                                                            <span>S${(item.order_unit_price * item.order_qty).toFixed(2)}</span>
+                                                        </div>
+                                                    </li>
+                                                ))
+                                            ) : (
+                                                <li>Items could not be loaded for this order.</li>
+                                            )}
                                         </ul>
                                     </div>
                                 )}

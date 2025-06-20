@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const OrderProduct = require('../models/OrderProductModel');
-const Product = require('../models/ProductModel'); // ✅ 1. Import the Product model
+const Product = require('../models/ProductModel'); 
 
 // --- START: Add the new controller function ---
 // Get all order products for a specific order ID
@@ -9,9 +9,12 @@ const getOrderProductsByOrderId = async (req, res) => {
 
     if (!mongoose.Types.ObjectId.isValid(orderId)) {
         return res.status(404).json({error: 'Invalid Order ID'});
-    }    try {
+    }    
+    try {
+        // ✅ FIX: Modified .populate() to fetch the fields that actually exist in your ProductModel.
+        // This now correctly gets the main product image filename.
         const orderProducts = await OrderProduct.find({ order_id: orderId })
-            .populate('product_id', 'product_name images product_description');
+            .populate('product_id', 'product_name product_image'); // Fetching name and the main image
 
         if (!orderProducts) {
             // Send an empty array if no products found, which is not an error
@@ -48,7 +51,6 @@ const getOrderProduct = async (req, res) => {
     res.status(200).json(orderProduct);
 }
 
-// ... (rest of the file is unchanged)
 // MODIFIED: Create a new order product AND update inventory
 const createOrderProduct = async (req, res) => {
     const {
@@ -60,24 +62,20 @@ const createOrderProduct = async (req, res) => {
     } = req.body;
     
     try {
-        // ✅ 2. Find the product in the database
         const product = await Product.findById(product_id);
         if (!product) {
             return res.status(404).json({ error: 'Product not found. Cannot update inventory.' });
         }
 
-        // ✅ 3. Check if there is enough stock
         if (product.warehouse_quantity < order_qty) {
             return res.status(400).json({ 
                 error: `Insufficient stock for product: ${product.product_name}. Available: ${product.warehouse_quantity}, Requested: ${order_qty}` 
             });
         }
         
-        // ✅ 4. Decrement the warehouse quantity and save the product
         product.warehouse_quantity -= order_qty;
         await product.save();
 
-        // ✅ 5. If stock update is successful, create the order-product record
         const orderProduct = await OrderProduct.create({
             order_id,
             product_id,
@@ -88,7 +86,6 @@ const createOrderProduct = async (req, res) => {
         res.status(200).json(orderProduct);
 
     } catch (error) {
-        // This will catch errors from both the product update and order-product creation
         console.error("Error creating order product and updating stock: ", error);
         res.status(500).json({error: `Server error while processing order item: ${error.message}`});
     }
@@ -127,8 +124,6 @@ const updateOrderProduct = async (req, res) => {
     res.status(200).json(orderProduct);
 }
 
-
-// --- START: Export the new function ---
 module.exports = {
     getOrderProductsByOrderId,
     getOrderProducts,
@@ -137,4 +132,3 @@ module.exports = {
     deleteOrderProduct,
     updateOrderProduct
 };
-// --- END: Export the new function ---

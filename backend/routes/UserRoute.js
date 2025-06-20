@@ -11,30 +11,30 @@ const {
     loginUser,
     signupUser,
     updateLoggedInUser,
-    updateUserPassword // 1. Import the new controller function
+    updateUserPassword,
+    deleteLoggedInUser // <-- ✅ 1. Import the new controller function
 } = require('../controllers/UserController');
 const requireAuth = require('../middleware/requireAuth');
 
 const router = express.Router();
-router.use((req, res, next) => next());
 
-// Specific routes must come first
+// Public routes
 router.post('/login', loginUser);
 router.post('/signup', signupUser);
+
+// Routes protected by authentication middleware
 router.patch('/update', requireAuth, updateLoggedInUser);
-
-// 2. Add the new route for updating the password
 router.patch('/update-password', requireAuth, updateUserPassword);
+router.delete('/delete-account', requireAuth, deleteLoggedInUser); // <-- ✅ 2. Add the new DELETE route
 
-// Ban/Unban routes
+// Admin/generic routes (some should be protected by an admin-role middleware in a real app)
 router.patch('/:id/ban', banUser);
 router.patch('/:id/unban', unbanUser);
 
-// Generic routes with parameters come last
 router.get('/', getUsers);
 router.get('/:id', getUser);
 router.post('/', createUser);
-router.delete('/:id', deleteUser);
+router.delete('/:id', deleteUser); // This is for an admin to delete any user
 router.patch('/:id', updateUser);
 
 module.exports = router;

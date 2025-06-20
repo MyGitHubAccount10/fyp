@@ -32,7 +32,6 @@ const SignUpPage = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
-  // --- ✅ FIX: ALL VALIDATION FUNCTION BODIES ARE FULLY RESTORED ---
   const validateFullName = (name) => {
     if (!name) return `Full Name is required.`;
     if (!/^[a-zA-Z\s]*$/.test(name)) {
@@ -144,6 +143,7 @@ const SignUpPage = () => {
       localStorage.setItem('user', JSON.stringify(result));
       window.location.href = '/';
 
+    // ✅ FIX: Removed the incorrect "=>" from the catch block
     } catch (err) {
       alert(`Error signing up: ${err.message}`);
     }

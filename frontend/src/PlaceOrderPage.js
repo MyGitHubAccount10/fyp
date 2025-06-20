@@ -263,7 +263,7 @@ function PlaceOrderPage() {
                                 <span>S${orderSummary.subtotal.toFixed(2)}</span>
                             </div>
                             <div className="summary-line">
-                                <span>Shipping (Singapore)</span>
+                                <span>Shipping to {shippingDetails.shippingAddress}</span>
                                 <span>S${orderSummary.shippingFee.toFixed(2)}</span>
                             </div>
                             <div className="summary-line">

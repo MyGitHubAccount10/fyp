@@ -90,7 +90,7 @@ function ShoppingCartPage() {
                                         <span className="size-info">Size: {item.size}</span>
                                     </div>
                                     <div className="item-actions">
-                                        <div className="action-btn quantity-controls">
+                                        <div className="quantity-controls">
                                             <button 
                                             onClick={() => handleQuantityChange(item.id, item.size, -1)} 
                                             disabled={item.quantity === 1}

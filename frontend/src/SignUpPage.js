@@ -29,6 +29,8 @@ const SignUpPage = () => {
   const [lastNameError, setLastNameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
+  const [shippingAddressError, setShippingAddressError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [isPasswordTouched, setIsPasswordTouched] = useState(false);
@@ -40,8 +42,8 @@ const SignUpPage = () => {
   // --- Validation Functions ---
   const validateName = (name, fieldName) => {
     if (!name) return `${fieldName} is required.`;
-    if (!/^[A-Z][a-zA-Z]*$/.test(name)) {
-      return `${fieldName} must start with a capital letter and contain no spaces, numbers, or special characters.`;
+    if (!/^[A-Z][a-zA-Z ]*$/.test(name)) {
+      return `${fieldName} must start with a capital letter and contain no numbers, or special characters.`;
     }
     return '';
   };
@@ -55,6 +57,17 @@ const SignUpPage = () => {
   const validatePhone = (phone) => {
     if (!phone) return 'Phone number is required.';
     if (!/^\d{8}$/.test(phone)) return 'Phone number must be exactly 8 digits.';
+    return '';
+  };
+
+  const validateShippingAddress = (address) => {
+    if (!address) return 'Shipping address is required.';
+    return '';
+  };
+
+  const validateUsername = (username) => {
+    if (!username) return 'Username is required.';
+    if (!/^[a-zA-Z0-9]+$/.test(username)) return 'Username must contain only letters and numbers.';
     return '';
   };
 
@@ -105,6 +118,8 @@ const SignUpPage = () => {
     const lNameError = validateName(lastName, 'Last Name');
     const emailErr = validateEmail(email);
     const phoneErr = validatePhone(phone);
+    const shippingAddressErr = validateShippingAddress(shippingAddress);
+    const usernameErr = validateUsername(username);
     const passError = validatePassword(password);
     const cnfPassError = validateConfirmPassword(password, confirmPassword);
     
@@ -112,11 +127,13 @@ const SignUpPage = () => {
     setLastNameError(lNameError);
     setEmailError(emailErr);
     setPhoneError(phoneErr);
+    setShippingAddressError(shippingAddressErr);
+    setUsernameError(usernameErr);
     setPasswordError(passError);
     setConfirmPasswordError(cnfPassError);
     setIsPasswordTouched(true);
 
-    if (fNameError || lNameError || emailErr || phoneErr || passError || cnfPassError) {
+    if (fNameError || lNameError || emailErr || phoneErr || shippingAddressErr || usernameErr || passError || cnfPassError) {
       return;
     }
 
@@ -155,7 +172,7 @@ const SignUpPage = () => {
 
   const inputStyle = { display: 'block', width: '100%', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
   const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
-  const errorMessageStyle = { color: '#e74c3c', fontSize: '0.875em', marginTop: '-10px', marginBottom: '15px' };
+  const errorMessageStyle = { color: '#e74c3c', fontSize: '0.875em', marginTop: '15px', marginBottom: '15px' };
 
   return (
     <>
@@ -180,9 +197,11 @@ const SignUpPage = () => {
             {phoneError && <p style={errorMessageStyle}>{phoneError}</p>}
             
             <input type="text" placeholder="Enter your shipping address" value={shippingAddress} onChange={e => setShippingAddress(e.target.value)} style={{...inputStyle, marginBottom: '15px'}} />
-            
+            {shippingAddressError && <p style={errorMessageStyle}>{shippingAddressError}</p>}
+
             <input type="text" placeholder="Enter your username" value={username} onChange={e => setUsername(e.target.value)} style={{...inputStyle, marginBottom: '15px'}} />
-            
+            {usernameError && <p style={errorMessageStyle}>{usernameError}</p>}
+
             <div className="password-input-wrapper" style={{ marginBottom: isPasswordTouched && passwordError ? '5px' : '15px' }}>
                 <input
                     type={isPasswordVisible ? 'text' : 'password'}

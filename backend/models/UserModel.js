@@ -18,9 +18,9 @@ const userSchema = new Schema({
     required: true,
     validate: {
       validator: function(v) {
-        return /^[A-Z][a-zA-Z]*$/.test(v);
+        return /^[A-Z][a-zA-Z ]*$/.test(v);
       },
-      message: 'First name must start with a capital letter and contain no spaces, numbers, or special characters.'
+      message: 'First name must start with a capital letter and contain no numbers, or special characters.'
     }
   },
   last_name: {
@@ -28,9 +28,9 @@ const userSchema = new Schema({
     required: true,
     validate: {
       validator: function(v) {
-        return /^[A-Z][a-zA-Z]*$/.test(v);
+        return /^[A-Z][a-zA-Z ]*$/.test(v);
       },
-      message: 'Last name must start with a capital letter and contain no spaces, numbers, or special characters.'
+      message: 'Last name must start with a capital letter and contain no numbers, or special characters.'
     }
   },
   shipping_address: {

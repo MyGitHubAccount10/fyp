@@ -358,17 +358,8 @@ function AddAdminPage() {
                                 </p>
                             )}
                         </div>
-                    </div>
+                    </div>                
                     <div className="form-section-card">
-                        <h3 className="section-card-title">Account Status</h3>
-                        <div className="form-group">
-                            <label htmlFor="adminStatus">Status</label>
-                            <select id="adminStatus" name="status" value={formData.status} onChange={handleChange} style={{ flex: '1 1 150px', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} disabled>
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
-                            </select>
-                        </div>
-                    </div>                    <div className="form-section-card">
                         <h3 className="section-card-title">{isSuperAdmin ? 'Create User Account' : 'Create Customer Account'}</h3>
                         <div className="form-actions-vertical">
                             <button type="submit" className="btn-save-product">

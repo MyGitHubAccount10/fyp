@@ -27,7 +27,7 @@ function AllOrdersPage() {
 
     // Fetch orders from API
     useEffect(() => {
-        const fetchOrders = async () => {
+        const fetchData = async () => {
             try {
                 setLoading(true);
                 
@@ -35,40 +35,48 @@ function AllOrdersPage() {
                 const adminUser = JSON.parse(localStorage.getItem('admin_user'));
                 if (!adminUser || !adminUser.token) {
                     throw new Error('No admin user found');
-                }
-
-                // Fetch orders
-                const response = await fetch('http://localhost:4000/api/order/admin/all', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${adminUser.token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
+                }                // Fetch orders and statuses in parallel
+                const [ordersResponse, statusesResponse] = await Promise.all([
+                    fetch('http://localhost:4000/api/order/admin/all', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${adminUser.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }),
+                    fetch('http://localhost:4000/api/status', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                ]);                if (!ordersResponse.ok) {
+                    console.error('Orders fetch failed:', ordersResponse.status, ordersResponse.statusText);
                     throw new Error('Failed to fetch orders');
                 }
+                if (!statusesResponse.ok) {
+                    console.error('Statuses fetch failed:', statusesResponse.status, statusesResponse.statusText);
+                    throw new Error('Failed to fetch statuses');
+                }                const orderData = await ordersResponse.json();
+                const statusData = await statusesResponse.json();
                 
-                const orderData = await response.json();
                 setOrders(orderData);
                 setAllOrders(orderData);
-
-                // Extract unique statuses from orders
-                const statuses = [...new Set(orderData.map(order => order.status_id?.status_name).filter(Boolean))];
-                setAvailableStatuses(statuses);
                 
-                setError('');
-            } catch (error) {
-                console.error('Error fetching orders:', error);
-                setError('Failed to load orders. Please try again.');
+                // Set available statuses from the status collection
+                setAvailableStatuses(statusData.map(status => status.status_name));
+                  setError('');            } catch (error) {
+                console.error('Error fetching data:', error);
+                setError('Failed to load data. Please try again.');
                 setOrders([]);
                 setAllOrders([]);
                 setAvailableStatuses([]);
             } finally {
                 setLoading(false);
             }
-        };        fetchOrders();
+        };
+
+        fetchData();
     }, []);
 
     // Filtered orders based on current filters

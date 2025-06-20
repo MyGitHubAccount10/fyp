@@ -196,10 +196,10 @@ const SignUpPage = () => {
             <input type="tel" placeholder="Enter your phone number" value={phone} onChange={e => setPhone(e.target.value)} onBlur={() => setPhoneError(validatePhone(phone))} pattern="[689]\d{7}" title="Enter a valid 8-digit Singapore number starting with 6, 8, or 9." style={{...phoneError ? errorInputStyle : inputStyle, marginBottom: phoneError ? '5px' : '15px'}} />
             {phoneError && <p style={errorMessageStyle}>{phoneError}</p>}
             
-            <input type="text" placeholder="Enter your shipping address" value={shippingAddress} onChange={e => setShippingAddress(e.target.value)} style={{...inputStyle, marginBottom: '15px'}} />
+            <input type="text" placeholder="Enter your shipping address" value={shippingAddress} onChange={e => setShippingAddress(e.target.value)} onBlur={() => setShippingAddressError(validateShippingAddress(shippingAddress))} style={{...shippingAddressError ? errorInputStyle : inputStyle, marginBottom: shippingAddressError ? '5px' : '15px'}} />
             {shippingAddressError && <p style={errorMessageStyle}>{shippingAddressError}</p>}
 
-            <input type="text" placeholder="Enter your username" value={username} onChange={e => setUsername(e.target.value)} style={{...inputStyle, marginBottom: '15px'}} />
+            <input type="text" placeholder="Enter your username" value={username} onChange={e => setUsername(e.target.value)} onBlur={() => setUsernameError(validateUsername(username))} style={{...usernameError ? errorInputStyle : inputStyle, marginBottom: usernameError ? '5px' : '15px'}} />
             {usernameError && <p style={errorMessageStyle}>{usernameError}</p>}
 
             <div className="password-input-wrapper" style={{ marginBottom: isPasswordTouched && passwordError ? '5px' : '15px' }}>

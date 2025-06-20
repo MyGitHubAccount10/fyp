@@ -37,10 +37,13 @@ const AdminLoginPage = () => {
       const user = await response.json();
       if (!response.ok) {
         throw new Error(user.error || 'Failed to log in');
-      }
-
-      if (user && user.role && user.role._id === ADMIN_ROLE_ID) {
-        // Use the isolated storage key for admins
+      }      if (user && user.role && (
+        user.role._id === ADMIN_ROLE_ID || 
+        user.role.role_name === 'Admin' || 
+        user.role.role_name === 'Super Admin' || 
+        user.role.role_name === 'Super-Admin'
+      )) {
+        // Use the isolated storage key for admins and super admins
         localStorage.setItem('admin_user', JSON.stringify(user));
         window.location.href = '/admin-dashboard';
       } else {
@@ -58,12 +61,11 @@ const AdminLoginPage = () => {
     <>
       <AdminHeader showNav={false} />
       <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-        <div style={{ flex: 1, maxWidth: '450px' }}>
-          <h2 style={{ fontWeight: 'bold', fontSize: '2em', marginBottom: '10px', textAlign: 'center' }}>
-            Admin Dashboard Login
+        <div style={{ flex: 1, maxWidth: '450px' }}>          <h2 style={{ fontWeight: 'bold', fontSize: '2em', marginBottom: '10px', textAlign: 'center' }}>
+            Admin Portal Login
           </h2>
           <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555', textAlign: 'center' }}>
-            Please log in to continue.
+            Admin and Super Admin access only.
           </p>
           <form onSubmit={handleSubmit}>
             <input

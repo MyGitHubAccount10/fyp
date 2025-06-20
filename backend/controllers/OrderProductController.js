@@ -9,10 +9,9 @@ const getOrderProductsByOrderId = async (req, res) => {
 
     if (!mongoose.Types.ObjectId.isValid(orderId)) {
         return res.status(404).json({error: 'Invalid Order ID'});
-    }
-
-    try {
-        const orderProducts = await OrderProduct.find({ order_id: orderId });
+    }    try {
+        const orderProducts = await OrderProduct.find({ order_id: orderId })
+            .populate('product_id', 'product_name images product_description');
 
         if (!orderProducts) {
             // Send an empty array if no products found, which is not an error

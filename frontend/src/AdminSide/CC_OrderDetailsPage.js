@@ -1,7 +1,7 @@
 // OrderDetailPage.js
 
-import {React, useState} from 'react';
-import { useNavigate } from 'react-router-dom';
+import {React, useState, useEffect} from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
@@ -14,41 +14,183 @@ const BackIcon = ({ color = "currentColor" }) => (
 
 function OrderDetailPage() {
   const navigate = useNavigate();
+  const { orderId } = useParams();
   const [modalImage, setModalImage] = useState(null);
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [availableStatuses, setAvailableStatuses] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [statusUpdating, setStatusUpdating] = useState(false);
 
+  // Fetch order details and statuses
+  useEffect(() => {
+    const fetchOrderDetails = async () => {
+      try {
+        setLoading(true);
+        
+        // Get admin user token
+        const adminUser = JSON.parse(localStorage.getItem('admin_user'));
+        if (!adminUser || !adminUser.token) {
+          throw new Error('No admin user found');
+        }        // Fetch order details and statuses in parallel
+        const [orderResponse, statusesResponse, orderProductsResponse] = await Promise.all([
+          fetch(`http://localhost:4000/api/order/${orderId}`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${adminUser.token}`,
+              'Content-Type': 'application/json'
+            }
+          }),
+          fetch('http://localhost:4000/api/status', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }),          fetch(`http://localhost:4000/api/order-products/by-order/${orderId}`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${adminUser.token}`,
+              'Content-Type': 'application/json'
+            }
+          })
+        ]);
+
+        if (!orderResponse.ok) {
+          throw new Error('Failed to fetch order details');
+        }
+        if (!statusesResponse.ok) {
+          throw new Error('Failed to fetch statuses');
+        }
+        
+        const orderData = await orderResponse.json();
+        const statusData = await statusesResponse.json();
+        const orderProductsData = orderProductsResponse.ok ? await orderProductsResponse.json() : [];
+        
+        // Combine order data with products
+        const orderWithProducts = {
+          ...orderData,
+          order_products: orderProductsData
+        };
+        
+        setOrder(orderWithProducts);
+        setAvailableStatuses(statusData);
+        setSelectedStatus(orderData.status_id?.status_name || '');
+        setError('');
+      } catch (error) {
+        console.error('Error fetching order details:', error);
+        setError('Failed to load order details. Please try again.');
+        setOrder(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (orderId) {
+      fetchOrderDetails();
+    }
+  }, [orderId]);
+
+  // Handle status update
+  const handleStatusUpdate = async (newStatusName) => {
+    try {
+      setStatusUpdating(true);
+      
+      // Find the status ID for the selected status name
+      const selectedStatusObj = availableStatuses.find(status => status.status_name === newStatusName);
+      if (!selectedStatusObj) {
+        throw new Error('Invalid status selected');
+      }
+
+      // Get admin user token
+      const adminUser = JSON.parse(localStorage.getItem('admin_user'));
+      if (!adminUser || !adminUser.token) {
+        throw new Error('No admin user found');
+      }
+
+      const response = await fetch(`http://localhost:4000/api/order/${orderId}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${adminUser.token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          status_id: selectedStatusObj._id
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update order status');
+      }
+
+      // Update local state
+      setOrder(prev => ({
+        ...prev,
+        status_id: selectedStatusObj
+      }));
+      setSelectedStatus(newStatusName);
+      
+      alert('Order status updated successfully!');
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('Failed to update order status. Please try again.');
+      // Reset to previous value
+      setSelectedStatus(order?.status_id?.status_name || '');
+    } finally {
+      setStatusUpdating(false);
+    }
+  };
   const handleBack = () => {
     navigate('/all-orders');
   };
-
-  // Dummy order data (replace with real data or props)
-  const order = {
-    orderId: '123456',
-    datePlaced: 'June 10, 2025',
-    status: 'Paid',
-    customer: {
-      name: 'John Doe',
-      phone: '+65 1234 5678',
-      email: 'john@example.com',
-    },
-    shipping: {
-      address: '123 Orchard Road, #04-05, Singapore 238888',
-      method: 'Standard Shipping (3-5 days)',
-    },
-    payment: {
-      method: 'Credit Card (Visa)',
-      total: '$189.90',
-    },
-    items: [
-      { name: 'Wave Skimboard', price: 129.9, quantity: 1, imageUrl: 'https://d3lezz6q2gd25j.cloudfront.net/6dwy4phae1mpytb3n30xvo9fqonq' },
-      { name: 'Tropical T Shirt', price: 19.99, quantity: 2, imageUrl: 'https://d3lezz6q2gd25j.cloudfront.net/qy9r377pw26ktvxgm0avwlskao8d' },
-      { name: 'Jacket', price: 29.99, quantity: 1, imageUrl: 'https://d3lezz6q2gd25j.cloudfront.net/sg6ic0qzfwlqsmr7pxpwthmd54wr' },
-      { name: 'Board Shorts', price: 60.0, quantity: 1, imageUrl: 'https://d3lezz6q2gd25j.cloudfront.net/oy8m7wqde3rehmf7vtr7ezf3jc3s' },
-      { name: 'Accessories', price: 20.0, quantity: 1, imageUrl: 'https://d3lezz6q2gd25j.cloudfront.net/jjkr7x3pcz2gs7cnhcrrb1aju6lj' }
-    ]
+  const calculateSubtotal = () => {
+    if (!order || !order.order_products) return '0.00';
+    return order.order_products.reduce((sum, item) => sum + (parseFloat(item.order_unit_price || 0) * parseInt(item.order_qty || 0)), 0).toFixed(2);
   };
 
-  const calculateSubtotal = () =>
-    order.items.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2);
+  // Loading state
+  if (loading) {
+    return (
+      <div className="add-product-page">
+        <AdminHeader />
+        <div className="manage-products-page">
+          <div style={{ textAlign: 'center', padding: '50px' }}>
+            <h2>Loading order details...</h2>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="add-product-page">
+        <AdminHeader />
+        <div className="manage-products-page">
+          <div style={{ textAlign: 'center', padding: '50px' }}>
+            <h2 style={{ color: 'red' }}>{error}</h2>
+            <button onClick={handleBack} className="btn-add-new">Back to All Orders</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // No order found
+  if (!order) {
+    return (
+      <div className="add-product-page">
+        <AdminHeader />
+        <div className="manage-products-page">
+          <div style={{ textAlign: 'center', padding: '50px' }}>
+            <h2>Order not found</h2>
+            <button onClick={handleBack} className="btn-add-new">Back to All Orders</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="add-product-page">
@@ -67,14 +209,16 @@ function OrderDetailPage() {
         <div className="add-product-form-layout">
 
           {/* Left Column - Order Info */}
-          <div className="add-product-main-column">
-
-            {/* Card: Order Summary */}
+          <div className="add-product-main-column">            {/* Card: Order Summary */}
             <div className="form-section-card">
               <h3 className="section-card-title">Order Summary</h3>
-              <p><strong>Order ID:</strong> {order.orderId}</p>
-              <p><strong>Date Placed:</strong> {order.datePlaced}</p>
-              <p><strong>Status:</strong> <span className="badge badge-green">{order.status}</span></p>
+              <p><strong>Order ID:</strong> #{order._id.slice(-8)}</p>
+              <p><strong>Date Placed:</strong> {new Date(order.order_date || order.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}</p>
+              <p><strong>Status:</strong> <span className="badge badge-green">{order.status_id?.status_name || 'Processing'}</span></p>
             </div>
 
             {/* Image Modal Preview */}
@@ -119,37 +263,61 @@ function OrderDetailPage() {
                   />
                 </div>
               </div>
-            )}
-
-            {/* Card: Order Items */}
+            )}            {/* Card: Order Items */}
             <div className="form-section-card">
               <h3 className="section-card-title">Items Ordered</h3>
               <div className="order-items-list">
-                {order.items.map((item, index) => (
-                  <div key={index} className="order-item-row" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    {/* Clickable thumbnail image */}
-                      <img
-                        src={item.imageUrl}
-                        alt={item.name}
-                        onClick={() => setModalImage(item.imageUrl)}
-                        style={{
+                {order.order_products && order.order_products.length > 0 ? (
+                  order.order_products.map((item, index) => (
+                    <div key={index} className="order-item-row" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      {/* Product image */}
+                      {item.product_id?.images && item.product_id.images.length > 0 ? (
+                        <img
+                          src={`http://localhost:4000/images/${item.product_id.images[0]}`}
+                          alt={item.product_id?.product_name || 'Product'}
+                          onClick={() => setModalImage(`http://localhost:4000/images/${item.product_id.images[0]}`)}
+                          style={{
+                            width: '40px',
+                            height: '40px',
+                            objectFit: 'cover',
+                            borderRadius: '4px',
+                            cursor: 'pointer'
+                          }}
+                        />
+                      ) : (
+                        <div style={{
                           width: '40px',
                           height: '40px',
-                          objectFit: 'cover',
+                          backgroundColor: '#f0f0f0',
                           borderRadius: '4px',
-                          cursor: 'pointer'
-                        }}
-                      />
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '12px'
+                        }}>
+                          No Image
+                        </div>
+                      )}
 
-                    <div style={{ flex: 1 }}>{item.name}</div>
-                    <div>{item.quantity} × ${item.price.toFixed(2)}</div>
-                  </div>
-                ))}
+                      <div style={{ flex: 1 }}>
+                        <div>{item.product_id?.product_name || 'Unknown Product'}</div>
+                        <div style={{ fontSize: '12px', color: '#666' }}>Size: {item.order_size}</div>
+                      </div>
+                      <div>{item.order_qty} × ${parseFloat(item.order_unit_price || 0).toFixed(2)}</div>
+                    </div>
+                  ))
+                ) : (
+                  <p>No items found for this order.</p>
+                )}
               </div>
               <hr />
               <div className="order-total-row">
                 <strong>Subtotal:</strong>
                 <strong>${calculateSubtotal()}</strong>
+              </div>
+              <div className="order-total-row">
+                <strong>Total:</strong>
+                <strong>${parseFloat(order.total_amount || 0).toFixed(2)}</strong>
               </div>
             </div>
 
@@ -158,50 +326,47 @@ function OrderDetailPage() {
 
           {/* Right Column - Customer & Payment */}
           <div className="add-product-sidebar-panel">
-            
-            {/* Card: Shipping Status */}
+              {/* Card: Shipping Status */}
             <div className="form-section-card">
               <h3 className="section-card-title">Shipping Status</h3>
-                <select
-                    className="category-select"
-                    style={{
-                        flex: '1 1 150px',
-                        padding: '10px',
-                        borderRadius: '6px',
-                        border: '1px solid #ccc'
-                    }}
-                >
-                    <option value="Pending">Pending</option>
-                    <option value="Processing">Processing</option>
-                    <option value="Shipped">Shipped</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Cancelled">Cancelled</option>
-                    <option value="Returned">Returned</option>
-                    <option value="Refunded">Refunded</option>
-                </select>
-
-            </div>
-
-            {/* Card: Customer Info */}
+              <select
+                className="category-select"
+                value={selectedStatus}
+                onChange={(e) => handleStatusUpdate(e.target.value)}
+                disabled={statusUpdating}
+                style={{
+                  flex: '1 1 150px',
+                  padding: '10px',
+                  borderRadius: '6px',
+                  border: '1px solid #ccc',
+                  opacity: statusUpdating ? 0.6 : 1
+                }}
+              >
+                {availableStatuses.map(status => (
+                  <option key={status._id} value={status.status_name}>
+                    {status.status_name}
+                  </option>
+                ))}
+              </select>
+              {statusUpdating && <p style={{ fontSize: '12px', color: '#666' }}>Updating status...</p>}
+            </div>            {/* Card: Customer Info */}
             <div className="form-section-card">
               <h3 className="section-card-title">Customer Information</h3>
-              <p><strong>Name:</strong> {order.customer.name}</p>
-              <p><strong>Phone:</strong> {order.customer.phone}</p>
-              <p><strong>Email:</strong> {order.customer.email}</p>
-            </div>
-
-            {/* Card: Shipping Info */}
+              <p><strong>Name:</strong> {order.user_id ? `${order.user_id.first_name} ${order.user_id.last_name}` : 'Unknown Customer'}</p>
+              <p><strong>Phone:</strong> {order.user_id?.phone_number || 'N/A'}</p>
+              <p><strong>Email:</strong> {order.user_id?.email || 'N/A'}</p>
+            </div>            {/* Card: Shipping Info */}
             <div className="form-section-card">
               <h3 className="section-card-title">Shipping Information</h3>
-              <p><strong>Address:</strong> {order.shipping.address}</p>
-              <p><strong>Method:</strong> {order.shipping.method}</p>
+              <p><strong>Address:</strong> {order.shipping_address || 'N/A'}</p>
+              <p><strong>Method:</strong> Standard Shipping</p>
             </div>
 
             {/* Card: Payment Info */}
             <div className="form-section-card">
               <h3 className="section-card-title">Payment</h3>
-              <p><strong>Method:</strong> {order.payment.method}</p>
-              <p><strong>Total:</strong> {order.payment.total}</p>
+              <p><strong>Method:</strong> {order.payment_method || 'N/A'}</p>
+              <p><strong>Total:</strong> ${parseFloat(order.total_amount || 0).toFixed(2)}</p>
             </div>
 
             {/* Card: Fulfillment & Tracking

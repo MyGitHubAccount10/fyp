@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Order = require('../models/OrderModel');
+const User = require('../models/UserModel');
 
 // Get all orders for admin (new function)
 const getAllOrders = async (req, res) => {
@@ -27,14 +28,29 @@ const getOrder = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({error: 'Invalid order ID'});
     }
-    const order = await Order.findById(id);
-    if (!order) {
-        return res.status(404).json({error: 'Order not found'});
+    
+    try {
+        const order = await Order.findById(id)
+            .populate('user_id', 'first_name last_name email username')
+            .populate('status_id', 'status_name');
+            
+        if (!order) {
+            return res.status(404).json({error: 'Order not found'});
+        }
+
+        // Get user role to check permissions
+        const userWithRole = await mongoose.model('User').findById(req.user._id).populate('role_id', 'role_name');
+        const userRole = userWithRole.role_id.role_name;
+
+        // Allow admins and super admins to view any order, regular users can only view their own
+        if (userRole !== 'Admin' && userRole !== 'Super Admin' && order.user_id._id.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ error: 'User not authorized to view this order' });
+        }
+
+        res.status(200).json(order);
+    } catch (error) {
+        res.status(400).json({error: error.message});
     }
-    if (order.user_id.toString() !== req.user._id.toString()) {
-        return res.status(403).json({ error: 'User not authorized to view this order' });
-    }
-    res.status(200).json(order);
 }
 
 // MODIFIED: Create a new order (postal_code logic removed)
@@ -110,11 +126,31 @@ const updateOrder = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({error: 'Invalid order ID'});
     }
-    const order = await Order.findOneAndUpdate({_id: id}, { ...req.body });
-    if (!order) {
-        return res.status(404).json({error: 'Order not found'});
+    
+    try {
+        // Get user role to check permissions
+        const userWithRole = await mongoose.model('User').findById(req.user._id).populate('role_id', 'role_name');
+        const userRole = userWithRole.role_id.role_name;
+
+        // Find the order first to check ownership if needed
+        const existingOrder = await Order.findById(id);
+        if (!existingOrder) {
+            return res.status(404).json({error: 'Order not found'});
+        }
+
+        // Allow admins and super admins to update any order, regular users can only update their own
+        if (userRole !== 'Admin' && userRole !== 'Super Admin' && existingOrder.user_id.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ error: 'User not authorized to update this order' });
+        }
+
+        const order = await Order.findOneAndUpdate({_id: id}, { ...req.body }, { new: true })
+            .populate('user_id', 'first_name last_name email username')
+            .populate('status_id', 'status_name');
+            
+        res.status(200).json(order);
+    } catch (error) {
+        res.status(400).json({error: error.message});
     }
-    res.status(200).json(order);
 }
 
 module.exports = {

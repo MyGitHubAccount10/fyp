@@ -129,14 +129,10 @@ function AllOrdersPage() {
             case 'In Transit': return 'status-shipped';
             default: return 'status-processing';
         }
-    };
-
-    // Handler for 'View Details' link (placeholder)
+    };    // Handler for 'View Details' link
     const handleViewDetails = (orderId) => {
         console.log("Viewing details for order:", orderId);
-        // In a real app, navigate to a specific order details page
-        // navigate(`/admin/orders/${orderId}`);
-        Navigate(`/order-details`);
+        Navigate(`/order-details/${orderId}`);
     };
 
     return (<>

@@ -150,8 +150,8 @@ function AddProductPage() {
         <div className="add-product-page"> {/* Page-specific class */}
             <AdminHeader />
         <div className="manage-products-page">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h2>Create a New Product</h2> {/* Title from the image */}
+            <div className="title-row">
+                <h2>Create a New Product</h2>
                 <button onClick={handleBack} className="btn-add-new">
                     <BackIcon size={18} color="white" />
                     Back to All Products

@@ -173,7 +173,7 @@ function EditProductPage() {
         <div className="add-product-page">
             <AdminHeader />
             <div className="manage-products-page">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div className="title-row">
                     <h2>Edit Product</h2>
                     <button onClick={handleBack} className="btn-add-new">
                         <BackIcon size={18} color="white" />

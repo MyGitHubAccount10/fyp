@@ -55,7 +55,7 @@ function OrderDetailPage() {
             <AdminHeader />
         <div className="manage-products-page">
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="title-row">
                 <h2>Order Details</h2> {/* Title from the image */}
                 <button onClick={handleBack} className="btn-add-new">
                     <BackIcon size={18} color="white" />

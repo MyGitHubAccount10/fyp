@@ -231,7 +231,7 @@ function AddAdminPage() {
           </div>
         ) : (
           <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="title-row">
               <div>
                 <h2>{isSuperAdmin ? 'Add New User' : 'Add New Customer'}</h2>
                 {currentUserRole && (

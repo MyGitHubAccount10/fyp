@@ -214,9 +214,11 @@ const handleFilter = () => {
                 {loading && <div style={{ textAlign: 'center', padding: '20px' }}>Loading users...</div>}
                 {error && <div style={{ textAlign: 'center', padding: '20px', color: 'red' }}>{error}</div>}
                 
-                {!loading && !error && (                    <>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <div>                                <h2>All Users</h2>
+                {!loading && !error && (                    
+                    <>
+                        <div className="title-row">
+                            <div>
+                                <h2>All Users</h2>
                                 {currentUserRole && (
                                     <p style={{ color: '#666', fontSize: '14px', margin: '5px 0' }}>
                                         Logged in as: <strong>{currentUserRole}</strong>

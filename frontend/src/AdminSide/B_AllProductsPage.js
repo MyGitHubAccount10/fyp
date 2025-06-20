@@ -191,7 +191,7 @@ function AllProductsPage() {
     return (<>
         <AdminHeader />
         <div className="manage-products-page">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="title-row">
                 <h2>All Products</h2>
                 <button onClick={handleAddProduct} className="btn-add-new">
                     <PencilIcon size={18} color="white" />

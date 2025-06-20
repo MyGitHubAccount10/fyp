@@ -8,13 +8,14 @@ import Footer from './Footer';
 import { SHIPPING_FEE } from './shippingConstants';
 import { GST_RATE } from './taxConstants'; // Import the GST rate
 
+// MODIFIED: Corrected the logo paths to match the file structure in the /public/images directory
 const paymentOptions = [
-    { id: 'paypal', name: 'PayPal', logo: '/images/payment-logos/paypal.png' },
-    { id: 'applePay', name: 'Apple Pay', logo: '/images/payment-logos/applepay.png' },
-    { id: 'googlePay', name: 'Google Pay', logo: '/images/payment-logos/googlepay.png' },
-    { id: 'aliPay', name: 'Alipay', logo: '/images/payment-logos/alipay.png' },
-    { id: 'grabPay', name: 'GrabPay', logo: '/images/payment-logos/grabpay.png' },
-    { id: 'eNETS', name: 'eNETS', logo: '/images/payment-logos/enets.png' },
+    { id: 'paypal', name: 'PayPal', logo: '/images/paypal.png' },
+    { id: 'applePay', name: 'Apple Pay', logo: '/images/applepay.png' },
+    { id: 'googlePay', name: 'Google Pay', logo: '/images/googlepay.png' }, // Assuming it's in /images
+    { id: 'aliPay', name: 'Alipay', logo: '/images/alipay.png' },       // Assuming it's in /images
+    { id: 'grabPay', name: 'GrabPay', logo: '/images/grabpay.png' },     // Assuming it's in /images
+    { id: 'eNETS', name: 'eNETS', logo: '/images/enets.png' },           // Assuming it's in /images
 ];
 
 function PlaceOrderPage() {

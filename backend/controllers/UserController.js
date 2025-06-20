@@ -107,6 +107,7 @@ const loginUser = async (req, res) => {
         _id: userWithRole._id, email: userWithRole.email, username: userWithRole.username, 
         phone_number: userWithRole.phone_number, first_name: userWithRole.first_name, 
         last_name: userWithRole.last_name, shipping_address: userWithRole.shipping_address, 
+        status: userWithRole.status,
         role: userWithRole.role_id, token 
     });
   } catch (error) {

@@ -6,8 +6,7 @@ export const useLogin = () => {
   const [isLoading, setIsLoading] = useState(null)
   const { dispatch } = useAuthContext()
 
-  const login = async (email, password) => {
-    setIsLoading(true)
+  const login = async (email, password) => {    setIsLoading(true)
     setError(null)
 
     const response = await fetch('/api/user/login', {
@@ -22,6 +21,13 @@ export const useLogin = () => {
       setError(json.error)
     }
     if (response.ok) {
+      // Check if user is banned
+      if (json.status === 'banned') {
+        setIsLoading(false)
+        setError('Access Denied. Your account has been banned. Please contact an administrator.')
+        return
+      }
+      
       // save the user to local storage
       localStorage.setItem('user', JSON.stringify(json))
 

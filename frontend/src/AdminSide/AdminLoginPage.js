@@ -43,6 +43,11 @@ const AdminLoginPage = () => {
         user.role.role_name === 'Super Admin' || 
         user.role.role_name === 'Super-Admin'
       )) {
+        // Check if user is banned
+        if (user.status === 'banned') {
+          throw new Error('Access Denied. Your account has been banned. Please contact an administrator.');
+        }
+        
         // Use the isolated storage key for admins and super admins
         localStorage.setItem('admin_user', JSON.stringify(user));
         window.location.href = '/admin-dashboard';

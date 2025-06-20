@@ -27,11 +27,16 @@ const LoginPage = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
-      });
-      const data = await response.json();
+      });      const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || `HTTP error! status: ${response.status}`);
       }
+      
+      // Check if user is banned
+      if (data.status === 'banned') {
+        throw new Error('Access Denied. Your account has been banned. Please contact an administrator.');
+      }
+      
       localStorage.setItem('user', JSON.stringify(data));
       window.location.href = '/';
     } catch (error) {

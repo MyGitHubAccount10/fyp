@@ -236,15 +236,48 @@ const ProductDetailPage = () => {
 
         <section className="similar-products-section">
           <h2 className="section-title-detail">Similar Products</h2>
+          {/* MODIFIED: Similar products grid now indicates stock status */}
           <div className="similar-products-grid">
-            {similarProducts.map(p => (
-              <Link to={`/product/${p._id}`} key={p._id} style={{ textDecoration: 'none' }}>
-                <div className="similar-product-card">
+            {similarProducts.map(p => {
+              const isAvailable = p.warehouse_quantity > 0;
+              const cardContent = (
+                <div className="similar-product-card" style={{ position: 'relative', opacity: isAvailable ? 1 : 0.6 }}>
                   <img src={`/images/${p.product_image}`} alt={p.product_name} className="similar-product-image" />
                   <div className="similar-product-caption">{p.product_name}</div>
+                  {!isAvailable && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '5px',
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                      pointerEvents: 'none'
+                    }}>
+                      Out of Stock
+                    </div>
+                  )}
                 </div>
-              </Link>
-            ))}
+              );
+
+              if (isAvailable) {
+                return (
+                  <Link to={`/product/${p._id}`} key={p._id} style={{ textDecoration: 'none' }}>
+                    {cardContent}
+                  </Link>
+                );
+              } else {
+                return (
+                  <div key={p._id}>
+                    {cardContent}
+                  </div>
+                );
+              }
+            })}
           </div>
         </section>
       </main>

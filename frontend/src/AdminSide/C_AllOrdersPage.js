@@ -37,7 +37,7 @@ function AllOrdersPage() {
                     throw new Error('No admin user found');
                 }                // Fetch orders and statuses in parallel
                 const [ordersResponse, statusesResponse] = await Promise.all([
-                    fetch('http://localhost:4000/api/order/admin/all', {
+                    fetch('http://localhost:4000/api/orders/admin/all', {
                         method: 'GET',
                         headers: {
                             'Authorization': `Bearer ${adminUser.token}`,

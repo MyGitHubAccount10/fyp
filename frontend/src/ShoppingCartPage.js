@@ -129,7 +129,11 @@ function ShoppingCartPage() {
                     <p><span>GST ({(GST_RATE * 100).toFixed(0)}%)</span> <span>${gst.toFixed(2)}</span></p>
                     {/* 6. Update the total to include GST */}
                     <p className="total-row"><strong>Total</strong> <strong>${(subtotal + SHIPPING_FEE + gst).toFixed(2)}</strong></p>
-                    <button className="complete-purchase-btn" onClick={handleCheckout}>Complete Purchase</button>
+                    <button 
+                    className="complete-purchase-btn" 
+                    onClick={handleCheckout}
+                    disabled={cartItems.length === 0}
+                    style={{opacity: cartItems.length === 0 ? 0.5 : 1}}>Complete Purchase</button>
                 </div>
 
                 {/* Saved for Later section is unchanged */}

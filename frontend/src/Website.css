@@ -312,13 +312,14 @@ h2 {
   font-size: 1.1em;
   cursor: pointer;
   padding: 0 8px;
-  color: #000000;
+  color: #004D40;
 }
 .quantity-controls span {
   padding: 0 8px;
   font-weight: 500;
   min-width: 15px;
   text-align: center;
+  color: #004D40;
 }
 .item-actions .action-btn {
   padding: 6px 12px;

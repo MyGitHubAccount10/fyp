@@ -190,14 +190,20 @@ const ProductDetailPage = () => {
                     <div className="quantity-controls-detail">
                         <button
                         onClick={() => handleQuantityChange(-1)}
-                        disabled={quantity === 1}>
-                        <span style={{ opacity: quantity === 1 ? 0.5 : 1 }}>-</span>
+                        disabled={quantity === 1}
+                        style={{ 
+                          pointerEvents: quantity === 1 ? 'none' : 'auto',
+                          opacity: quantity === 1 ? 0.5 : 1 }}>
+                        <span>-</span>
                         </button>
                         <span>{quantity}</span>
                         <button 
                         onClick={() => handleQuantityChange(1)}
-                        disabled={quantity >= stock}>
-                        <span style={{ opacity: quantity === stock ? 0.5 : 1 }}>+</span>
+                        disabled={quantity >= stock}
+                        style={{ 
+                          pointerEvents: quantity === stock ? 'none' : 'auto',
+                          opacity: quantity === stock ? 0.5 : 1 }}>
+                        <span>+</span>
                         </button>
                     </div>
                   </div>

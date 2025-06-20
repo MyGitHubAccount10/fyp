@@ -90,22 +90,29 @@ function ShoppingCartPage() {
                                         <span className="size-info">Size: {item.size}</span>
                                     </div>
                                     <div className="item-actions">
-                                        <div className="quantity-controls">
+                                        <div className="action-btn quantity-controls">
                                             <button 
                                             onClick={() => handleQuantityChange(item.id, item.size, -1)} 
-                                            disabled={item.quantity === 1}>
-                                            <span style={{ opacity: item.quantity === 1 ? 0.5 : 1 }}>-</span>
+                                            disabled={item.quantity === 1}
+                                            style={{
+                                                pointerEvents: item.quantity === 1 ? 'none' : 'auto', 
+                                                opacity: item.quantity === 1 ? 0.5 : 1 }}>
+                                            <span>-</span>
                                             </button>
                                             <span>{item.quantity}</span>
                                             <button 
                                             onClick={() => handleQuantityChange(item.id, item.size, 1)} 
                                             disabled={cartItems
                                                     .filter(cartItem => cartItem.id === item.id)
-                                                    .reduce((acc, cartItem) => acc + cartItem.quantity, 0) >= item.warehouse_quantity}>
-                                            <span style={{ opacity: 
-                                                cartItems
-                                                    .filter(cartItem => cartItem.id === item.id)
-                                                    .reduce((acc, cartItem) => acc + cartItem.quantity, 0) >= item.warehouse_quantity ? 0.5 : 1 }}>+</span>
+                                                    .reduce((acc, cartItem) => acc + cartItem.quantity, 0) >= item.warehouse_quantity}
+                                            style={{
+                                                pointerEvents: cartItems
+                                                .filter(cartItem => cartItem.id === item.id)
+                                                .reduce((acc, cartItem) => acc + cartItem.quantity, 0) >= item.warehouse_quantity ? 'none' : 'auto',
+                                                opacity: cartItems
+                                                .filter(cartItem => cartItem.id === item.id)
+                                                .reduce((acc, cartItem) => acc + cartItem.quantity, 0) >= item.warehouse_quantity ? 0.5 : 1 }}>
+                                            <span>+</span>
                                             </button>
                                         </div>
                                         <button className="action-btn delete-btn" onClick={() => handleDeleteItem(item.id, item.size)}>Delete</button>
@@ -133,7 +140,9 @@ function ShoppingCartPage() {
                     className="complete-purchase-btn" 
                     onClick={handleCheckout}
                     disabled={cartItems.length === 0}
-                    style={{opacity: cartItems.length === 0 ? 0.5 : 1}}>Complete Purchase</button>
+                    style={{ 
+                        pointerEvents: cartItems.length === 0 ? 'none' : 'auto', 
+                        opacity: cartItems.length === 0 ? 0.5 : 1 }}>Complete Purchase</button>
                 </div>
 
                 {/* Saved for Later section is unchanged */}

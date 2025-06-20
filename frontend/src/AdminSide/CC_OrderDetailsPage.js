@@ -15,13 +15,14 @@ const BackIcon = ({ color = "currentColor" }) => (
 function OrderDetailPage() {
   const navigate = useNavigate();
   const { orderId } = useParams();
-  const [modalImage, setModalImage] = useState(null);
-  const [order, setOrder] = useState(null);
+  const [modalImage, setModalImage] = useState(null);  const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [availableStatuses, setAvailableStatuses] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [statusUpdating, setStatusUpdating] = useState(false);
+  const [statusMessage, setStatusMessage] = useState('');
+  const [internalNote, setInternalNote] = useState('');
 
   // Fetch order details and statuses
   useEffect(() => {
@@ -47,7 +48,8 @@ function OrderDetailPage() {
             headers: {
               'Content-Type': 'application/json'
             }
-          }),          fetch(`http://localhost:4000/api/order-products/by-order/${orderId}`, {
+          }),          
+          fetch(`http://localhost:4000/api/order-products/by-order/${orderId}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${adminUser.token}`,
@@ -66,12 +68,15 @@ function OrderDetailPage() {
         const orderData = await orderResponse.json();
         const statusData = await statusesResponse.json();
         const orderProductsData = orderProductsResponse.ok ? await orderProductsResponse.json() : [];
-        
-        // Combine order data with products
+          // Combine order data with products
         const orderWithProducts = {
           ...orderData,
           order_products: orderProductsData
         };
+        
+        // Debug: Log the order data to see product images
+        console.log('Order with products:', orderWithProducts);
+        console.log('Order products:', orderProductsData);
         
         setOrder(orderWithProducts);
         setAvailableStatuses(statusData);
@@ -119,19 +124,20 @@ function OrderDetailPage() {
 
       if (!response.ok) {
         throw new Error('Failed to update order status');
-      }
-
-      // Update local state
+      }      // Update local state
       setOrder(prev => ({
         ...prev,
         status_id: selectedStatusObj
       }));
       setSelectedStatus(newStatusName);
       
-      alert('Order status updated successfully!');
+      // Show success message
+      setStatusMessage('Order status updated successfully!');
+      setTimeout(() => setStatusMessage(''), 3000);
     } catch (error) {
       console.error('Error updating status:', error);
-      alert('Failed to update order status. Please try again.');
+      setStatusMessage('Failed to update order status. Please try again.');
+      setTimeout(() => setStatusMessage(''), 5000);
       // Reset to previous value
       setSelectedStatus(order?.status_id?.status_name || '');
     } finally {
@@ -239,12 +245,11 @@ function OrderDetailPage() {
               >
                 {/* Modal Content */}
                 <div
-                  onClick={(e) => e.stopPropagation()}
-                  style={{
+                  onClick={(e) => e.stopPropagation()}                  style={{
                     backgroundColor: 'white',
                     borderRadius: '8px',
-                    maxWidth: '25vw',
-                    maxHeight: '25vh',
+                    maxWidth: '80vw',
+                    maxHeight: '80vh',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
@@ -265,15 +270,25 @@ function OrderDetailPage() {
             <div className="form-section-card">
               <h3 className="section-card-title">Items Ordered</h3>
               <div className="order-items-list">
-                {order.order_products && order.order_products.length > 0 ? (
-                  order.order_products.map((item, index) => (
-                    <div key={index} className="order-item-row" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      {/* Product image */}
-                      {item.product_id?.images && item.product_id.images.length > 0 ? (
+                {order.order_products && order.order_products.length > 0 ? (                  order.order_products.map((item, index) => (
+                    <div key={index} className="order-item-row" style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '10px',
+                      marginBottom: '10px',
+                      padding: '8px',
+                      backgroundColor: '#f9f9f9',
+                      borderRadius: '4px'
+                    }}>                      {/* Product image */}
+                      {item.product_id?.product_image ? (
                         <img
-                          src={`http://localhost:4000/images/${item.product_id.images[0]}`}
+                          src={`/images/${item.product_id.product_image}`}
                           alt={item.product_id?.product_name || 'Product'}
-                          onClick={() => setModalImage(`http://localhost:4000/images/${item.product_id.images[0]}`)}
+                          onClick={() => setModalImage(`/images/${item.product_id.product_image}`)}
+                          onError={(e) => {
+                            console.log('Image failed to load:', `/images/${item.product_id.product_image}`);
+                            console.log('Product data:', item.product_id);
+                          }}
                           style={{
                             width: '40px',
                             height: '40px',
@@ -295,25 +310,47 @@ function OrderDetailPage() {
                         }}>
                           No Image
                         </div>
-                      )}
-
-                      <div style={{ flex: 1 }}>
-                        <div>{item.product_id?.product_name || 'Unknown Product'}</div>
+                      )}<div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ 
+                          wordWrap: 'break-word', 
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {item.product_id?.product_name || 'Unknown Product'}
+                        </div>
                         <div style={{ fontSize: '12px', color: '#666' }}>Size: {item.order_size}</div>
                       </div>
-                      <div>{item.order_qty} × ${parseFloat(item.order_unit_price || 0).toFixed(2)}</div>
+                      <div style={{ 
+                        flexShrink: 0,
+                        marginLeft: '10px',
+                        textAlign: 'right',
+                        minWidth: 'fit-content'
+                      }}>
+                        {item.order_qty} × ${parseFloat(item.order_unit_price || 0).toFixed(2)}
+                      </div>
                     </div>
                   ))
                 ) : (
                   <p>No items found for this order.</p>
                 )}
-              </div>
-              <hr />
-              <div className="order-total-row">
+              </div>              <hr />
+              <div className="order-total-row" style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                padding: '5px 0'
+              }}>
                 <strong>Subtotal:</strong>
                 <strong>${calculateSubtotal()}</strong>
               </div>
-              <div className="order-total-row">
+              <div className="order-total-row" style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                padding: '5px 0',
+                fontSize: '16px'
+              }}>
                 <strong>Total:</strong>
                 <strong>${parseFloat(order.total_amount || 0).toFixed(2)}</strong>
               </div>
@@ -323,44 +360,57 @@ function OrderDetailPage() {
           </div>
 
           {/* Right Column - Customer & Payment */}
-          <div className="add-product-sidebar-panel">
-              {/* Card: Shipping Status */}
-            <div className="form-section-card">
-              <h3 className="section-card-title">Shipping Status</h3>
-              <select
-                className="category-select"
-                value={selectedStatus}
-                onChange={(e) => handleStatusUpdate(e.target.value)}
-                disabled={statusUpdating}
-                style={{
-                  flex: '1 1 150px',
-                  padding: '10px',
-                  borderRadius: '6px',
-                  border: '1px solid #ccc',
-                  opacity: statusUpdating ? 0.6 : 1
-                }}
-              >
-                {availableStatuses.map(status => (
-                  <option key={status._id} value={status.status_name}>
-                    {status.status_name}
-                  </option>
-                ))}
-              </select>
+          <div className="add-product-sidebar-panel">              {/* Card: Shipping Status */}
+            <div className="form-section-card">              <h3 className="section-card-title">Shipping Status</h3>
+              <div style={{ width: '100%', overflow: 'hidden' }}>
+                <select
+                  className="category-select"
+                  value={selectedStatus}
+                  onChange={(e) => handleStatusUpdate(e.target.value)}
+                  disabled={statusUpdating}
+                  style={{
+                    width: '100%',
+                    maxWidth: '100%',
+                    minWidth: 'auto',
+                    padding: '10px',
+                    borderRadius: '6px',
+                    border: '1px solid #ccc',
+                    opacity: statusUpdating ? 0.6 : 1,
+                    boxSizing: 'border-box',
+                    fontSize: '14px',
+                    overflow: 'hidden'
+                  }}
+                >
+                  {availableStatuses.map(status => (
+                    <option key={status._id} value={status.status_name}>
+                      {status.status_name}
+                    </option>
+                  ))}
+                </select>
+              </div>
               {statusUpdating && <p style={{ fontSize: '12px', color: '#666' }}>Updating status...</p>}
+              {statusMessage && (
+                <p style={{ 
+                  fontSize: '12px', 
+                  color: statusMessage.includes('successfully') ? '#28a745' : '#dc3545',
+                  marginTop: '5px'
+                }}>
+                  {statusMessage}
+                </p>
+              )}
             </div>            {/* Card: Customer Info */}
             <div className="form-section-card">
               <h3 className="section-card-title">Customer Information</h3>
-              <p><strong>Name:</strong> {order.user_id ? `${order.user_id.first_name} ${order.user_id.last_name}` : 'Unknown Customer'}</p>
-              <p><strong>Phone:</strong> {order.user_id?.phone_number || 'N/A'}</p>
-              <p><strong>Email:</strong> {order.user_id?.email || 'N/A'}</p>
+              <p style={{ wordWrap: 'break-word' }}><strong>Name:</strong> {order.user_id ? `${order.user_id.first_name} ${order.user_id.last_name}` : 'Unknown Customer'}</p>
+              <p style={{ wordWrap: 'break-word' }}><strong>Username:</strong> {order.user_id?.username || 'N/A'}</p>
+              <p style={{ wordWrap: 'break-word' }}><strong>Phone:</strong> {order.user_id?.phone_number || 'N/A'}</p>
+              <p style={{ wordWrap: 'break-word' }}><strong>Email:</strong> {order.user_id?.email || 'N/A'}</p>
             </div>            {/* Card: Shipping Info */}
             <div className="form-section-card">
               <h3 className="section-card-title">Shipping Information</h3>
-              <p><strong>Address:</strong> {order.shipping_address || 'N/A'}</p>
+              <p style={{ wordWrap: 'break-word', lineHeight: '1.5' }}><strong>Address:</strong> {order.shipping_address || 'N/A'}</p>
               <p><strong>Method:</strong> Standard Shipping</p>
-            </div>
-
-            {/* Card: Payment Info */}
+            </div>{/* Card: Payment Info */}
             <div className="form-section-card">
               <h3 className="section-card-title">Payment</h3>
               <p><strong>Method:</strong> {order.payment_method || 'N/A'}</p>
@@ -370,94 +420,25 @@ function OrderDetailPage() {
             {/* Card: Fulfillment & Tracking
             <div className="form-section-card">
               <h3 className="section-card-title">Fulfillment & Tracking</h3>
-              <p><strong>Tracking Number:</strong> TRKSG123456789</p>
-              <p><strong>Courier:</strong> Ninja Van</p>
-              <button
-                className="btn-add-new"
-                style={{ marginTop: '10px' }}
-                onClick={() => window.open('https://www.ninjavan.co/en-sg/tracking', '_blank')}
-              >
-                Track Package
-              </button>
+              <p><strong>Tracking Number:</strong> {order.tracking_number || 'Not assigned yet'}</p>
+              <p><strong>Courier:</strong> {order.courier || 'To be determined'}</p>
+              {order.tracking_number && (
+                <button
+                  className="btn-add-new"
+                  style={{ marginTop: '10px' }}
+                  onClick={() => window.open('https://www.ninjavan.co/en-sg/tracking', '_blank')}
+                >
+                  Track Package
+                </button>
+              )}
             </div> */}
 
-
           </div>
 
         </div>
 
-      </form>
-
-      <form className="add-product-form-layout">
-        <div className="add-product-main-column">
-          <div className="form-section-card">
-            <h3 className="section-card-title">Fulfillment & Tracking</h3>
-            <p><strong>Tracking Number:</strong> TRKSG123456789</p>
-            <p><strong>Courier:</strong> Ninja Van</p>
-            <button
-              className="btn-add-new"
-              style={{ marginTop: '10px' }}
-              onClick={() => window.open('https://www.ninjavan.co/en-sg/tracking', '_blank')}
-            >
-              Track Package
-            </button>
-          </div>
-
-
-          {/* Card: Order Notes & History */}
-          <div className="form-section-card">
-            <h3 className="section-card-title">Order Notes & History</h3>
-
-            {/* Internal Note */}
-            <div style={{ marginBottom: '12px' }}>
-              <label htmlFor="internalNote" style={{ fontWeight: 'bold' }}>Internal Note:</label>
-              <textarea
-                id="internalNote"
-                rows="3"
-                placeholder="Write a private note for internal use..."
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  marginTop: '6px',
-                  borderRadius: '6px',
-                  border: '1px solid #ccc',
-                  resize: 'vertical',
-                  boxSizing: 'border-box'
-                }}
-              ></textarea>
-              <button
-                className="btn-add-new"
-                style={{ marginTop: '8px' }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  alert("Note saved (not really, just a placeholder)");
-                }}
-              >
-                Save Note
-              </button>
-            </div>
-
-            {/* History log */}
-            <div>
-              <p style={{ fontWeight: 'bold', marginBottom: '6px' }}>Order History:</p>
-              <ul style={{ paddingLeft: '18px' }}>
-                <li>June 12, 2025 - Status changed to <strong>Shipped</strong></li>
-                <li>June 11, 2025 - Tracking number added</li>
-                <li>June 10, 2025 - Order placed</li>
-              </ul>
-            </div>
-          </div>
-
-
-
-
-
-{/* --------------------- */}
-
-        </div>
       </form>
     </div>
-
   </div>
 );
 

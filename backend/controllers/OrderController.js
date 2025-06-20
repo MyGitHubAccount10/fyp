@@ -6,7 +6,7 @@ const User = require('../models/UserModel');
 const getAllOrders = async (req, res) => {
     try {
         const orders = await Order.find({})
-            .populate('user_id', 'first_name last_name email username')
+            .populate('user_id', 'first_name last_name email username phone_number')
             .populate('status_id', 'status_name')
             .sort({createdAt: -1});
         res.status(200).json(orders);
@@ -28,10 +28,9 @@ const getOrder = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({error: 'Invalid order ID'});
     }
-    
-    try {
+      try {
         const order = await Order.findById(id)
-            .populate('user_id', 'first_name last_name email username')
+            .populate('user_id', 'first_name last_name email username phone_number')
             .populate('status_id', 'status_name');
             
         if (!order) {
@@ -141,10 +140,8 @@ const updateOrder = async (req, res) => {
         // Allow admins and super admins to update any order, regular users can only update their own
         if (userRole !== 'Admin' && userRole !== 'Super Admin' && existingOrder.user_id.toString() !== req.user._id.toString()) {
             return res.status(403).json({ error: 'User not authorized to update this order' });
-        }
-
-        const order = await Order.findOneAndUpdate({_id: id}, { ...req.body }, { new: true })
-            .populate('user_id', 'first_name last_name email username')
+        }        const order = await Order.findOneAndUpdate({_id: id}, { ...req.body }, { new: true })
+            .populate('user_id', 'first_name last_name email username phone_number')
             .populate('status_id', 'status_name');
             
         res.status(200).json(order);

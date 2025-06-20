@@ -489,16 +489,14 @@ const adminStylesCss = `
 }
 
 
-/* Status Badges */
+/* Badge styles for user status */
 .badge {
   display: inline-block;
   padding: 4px 8px;
   border-radius: 12px;
-  font-size: 0.75em;
+  font-size: 12px;
   font-weight: 500;
   text-transform: capitalize;
-  min-width: 60px;
-  text-align: center;
 }
 
 .badge-green {
@@ -515,32 +513,33 @@ const adminStylesCss = `
 
 .badge-gray {
   background-color: #e2e3e5;
-  color: #383d41;
+  color: #6c757d;
   border: 1px solid #d6d8db;
 }
 
-/* Unban Button */
+/* Disabled button styles */
+.disabled-btn {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+  cursor: not-allowed;
+}
+
+.disabled-btn:hover {
+  background-color: #f8f9fa;
+  color: #6c757d;
+}
+
+/* Unban button styles */
 .unban-btn {
   background-color: #28a745;
   color: white;
-  border: none;
-  padding: 6px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9em;
-  transition: background-color 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px solid #28a745;
 }
 
 .unban-btn:hover {
   background-color: #218838;
-}
-
-.unban-btn svg {
-  width: 16px;
-  height: 16px;
+  border-color: #1e7e34;
 }
 
 /* Responsive adjustments for Add Product Page (within existing media queries) */

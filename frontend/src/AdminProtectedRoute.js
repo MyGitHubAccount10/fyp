@@ -15,7 +15,12 @@ const AdminProtectedRoute = ({ children }) => {
     user = null; 
   }
 
-  const isAdmin = user && user.role?._id === ADMIN_ROLE_ID;
+  const isAdmin = user && user.role && (
+    user.role._id === ADMIN_ROLE_ID || 
+    user.role.role_name === 'Admin' || 
+    user.role.role_name === 'Super Admin' || 
+    user.role.role_name === 'Super-Admin'
+  );
 
   if (isAdmin) {
     return children;

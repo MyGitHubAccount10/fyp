@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/UserModel');
+const Order = require('../models/OrderModel'); // ✅ 1. Import the Order model
+const OrderProduct = require('../models/OrderProductModel'); // ✅ 2. Import the Order-Product model
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
@@ -7,6 +9,7 @@ const createToken = (_id) => {
     return jwt.sign({_id}, process.env.SECRET, { expiresIn: '3d' })
 }
 
+// ... (getUsers, getUser, createUser functions remain the same) ...
 const getUsers = async (req, res) => {
     const users = await User.find({}).sort({createdAt: -1});
     res.status(200).json(users);
@@ -20,30 +23,15 @@ const getUser = async (req, res) => {
     res.status(200).json(user);
 }
 
-// --- MODIFIED: This function now accepts all fields from the admin creation form ---
 const createUser = async (req, res) => {
     const { 
-        first_name, 
-        last_name, 
-        username, 
-        email, 
-        shipping_address,
-        password, 
-        phone_number, 
-        role_id 
+        first_name, last_name, username, email, shipping_address,
+        password, phone_number, role_id 
     } = req.body;
-
-    // Use the comprehensive .signup static method which already handles hashing and validation
     try {
        const user = await User.signup(
-            email, 
-            password, 
-            username, 
-            phone_number, 
-            role_id, 
-            first_name, 
-            last_name, 
-            shipping_address
+            email, password, username, phone_number, role_id, 
+            first_name, last_name, shipping_address
         );
        res.status(201).json(user);
     } catch (error) {
@@ -51,24 +39,76 @@ const createUser = async (req, res) => {
     }
 }
 
+
+// Admin-only delete function (for deleting OTHER users)
 const deleteUser = async (req, res) => {
     const {id} = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({error: 'Invalid user ID'});
+    // Note: A full implementation for this would also need to cascade delete orders.
+    // We are focusing on the user self-delete for this request.
     const user = await User.findByIdAndDelete({_id: id});
     if (!user) return res.status(404).json({error: 'User not found'});
     res.status(200).json(user);
 }
 
+
+// --- ✅ 3. REWRITTEN FUNCTION WITH CASCADE DELETE & TRANSACTION ---
+const deleteLoggedInUser = async (req, res) => {
+    const userId = req.user._id;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+        return res.status(400).json({ error: 'Invalid user token.' });
+    }
+
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        // Step 1: Find all orders associated with the user to get their IDs
+        const userOrders = await Order.find({ user_id: userId }).session(session);
+        const orderIdsToDelete = userOrders.map(order => order._id);
+
+        // Step 2: If there are orders, delete all associated order-products
+        if (orderIdsToDelete.length > 0) {
+            await OrderProduct.deleteMany({ order_id: { $in: orderIdsToDelete } }).session(session);
+        }
+
+        // Step 3: Delete all orders belonging to the user
+        await Order.deleteMany({ user_id: userId }).session(session);
+
+        // Step 4: Delete the user account itself
+        const deletedUser = await User.findByIdAndDelete(userId).session(session);
+
+        if (!deletedUser) {
+            // If the user wasn't found, something is wrong. Abort the transaction.
+            await session.abortTransaction();
+            session.endSession();
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        // If all steps were successful, commit the transaction
+        await session.commitTransaction();
+        session.endSession();
+
+        res.status(200).json({ message: 'Account and all associated orders have been successfully deleted.' });
+
+    } catch (error) {
+        // If any error occurs at any step, abort the entire transaction
+        await session.abortTransaction();
+        session.endSession();
+        console.error('Error during account deletion transaction:', error);
+        res.status(500).json({ error: 'Server error while deleting account. The operation was cancelled.' });
+    }
+};
+// --- ✅ END OF REWRITTEN FUNCTION ---
+
+
+// ... (banUser, unbanUser, updateUser, loginUser, etc. all remain the same) ...
+
 const banUser = async (req, res) => {
     const {id} = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({error: 'Invalid user ID'});
-    
-    const user = await User.findByIdAndUpdate(
-        {_id: id}, 
-        {status: 'banned'}, 
-        {new: true}
-    );
-    
+    const user = await User.findByIdAndUpdate({_id: id}, {status: 'banned'}, {new: true});
     if (!user) return res.status(404).json({error: 'User not found'});
     res.status(200).json({message: 'User banned successfully', user});
 }
@@ -76,13 +116,7 @@ const banUser = async (req, res) => {
 const unbanUser = async (req, res) => {
     const {id} = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({error: 'Invalid user ID'});
-    
-    const user = await User.findByIdAndUpdate(
-        {_id: id}, 
-        {status: 'active'}, 
-        {new: true}
-    );
-    
+    const user = await User.findByIdAndUpdate({_id: id}, {status: 'active'}, {new: true});
     if (!user) return res.status(404).json({error: 'User not found'});
     res.status(200).json({message: 'User unbanned successfully', user});
 }
@@ -94,8 +128,6 @@ const updateUser = async (req, res) => {
     if (!user) return res.status(404).json({error: 'User not found'});
     res.status(200).json(user);
 }
-
-// ... (All other controller functions remain unchanged)
 
 const loginUser = async (req, res) => {
   const {email, password} = req.body;
@@ -181,4 +213,5 @@ module.exports = {
     loginUser,
     updateLoggedInUser,
     updateUserPassword,
+    deleteLoggedInUser, // Function name is unchanged, but its logic is now transactional
 };

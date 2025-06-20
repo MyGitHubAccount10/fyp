@@ -2639,3 +2639,33 @@ input[type="password"]::-ms-clear {
 .password-input-wrapper input {
   padding-right: 45px !important; /* Add space on the right for the icon */
 }
+
+
+
+/* Add to your Website.css or similar file */
+
+.profile-section.danger-zone {
+    border-color: #dc3545; /* A red border to signify danger */
+}
+
+.profile-section.danger-zone .profile-section-header h3 {
+    color: #dc3545;
+}
+
+.btn-delete-account {
+    background-color: #dc3545; /* Bootstrap's danger red */
+    color: white;
+    border: 1px solid #dc3545;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.2s, border-color 0.2s;
+    margin-top: 10px;
+}
+
+.btn-delete-account:hover {
+    background-color: #c82333; /* A darker red on hover */
+    border-color: #bd2130;
+}

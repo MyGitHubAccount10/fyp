@@ -232,15 +232,13 @@ function AllOrdersPage() {
       className="pagination-button"
     >
       {'Next >>'}
-    </button>
-  </div>
+    </button>  </div>
 </div>
-
-
 
             {/* Orders Table */}
             <div className="orders-table-container">
-                <table className="orders-table">                    <thead>
+                <table className="orders-table">
+                    <thead>
                         <tr>
                             <th>Order ID</th>
                             <th>Date</th>
@@ -249,8 +247,8 @@ function AllOrdersPage() {
                             <th>Payment Method</th>
                             <th>Order Status</th>
                             <th>Actions</th>
-                        </tr>
-                    </thead><tbody>
+                        </tr>                    </thead>
+                    <tbody>
                         {loading ? (
                             <tr>
                                 <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>Loading orders...</td>
@@ -258,7 +256,8 @@ function AllOrdersPage() {
                         ) : error ? (
                             <tr>
                                 <td colSpan="7" style={{ textAlign: 'center', padding: '20px', color: 'red' }}>{error}</td>
-                            </tr>                        ) : currentOrders.length > 0 ? (
+                            </tr>
+                        ) : currentOrders.length > 0 ? (
                              currentOrders.map(order => (
                                 <tr key={order._id}>
                                     <td>#{order._id.slice(-8)}</td> {/* Display last 8 characters of ID */}

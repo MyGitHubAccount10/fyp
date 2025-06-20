@@ -1,7 +1,7 @@
 // src/Header.js
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom'; // MODIFIED: Import useNavigate
 import './Website.css';
 
 // --- ICONS (No Changes) ---
@@ -47,9 +47,11 @@ const CloseIcon = () => (
 const Header = () => {
     const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false); 
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State for sidebar
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState(''); // ✅ 1. Add state for the search query
     const profileDropdownRef = useRef(null);
     const user = JSON.parse(localStorage.getItem('user'));
+    const navigate = useNavigate(); // ✅ 2. Get the navigate function
 
     const toggleProductDropdown = (e) => {
         e.preventDefault();
@@ -78,20 +80,31 @@ const Header = () => {
         localStorage.removeItem('user');
         window.location.href = '/'; 
     };
+    
+    // ✅ 3. Create a handler for search submission
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            // Navigate to the search page with the query
+            navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+            setSearchQuery(''); // Clear the input field
+            if (isSidebarOpen) setIsSidebarOpen(false); // Close sidebar on mobile search
+        }
+    };
 
     return (
         <>
             {/* The main header */}
             <header>
                 <div className="header-left-content">
-                    {/* Burger Menu Button - will be shown via CSS on small screens */}
+                    {/* Burger Menu Button */}
                     <button className="burger-btn" onClick={() => setIsSidebarOpen(true)} aria-label="Open navigation menu">
                         <BurgerIcon />
                     </button>
                     <Link to="/" className="header-logo-link">
                         <img src={logoImage} alt="This Side Up Logo" className="header-logo-img" />
                     </Link>
-                    {/* Desktop Navigation - will be hidden via CSS on small screens */}
+                    {/* Desktop Navigation */}
                     <nav className="header-nav-links">
                         <NavLink to="/about" className={({ isActive }) => isActive ? "active-link" : ""}>About</NavLink>
                         <NavLink to="/contact" className={({ isActive }) => isActive ? "active-link" : ""}>Contact</NavLink>
@@ -105,14 +118,20 @@ const Header = () => {
                     </nav>
                 </div>
                 <div className="header-right-content">
-                    {/* Desktop Search - will be hidden via CSS on small screens */}
-                    <form className="search-bar" role="search" onSubmit={(e) => e.preventDefault()}>
-                        <input type="search" placeholder="Search" aria-label="Search site" />
+                    {/* MODIFIED: Desktop Search */}
+                    <form className="search-bar" role="search" onSubmit={handleSearchSubmit}>
+                        <input 
+                            type="search" 
+                            placeholder="Search" 
+                            aria-label="Search site"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
                         <button type="submit" aria-label="Submit search" title="Search">
                             <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M21 21L16.65 16.65" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                         </button>
                     </form>
-                    {/* Icons that are always visible */}
+                    {/* Icons */}
                     <Link to="/cart" aria-label="Shopping Cart" className="header-icon-link" title="Shopping Cart">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 2L3 6V20C3 20.5304 3.21071 21.0391 3.58579 21.4142C3.96086 21.7893 4.46957 22 5 22H19C19.5304 21.7893 20.2107 21.4142 20.5858 21.0391C20.9609 20.664 21.1716 20.1554 21.1716 19.625V6L18 2H6Z" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" transform="scale(0.9) translate(1.2, 1.2)"/><path d="M3 6H21" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" transform="scale(0.9) translate(1.2, 1.2)"/><path d="M16 10C16 11.0609 15.5786 12.0783 14.8284 12.8284C14.0783 13.5786 13.0609 14 12 14C10.9391 14 9.92172 13.5786 9.17157 12.8284C8.42143 12.0783 8 11.0609 8 10" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" transform="scale(0.9) translate(1.2, 1.2)"/></svg>
                     </Link>
@@ -149,7 +168,7 @@ const Header = () => {
                 </nav>
             )}
 
-            {/* The mobile sidebar, which appears when the burger is clicked */}
+            {/* The mobile sidebar */}
             <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
                 <div className="sidebar-header">
                     <button onClick={() => setIsSidebarOpen(false)} className="close-sidebar-btn" aria-label="Close menu">
@@ -157,8 +176,15 @@ const Header = () => {
                     </button>
                 </div>
                 <div className="sidebar-content">
-                    <form className="sidebar-search-bar" role="search" onSubmit={(e) => { e.preventDefault(); setIsSidebarOpen(false); }}>
-                        <input type="search" placeholder="Search" aria-label="Search site" />
+                    {/* MODIFIED: Sidebar Search */}
+                    <form className="sidebar-search-bar" role="search" onSubmit={handleSearchSubmit}>
+                        <input 
+                            type="search" 
+                            placeholder="Search" 
+                            aria-label="Search site" 
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
                         <button type="submit" aria-label="Submit search" title="Search"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M21 21L16.65 16.65" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
                     </form>
                     <nav className="sidebar-nav-links">

@@ -19,6 +19,7 @@ import PlaceOrderPage from './PlaceOrderPage';
 import OrderHistoryPage from './OrderHistoryPage';
 import PageNotFound from './PageNotFound';
 import CategoryPage from './CategoryPage';
+import SearchPage from './SearchPage'; // ✅ 1. Import the new SearchPage component
 
 // Admin-facing pages
 import AdminLoginPage from './AdminSide/AdminLoginPage';
@@ -63,6 +64,7 @@ function App() {
         <Route path="login" element={<LoginPage />} />
         <Route path="profile" element={<UserProfilePage />} />
         <Route path="cart" element={<ShoppingCartPage />} />
+        <Route path="search" element={<SearchPage />} /> {/* ✅ 2. Add the route for the search page */}
         <Route path="place-order" element={<PlaceOrderPage />} />
         <Route path="order-history" element={<OrderHistoryPage />} />
 

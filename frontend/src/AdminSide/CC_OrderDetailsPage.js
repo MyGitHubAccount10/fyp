@@ -35,7 +35,7 @@ function OrderDetailPage() {
           throw new Error('No admin user found');
         }        // Fetch order details and statuses in parallel
         const [orderResponse, statusesResponse, orderProductsResponse] = await Promise.all([
-          fetch(`http://localhost:4000/api/order/${orderId}`, {
+          fetch(`http://localhost:4000/api/orders/${orderId}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${adminUser.token}`,
@@ -106,9 +106,7 @@ function OrderDetailPage() {
       const adminUser = JSON.parse(localStorage.getItem('admin_user'));
       if (!adminUser || !adminUser.token) {
         throw new Error('No admin user found');
-      }
-
-      const response = await fetch(`http://localhost:4000/api/order/${orderId}`, {
+      }      const response = await fetch(`http://localhost:4000/api/orders/${orderId}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${adminUser.token}`,

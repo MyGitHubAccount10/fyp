@@ -146,10 +146,28 @@ function OrderDetailPage() {
   };
   const handleBack = () => {
     navigate('/all-orders');
-  };
-  const calculateSubtotal = () => {
+  };  const calculateSubtotal = () => {
     if (!order || !order.order_products) return '0.00';
     return order.order_products.reduce((sum, item) => sum + (parseFloat(item.order_unit_price || 0) * parseInt(item.order_qty || 0)), 0).toFixed(2);
+  };
+
+  const getStatusBadgeClass = (status) => {
+    switch (status) {
+      case 'Shipped':
+      case 'Delivered':
+      case 'Completed':
+        return 'badge badge-green';
+      case 'Processing':
+      case 'In Transit':
+        return 'badge badge-yellow';
+      case 'Cancelled':
+        return 'badge badge-red';
+      case 'Pending Payment':
+      case 'Pending':
+        return 'badge badge-blue';
+      default:
+        return 'badge badge-gray';
+    }
   };
 
   // Loading state
@@ -222,7 +240,7 @@ function OrderDetailPage() {
                 month: 'long',
                 day: 'numeric'
               })}</p>
-              <p><strong>Status:</strong> <span className="badge badge-green">{order.status_id?.status_name || 'Processing'}</span></p>
+              <p><strong>Status:</strong> <span className={getStatusBadgeClass(order.status_id?.status_name || 'Processing')}>{order.status_id?.status_name || 'Processing'}</span></p>
             </div>
 
             {/* Image Modal Preview */}

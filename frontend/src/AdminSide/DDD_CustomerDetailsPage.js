@@ -27,7 +27,42 @@ function UserDetailPage() {
     email: '',
     phone_number: '',
     shipping_address: '',
-    role_id: ''});
+    role_id: ''});  // Fetch user's recent orders
+  const fetchUserOrders = async (userId) => {
+    try {
+      // Get admin user data from localStorage
+      const adminUser = JSON.parse(localStorage.getItem('admin_user'));
+      const token = adminUser?.token;
+      
+      if (!token) {
+        console.log('No admin token found');
+        setRecentOrders([]);
+        return;
+      }
+
+      // For now, we'll fetch all orders and filter by user ID
+      // In a production app, you might want a specific endpoint for admin to get user orders
+      const response = await fetch('http://localhost:4000/api/orders/admin/all', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });      if (response.ok) {
+        const allOrders = await response.json();
+        // Filter orders for this specific user and get the most recent 5
+        // Add null checks to handle orders without populated user_id
+        const userOrders = allOrders
+          .filter(order => order.user_id && order.user_id._id === userId)
+          .slice(0, 5); // Get only the 5 most recent orders
+        setRecentOrders(userOrders);
+      } else {
+        console.log('Could not fetch orders - response status:', response.status);
+        setRecentOrders([]);
+      }
+    } catch (error) {
+      console.error('Error fetching user orders:', error);
+      setRecentOrders([]);
+    }
+  };
 
   // Fetch available roles
   const fetchRoles = async () => {
@@ -59,11 +94,10 @@ function UserDetailPage() {
       let roleName = 'Unknown';
       if (roleResponse.ok) {
         const roleData = await roleResponse.json();
-        roleName = roleData.role_name;
-      }
-        // Fetch user's orders (this might not work if orders API requires auth)
-      // For now, we'll skip orders or implement a separate admin endpoint
-      setRecentOrders([]); // Set empty for now
+        roleName = roleData.role_name;      }
+        // Fetch user's orders
+        await fetchUserOrders(userId);
+        
         setUser({
         ...userData,
         role_name: roleName
@@ -350,12 +384,24 @@ function UserDetailPage() {
 
               {/* Card: Recent Orders */}
               <div className="form-section-card">
-                <h3 className="section-card-title">Recent Orders</h3>
-                {recentOrders.length > 0 ? (
+                <h3 className="section-card-title">Recent Orders</h3>                {recentOrders.length > 0 ? (
                   <ul style={{ paddingLeft: '18px' }}>
                     {recentOrders.map((order, index) => (
-                      <li key={index}>
-                        <strong>{order._id}</strong> – {new Date(order.createdAt).toLocaleDateString()} – ${order.total_amount?.toFixed(2) || 'N/A'} – <span className="badge badge-gray">{order.status || 'Pending'}</span>
+                      <li key={order._id || index} style={{ marginBottom: '8px' }}>
+                        <div>
+                          <strong>Order #{order._id?.slice(-8) || 'N/A'}</strong>
+                        </div>
+                        <div style={{ fontSize: '14px', color: '#666' }}>
+                          Date: {new Date(order.createdAt).toLocaleDateString()}
+                        </div>
+                        <div style={{ fontSize: '14px', color: '#666' }}>
+                          Amount: ${order.total_amount?.toFixed(2) || 'N/A'}
+                        </div>
+                        <div style={{ fontSize: '14px' }}>
+                          Status: <span className={`badge ${order.status_id?.status_name === 'Completed' ? 'badge-green' : 'badge-gray'}`}>
+                            {order.status_id?.status_name || 'Pending'}
+                          </span>
+                        </div>
                       </li>
                     ))}
                   </ul>

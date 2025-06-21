@@ -6,7 +6,7 @@ const User = require('../models/UserModel');
 const getAllOrders = async (req, res) => {
     try {
         const orders = await Order.find({})
-            .populate('user_id', 'first_name last_name email username phone_number')
+            .populate('user_id', 'full_name email username phone_number')
             .populate('status_id', 'status_name')
             .sort({createdAt: -1});
         res.status(200).json(orders);
@@ -27,10 +27,9 @@ const getOrder = async (req, res) => {
     const {id} = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(404).json({error: 'Invalid order ID'});
-    }
-      try {
+    }      try {
         const order = await Order.findById(id)
-            .populate('user_id', 'first_name last_name email username phone_number')
+            .populate('user_id', 'full_name email username phone_number')
             .populate('status_id', 'status_name');
             
         if (!order) {

@@ -80,12 +80,10 @@ function AllOrdersPage() {
     }, []);
 
     // Filtered orders based on current filters
-    const filteredOrders = allOrders.filter(order => {
-        const matchesSearch = searchTerm.toLowerCase() === '' ||
+    const filteredOrders = allOrders.filter(order => {        const matchesSearch = searchTerm.toLowerCase() === '' ||
                               order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
                               (order.user_id && 
-                               (order.user_id.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                order.user_id.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                               (order.user_id.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                 order.user_id.email?.toLowerCase().includes(searchTerm.toLowerCase())));
 
         const orderStatus = order.status_id?.status_name || 'Unknown';
@@ -264,7 +262,7 @@ function AllOrdersPage() {
                                         hour: '2-digit',
                                         minute: '2-digit'
                                     })}</td>
-                                    <td>{order.user_id ? `${order.user_id.first_name} ${order.user_id.last_name}` : 'Unknown Customer'}</td>
+                                    <td>{order.user_id ? order.user_id.full_name : 'Unknown Customer'}</td>
                                     <td>${parseFloat(order.total_amount || 0).toFixed(2)}</td>
                                     <td>{order.payment_method || 'N/A'}</td>
                                     <td className={getOrderStatusClass(order.status_id?.status_name || 'Processing')}>

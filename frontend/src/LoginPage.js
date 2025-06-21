@@ -1,6 +1,8 @@
 // LoginPage.js
 
 import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom'; // MODIFIED: Import router hooks
+import { useAuthContext } from './hooks/useAuthContext';     // MODIFIED: Import auth context hook
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -17,6 +19,11 @@ const LoginPage = () => {
   const [apiError, setApiError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  // MODIFIED: Use hooks for navigation and state management
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { dispatch } = useAuthContext();
 
   const validateEmail = (email) => {
     if (!email) return 'Email is required.';
@@ -43,7 +50,8 @@ const LoginPage = () => {
 
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:4000/api/user/login', {
+      // MODIFIED: Use relative path for API call
+      const response = await fetch('/api/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -57,8 +65,15 @@ const LoginPage = () => {
         throw new Error('Access Denied. Your account has been banned. Please contact an administrator.');
       }
       
+      // MODIFIED: Correct login logic
+      // 1. Save the user to local storage for session persistence
       localStorage.setItem('user', JSON.stringify(data));
-      window.location.href = '/';
+      // 2. Update the auth context to inform the app of the login
+      dispatch({ type: 'LOGIN', payload: data });
+      // 3. Navigate the user to their intended destination, or the homepage
+      const from = location.state?.from || '/';
+      navigate(from, { replace: true });
+
     } catch (error) {
       console.error('Login error:', error);
       setApiError(error.message || 'Network error - please check your connection');

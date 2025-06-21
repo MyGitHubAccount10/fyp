@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCartContext } from './hooks/useCartContext';
+import { useAuthContext } from './hooks/useAuthContext'; // Import AuthContext
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 import { SHIPPING_FEE } from './shippingConstants';
-import { GST_RATE } from './taxConstants'; // 1. Import the GST rate
+import { GST_RATE } from './taxConstants';
 
 function ShoppingCartPage() {
     const navigate = useNavigate();
     const { cartItems, dispatch } = useCartContext();
+    const { user } = useAuthContext(); // Get user from context
 
     const [subtotal, setSubtotal] = useState(0);
-    const [gst, setGst] = useState(0); // 2. Add state for GST
+    const [gst, setGst] = useState(0);
     const [savedItems, setSavedItems] = useState([]);
 
     useEffect(() => {
@@ -21,20 +23,16 @@ function ShoppingCartPage() {
             return acc + item.quantity * itemPrice;
         }, 0);
         
-        const calculatedGst = calculatedSubtotal * GST_RATE; // 3. Calculate GST based on subtotal
+        const calculatedGst = calculatedSubtotal * GST_RATE;
 
         setSubtotal(calculatedSubtotal);
-        setGst(calculatedGst); // 4. Set the GST state
+        setGst(calculatedGst);
 
-    }, [cartItems]); // This effect re-runs whenever cart items change
+    }, [cartItems]);
 
-    // ... (rest of the handlers are unchanged)
     const handleQuantityChange = (itemId, size, change) => {
         const item = cartItems.find(item => item.id === itemId && item.size === size);
         if (item) {
-            cartItems
-            .filter(cartItem => cartItem.id === itemId)
-            .reduce((acc, cartItem) => acc + cartItem.quantity, 0);
             dispatch({
                 type: 'UPDATE_QUANTITY',
                 payload: { id: itemId, size: size, quantity: Math.max(1, item.quantity + change) }
@@ -66,8 +64,15 @@ function ShoppingCartPage() {
         setSavedItems(prev => prev.filter(item => item.id !== itemId || item.size !== size));
     };
 
+    // --- CORRECTED LOGIC FOR SCENARIO 1 ---
     const handleCheckout = () => {
-        navigate('/place-order');
+        if (user) {
+            navigate('/place-order');
+        } else {
+            // User isn't logged in. Redirect to login, and tell the login page
+            // to send the user to the PLACE ORDER page when they are done.
+            navigate('/login', { state: { from: '/place-order' } });
+        }
     };
 
     return (
@@ -127,14 +132,11 @@ function ShoppingCartPage() {
                     )}
                 </div>
 
-                {/* --- MODIFIED: Cart Total Section --- */}
                 <div className="cart-total">
                     <h3>Cart Total</h3>
                     <p><span>Subtotal</span> <span>${subtotal.toFixed(2)}</span></p>
                     <p><span>Shipment</span> <span>${SHIPPING_FEE.toFixed(2)}</span></p>
-                    {/* 5. Display the calculated GST */}
                     <p><span>GST ({(GST_RATE * 100).toFixed(0)}%)</span> <span>${gst.toFixed(2)}</span></p>
-                    {/* 6. Update the total to include GST */}
                     <p className="total-row"><strong>Total</strong> <strong>${(subtotal + SHIPPING_FEE + gst).toFixed(2)}</strong></p>
                     <button 
                     className="complete-purchase-btn" 
@@ -145,7 +147,6 @@ function ShoppingCartPage() {
                         opacity: cartItems.length === 0 ? 0.5 : 1 }}>Complete Purchase</button>
                 </div>
 
-                {/* Saved for Later section is unchanged */}
                 <div className="saved-items">
                     <h3>Saved for Later</h3>
                     {savedItems.length === 0 ? (

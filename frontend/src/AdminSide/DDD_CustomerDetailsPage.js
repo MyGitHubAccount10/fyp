@@ -1,7 +1,7 @@
 // UserDetailPage.js
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
@@ -14,6 +14,7 @@ const BackIcon = ({ color = "currentColor" }) => (
 
 function UserDetailPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { userId } = useParams();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,6 +23,11 @@ function UserDetailPage() {
   const [recentOrders, setRecentOrders] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [availableRoles, setAvailableRoles] = useState([]);
+  
+  // Get permission info from navigation state
+  const canEdit = location.state?.canEdit ?? true; // Default to true for backward compatibility
+  const currentUserRole = location.state?.currentUserRole;
+  const targetUserRole = location.state?.targetUserRole;
   const [editForm, setEditForm] = useState({    full_name: '',
     username: '',
     email: '',
@@ -218,12 +224,42 @@ function UserDetailPage() {
     <div className="add-product-page">
       <AdminHeader />
       <div className="manage-products-page">        <div className="title-row">
-          <h2>User Details</h2>
+          <div>
+            <h2>User Details</h2>
+            {!canEdit && (
+              <p style={{ 
+                color: '#856404', 
+                backgroundColor: '#fff3cd', 
+                border: '1px solid #ffeaa7',
+                borderRadius: '4px',
+                padding: '8px 12px',
+                margin: '10px 0',
+                fontSize: '14px'
+              }}>
+                <strong>Read-Only Access:</strong> You can view this user's information but cannot make changes. 
+                Only Super Admins can edit {targetUserRole} users.
+              </p>
+            )}
+          </div>
           <div style={{ display: 'flex', gap: '10px' }}>
             {!isEditing ? (
-              <button onClick={handleEdit} className="btn-add-new">
-                Edit User
-              </button>
+              canEdit ? (
+                <button onClick={handleEdit} className="btn-add-new">
+                  Edit User
+                </button>
+              ) : (
+                <div style={{ 
+                  padding: '10px 15px', 
+                  backgroundColor: '#f8f9fa', 
+                  border: '1px solid #dee2e6', 
+                  borderRadius: '4px',
+                  color: '#6c757d',
+                  fontSize: '14px',
+                  fontStyle: 'italic'
+                }}>
+                  View Only - Edit restricted for {targetUserRole} users
+                </div>
+              )
             ) : (
               <>
                 <button onClick={handleSave} className="btn-add-new">

@@ -132,8 +132,18 @@ function AllCustomersPage() {
     };    // Action Handlers
     const handleEditUser = (user) => {
         console.log("Editing user:", user);
-        Navigate(`/customer-details/${user._id}`);
-    };    const handleBanUser = (userId, currentStatus, userRole) => {
+        // Check if current user has permission to edit this specific user
+        const canEdit = isSuperAdmin || (currentUserRole === 'Admin' && user.role_name !== 'Admin' && user.role_name !== 'Super Admin' && user.role_name !== 'Super-Admin');
+        
+        // Navigate to customer details page with edit permission info
+        Navigate(`/customer-details/${user._id}`, { 
+            state: { 
+                canEdit: canEdit,
+                currentUserRole: currentUserRole,
+                targetUserRole: user.role_name
+            } 
+        });
+    };const handleBanUser = (userId, currentStatus, userRole) => {
         // Check if current user has permission to ban this specific user
         if (!isSuperAdmin && (userRole === 'Admin' || userRole === 'Super Admin' || userRole === 'Super-Admin')) {
             alert('Only Super Admins can ban/unban other Admin users. Regular Admins can only ban/unban customers.');
@@ -357,9 +367,18 @@ const handleFilter = () => {
                                             {user.status || 'active'}
                                         </span>
                                     </td>
-                                    <td>{new Date(user.createdAt).toLocaleDateString()}</td><td className="action-column">
+                                    <td>{new Date(user.createdAt).toLocaleDateString()}</td>                                    <td className="action-column">
                                         <div className="action-icons">
-                                            <button onClick={() => handleEditUser(user)} title="Edit User"><PencilIcon /></button>
+                                            {/* Show edit button based on permissions */}
+                                            {(isSuperAdmin || (currentUserRole === 'Admin' && user.role_name !== 'Admin' && user.role_name !== 'Super Admin' && user.role_name !== 'Super-Admin')) ? (
+                                                <button onClick={() => handleEditUser(user)} title="Edit User">
+                                                    <PencilIcon />
+                                                </button>
+                                            ) : (
+                                                <button onClick={() => handleEditUser(user)} title="View User (Edit restricted for Admin users)">
+                                                    <PencilIcon />
+                                                </button>
+                                            )}
                                             {/* Show ban/unban button based on permissions */}
                                             {(isSuperAdmin || (currentUserRole === 'Admin' && user.role_name !== 'Admin' && user.role_name !== 'Super Admin' && user.role_name !== 'Super-Admin')) ? (
                                                 <button 

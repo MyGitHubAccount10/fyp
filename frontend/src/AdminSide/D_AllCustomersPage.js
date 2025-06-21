@@ -178,17 +178,14 @@ function AllCustomersPage() {
         console.log("Adding new admin");
         // In a real app, open the sidebar/modal for a new admin form
         Navigate('/add-admin');
-    }
-
-    // Filter/Search Logic (basic client-side demo)
+    }    // Filter/Search Logic (basic client-side demo)
 const handleFilter = () => {
     console.log("Filtering with:", { searchTerm, selectedRole });
     let filtered = allUsers;
 
     if (searchTerm) {
         filtered = filtered.filter(user =>
-            user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
             user.email.toLowerCase().includes(searchTerm.toLowerCase())
         );
@@ -334,12 +331,10 @@ const handleFilter = () => {
             </div>
             </div>                {/* Users Table */}
             <div className="orders-table-container">
-                <table className="orders-table">
-                    <thead>                        <tr>
+                <table className="orders-table">                    <thead>                        <tr>
                             <th>ID</th>
                             <th>Role</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
+                            <th>Full Name</th>
                             <th>Username</th>
                             <th>Email</th>
                             <th>Phone Number</th>
@@ -350,12 +345,10 @@ const handleFilter = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentUsers.length > 0 ? (                             currentUsers.map(user => (
-                                <tr key={user._id} style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>
+                        {currentUsers.length > 0 ? (                             currentUsers.map(user => (                                <tr key={user._id} style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>
                                     <td>{user._id}</td>
                                     <td>{user.role_name}</td>
-                                    <td>{user.first_name}</td>
-                                    <td>{user.last_name}</td>
+                                    <td>{user.full_name}</td>
                                     <td>{user.username}</td>
                                     <td>{user.email}</td>
                                     <td>{user.phone_number}</td>
@@ -365,7 +358,7 @@ const handleFilter = () => {
                                             {user.status || 'active'}
                                         </span>
                                     </td>
-                                    <td>{new Date(user.createdAt).toLocaleDateString()}</td>                                    <td className="action-column">
+                                    <td>{new Date(user.createdAt).toLocaleDateString()}</td><td className="action-column">
                                         <div className="action-icons">
                                             <button onClick={() => handleEditUser(user)} title="Edit User"><PencilIcon /></button>
                                             {/* Show ban/unban button based on permissions */}
@@ -392,7 +385,7 @@ const handleFilter = () => {
                                 </tr>
                             ))                        ) : (
                             <tr>
-                                <td colSpan="11" style={{ textAlign: 'center', padding: '20px' }}>No users found.</td>
+                                <td colSpan="10" style={{ textAlign: 'center', padding: '20px' }}>No users found.</td>
                             </tr>
                         )}
                     </tbody>

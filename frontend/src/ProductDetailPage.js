@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useCartContext } from './hooks/useCartContext';
-import { useAuthContext } from './hooks/useAuthContext'; // MODIFIED: Import AuthContext
+import { useAuthContext } from './hooks/useAuthContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -9,20 +9,20 @@ import Footer from './Footer';
 const ProductDetailPage = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
-  const { cartItems, dispatch } = useCartContext();
-  const { user } = useAuthContext(); // MODIFIED: Get user from context
+  // MODIFIED: Bring back cartItems to perform live calculations
+  const { cartItems, dispatch } = useCartContext(); 
+  const { user } = useAuthContext();
 
-  // --- FIX 1: Initialize product state as null, not with the ID string ---
   const [product, setProduct] = useState(null);
-  
   const [similarProducts, setSimilarProducts] = useState([]);
   const [selectedImage, setSelectedImage] = useState('');
   const [productImages, setProductImages] = useState([]);
   const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
+  // MODIFIED: This 'stock' will now represent what's available for the user to add.
   const [stock, setStock] = useState(0);
 
-  // This effect fetches the main product data. It is already correct.
+  // This effect fetches product data and calculates available stock
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -40,28 +40,28 @@ const ProductDetailPage = () => {
           setSelectedImage(productData.product_image);
           setProductImages(images);
 
-          // Calculate total quantity of this product in the cart, across all sizes
-          const totalQuantity = cartItems.reduce((total, item) => {
-            if (item.id === productData._id) {
-              return total + item.quantity;
-            }
-            return total;
-          }, 0);
+          // --- MODIFIED: Real-time stock calculation ---
+          // 1. Find how many of this specific product are already in the cart (across all sizes)
+          const quantityInCart = cartItems
+            .filter(item => item.id === productData._id)
+            .reduce((sum, item) => sum + item.quantity, 0);
 
-          // Deduct the total quantity in cart from the warehouse quantity to get available stock
-          setStock(productData.warehouse_quantity - totalQuantity);
-          setQuantity(1); // Reset quantity to 1 for the newly selected product/size or initial load
+          // 2. Calculate the stock the user can actually add
+          const availableStock = productData.warehouse_quantity - quantityInCart;
+          setStock(availableStock);
+          
+          setQuantity(1);
         }
       } catch (error) {
         console.error('Error fetching product:', error);
       }
     };
     fetchProduct();
-  }, [productId, cartItems, selectedSize]);
+    // MODIFIED: Add cartItems as a dependency so stock recalculates if the cart changes.
+  }, [productId, cartItems]);
 
-  // This effect fetches similar products AFTER the main product has loaded.
+  // This effect fetches similar products
   useEffect(() => {
-    // --- FIX 3: Add a guard clause to prevent running if product is not yet loaded ---
     if (product) {
       const fetchSimilarProducts = async () => {
         try {
@@ -81,37 +81,22 @@ const ProductDetailPage = () => {
       fetchSimilarProducts();
     }
     
-    // Reset quantity and scroll to top when the product changes
     setQuantity(1);
     window.scrollTo(0, 0);
-
-    // --- FIX 2: Add productId to the dependency array to remove the warning ---
   }, [product, productId]);
 
   const sizes = ['S', 'M', 'L'];
 
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
-    // Recalculate available stock when size changes
-    if (product) {
-      const totalQuantity = cartItems.reduce((total, item) => {
-        if (item.id === product._id) {
-          return total + item.quantity;
-        }
-        return total;
-      }, 0);
-      
-      // Deduct the total quantity in cart from the warehouse quantity to get available stock
-      setStock(product.warehouse_quantity - totalQuantity);
-      setQuantity(1); // Reset quantity to 1 for the newly selected product/size or initial load
-    }
+    setQuantity(1);
   };
 
   const handleQuantityChange = (amount) => {
-    setQuantity(prevQuantity => Math.max(1, Math.min(prevQuantity + amount, stock))); // Limit quantity by availableStock
+    // The quantity is now limited by the calculated 'stock' available for the user to add
+    setQuantity(prevQuantity => Math.max(1, Math.min(prevQuantity + amount, stock)));
   };
 
-  // --- MODIFIED: New handlers for cart/buy actions ---
   const handleAddToCart = () => {
     dispatch({
       type: 'ADD_TO_CART',
@@ -129,14 +114,10 @@ const ProductDetailPage = () => {
     if (user) {
       navigate('/place-order');
     } else {
-      // User isn't logged in. Redirect them to login and tell the login page
-      // to send them to '/place-order' after they're done.
       navigate('/login', { state: { from: '/place-order' } });
     }
   };
 
-
-  // --- FIX 4: Add a loading state to prevent the page from crashing ---
   if (!product) {
     return (
       <>
@@ -147,11 +128,11 @@ const ProductDetailPage = () => {
     );
   }
 
-  // These functions are now safe to use because we know 'product' is loaded.
+  // Use the total warehouse quantity for the initial status display
   const handlerStatus = () => {
-    if (stock === 0) {
+    if (product.warehouse_quantity === 0) {
         return 'No Stock';
-    } else if (stock <= product.threshold) {
+    } else if (product.warehouse_quantity <= product.threshold) {
         return 'Limited Stock';
     } else {
         return 'In Stock';
@@ -196,7 +177,8 @@ const ProductDetailPage = () => {
               <strong>{handlerStatus()}</strong>
             </p>
 
-            {stock > 0 && (
+            {/* --- MODIFIED: Conditional Rendering for Scenarios 1 & 2 --- */}
+            {stock > 0 ? (
               <>
                 <div className="product-options">
                     <div>
@@ -216,35 +198,33 @@ const ProductDetailPage = () => {
                     <span className="option-label">Quantity:</span>
                     <div className="quantity-controls-detail">
                         <button
-                        onClick={() => handleQuantityChange(-1)}
-                        disabled={quantity === 1}
-                        style={{ 
-                          pointerEvents: quantity === 1 ? 'none' : 'auto',
-                          opacity: quantity === 1 ? 0.5 : 1 }}>
-                        <span>-</span>
+                          onClick={() => handleQuantityChange(-1)}
+                          disabled={quantity === 1}
+                          style={{ pointerEvents: quantity === 1 ? 'none' : 'auto', opacity: quantity === 1 ? 0.5 : 1 }}>
+                          <span>-</span>
                         </button>
                         <span>{quantity}</span>
                         <button 
-                        onClick={() => handleQuantityChange(1)}
-                        disabled={quantity >= stock}
-                        style={{ 
-                          pointerEvents: quantity === stock ? 'none' : 'auto',
-                          opacity: quantity === stock ? 0.5 : 1 }}>
-                        <span>+</span>
+                          onClick={() => handleQuantityChange(1)}
+                          disabled={quantity >= stock}
+                          style={{ pointerEvents: quantity >= stock ? 'none' : 'auto', opacity: quantity >= stock ? 0.5 : 1 }}>
+                          <span>+</span>
                         </button>
                     </div>
                   </div>
                 </div>
                 <div className="product-actions-detail">              
-                  {/* MODIFIED: Use the new handlers */}
-                  <button className="btn-buy-now" onClick={handleBuyNow}>
-                    Buy Now
-                  </button>
-                  <button className="btn-add-to-cart-detail" onClick={handleAddToCart}>
-                    Add to Cart
-                  </button>
+                  <button className="btn-buy-now" onClick={handleBuyNow}>Buy Now</button>
+                  <button className="btn-add-to-cart-detail" onClick={handleAddToCart}>Add to Cart</button>
                 </div> 
               </>           
+            ) : (
+              <div className="stock-info-message">
+                {product.warehouse_quantity > 0 
+                  ? "You have all available stock in your cart." 
+                  : "This product is currently out of stock."
+                }
+              </div>
             )}
           </div>
         </section>
@@ -256,7 +236,6 @@ const ProductDetailPage = () => {
 
         <section className="similar-products-section">
           <h2 className="section-title-detail">Similar Products</h2>
-          {/* MODIFIED: Similar products grid now indicates stock status */}
           <div className="similar-products-grid">
             {similarProducts.map(p => {
               const isAvailable = p.warehouse_quantity > 0;
@@ -265,19 +244,7 @@ const ProductDetailPage = () => {
                   <img src={`/images/${p.product_image}`} alt={p.product_name} className="similar-product-image" />
                   <div className="similar-product-caption">{p.product_name}</div>
                   {!isAvailable && (
-                    <div style={{
-                      position: 'absolute',
-                      top: '50%',
-                      left: '50%',
-                      transform: 'translate(-50%, -50%)',
-                      backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                      color: 'white',
-                      padding: '8px 16px',
-                      borderRadius: '5px',
-                      fontWeight: 'bold',
-                      textAlign: 'center',
-                      pointerEvents: 'none'
-                    }}>
+                    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: 'rgba(0, 0, 0, 0.6)', color: 'white', padding: '8px 16px', borderRadius: '5px', fontWeight: 'bold', textAlign: 'center', pointerEvents: 'none' }}>
                       Out of Stock
                     </div>
                   )}

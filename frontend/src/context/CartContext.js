@@ -1,4 +1,4 @@
-import { createContext, useReducer } from 'react';
+import { createContext, useReducer, useEffect } from 'react';
 
 export const CartContext = createContext();
 
@@ -52,7 +52,26 @@ export const cartReducer = (state, action) => {
 export const CartContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(cartReducer, {
         cartItems: []
+    }, (initialState) => {
+        // Lazy initializer: runs only on the first render
+        // This function loads the cart from localStorage when the app starts
+        try {
+            const localData = localStorage.getItem('cart');
+            return localData ? { cartItems: JSON.parse(localData) } : initialState;
+        } catch (error) {
+            console.error("Could not parse cart from localStorage", error);
+            return initialState;
+        }
     });
+
+    // This effect runs whenever the cartItems state changes, saving it to localStorage
+    useEffect(() => {
+        try {
+            localStorage.setItem('cart', JSON.stringify(state.cartItems));
+        } catch (error) {
+            console.error("Could not save cart to localStorage", error);
+        }
+    }, [state.cartItems]);
 
     return (
         <CartContext.Provider value={{ ...state, dispatch }}>

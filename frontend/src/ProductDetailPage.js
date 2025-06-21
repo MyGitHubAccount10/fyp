@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useCartContext } from './hooks/useCartContext';
+import { useAuthContext } from './hooks/useAuthContext'; // MODIFIED: Import AuthContext
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -9,6 +10,7 @@ const ProductDetailPage = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
   const { cartItems, dispatch } = useCartContext();
+  const { user } = useAuthContext(); // MODIFIED: Get user from context
 
   // --- FIX 1: Initialize product state as null, not with the ID string ---
   const [product, setProduct] = useState(null);
@@ -108,6 +110,31 @@ const ProductDetailPage = () => {
   const handleQuantityChange = (amount) => {
     setQuantity(prevQuantity => Math.max(1, Math.min(prevQuantity + amount, stock))); // Limit quantity by availableStock
   };
+
+  // --- MODIFIED: New handlers for cart/buy actions ---
+  const handleAddToCart = () => {
+    dispatch({
+      type: 'ADD_TO_CART',
+      payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
+    });
+    navigate('/cart');
+  };
+
+  const handleBuyNow = () => {
+    dispatch({
+      type: 'ADD_TO_CART',
+      payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
+    });
+
+    if (user) {
+      navigate('/place-order');
+    } else {
+      // User isn't logged in. Redirect them to login and tell the login page
+      // to send them to '/place-order' after they're done.
+      navigate('/login', { state: { from: '/place-order' } });
+    }
+  };
+
 
   // --- FIX 4: Add a loading state to prevent the page from crashing ---
   if (!product) {
@@ -209,25 +236,12 @@ const ProductDetailPage = () => {
                   </div>
                 </div>
                 <div className="product-actions-detail">              
-                  <button 
-                    className="btn-buy-now"
-                    onClick={() => {
-                      dispatch({
-                        type: 'ADD_TO_CART',
-                        payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
-                      });
-                      navigate('/place-order');
-                    }}>Buy Now
+                  {/* MODIFIED: Use the new handlers */}
+                  <button className="btn-buy-now" onClick={handleBuyNow}>
+                    Buy Now
                   </button>
-                  <button 
-                    className="btn-add-to-cart-detail"
-                    onClick={() => {
-                      dispatch({
-                        type: 'ADD_TO_CART',
-                        payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
-                      });
-                      navigate('/cart');
-                    }}>Add to Cart
+                  <button className="btn-add-to-cart-detail" onClick={handleAddToCart}>
+                    Add to Cart
                   </button>
                 </div> 
               </>           

@@ -24,9 +24,9 @@ function PlaceOrderPage() {
     const { user } = useAuthContext();
     const { cartItems, dispatch } = useCartContext();
 
+    // MODIFIED: Replaced firstName and lastName with fullName
     const [shippingDetails, setShippingDetails] = useState({
-        firstName: '',
-        lastName: '',
+        fullName: '',
         email: '',
         phoneNumber: '',
         shippingAddress: '',
@@ -66,9 +66,9 @@ function PlaceOrderPage() {
 
         const userData = JSON.parse(localStorage.getItem('user'));
         if (userData) {
+            // MODIFIED: Set fullName instead of separate first/last names
             setShippingDetails({
-                firstName: userData.first_name || '',
-                lastName: userData.last_name || '',
+                fullName: userData.full_name || '',
                 email: userData.email || '',
                 phoneNumber: userData.phone_number || '',
                 shippingAddress: userData.shipping_address || '',
@@ -202,13 +202,10 @@ function PlaceOrderPage() {
                         <div className="checkout-main-content">
                             <section className="form-section">
                                 <h3>Shipping Details (Singapore Only)</h3>
+                                {/* MODIFIED: Replaced First Name and Last Name with a single Full Name field */}
                                 <div className="form-group">
-                                    <label htmlFor="firstName">First Name</label>
-                                    <input type="text" id="firstName" name="firstName" value={shippingDetails.firstName} disabled className="disabled-input" />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="lastName">Last Name</label>
-                                    <input type="text" id="lastName" name="lastName" value={shippingDetails.lastName} disabled className="disabled-input" />
+                                    <label htmlFor="fullName">Full Name</label>
+                                    <input type="text" id="fullName" name="fullName" value={shippingDetails.fullName} disabled className="disabled-input" />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="email">Email</label>

@@ -27,7 +27,8 @@ const CustomisePage = () => {
                     <select
                         name="type"
                         value={type}
-                        style={inputStyle} required>
+                        style={inputStyle}
+                        onChange={e => setType(e.target.value)} required>
                         <option value="">Select</option>
                         <option value="Flatland">Flatland</option>
                         <option value="Wave">Wave</option>
@@ -39,7 +40,7 @@ const CustomisePage = () => {
                         name="size"
                         value={size}
                         style={inputStyle}
-                        required>
+                        onChange={e => setSize(e.target.value)} required>
                         <option value="">Select</option>
                         <option value="Small">Small</option>
                         <option value="Medium">Medium</option>
@@ -51,7 +52,7 @@ const CustomisePage = () => {
                         name="shape"
                         value={shape}
                         style={inputStyle}
-                        required>
+                        onChange={e => setShape(e.target.value)} required>
                         <option value="">Select</option>
                         <option value="Square Tail">Square Tail</option>
                         <option value="Round Tail">Round Tail</option>
@@ -64,7 +65,7 @@ const CustomisePage = () => {
                         name="material"
                         value={material}
                         style={inputStyle}
-                        required>
+                        onChange={e => setMaterial(e.target.value)} required>
                         <option value="">Select</option>
                         <option value="Wood">Wood</option>
                         <option value="Foam Core">Foam Core</option>
@@ -79,14 +80,16 @@ const CustomisePage = () => {
                         type="color"
                         name="topColor"
                         value={topColor}
-                        style={inputStyle}/>
-
+                        style={{...inputStyle, padding: '0px'}}
+                        onChange={e => setTopColor(e.target.value)} required />
+                    
                     <label>Bottom Color:</label>
                     <input
                         type="color"
                         name="bottomColor"
                         value={bottomColor}
-                        style={inputStyle} />
+                        style={{...inputStyle, padding: '0px'}}
+                        onChange={e => setBottomColor(e.target.value)} required/>
 
                     <label>Price:</label>
                     <input
@@ -95,7 +98,7 @@ const CustomisePage = () => {
                         value={price}
                         placeholder="Enter price"
                         style={inputStyle}
-                        required />
+                        onChange={e => setPrice(e.target.value)} required />
 
                         <button type="submit" className="complete-purchase-btn" style={{ backgroundColor: '#333', color: '#fff', margin: '12px', padding: '12px' }}>Submit Custom Order</button>
                 </form>

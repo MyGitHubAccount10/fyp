@@ -121,7 +121,7 @@ function AdminDashboard() {
 
                 <div className="dashboard-stats">
 
-                    <div className="stat-card" onClick={() => navigate('/admin/sales-report')}>
+                    <div className="stat-card" onClick={() => navigate('/sales-report')}>
                         <div className="stat-icon icon-sales"><MoneyIcon color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Total Sales (Month)</div>

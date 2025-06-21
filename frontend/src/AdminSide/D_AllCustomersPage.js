@@ -197,7 +197,7 @@ const handleFilter = () => {
 
     setUsers(filtered);
     setCurrentPage(1);
-};     // Trigger filter when search term or category changes (optional auto-filter)
+};// Trigger filter when search term or category changes (optional auto-filter)
     useEffect(() => {
          if (allUsers.length > 0) {
              handleFilter();
@@ -287,12 +287,11 @@ const handleFilter = () => {
                 border: '1px solid #ccc'
             }}
             value={selectedRole}
-            onChange={(e) => setSelectedRole(e.target.value)}
-        >
+            onChange={(e) => setSelectedRole(e.target.value)}        >
             <option value="All Roles">All Roles</option>
             <option value="Customer">Customer</option>
             <option value="Admin">Admin</option>
-            <option value="Super-Admin">Super Admin</option>
+            <option value="Super Admin">Super Admin</option>
 
         </select>
     </div>

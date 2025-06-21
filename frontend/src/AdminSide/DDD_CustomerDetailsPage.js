@@ -21,12 +21,26 @@ function UserDetailPage() {
   const [notes, setNotes] = useState('');
   const [recentOrders, setRecentOrders] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState({
-    full_name: '',
+  const [availableRoles, setAvailableRoles] = useState([]);
+  const [editForm, setEditForm] = useState({    full_name: '',
     username: '',
     email: '',
     phone_number: '',
-    shipping_address: ''  });
+    shipping_address: '',
+    role_id: ''});
+
+  // Fetch available roles
+  const fetchRoles = async () => {
+    try {
+      const response = await fetch('http://localhost:4000/api/role');
+      if (response.ok) {
+        const rolesData = await response.json();
+        setAvailableRoles(rolesData);
+      }
+    } catch (error) {
+      console.error('Error fetching roles:', error);
+    }
+  };
 
   // Fetch user data function (extracted to be reusable)
   const fetchUserData = async () => {
@@ -54,14 +68,14 @@ function UserDetailPage() {
         ...userData,
         role_name: roleName
       });
-      
-      // Initialize edit form with user data
+        // Initialize edit form with user data
       setEditForm({
         full_name: userData.full_name || '',
         username: userData.username || '',
         email: userData.email || '',
         phone_number: userData.phone_number || '',
-        shipping_address: userData.shipping_address || ''
+        shipping_address: userData.shipping_address || '',
+        role_id: userData.role_id || ''
       });
       
       setNotes(''); // Initialize notes (you might want to store this in user data)
@@ -73,11 +87,11 @@ function UserDetailPage() {
       setLoading(false);
     }
   };
-
   // Fetch user data on component mount
   useEffect(() => {
     if (userId) {
       fetchUserData();
+      fetchRoles();
     }
   }, [userId]);
 
@@ -88,7 +102,6 @@ function UserDetailPage() {
   const handleEdit = () => {
     setIsEditing(true);
   };
-
   const handleCancel = () => {
     setIsEditing(false);
     // Reset form to original values
@@ -97,9 +110,10 @@ function UserDetailPage() {
       username: user.username || '',
       email: user.email || '',
       phone_number: user.phone_number || '',
-      shipping_address: user.shipping_address || ''
+      shipping_address: user.shipping_address || '',
+      role_id: user.role_id || ''
     });
-  };  const handleSave = async () => {
+  };const handleSave = async () => {
     try {
       const response = await fetch(`http://localhost:4000/api/user/${userId}`, {
         method: 'PATCH',
@@ -282,30 +296,55 @@ function UserDetailPage() {
                   )}
                 </div>
 
-                <p><strong>Role:</strong> {user.role_name}</p>
-                <p><strong>Status:</strong> <span className={`badge ${user.status === 'banned' ? 'badge-red' : 'badge-green'}`}>{user.status || 'active'}</span></p>
-                <p><strong>Joined:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
-                
                 <div style={{ marginBottom: '10px' }}>
-                  <strong>Shipping Address:</strong> 
+                  <strong>Role:</strong> 
                   {isEditing ? (
-                    <textarea
-                      value={editForm.shipping_address}
-                      onChange={(e) => handleInputChange('shipping_address', e.target.value)}
+                    <select
+                      value={editForm.role_id}
+                      onChange={(e) => handleInputChange('role_id', e.target.value)}
                       style={{
                         marginLeft: '10px',
                         padding: '5px',
                         border: '1px solid #ccc',
                         borderRadius: '4px',
-                        width: '100%',
-                        maxWidth: '300px',
-                        minHeight: '60px',
-                        resize: 'vertical'
+                        width: '200px'
                       }}
-                    />
+                    >
+                      <option value="">Select Role</option>
+                      {availableRoles.map(role => (
+                        <option key={role._id} value={role._id}>
+                          {role.role_name}
+                        </option>
+                      ))}
+                    </select>
                   ) : (
-                    <span style={{ marginLeft: '10px' }}>{user.shipping_address}</span>
+                    <span style={{ marginLeft: '10px' }}>{user.role_name}</span>
                   )}
+                </div>
+                <p><strong>Status:</strong> <span className={`badge ${user.status === 'banned' ? 'badge-red' : 'badge-green'}`}>{user.status || 'active'}</span></p>
+                <p><strong>Joined:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
+                  <div style={{ marginBottom: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                    <strong style={{ marginTop: '5px', minWidth: 'fit-content' }}>Shipping Address:</strong> 
+                    {isEditing ? (
+                      <textarea
+                        value={editForm.shipping_address}
+                        onChange={(e) => handleInputChange('shipping_address', e.target.value)}
+                        style={{
+                          padding: '5px',
+                          border: '1px solid #ccc',
+                          borderRadius: '4px',
+                          width: '100%',
+                          maxWidth: '300px',
+                          minHeight: '60px',
+                          resize: 'vertical',
+                          flex: 1
+                        }}
+                      />
+                    ) : (
+                      <span style={{ flex: 1 }}>{user.shipping_address}</span>
+                    )}
+                  </div>
                 </div>
               </div>
 

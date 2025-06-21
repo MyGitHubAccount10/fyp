@@ -240,7 +240,7 @@ function OrderDetailPage() {
                 month: 'long',
                 day: 'numeric'
               })}</p>
-              <p><strong>Status:</strong> <span className={getStatusBadgeClass(order.status_id?.status_name || 'Processing')}>{order.status_id?.status_name || 'Processing'}</span></p>
+              <p><strong>Status:</strong> <span className="badge badge-green">{order.status_id?.status_name || 'Processing'}</span></p>
             </div>
 
             {/* Image Modal Preview */}
@@ -378,25 +378,27 @@ function OrderDetailPage() {
           </div>
 
           {/* Right Column - Customer & Payment */}
-          <div className="add-product-sidebar-panel">              {/* Card: Shipping Status */}
-            <div className="form-section-card">              <h3 className="section-card-title">Shipping Status</h3>
-              <div style={{ width: '100%', overflow: 'hidden' }}>
+          <div className="add-product-sidebar-panel">              
+            {/* Card: Shipping Status */}
+            <div className="form-section-card">              
+              <h3 className="section-card-title">Shipping Status</h3>              
+              <div style={{ width: '100%', boxSizing: 'border-box', padding: '0', margin: '0' }}>
                 <select
                   className="category-select"
                   value={selectedStatus}
                   onChange={(e) => handleStatusUpdate(e.target.value)}
                   disabled={statusUpdating}
                   style={{
-                    width: '100%',
-                    maxWidth: '100%',
-                    minWidth: 'auto',
+                    width: 'calc(100% - 2px)',
+                    maxWidth: 'none',
+                    minWidth: '0',
                     padding: '10px',
                     borderRadius: '6px',
                     border: '1px solid #ccc',
                     opacity: statusUpdating ? 0.6 : 1,
                     boxSizing: 'border-box',
                     fontSize: '14px',
-                    overflow: 'hidden'
+                    margin: '0'
                   }}
                 >
                   {availableStatuses.map(status => (
@@ -419,7 +421,7 @@ function OrderDetailPage() {
             </div>            {/* Card: Customer Info */}
             <div className="form-section-card">
               <h3 className="section-card-title">Customer Information</h3>
-              <p style={{ wordWrap: 'break-word' }}><strong>Name:</strong> {order.user_id ? order.user_id.full_name : 'Unknown Customer'}</p>
+              <p style={{ wordWrap: 'break-word' }}><strong>Name:</strong> {order.user_id ? `${order.user_id.first_name} ${order.user_id.last_name}` : 'Unknown Customer'}</p>
               <p style={{ wordWrap: 'break-word' }}><strong>Username:</strong> {order.user_id?.username || 'N/A'}</p>
               <p style={{ wordWrap: 'break-word' }}><strong>Phone:</strong> {order.user_id?.phone_number || 'N/A'}</p>
               <p style={{ wordWrap: 'break-word' }}><strong>Email:</strong> {order.user_id?.email || 'N/A'}</p>

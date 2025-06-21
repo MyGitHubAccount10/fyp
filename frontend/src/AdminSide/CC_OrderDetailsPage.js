@@ -418,10 +418,9 @@ function OrderDetailPage() {
                   {statusMessage}
                 </p>
               )}
-            </div>            {/* Card: Customer Info */}
-            <div className="form-section-card">
+            </div>            {/* Card: Customer Info */}            <div className="form-section-card">
               <h3 className="section-card-title">Customer Information</h3>
-              <p style={{ wordWrap: 'break-word' }}><strong>Name:</strong> {order.user_id ? `${order.user_id.first_name} ${order.user_id.last_name}` : 'Unknown Customer'}</p>
+              <p style={{ wordWrap: 'break-word' }}><strong>Name:</strong> {order.user_id?.full_name || 'Unknown Customer'}</p>
               <p style={{ wordWrap: 'break-word' }}><strong>Username:</strong> {order.user_id?.username || 'N/A'}</p>
               <p style={{ wordWrap: 'break-word' }}><strong>Phone:</strong> {order.user_id?.phone_number || 'N/A'}</p>
               <p style={{ wordWrap: 'break-word' }}><strong>Email:</strong> {order.user_id?.email || 'N/A'}</p>

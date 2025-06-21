@@ -140,7 +140,7 @@ const updateOrder = async (req, res) => {
         if (userRole !== 'Admin' && userRole !== 'Super Admin' && existingOrder.user_id.toString() !== req.user._id.toString()) {
             return res.status(403).json({ error: 'User not authorized to update this order' });
         }        const order = await Order.findOneAndUpdate({_id: id}, { ...req.body }, { new: true })
-            .populate('user_id', 'first_name last_name email username phone_number')
+            .populate('user_id', 'full_name email username phone_number')
             .populate('status_id', 'status_name');
             
         res.status(200).json(order);

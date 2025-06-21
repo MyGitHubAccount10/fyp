@@ -692,7 +692,8 @@ h2 {
 .form-group input[type="number"],
 .form-group input[type="email"],
 .form-group input[type="tel"],
-.form-group input[type="password"] { /* Added password for completeness */
+.form-group input[type="password"],
+.form-group input[type="color"] {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #D9D9D9;
@@ -704,7 +705,8 @@ h2 {
 .form-group input[type="number"]:focus,
 .form-group input[type="email"]:focus,
 .form-group input[type="tel"]:focus,
-.form-group input[type="password"]:focus {
+.form-group input[type="password"]:focus,
+.form-group input[type="color"]:focus {
     border-color: #FFAB89;
     outline: none;
     box-shadow: 0 0 0 2px rgba(241, 103, 58, 0.2);
@@ -716,6 +718,16 @@ h2 {
 }
 .form-group-inline > div {
     flex: 1;
+}
+
+select {
+    margin: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95em;
+    background-color: white;
+    cursor: pointer;
+    min-width: 150px; /* Ensure min-width before wrapping */
 }
 
 /* Payment Options */

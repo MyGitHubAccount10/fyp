@@ -17,9 +17,10 @@ import ProductDetailPage from './ProductDetailPage';
 import ShoppingCartPage from './ShoppingCartPage';
 import PlaceOrderPage from './PlaceOrderPage';
 import OrderHistoryPage from './OrderHistoryPage';
-import PageNotFound from './PageNotFound';
 import CategoryPage from './CategoryPage';
 import SearchPage from './SearchPage'; // ✅ 1. Import the new SearchPage component
+import Customerise from './CustomisePage'; // Customise page
+import PageNotFound from './PageNotFound';
 
 // Admin-facing pages
 import AdminLoginPage from './AdminSide/AdminLoginPage';
@@ -65,6 +66,7 @@ function App() {
         <Route path="profile" element={<UserProfilePage />} />
         <Route path="cart" element={<ShoppingCartPage />} />
         <Route path="search" element={<SearchPage />} /> {/* ✅ 2. Add the route for the search page */}
+        <Route path="customise" element={<Customerise />} />
         <Route path="place-order" element={<PlaceOrderPage />} />
         <Route path="order-history" element={<OrderHistoryPage />} />
 
@@ -73,10 +75,12 @@ function App() {
         <Route path="admin-login" element={<AdminLoginPage />} />
 
         {/* ✅ 2. Wrap all other admin routes inside the AdminProtectedRoute component. */}
-        {/* This acts as a gatekeeper, checking for the correct admin role. */}        <Route path="admin-dashboard" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
+        {/* This acts as a gatekeeper, checking for the correct admin role. */}        
+        <Route path="admin-dashboard" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
         <Route path="all-products" element={<AdminProtectedRoute><AllProductsPage /></AdminProtectedRoute>} />
         <Route path="add-product" element={<AdminProtectedRoute><AddProductPage /></AdminProtectedRoute>} />
-        <Route path="edit-product/:id" element={<AdminProtectedRoute><EditProductPage /></AdminProtectedRoute>} />        <Route path="all-orders" element={<AdminProtectedRoute><AllOrdersPage /></AdminProtectedRoute>} />
+        <Route path="edit-product/:id" element={<AdminProtectedRoute><EditProductPage /></AdminProtectedRoute>} />        
+        <Route path="all-orders" element={<AdminProtectedRoute><AllOrdersPage /></AdminProtectedRoute>} />
         <Route path="order-details/:orderId" element={<AdminProtectedRoute><OrderDetailsPage /></AdminProtectedRoute>} />
         <Route path="all-customers" element={<AdminProtectedRoute><AllCustomersPage /></AdminProtectedRoute>} />
         <Route path="customer-details/:userId" element={<AdminProtectedRoute><CustomerDetailsPage /></AdminProtectedRoute>} />

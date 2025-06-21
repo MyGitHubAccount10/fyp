@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -30,6 +30,7 @@ const RightArrowIcon = () => (
 
 const HomePage = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const navigate = useNavigate();
   const { products, dispatch } = useProductsContext();
 
   const nextSlide = () => {
@@ -43,6 +44,10 @@ const HomePage = () => {
       prevIndex === 0 ? slideshowImages.length - 1 : prevIndex - 1
     );
   };
+
+  const handleCustomise = () => {
+    navigate('/customise'); // Navigate to the Customise page
+  }
 
   useEffect(() => {
         console.log('HomePage useEffect triggered'); // Debug log
@@ -89,7 +94,7 @@ const HomePage = () => {
                     </button>
                 </>
             )}
-            <button className="hero-cta-button">Customise Skimboards</button>
+            <button onClick={handleCustomise} className="hero-cta-button">Customise Skimboards</button>
           </div>
         </section>
 

@@ -1,30 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from './hooks/useAuthContext';
 import { useCartContext } from './hooks/useCartContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 import { SHIPPING_FEE } from './shippingConstants';
-import { GST_RATE } from './taxConstants'; // Import the GST rate
+import { GST_RATE } from './taxConstants';
 
-// MODIFIED: Corrected the logo paths to match the file structure in the /public/images directory
 const paymentOptions = [
     { id: 'paypal', name: 'PayPal', logo: '/images/paypal.png' },
     { id: 'applePay', name: 'Apple Pay', logo: '/images/applepay.png' },
-    { id: 'googlePay', name: 'Google Pay', logo: '/images/googlepay.png' }, // Assuming it's in /images
-    { id: 'aliPay', name: 'Alipay', logo: '/images/alipay.png' },       // Assuming it's in /images
-    { id: 'grabPay', name: 'GrabPay', logo: '/images/grabpay.png' },     // Assuming it's in /images
-    { id: 'eNETS', name: 'eNETS', logo: '/images/enets.png' },           // Assuming it's in /images
+    { id: 'googlePay', name: 'Google Pay', logo: '/images/googlepay.png' },
+    { id: 'aliPay', name: 'Alipay', logo: '/images/alipay.png' },
+    { id: 'grabPay', name: 'GrabPay', logo: '/images/grabpay.png' },
+    { id: 'eNETS', name: 'eNETS', logo: '/images/enets.png' },
 ];
 
 function PlaceOrderPage() {
     const navigate = useNavigate();
-    const location = useLocation();
+    // MODIFIED: We no longer need authIsReady here, as the context handles the initial loading.
     const { user } = useAuthContext();
     const { cartItems, dispatch } = useCartContext();
 
-    // MODIFIED: Replaced firstName and lastName with fullName
     const [shippingDetails, setShippingDetails] = useState({
         fullName: '',
         email: '',
@@ -32,10 +30,8 @@ function PlaceOrderPage() {
         shippingAddress: '',
     });
 
-    // ✅ FIX: Re-added the state declaration that was accidentally omitted
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
 
-    // MODIFIED: State now includes GST
     const [orderSummary, setOrderSummary] = useState({
         items: [],
         subtotal: 0,
@@ -44,7 +40,55 @@ function PlaceOrderPage() {
         total: 0,
     });
 
-    // ✅ FIX: Re-added the function definition that was accidentally omitted
+    // --- MODIFIED: Simplified Guard Logic ---
+    // The component now only renders after the auth check is complete,
+    // so we can directly check the status of user and cartItems.
+    useEffect(() => {
+        // Guard 1: User must be logged in. This check is now reliable.
+        if (!user) {
+            navigate('/login', { state: { from: '/place-order' } });
+            return;
+        }
+
+        // Guard 2: Cart must not be empty.
+        if (cartItems.length === 0) {
+            navigate('/');
+            return;
+        }
+
+        // If both guards pass, pre-populate the user's details.
+        const userData = JSON.parse(localStorage.getItem('user'));
+        if (userData) {
+            setShippingDetails({
+                fullName: userData.full_name || '',
+                email: userData.email || '',
+                phoneNumber: userData.phone_number || '',
+                shippingAddress: userData.shipping_address || '',
+            });
+        }
+    }, [user, cartItems, navigate]); // REMOVED: authIsReady is no longer a dependency.
+
+
+    useEffect(() => {
+        if (cartItems.length > 0) {
+            const calculatedSubtotal = cartItems.reduce((sum, item) => {
+                const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
+                return sum + item.quantity * itemPrice;
+            }, 0);
+
+            const calculatedGst = calculatedSubtotal * GST_RATE;
+            const calculatedTotal = calculatedSubtotal + SHIPPING_FEE + calculatedGst;
+
+            setOrderSummary({
+                items: cartItems,
+                subtotal: calculatedSubtotal,
+                shippingFee: SHIPPING_FEE,
+                gst: calculatedGst,
+                total: calculatedTotal,
+            });
+        }
+    }, [cartItems]);
+    
     const getUserIdFromToken = (token) => {
         try {
             const base64Url = token.split('.')[1];
@@ -57,45 +101,6 @@ function PlaceOrderPage() {
         }
     };
 
-    // useEffect to pre-populate user details into the form
-    useEffect(() => {
-        if (!user || !user.token) {
-            navigate('/login', { state: { from: location.pathname } });
-            return;
-        }
-
-        const userData = JSON.parse(localStorage.getItem('user'));
-        if (userData) {
-            // MODIFIED: Set fullName instead of separate first/last names
-            setShippingDetails({
-                fullName: userData.full_name || '',
-                email: userData.email || '',
-                phoneNumber: userData.phone_number || '',
-                shippingAddress: userData.shipping_address || '',
-            });
-        }
-    }, [user, navigate, location]);
-
-    // useEffect to calculate order summary, now with GST
-    useEffect(() => {
-        const passedItems = location.state?.items || cartItems;
-        const calculatedSubtotal = passedItems.reduce((sum, item) => {
-            const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
-            return sum + item.quantity * itemPrice;
-        }, 0);
-
-        const calculatedGst = calculatedSubtotal * GST_RATE;
-        const calculatedTotal = calculatedSubtotal + SHIPPING_FEE + calculatedGst;
-
-        setOrderSummary({
-            items: passedItems,
-            subtotal: calculatedSubtotal,
-            shippingFee: SHIPPING_FEE,
-            gst: calculatedGst,
-            total: calculatedTotal,
-        });
-    }, [location.state, cartItems]);
-    
     const handleShippingChange = (e) => {
         setShippingDetails(prev => ({ ...prev, shippingAddress: e.target.value }));
     };
@@ -132,11 +137,11 @@ function PlaceOrderPage() {
         try {
             const orderData = {
                 user_id: userId,
-                status_id: '684d00b7df30da21ceb3e551', // 'Pending' status
+                status_id: '684d00b7df30da21ceb3e551',
                 payment_method: selectedPaymentMethod,
                 shipping_address: shippingDetails.shippingAddress,
                 order_date: new Date().toISOString(),
-                total_amount: parseFloat(orderSummary.total) // This total now includes GST
+                total_amount: parseFloat(orderSummary.total)
             };
 
             const orderResponse = await fetch('/api/orders', {
@@ -150,10 +155,6 @@ function PlaceOrderPage() {
 
             const orderId = orderResult._id;
             
-            // 🧠 NOTE: This loop creates order items one by one. If an item in the middle of the cart fails (e.g., out of stock),
-            // the previous items are already committed to the database. A more robust solution would use a backend transaction
-            // to process the entire cart in one atomic operation. This implementation adds error checking to stop the process
-            // as soon as a failure is detected.
             for (const item of cartItems) {
                 const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
                 const productId = item.id || item.product_id || item._id;
@@ -167,17 +168,14 @@ function PlaceOrderPage() {
                     order_size: item.size || 'N/A'
                 };
                 
-                // MODIFIED: Capture and check the response of the fetch call
                 const orderProductResponse = await fetch('/api/order-products', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`},
                     body: JSON.stringify(orderProductData)
                 });
 
-                // ✅ 1. Check if the response was successful
                 if (!orderProductResponse.ok) {
                     const errorResult = await orderProductResponse.json();
-                    // ✅ 2. Throw an error with the specific message from the backend
                     throw new Error(errorResult.error || 'Failed to add an item to the order.');
                 }
             }
@@ -191,6 +189,13 @@ function PlaceOrderPage() {
         }
     };
 
+    // REMOVED: The loading check `if (!authIsReady)` is no longer needed
+    // because the entire component won't render until the context is ready.
+    
+    // If guards are redirecting, this prevents rendering the form with bad data.
+    if (cartItems.length === 0 || !user) {
+        return null; 
+    }
 
     return (
         <>
@@ -202,7 +207,6 @@ function PlaceOrderPage() {
                         <div className="checkout-main-content">
                             <section className="form-section">
                                 <h3>Shipping Details (Singapore Only)</h3>
-                                {/* MODIFIED: Replaced First Name and Last Name with a single Full Name field */}
                                 <div className="form-group">
                                     <label htmlFor="fullName">Full Name</label>
                                     <input type="text" id="fullName" name="fullName" value={shippingDetails.fullName} disabled className="disabled-input" />

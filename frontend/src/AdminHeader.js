@@ -133,7 +133,7 @@ const AdminHeader = ({ showNav = true }) => {
                     <NavLink to="/all-customers" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}>
                         <CustomersIcon /> Customers
                     </NavLink>
-                    <NavLink to="/sales-reports" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}>
+                    <NavLink to="/sales-report" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}>
                         <SalesReportsIcon /> Sales Reports
                     </NavLink>
                 </nav>

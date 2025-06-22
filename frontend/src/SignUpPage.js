@@ -162,36 +162,101 @@ const SignUpPage = () => {
           <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>Create a new account!</p>
           <form onSubmit={handleSubmit} noValidate>
             
-            <input type="text" placeholder="Enter your full name" value={fullName} onChange={e => setFullName(e.target.value)} onBlur={() => setFullNameError(validateFullName(fullName))} style={{...fullNameError ? errorInputStyle : inputStyle, marginBottom: fullNameError ? '0' : '15px'}} />
+            <input
+              type="text"
+              placeholder="Enter your full name"
+              value={fullName}
+              onChange={e => setFullName(e.target.value)}
+              onBlur={() => setFullNameError(validateFullName(fullName))}
+              style={{...fullNameError ? errorInputStyle : inputStyle, marginBottom: fullNameError ? '0' : '15px'}} />
             {fullNameError && <p style={errorMessageStyle}>{fullNameError}</p>}
             
-            <input type="email" placeholder="Enter your email" value={email} onChange={e => setEmail(e.target.value)} onBlur={() => setEmailError(validateEmail(email))} style={{...emailError ? errorInputStyle : inputStyle, marginBottom: emailError ? '0' : '15px'}} />
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              onBlur={() => setEmailError(validateEmail(email))}
+              style={{...emailError ? errorInputStyle : inputStyle, marginBottom: emailError ? '0' : '15px'}} />
             {emailError && <p style={errorMessageStyle}>{emailError}</p>}
             
-            <input type="tel" placeholder="Enter your phone number" value={phone} onChange={e => setPhone(e.target.value)} onBlur={() => setPhoneError(validatePhone(phone))} pattern="[689]\d{7}" title="Enter a valid 8-digit Singapore number" style={{...phoneError ? errorInputStyle : inputStyle, marginBottom: phoneError ? '0' : '15px'}} />
+            <input 
+              type="tel"
+              placeholder="Enter your phone number"
+              value={phone}
+              onChange={e => setPhone(e.target.value)}
+              onBlur={() => setPhoneError(validatePhone(phone))}
+              pattern="[689]\d{7}"
+              title="Enter a valid 8-digit Singapore number"
+              style={{...phoneError ? errorInputStyle : inputStyle, marginBottom: phoneError ? '0' : '15px'}} />
             {phoneError && <p style={errorMessageStyle}>{phoneError}</p>}
             
-            <input type="text" placeholder="Enter your shipping address" value={shippingAddress} onChange={e => setShippingAddress(e.target.value)} onBlur={() => setShippingAddressError(validateShippingAddress(shippingAddress))} style={{...shippingAddressError ? errorInputStyle : inputStyle, marginBottom: shippingAddressError ? '0' : '15px'}} />
+            <input
+              type="text"
+              placeholder="Enter your shipping address"
+              value={shippingAddress}
+              onChange={e => setShippingAddress(e.target.value)}
+              onBlur={() => setShippingAddressError(validateShippingAddress(shippingAddress))}
+              style={{...shippingAddressError ? errorInputStyle : inputStyle, marginBottom: shippingAddressError ? '0' : '15px'}} />
             {shippingAddressError && <p style={errorMessageStyle}>{shippingAddressError}</p>}
 
-            <input type="text" placeholder="Enter your username" value={username} onChange={e => setUsername(e.target.value)} onBlur={() => setUsernameError(validateUsername(username))} style={{...usernameError ? errorInputStyle : inputStyle, marginBottom: usernameError ? '0' : '15px'}} />
+            <input
+              type="text"
+              placeholder="Enter your username"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              onBlur={() => setUsernameError(validateUsername(username))}
+              style={{...usernameError ? errorInputStyle : inputStyle, marginBottom: usernameError ? '0' : '15px'}} />
             {usernameError && <p style={errorMessageStyle}>{usernameError}</p>}
 
             <div className="password-input-wrapper" style={{ marginBottom: isPasswordTouched && passwordError ? '0' : '15px' }}>
-                <input type={isPasswordVisible ? 'text' : 'password'} placeholder="Enter your password" value={password} onChange={handlePasswordChange} onBlur={handlePasswordBlur} style={isPasswordTouched && passwordError ? errorInputStyle : inputStyle} />
-                <button type="button" className="password-toggle-btn" onClick={() => setIsPasswordVisible(p => !p)}>{isPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}</button>
+                <input
+                  type={isPasswordVisible ? 'text' : 'password'}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={handlePasswordChange}
+                  onBlur={handlePasswordBlur}
+                  style={isPasswordTouched && passwordError ? errorInputStyle : inputStyle} />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setIsPasswordVisible(p => !p)}>
+                  {isPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
+                </button>
             </div>
             {isPasswordTouched && passwordError && <p style={errorMessageStyle}>{passwordError}</p>}
 
             <div className="password-input-wrapper" style={{ marginBottom: confirmPasswordError ? '0' : '15px' }}>
-                <input type={isConfirmPasswordVisible ? 'text' : 'password'} placeholder="Confirm your password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} onBlur={() => setConfirmPasswordError(validateConfirmPassword(password, confirmPassword))} style={confirmPasswordError ? errorInputStyle : inputStyle} />
-                <button type="button" className="password-toggle-btn" onClick={() => setIsConfirmPasswordVisible(p => !p)}>{isConfirmPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}</button>
+                <input
+                  type={isConfirmPasswordVisible ? 'text' : 'password'}
+                  placeholder="Confirm your password"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  onBlur={() => setConfirmPasswordError(validateConfirmPassword(password, confirmPassword))}
+                  style={confirmPasswordError ? errorInputStyle : inputStyle} />
+                <button
+                  type="button"
+                  className="password-toggle-btn"
+                  onClick={() => setIsConfirmPasswordVisible(p => !p)}>
+                  {isConfirmPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
+                </button>
             </div>
             {confirmPasswordError && <p style={errorMessageStyle}>{confirmPasswordError}</p>}
             
             <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-              <button type="button" className="update-cart-btn" onClick={handleAlreadyHaveAccount} style={{ flexGrow: 1, backgroundColor: '#f0f0f0', color: '#333', border: '1px solid #ccc' }}>Already have an account?</button>
-              <button type="submit" className="complete-purchase-btn" style={{ flexGrow: 1, backgroundColor: '#333', color: '#fff' }}>Sign Up</button>
+              <button
+                type="button"
+                className="update-cart-btn"
+                onClick={handleAlreadyHaveAccount}
+                style={{ flexGrow: 1, backgroundColor: '#f0f0f0', color: '#333', border: '1px solid #ccc' }}>
+                Already have an account?
+              </button>
+              <button
+                type="submit"
+                className="complete-purchase-btn"
+                style={{ flexGrow: 1, backgroundColor: '#333', color: '#fff' }}>
+                Sign Up
+              </button>
             </div>
           </form>
         </div>

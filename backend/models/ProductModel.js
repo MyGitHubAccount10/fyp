@@ -23,7 +23,8 @@ const productSchema = new Schema({
   warehouse_quantity: {
     type: Number,
     required: true
-  },  product_image: {
+  },  
+  product_image: {
     type: String,
     required: true
   },

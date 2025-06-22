@@ -125,10 +125,17 @@ const LoginPage = () => {
             {passwordError && <p style={errorMessageStyle}>{passwordError}</p>}
             
             <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-              <button type="button" className="update-cart-btn" style={{ flexGrow: 1, backgroundColor: '#f0f0f0', color: '#333', border: '1px solid #ccc' }}>
+              <button
+                type="button"
+                className="update-cart-btn"
+                style={{ flexGrow: 1, backgroundColor: '#f0f0f0', color: '#333', border: '1px solid #ccc' }}>
                 Forgot Password?
               </button>
-              <button type="submit" className="complete-purchase-btn" style={{ flexGrow: 1, backgroundColor: '#333', color: '#fff' }} disabled={isLoading}>
+              <button
+                type="submit"
+                className="complete-purchase-btn"
+                style={{ flexGrow: 1, backgroundColor: '#333', color: '#fff' }}
+                disabled={isLoading}>
                 {isLoading ? 'Logging in...' : 'Login'}
               </button>
             </div>

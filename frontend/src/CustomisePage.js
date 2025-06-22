@@ -4,6 +4,9 @@ import Header from './Header';
 import Footer from './Footer';
 
 const CustomisePage = () => {
+    const [page, setPage] = useState(1);
+
+    // State in first page
     const [type, setType] = useState('');
     const [shape, setShape] = useState('');
     const [size, setSize] = useState('');
@@ -38,7 +41,7 @@ const CustomisePage = () => {
         if (price <= 0) return 'Price must be greater than 0';
     }
 
-    const handleSubmit = (e) => {
+    const handleFirstSubmit = (e) => {
         e.preventDefault();
 
         const typeError = validateType(type);
@@ -56,6 +59,7 @@ const CustomisePage = () => {
         if (typeError || shapeError || sizeError || materialError || priceError) {
             return;
         }
+        setPage(2);
     }
     const inputStyle = { display: 'block', width: '100%', margin: '12px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
     const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
@@ -69,7 +73,8 @@ const CustomisePage = () => {
                 <h2 style={{ fontWeight: 'bold', fontSize: '2em', marginBottom: '10px' }}>Customise Form</h2>
                 <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>Customise Your Skimboard!</p>
                         
-                <form onSubmit={handleSubmit} noValidate>
+                { page === 1 && (
+                    <form onSubmit={handleFirstSubmit} noValidate>
                     <label>Board Type:</label>
                     <select
                         name="type"
@@ -161,8 +166,14 @@ const CustomisePage = () => {
                         style={{...priceError ? errorInputStyle : inputStyle, marginBottom: priceError ? '0' : '15px'}}/>
                     {priceError && <p style={errorMessageStyle}>{priceError}</p>}
 
-                    <button type="submit" className="complete-purchase-btn" style={{ backgroundColor: '#333', color: '#fff', margin: '12px', padding: '12px' }}>Submit Custom Order</button>
-                </form>
+                    <button 
+                        type="submit"
+                        className="complete-purchase-btn"
+                        style={{ backgroundColor: '#333', color: '#fff', margin: '12px', padding: '12px' }}>
+                        Proceed to Upload Image
+                    </button>
+                    </form>   
+                )}
                 </div>
             </div>
             <Footer />

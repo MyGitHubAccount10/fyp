@@ -158,7 +158,7 @@ const CustomisePage = () => {
                         placeholder="Enter price"
                         onChange={e => setPrice(e.target.value)}
                         onBlur={()=> setPriceError(validatePrice(price))}
-                        style={{...typeError ? errorInputStyle : inputStyle, marginBottom: typeError ? '0' : '15px'}}/>
+                        style={{...priceError ? errorInputStyle : inputStyle, marginBottom: priceError ? '0' : '15px'}}/>
                     {priceError && <p style={errorMessageStyle}>{priceError}</p>}
 
                     <button type="submit" className="complete-purchase-btn" style={{ backgroundColor: '#333', color: '#fff', margin: '12px', padding: '12px' }}>Submit Custom Order</button>

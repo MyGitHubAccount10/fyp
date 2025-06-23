@@ -106,17 +106,21 @@ const CustomisePage = () => {
                         value={size}
                         onChange={e => {
                             setSize(e.target.value)
-                            if (e.target.value === 'Small') setPrice(40);
-                            else if (e.target.value === 'Medium') setPrice(60);
-                            else if (e.target.value === 'Large') setPrice(80);
+                            if (e.target.value === 'XS') setPrice(20);
+                            else if (e.target.value === 'S') setPrice(40);
+                            else if (e.target.value === 'M') setPrice(60);
+                            else if (e.target.value === 'L') setPrice(80);
+                            else if (e.target.value === 'XL') setPrice(100);
                             else setPrice(0);
                         }}
                         onBlur={() => setSizeError(validateSize(size))}
                         style={{...sizeError ? errorInputStyle : inputStyle, marginBottom: sizeError ? '0' : '15px'}}>
                         <option value="">Select</option>
-                        <option value="Small">Small</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Large">Large</option>
+                        <option value="XS">Extra Small</option>
+                        <option value="S">Small</option>
+                        <option value="M">Medium</option>
+                        <option value="L">Large</option>
+                        <option value="XL">Extra Large</option>
                     </select>
 
                     {sizeError && <p style={errorMessageStyle}>{sizeError}</p>}

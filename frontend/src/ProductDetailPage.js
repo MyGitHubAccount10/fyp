@@ -49,7 +49,6 @@ const ProductDetailPage = () => {
           // 2. Calculate the stock the user can actually add
           const availableStock = productData.warehouse_quantity - quantityInCart;
           setStock(availableStock);
-          
           setQuantity(1);
         }
       } catch (error) {
@@ -85,7 +84,7 @@ const ProductDetailPage = () => {
     window.scrollTo(0, 0);
   }, [product, productId]);
 
-  const sizes = ['S', 'M', 'L'];
+  const sizes = ['XS', 'S', 'M', 'L', 'XL'];
 
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
@@ -130,9 +129,9 @@ const ProductDetailPage = () => {
 
   // Use the total warehouse quantity for the initial status display
   const handlerStatus = () => {
-    if (product.warehouse_quantity === 0) {
+    if (stock === 0) {
         return 'No Stock';
-    } else if (product.warehouse_quantity <= product.threshold) {
+    } else if (stock <= product.threshold) {
         return 'Limited Stock';
     } else {
         return 'In Stock';

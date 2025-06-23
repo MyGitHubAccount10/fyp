@@ -21,11 +21,6 @@ const orderSchema = new Schema({
         type: String,
         required: true
     },
-    // REMOVED: The postal_code field is no longer needed
-    // postal_code: {
-    //     type: String,
-    //     required: true
-    // },
     order_date: {
         type: Date,
         required: true

@@ -10,6 +10,7 @@ const CustomisePage = () => {
     const [shape, setShape] = useState('');
     const [size, setSize] = useState('');
     const [material, setMaterial] = useState('');
+    const [thickness, setThickness] = useState('');
     const [topColor, setTopColor] = useState('');
     const [bottomColor, setBottomColor] = useState('');
     const [price, setPrice] = useState(0);
@@ -18,21 +19,26 @@ const CustomisePage = () => {
     const [shapeError, setShapeError] = useState('');
     const [sizeError, setSizeError] = useState('');
     const [materialError, setMaterialError] = useState('');
+    const [thicknessError, setThicknessError] = useState('');
 
     const validateType = (type) => {
-        if (!type) return 'Board type is required';
+        if (!type) return 'Board type is required.';
     }
 
     const validateShape = (shape) => {
-        if (!shape) return 'Board shape is required';
+        if (!shape) return 'Board shape is required.';
     }
 
     const validateSize = (size) => {
-        if (!size) return 'Board size is required';
+        if (!size) return 'Board size is required.';
     }
 
     const validateMaterial = (material) => {
-        if (!material) return 'Material is required';
+        if (!material) return 'Material is required.';
+    }
+
+    const validateThickness = (thickness) => {
+        if (!thickness) return 'Thickness is required.';
     }
 
     const handleSubmit = (e) => {
@@ -47,8 +53,9 @@ const CustomisePage = () => {
         setShapeError(shapeError);
         setSizeError(sizeError);
         setMaterialError(materialError);
+        setThicknessError(validateThickness(thickness));
 
-        if (typeError || shapeError || sizeError || materialError) {
+        if (typeError || shapeError || sizeError || materialError || thicknessError) {
             return;
         }
     }
@@ -68,6 +75,13 @@ const CustomisePage = () => {
             'Pin Tail': 20,
             'Swallow Tail': 25
         };
+        const materialPrices = {
+            'Foam Core': 40,
+            'Wood': 60,
+            'Epoxy Coating': 80,
+            'Fiberglass': 160,
+            'Carbon Fiber': 200,
+        };
         const sizePrices = {
             'XS': 5,
             'S': 10,
@@ -75,20 +89,23 @@ const CustomisePage = () => {
             'L': 20,
             'XL': 25
         };
-        const materialPrices = {
-            'Foam Core': 20,
-            'Wood': 30,
-            'Epoxy Coating': 40,
-            'Fiberglass': 80,
-            'Carbon Fiber': 100,
+        
+        const thicknessPrices = {
+            '3mm': 15,
+            '5mm': 25,
+            '7mm': 35,
+            '9mm': 45,
+            '11mm': 55
         };
+
         const typePrice = typePrices[type] || 0;
         const shapePrice = shapePrices[shape] || 0;
         const sizePrice = sizePrices[size] || 0;
         const materialPrice = materialPrices[material] || 0;
-        const totalPrice = typePrice + shapePrice + sizePrice + materialPrice;
+        const thicknessPrice = thicknessPrices[thickness] || 0;
+        const totalPrice = typePrice + shapePrice + sizePrice + materialPrice + thicknessPrice;
         setPrice(totalPrice);
-    }, [type, shape, size, material]);
+    }, [type, shape, size, material, thickness]);
     
     return (
         <>
@@ -112,7 +129,6 @@ const CustomisePage = () => {
                         <option value="Wave">Wave</option>
                         <option value="Hybrid">Hybrid</option>
                     </select>
-
                     {typeError && <p style={errorMessageStyle}>{typeError}</p>}
 
                     <label>Board Shape:</label>
@@ -128,7 +144,6 @@ const CustomisePage = () => {
                         <option value="Pin Tail">Pin Tail</option>
                         <option value="Swallow Tail">Swallow Tail</option>
                     </select>
-
                     {shapeError && <p style={errorMessageStyle}>{shapeError}</p>}
 
                     <label>Board Size:</label>
@@ -145,7 +160,6 @@ const CustomisePage = () => {
                         <option value="L">Large</option>
                         <option value="XL">Extra Large</option>
                     </select>
-
                     {sizeError && <p style={errorMessageStyle}>{sizeError}</p>}
 
                     <label>Material:</label>
@@ -162,8 +176,23 @@ const CustomisePage = () => {
                         <option value="Fiberglass">Fiberglass</option>
                         <option value="Carbon Fiber">Carbon Fiber</option>
                     </select>
-
                     {materialError && <p style={errorMessageStyle}>{materialError}</p>}
+
+                    <label>Thickness:</label>
+                    <select
+                        name="thickness"
+                        value={thickness}
+                        onChange={e => setThickness(e.target.value)}
+                        onBlur={() => setThicknessError(validateThickness(thickness))}
+                        style={{...thicknessError ? errorInputStyle : inputStyle, marginBottom: thicknessError ? '0' : '15px'}}>
+                        <option value="">Select</option>
+                        <option value="3mm">Ultra Thin (3mm)</option>
+                        <option value="5mm">Thin (5mm)</option>
+                        <option value="7mm">Standard (7mm)</option>
+                        <option value="9mm">Thick (9mm)</option>
+                        <option value="11mm">Ultra Thick 11mm</option>
+                    </select>
+                    {thicknessError && <p style={errorMessageStyle}>{thicknessError}</p>}
 
                     <label>Top Color:</label>
                     <input

@@ -11,7 +11,7 @@ const ProductCard = ({ product }) => {
 
   // The visual content of the card
   const cardInnerContent = (
-    <div className="product-card" style={{ position: 'relative', opacity: isAvailable ? 1 : 0.6 }}>
+    <div className="product-card" style={{ position: 'relative', opacity: isAvailable ? 1 : 0.8 }}>
       <img src={`/images/${product.product_image}`} alt={product.product_name} className="product-image" />
       <div className="product-info">
         <h3 className="product-name">{product.product_name}</h3>
@@ -28,29 +28,17 @@ const ProductCard = ({ product }) => {
           borderRadius: '5px',
           fontWeight: 'bold',
           textAlign: 'center',
-          pointerEvents: 'none' // Ensures the text itself isn't interactive
         }}>
           Out of Stock
         </div>
       )}
     </div>
   );
-
-  // Conditionally wrap with a Link to make it non-clickable when unavailable
-  if (isAvailable) {
-    return (
-      <Link to={`/product/${product._id}`} style={{ textDecoration: 'none' }}>
-        {cardInnerContent}
-      </Link>
-    );
-  } else {
-    // Render as a simple, non-interactive div
-    return (
-      <div>
-        {cardInnerContent}
-      </div>
-    );
-  }
+  return (
+    <Link to={`/product/${product._id}`} style={{ textDecoration: 'none'}}>
+      {cardInnerContent}
+    </Link>
+  );
 };
 
 const CategoryPage = ({ categoryName }) => {

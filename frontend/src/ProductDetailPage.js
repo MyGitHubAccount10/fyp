@@ -232,7 +232,7 @@ const ProductDetailPage = () => {
             {similarProducts.map(p => {
               const isAvailable = p.warehouse_quantity > 0;
               const cardContent = (
-                <div className="similar-product-card" style={{ position: 'relative', opacity: isAvailable ? 1 : 0.6 }}>
+                <div className="similar-product-card" style={{ position: 'relative', opacity: isAvailable ? 1 : 0.8 }}>
                   <img src={`/images/${p.product_image}`} alt={p.product_name} className="similar-product-image" />
                   <div className="similar-product-caption">{p.product_name}</div>
                   {!isAvailable && (
@@ -243,19 +243,11 @@ const ProductDetailPage = () => {
                 </div>
               );
 
-              if (isAvailable) {
-                return (
-                  <Link to={`/product/${p._id}`} key={p._id} style={{ textDecoration: 'none' }}>
-                    {cardContent}
-                  </Link>
-                );
-              } else {
-                return (
-                  <div key={p._id}>
-                    {cardContent}
-                  </div>
-                );
-              }
+              return (
+                <Link to={`/product/${p._id}`} key={p._id} style={{ textDecoration: 'none'}}>
+                  {cardContent}
+                </Link>
+              );
             })}
           </div>
         </section>

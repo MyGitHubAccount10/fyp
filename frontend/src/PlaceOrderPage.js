@@ -209,15 +209,15 @@ function PlaceOrderPage() {
                                 <h3>Shipping Details (Singapore Only)</h3>
                                 <div className="form-group">
                                     <label htmlFor="fullName">Full Name</label>
-                                    <input type="text" id="fullName" name="fullName" value={shippingDetails.fullName} disabled className="disabled-input" />
+                                    <input type="text" id="fullName" name="fullName" value={shippingDetails.fullName} disabled />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="email">Email</label>
-                                    <input type="email" id="email" name="email" value={shippingDetails.email} disabled className="disabled-input" />
+                                    <input type="email" id="email" name="email" value={shippingDetails.email} disabled />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="phoneNumber">Phone Number</label>
-                                    <input type="tel" id="phoneNumber" name="phoneNumber" value={shippingDetails.phoneNumber} disabled className="disabled-input" />
+                                    <input type="tel" id="phoneNumber" name="phoneNumber" value={shippingDetails.phoneNumber} disabled />
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="shippingAddress">Shipping Address</label>

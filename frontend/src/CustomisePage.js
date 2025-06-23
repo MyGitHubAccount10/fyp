@@ -19,7 +19,6 @@ const CustomisePage = () => {
     const [shapeError, setShapeError] = useState('');
     const [sizeError, setSizeError] = useState('');
     const [materialError, setMaterialError] = useState('');
-    const [priceError, setPriceError] = useState('');
 
     const validateType = (type) => {
         if (!type) return 'Board type is required';
@@ -37,10 +36,6 @@ const CustomisePage = () => {
         if (!material) return 'Material is required';
     }
 
-    const validatePrice = (price) => {
-        if (price <= 0) return 'Price must be greater than 0';
-    }
-
     const handleFirstSubmit = (e) => {
         e.preventDefault();
 
@@ -48,17 +43,16 @@ const CustomisePage = () => {
         const shapeError = validateShape(shape);
         const sizeError = validateSize(size);
         const materialError = validateMaterial(material);
-        const priceError = validatePrice(price);
         
         setTypeError(typeError);
         setShapeError(shapeError);
         setSizeError(sizeError);
         setMaterialError(materialError);
-        setPriceError(priceError);
 
-        if (typeError || shapeError || sizeError || materialError || priceError) {
+        if (typeError || shapeError || sizeError || materialError) {
             return;
         }
+
         setPage(2);
     }
     const inputStyle = { display: 'block', width: '100%', margin: '12px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
@@ -110,7 +104,13 @@ const CustomisePage = () => {
                     <select
                         name="size"
                         value={size}
-                        onChange={e => setSize(e.target.value)}
+                        onChange={e => {
+                            setSize(e.target.value)
+                            if (e.target.value === 'Small') setPrice(40);
+                            else if (e.target.value === 'Medium') setPrice(60);
+                            else if (e.target.value === 'Large') setPrice(80);
+                            else setPrice(0);
+                        }}
                         onBlur={() => setSizeError(validateSize(size))}
                         style={{...sizeError ? errorInputStyle : inputStyle, marginBottom: sizeError ? '0' : '15px'}}>
                         <option value="">Select</option>
@@ -161,12 +161,10 @@ const CustomisePage = () => {
                         name="price"
                         value={price}
                         placeholder="Enter price"
-                        onChange={e => setPrice(e.target.value)}
-                        onBlur={()=> setPriceError(validatePrice(price))}
-                        style={{...priceError ? errorInputStyle : inputStyle, marginBottom: priceError ? '0' : '15px'}}/>
-                    {priceError && <p style={errorMessageStyle}>{priceError}</p>}
+                        style={{...inputStyle}}
+                        disabled/>
 
-                    <button 
+                    <button
                         type="submit"
                         className="complete-purchase-btn"
                         style={{ backgroundColor: '#333', color: '#fff', margin: '12px', padding: '12px' }}>

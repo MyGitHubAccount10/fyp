@@ -177,7 +177,7 @@ const ProductDetailPage = () => {
             </p>
 
             {/* --- MODIFIED: Conditional Rendering for Scenarios 1 & 2 --- */}
-            {stock > 0 ? (
+            {stock > 0 && (
               <>
                 <div className="product-options">
                     <div>
@@ -215,15 +215,8 @@ const ProductDetailPage = () => {
                 <div className="product-actions-detail">              
                   <button className="btn-buy-now" onClick={handleBuyNow}>Buy Now</button>
                   <button className="btn-add-to-cart-detail" onClick={handleAddToCart}>Add to Cart</button>
-                </div> 
-              </>           
-            ) : (
-              <div className="stock-info-message">
-                {product.warehouse_quantity > 0 
-                  ? "You have all available stock in your cart." 
-                  : "This product is currently out of stock."
-                }
-              </div>
+                </div>
+              </>
             )}
           </div>
         </section>

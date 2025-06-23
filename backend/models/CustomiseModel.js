@@ -24,6 +24,10 @@ const customiseSchema = new Schema({
     type: String,
     required: true
   },
+  thickness: {
+    type: String,
+    required: true
+  },
   top_color: {
     type: String,
     required: true

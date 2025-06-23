@@ -32,6 +32,7 @@ const createCustomise = async (req, res) => {
         board_shape,
         board_size,
         material,
+        thickness,
         top_color,
         bottom_color,
         customise_price,
@@ -44,6 +45,7 @@ const createCustomise = async (req, res) => {
             board_shape,
             board_size,
             material,
+            thickness,
             top_color,
             bottom_color,
             customise_price

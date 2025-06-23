@@ -19,26 +19,18 @@ const CustomisePage = () => {
     const [shapeError, setShapeError] = useState('');
     const [sizeError, setSizeError] = useState('');
     const [materialError, setMaterialError] = useState('');
-    const [priceError, setPriceError] = useState('');
-
-    // State for second page (image editing)
+    const [priceError, setPriceError] = useState('');    // State for second page (image editing)
     const [activeLayer, setActiveLayer] = useState('top'); // 'top' or 'bottom'
-    const [topImage, setTopImage] = useState(null);
-    const [bottomImage, setBottomImage] = useState(null);
-    const [topImageStyle, setTopImageStyle] = useState({
-        scale: 1,
-        x: 0,
-        y: 0,
-        rotation: 0
-    });
-    const [bottomImageStyle, setBottomImageStyle] = useState({
-        scale: 1,
-        x: 0,
-        y: 0,
-        rotation: 0
-    });
+    const [topImages, setTopImages] = useState([]);
+    const [bottomImages, setBottomImages] = useState([]);
+    const [selectedImageId, setSelectedImageId] = useState(null);
     const [isDragging, setIsDragging] = useState(false);
-    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });    const validateType = (type) => {
+    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+    const [dragMode, setDragMode] = useState('move'); // 'move', 'scale', 'rotate'
+    const [hoveredImageId, setHoveredImageId] = useState(null);
+    const [hoveredZone, setHoveredZone] = useState(null); // 'center', 'corner', 'edge'
+
+    const validateType = (type) => {
         if (!type) return 'Board type is required';
     };
 
@@ -77,18 +69,32 @@ const CustomisePage = () => {
             return;
         }
         setPage(2);
-    }
+    }    // Image handling functions
+    const generateImageId = () => {
+        return Date.now() + Math.random().toString(36).substr(2, 9);
+    };
 
-    // Image handling functions
     const handleImageUpload = (file, layer) => {
         if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
             reader.onload = (e) => {
+                const newImage = {
+                    id: generateImageId(),
+                    src: e.target.result,
+                    scale: 1,
+                    x: 100,
+                    y: 100,
+                    rotation: 0,
+                    width: 200,
+                    height: 200
+                };
+                
                 if (layer === 'top') {
-                    setTopImage(e.target.result);
+                    setTopImages(prev => [...prev, newImage]);
                 } else {
-                    setBottomImage(e.target.result);
+                    setBottomImages(prev => [...prev, newImage]);
                 }
+                setSelectedImageId(newImage.id);
             };
             reader.readAsDataURL(file);
         }
@@ -102,44 +108,115 @@ const CustomisePage = () => {
         e.preventDefault();
         const files = e.dataTransfer.files;
         if (files.length > 0) {
-            handleImageUpload(files[0], activeLayer);
+            for (let i = 0; i < files.length; i++) {
+                handleImageUpload(files[i], activeLayer);
+            }
         }
     };
 
     const handleFileSelect = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            handleImageUpload(file, activeLayer);
+        const files = e.target.files;
+        if (files) {
+            for (let i = 0; i < files.length; i++) {
+                handleImageUpload(files[i], activeLayer);
+            }
         }
     };
 
-    const handleImageMouseDown = (e) => {
+    const getMouseZone = (e, imageElement) => {
+        const rect = imageElement.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const width = rect.width;
+        const height = rect.height;
+        
+        const cornerSize = 20;
+        const edgeSize = 15;
+        
+        // Check corners for rotation
+        if ((x < cornerSize && y < cornerSize) || 
+            (x > width - cornerSize && y < cornerSize) ||
+            (x < cornerSize && y > height - cornerSize) ||
+            (x > width - cornerSize && y > height - cornerSize)) {
+            return 'rotate';
+        }
+        
+        // Check edges for scaling
+        if (x < edgeSize || x > width - edgeSize || y < edgeSize || y > height - edgeSize) {
+            return 'scale';
+        }
+        
+        // Center for moving
+        return 'move';
+    };
+
+    const getCursor = (zone) => {
+        switch (zone) {
+            case 'rotate': return 'grab';
+            case 'scale': return 'nw-resize';
+            case 'move': return 'move';
+            default: return 'default';
+        }
+    };
+
+    const handleImageMouseDown = (e, imageId) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const zone = getMouseZone(e, e.currentTarget);
         setIsDragging(true);
+        setSelectedImageId(imageId);
+        setDragMode(zone);
         setDragStart({
             x: e.clientX,
             y: e.clientY
         });
     };
 
-    const handleImageMouseMove = (e) => {
-        if (!isDragging) return;
+    const handleImageMouseMove = (e, imageId) => {
+        if (!isDragging || selectedImageId !== imageId) {
+            // Just update hover state for cursor changes
+            const zone = getMouseZone(e, e.currentTarget);
+            setHoveredZone(zone);
+            setHoveredImageId(imageId);
+            return;
+        }
         
         const deltaX = e.clientX - dragStart.x;
         const deltaY = e.clientY - dragStart.y;
         
-        const currentStyle = activeLayer === 'top' ? topImageStyle : bottomImageStyle;
-        const newStyle = {
-            ...currentStyle,
-            x: currentStyle.x + deltaX,
-            y: currentStyle.y + deltaY
-        };
+        const images = activeLayer === 'top' ? topImages : bottomImages;
+        const setImages = activeLayer === 'top' ? setTopImages : setBottomImages;
         
-        if (activeLayer === 'top') {
-            setTopImageStyle(newStyle);
-        } else {
-            setBottomImageStyle(newStyle);
-        }
+        const updatedImages = images.map(img => {
+            if (img.id === imageId) {
+                switch (dragMode) {
+                    case 'move':
+                        return {
+                            ...img,
+                            x: img.x + deltaX,
+                            y: img.y + deltaY
+                        };
+                    case 'scale':
+                        const scaleFactor = 1 + (deltaX + deltaY) / 200;
+                        return {
+                            ...img,
+                            scale: Math.max(0.1, Math.min(3, img.scale * Math.max(0.5, scaleFactor)))
+                        };
+                    case 'rotate':
+                        const rotationDelta = deltaX / 2;
+                        return {
+                            ...img,
+                            rotation: (img.rotation + rotationDelta) % 360
+                        };
+                    default:
+                        return img;
+                }
+            }
+            return img;
+        });
         
+        setImages(updatedImages);
         setDragStart({
             x: e.clientX,
             y: e.clientY
@@ -148,47 +225,62 @@ const CustomisePage = () => {
 
     const handleImageMouseUp = () => {
         setIsDragging(false);
+        setDragMode('move');
+    };
+
+    const handleImageMouseLeave = () => {
+        setHoveredImageId(null);
+        setHoveredZone(null);
+    };
+
+    const updateSelectedImage = (updates) => {
+        if (!selectedImageId) return;
+        
+        const images = activeLayer === 'top' ? topImages : bottomImages;
+        const setImages = activeLayer === 'top' ? setTopImages : setBottomImages;
+        
+        const updatedImages = images.map(img => 
+            img.id === selectedImageId ? { ...img, ...updates } : img
+        );
+        setImages(updatedImages);
     };
 
     const handleScaleChange = (value) => {
-        const currentStyle = activeLayer === 'top' ? topImageStyle : bottomImageStyle;
-        const newStyle = { ...currentStyle, scale: value };
-        
-        if (activeLayer === 'top') {
-            setTopImageStyle(newStyle);
-        } else {
-            setBottomImageStyle(newStyle);
-        }
+        updateSelectedImage({ scale: value });
     };
 
     const handleRotationChange = (value) => {
-        const currentStyle = activeLayer === 'top' ? topImageStyle : bottomImageStyle;
-        const newStyle = { ...currentStyle, rotation: value };
-        
-        if (activeLayer === 'top') {
-            setTopImageStyle(newStyle);
-        } else {
-            setBottomImageStyle(newStyle);
-        }
+        updateSelectedImage({ rotation: value });
     };
 
     const resetImagePosition = () => {
-        const resetStyle = { scale: 1, x: 0, y: 0, rotation: 0 };
-        if (activeLayer === 'top') {
-            setTopImageStyle(resetStyle);
-        } else {
-            setBottomImageStyle(resetStyle);
-        }
+        updateSelectedImage({ scale: 1, x: 100, y: 100, rotation: 0 });
     };
 
     const removeImage = () => {
+        if (!selectedImageId) return;
+        
+        const images = activeLayer === 'top' ? topImages : bottomImages;
+        const setImages = activeLayer === 'top' ? setTopImages : setBottomImages;
+        
+        const filteredImages = images.filter(img => img.id !== selectedImageId);
+        setImages(filteredImages);
+        setSelectedImageId(null);
+    };
+
+    const removeAllImages = () => {
         if (activeLayer === 'top') {
-            setTopImage(null);
-            setTopImageStyle({ scale: 1, x: 0, y: 0, rotation: 0 });
+            setTopImages([]);
         } else {
-            setBottomImage(null);
-            setBottomImageStyle({ scale: 1, x: 0, y: 0, rotation: 0 });
+            setBottomImages([]);
         }
+        setSelectedImageId(null);
+    };
+
+    const getSelectedImage = () => {
+        if (!selectedImageId) return null;
+        const images = activeLayer === 'top' ? topImages : bottomImages;
+        return images.find(img => img.id === selectedImageId);
     };
     const inputStyle = { display: 'block', width: '100%', margin: '12px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
     const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
@@ -328,63 +420,76 @@ const CustomisePage = () => {
 
                         {/* Skimboard Canvas */}
                         <div style={{ display: 'flex', gap: '20px' }}>
-                            <div style={{ flex: 2 }}>
-                                <div 
+                            <div style={{ flex: 2 }}>                                <div 
                                     className="skimboard-canvas"
                                     style={{
                                         backgroundColor: activeLayer === 'top' ? topColor : bottomColor,
                                     }}
                                     onDragOver={handleDragOver}
                                     onDrop={handleDrop}
-                                    onMouseMove={handleImageMouseMove}
+                                    onMouseMove={(e) => !isDragging && setHoveredZone(null)}
                                     onMouseUp={handleImageMouseUp}
                                     onMouseLeave={handleImageMouseUp}
                                 >
                                     <div className="layer-indicator">
                                         {activeLayer === 'top' ? 'Top Layer' : 'Bottom Layer'}
                                     </div>
-                                      {/* Bottom layer image */}
-                                    {bottomImage && (
+                                    
+                                    {/* Bottom layer images */}
+                                    {bottomImages.map((image) => (
                                         <img
-                                            src={bottomImage}
+                                            key={image.id}
+                                            src={image.src}
                                             alt="Bottom design"
                                             className="customization-image"
                                             style={{
-                                                transform: `translate(${bottomImageStyle.x}px, ${bottomImageStyle.y}px) scale(${bottomImageStyle.scale}) rotate(${bottomImageStyle.rotation}deg)`,
+                                                transform: `translate(${image.x}px, ${image.y}px) scale(${image.scale}) rotate(${image.rotation}deg)`,
                                                 transformOrigin: 'center',
-                                                opacity: activeLayer === 'bottom' ? 1 : 0.5,
-                                                zIndex: 1,
-                                                cursor: activeLayer === 'bottom' ? 'move' : 'default'
+                                                opacity: activeLayer === 'bottom' ? 1 : 0.3,
+                                                zIndex: activeLayer === 'bottom' && selectedImageId === image.id ? 100 : 1,
+                                                cursor: activeLayer === 'bottom' && hoveredImageId === image.id ? getCursor(hoveredZone) : 'default',
+                                                border: activeLayer === 'bottom' && selectedImageId === image.id ? '2px solid #007bff' : 'none',
+                                                width: `${image.width}px`,
+                                                height: `${image.height}px`
                                             }}
-                                            onMouseDown={activeLayer === 'bottom' ? handleImageMouseDown : undefined}
+                                            onMouseDown={activeLayer === 'bottom' ? (e) => handleImageMouseDown(e, image.id) : undefined}
+                                            onMouseMove={activeLayer === 'bottom' ? (e) => handleImageMouseMove(e, image.id) : undefined}
+                                            onMouseLeave={handleImageMouseLeave}
                                             draggable={false}
                                         />
-                                    )}
+                                    ))}
                                     
-                                    {/* Top layer image */}
-                                    {topImage && (
+                                    {/* Top layer images */}
+                                    {topImages.map((image) => (
                                         <img
-                                            src={topImage}
+                                            key={image.id}
+                                            src={image.src}
                                             alt="Top design"
                                             className="customization-image"
                                             style={{
-                                                transform: `translate(${topImageStyle.x}px, ${topImageStyle.y}px) scale(${topImageStyle.scale}) rotate(${topImageStyle.rotation}deg)`,
+                                                transform: `translate(${image.x}px, ${image.y}px) scale(${image.scale}) rotate(${image.rotation}deg)`,
                                                 transformOrigin: 'center',
-                                                opacity: activeLayer === 'top' ? 1 : 0.5,
-                                                zIndex: 2,
-                                                cursor: activeLayer === 'top' ? 'move' : 'default'
+                                                opacity: activeLayer === 'top' ? 1 : 0.3,
+                                                zIndex: activeLayer === 'top' && selectedImageId === image.id ? 100 : 2,
+                                                cursor: activeLayer === 'top' && hoveredImageId === image.id ? getCursor(hoveredZone) : 'default',
+                                                border: activeLayer === 'top' && selectedImageId === image.id ? '2px solid #007bff' : 'none',
+                                                width: `${image.width}px`,
+                                                height: `${image.height}px`
                                             }}
-                                            onMouseDown={activeLayer === 'top' ? handleImageMouseDown : undefined}
+                                            onMouseDown={activeLayer === 'top' ? (e) => handleImageMouseDown(e, image.id) : undefined}
+                                            onMouseMove={activeLayer === 'top' ? (e) => handleImageMouseMove(e, image.id) : undefined}
+                                            onMouseLeave={handleImageMouseLeave}
                                             draggable={false}
                                         />
-                                    )}
+                                    ))}
                                     
                                     {/* Drop zone message */}
-                                    {((activeLayer === 'top' && !topImage) || (activeLayer === 'bottom' && !bottomImage)) && (
+                                    {((activeLayer === 'top' && topImages.length === 0) || (activeLayer === 'bottom' && bottomImages.length === 0)) && (
                                         <div className="drop-zone-message">
                                             <div className="drop-zone-icon">📁</div>
-                                            <div>Drag & Drop Image Here</div>
+                                            <div>Drag & Drop Images Here</div>
                                             <div style={{ fontSize: '14px', marginTop: '5px' }}>or use the upload button</div>
+                                            <div style={{ fontSize: '12px', marginTop: '5px', color: '#888' }}>Multiple images supported</div>
                                         </div>
                                     )}
                                 </div>
@@ -394,34 +499,78 @@ const CustomisePage = () => {
                                     <h4 style={{ marginTop: 0, marginBottom: '20px' }}>
                                         {activeLayer === 'top' ? 'Top Layer' : 'Bottom Layer'} Controls
                                     </h4>
-                                    
-                                    {/* File Upload */}
+                                      {/* File Upload */}
                                     <div className="control-group">
                                         <label className="control-label">
-                                            Upload Image:
+                                            Upload Images:
                                         </label>
                                         <input
                                             type="file"
                                             accept="image/*"
+                                            multiple
                                             onChange={handleFileSelect}
                                             style={{ width: '100%', padding: '8px' }}
                                         />
+                                        <div style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
+                                            {activeLayer === 'top' ? topImages.length : bottomImages.length} image(s) on this layer
+                                        </div>
                                     </div>
 
+                                    {/* Image List */}
+                                    {(activeLayer === 'top' ? topImages : bottomImages).length > 0 && (
+                                        <div className="control-group">
+                                            <label className="control-label">Images on {activeLayer} layer:</label>
+                                            <div style={{ maxHeight: '150px', overflowY: 'auto', border: '1px solid #ddd', borderRadius: '4px' }}>
+                                                {(activeLayer === 'top' ? topImages : bottomImages).map((image, index) => (
+                                                    <div
+                                                        key={image.id}
+                                                        onClick={() => setSelectedImageId(image.id)}
+                                                        style={{
+                                                            padding: '8px',
+                                                            borderBottom: '1px solid #eee',
+                                                            cursor: 'pointer',
+                                                            backgroundColor: selectedImageId === image.id ? '#e3f2fd' : 'transparent',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '8px'
+                                                        }}
+                                                    >
+                                                        <img 
+                                                            src={image.src} 
+                                                            alt={`Image ${index + 1}`}
+                                                            style={{ width: '30px', height: '30px', objectFit: 'cover', borderRadius: '4px' }}
+                                                        />
+                                                        <span style={{ fontSize: '14px' }}>Image {index + 1}</span>
+                                                        {selectedImageId === image.id && <span style={{ color: '#007bff', fontSize: '12px' }}>✓ Selected</span>}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {/* Image Controls */}
-                                    {((activeLayer === 'top' && topImage) || (activeLayer === 'bottom' && bottomImage)) && (
+                                    {selectedImageId && getSelectedImage() && (
                                         <>
+                                            <div className="control-group">
+                                                <label className="control-label" style={{ color: '#007bff' }}>
+                                                    Editing Selected Image
+                                                </label>
+                                                <div style={{ fontSize: '12px', color: '#666', marginBottom: '10px' }}>
+                                                    💡 Hover over image: center=move, edges=scale, corners=rotate
+                                                </div>
+                                            </div>
+
                                             {/* Scale Control */}
                                             <div className="control-group">
                                                 <label className="control-label">
-                                                    Scale: {(activeLayer === 'top' ? topImageStyle.scale : bottomImageStyle.scale).toFixed(2)}
+                                                    Scale: {getSelectedImage().scale.toFixed(2)}
                                                 </label>
                                                 <input
                                                     type="range"
                                                     min="0.1"
                                                     max="3"
                                                     step="0.1"
-                                                    value={activeLayer === 'top' ? topImageStyle.scale : bottomImageStyle.scale}
+                                                    value={getSelectedImage().scale}
                                                     onChange={(e) => handleScaleChange(parseFloat(e.target.value))}
                                                     className="range-input"
                                                 />
@@ -430,14 +579,14 @@ const CustomisePage = () => {
                                             {/* Rotation Control */}
                                             <div className="control-group">
                                                 <label className="control-label">
-                                                    Rotation: {activeLayer === 'top' ? topImageStyle.rotation : bottomImageStyle.rotation}°
+                                                    Rotation: {getSelectedImage().rotation}°
                                                 </label>
                                                 <input
                                                     type="range"
                                                     min="0"
                                                     max="360"
                                                     step="1"
-                                                    value={activeLayer === 'top' ? topImageStyle.rotation : bottomImageStyle.rotation}
+                                                    value={getSelectedImage().rotation}
                                                     onChange={(e) => handleRotationChange(parseInt(e.target.value))}
                                                     className="range-input"
                                                 />
@@ -445,8 +594,7 @@ const CustomisePage = () => {
 
                                             {/* Position Info */}
                                             <div className="position-info">
-                                                Position: X: {Math.round(activeLayer === 'top' ? topImageStyle.x : bottomImageStyle.x)}, 
-                                                Y: {Math.round(activeLayer === 'top' ? topImageStyle.y : bottomImageStyle.y)}
+                                                Position: X: {Math.round(getSelectedImage().x)}, Y: {Math.round(getSelectedImage().y)}
                                             </div>
 
                                             {/* Action Buttons */}
@@ -455,16 +603,29 @@ const CustomisePage = () => {
                                                     onClick={resetImagePosition}
                                                     className="action-button primary"
                                                 >
-                                                    Reset Position
+                                                    Reset Selected Image
                                                 </button>
                                                 <button
                                                     onClick={removeImage}
                                                     className="action-button danger"
                                                 >
-                                                    Remove Image
+                                                    Remove Selected Image
                                                 </button>
                                             </div>
                                         </>
+                                    )}
+
+                                    {/* Layer Actions */}
+                                    {(activeLayer === 'top' ? topImages : bottomImages).length > 0 && (
+                                        <div className="control-group">
+                                            <button
+                                                onClick={removeAllImages}
+                                                className="action-button danger"
+                                                style={{ backgroundColor: '#dc3545', opacity: 0.8 }}
+                                            >
+                                                Clear All Images from {activeLayer} Layer
+                                            </button>
+                                        </div>
                                     )}
 
                                     {/* Board Info */}
@@ -476,9 +637,7 @@ const CustomisePage = () => {
                                         <div><strong>Material:</strong> {material}</div>
                                         <div><strong>Price:</strong> ${price}</div>
                                     </div>
-                                </div>
-
-                                {/* Final Submit Button */}
+                                </div>                                {/* Final Submit Button */}
                                 <button
                                     className="action-button success"
                                     onClick={() => {

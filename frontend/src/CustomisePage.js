@@ -6,7 +6,6 @@ import Footer from './Footer';
 const CustomisePage = () => {
     const [page, setPage] = useState(1);
 
-    // State in first page
     const [type, setType] = useState('');
     const [shape, setShape] = useState('');
     const [size, setSize] = useState('');
@@ -36,7 +35,7 @@ const CustomisePage = () => {
         if (!material) return 'Material is required';
     }
 
-    const handleFirstSubmit = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         const typeError = validateType(type);
@@ -52,12 +51,44 @@ const CustomisePage = () => {
         if (typeError || shapeError || sizeError || materialError) {
             return;
         }
-
-        setPage(2);
     }
     const inputStyle = { display: 'block', width: '100%', margin: '12px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
     const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
     const errorMessageStyle = { color: '#e74c3c', fontSize: '0.875em', marginTop: '5px', marginBottom: '15px' };
+    
+    useEffect(() => {
+        const typePrices = {
+            'Flatland': 50,
+            'Wave': 70,
+            'Hybrid': 90
+        };
+        const shapePrices = {
+            'Square Tail': 10,
+            'Round Tail': 15,
+            'Pin Tail': 20,
+            'Swallow Tail': 25
+        };
+        const sizePrices = {
+            'XS': 5,
+            'S': 10,
+            'M': 15,
+            'L': 20,
+            'XL': 25
+        };
+        const materialPrices = {
+            'Foam Core': 20,
+            'Wood': 30,
+            'Epoxy Coating': 40,
+            'Fiberglass': 80,
+            'Carbon Fiber': 100,
+        };
+        const typePrice = typePrices[type] || 0;
+        const shapePrice = shapePrices[shape] || 0;
+        const sizePrice = sizePrices[size] || 0;
+        const materialPrice = materialPrices[material] || 0;
+        const totalPrice = typePrice + shapePrice + sizePrice + materialPrice;
+        setPrice(totalPrice);
+    }, [type, shape, size, material]);
     
     return (
         <>
@@ -68,7 +99,7 @@ const CustomisePage = () => {
                 <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>Customise Your Skimboard!</p>
                         
                 { page === 1 && (
-                    <form onSubmit={handleFirstSubmit} noValidate>
+                    <form onSubmit={handleSubmit} noValidate>
                     <label>Board Type:</label>
                     <select
                         name="type"
@@ -104,15 +135,7 @@ const CustomisePage = () => {
                     <select
                         name="size"
                         value={size}
-                        onChange={e => {
-                            setSize(e.target.value)
-                            if (e.target.value === 'XS') setPrice(20);
-                            else if (e.target.value === 'S') setPrice(40);
-                            else if (e.target.value === 'M') setPrice(60);
-                            else if (e.target.value === 'L') setPrice(80);
-                            else if (e.target.value === 'XL') setPrice(100);
-                            else setPrice(0);
-                        }}
+                        onChange={e => setSize(e.target.value)}
                         onBlur={() => setSizeError(validateSize(size))}
                         style={{...sizeError ? errorInputStyle : inputStyle, marginBottom: sizeError ? '0' : '15px'}}>
                         <option value="">Select</option>
@@ -133,12 +156,11 @@ const CustomisePage = () => {
                         onBlur={() => setMaterialError(validateMaterial(material))}
                         style={{...materialError ? errorInputStyle : inputStyle, marginBottom: materialError ? '0' : '15px'}}>
                         <option value="">Select</option>
-                        <option value="Wood">Wood</option>
                         <option value="Foam Core">Foam Core</option>
+                        <option value="Wood">Wood</option>
+                        <option value="Epoxy Coating">Epoxy Coating</option>
                         <option value="Fiberglass">Fiberglass</option>
                         <option value="Carbon Fiber">Carbon Fiber</option>
-                        <option value="Epoxy Coating">Epoxy Coating</option>
-                        <option value="Plastic Bottom">Plastic Bottom</option>
                     </select>
 
                     {materialError && <p style={errorMessageStyle}>{materialError}</p>}
@@ -159,20 +181,21 @@ const CustomisePage = () => {
                         style={{...inputStyle, padding: '0px'}}
                         onChange={e => setBottomColor(e.target.value)} required/>
 
-                    <label>Price:</label>
-                    <input
-                        type="number"
-                        name="price"
-                        value={price}
-                        placeholder="Enter price"
-                        style={{...inputStyle}}
-                        disabled/>
+                    <p>Price: ${price}</p>
+
+                    <button
+                        type="submit"
+                        className="complete-purchase-btn"
+                        onClick={() => setPage(2)}
+                        style={{ backgroundColor: '#333', color: '#fff', margin: '12px', padding: '12px' }}>
+                        Add Custom Image (Optional)
+                    </button>
 
                     <button
                         type="submit"
                         className="complete-purchase-btn"
                         style={{ backgroundColor: '#333', color: '#fff', margin: '12px', padding: '12px' }}>
-                        Proceed to Upload Image
+                        Complete Custom Order
                     </button>
                     </form>   
                 )}

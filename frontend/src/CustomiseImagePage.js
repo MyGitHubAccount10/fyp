@@ -26,6 +26,10 @@ export default function CustomiseImagePage() {
     }
   };
 
+  const handleDeleteImage = (id) => {
+  setImages((prev) => prev.filter((img) => img.id !== id));
+};
+
   const handleReset = () => {
     setColor('#FFD700');
     setCustomText('My Skimboard');
@@ -149,14 +153,18 @@ export default function CustomiseImagePage() {
               {customText}
             </div>
             {images.map((img) => (
-              <img
+            <div
                 key={img.id}
-                src={img.src}
-                alt="Uploaded"
-                className="draggable skimboard-image"
+                className="image-wrapper"
                 style={{ top: img.y, left: img.x }}
                 onMouseDown={(e) => handleMouseDown(e, 'image', img.id)}
-              />
+            >
+                <img src={img.src} alt="Uploaded" className="skimboard-image" />
+                <button className="delete-btn" onClick={(e) => {
+                e.stopPropagation(); // prevent drag
+                handleDeleteImage(img.id);
+                }}>×</button>
+            </div>
             ))}
           </div>
         </div>

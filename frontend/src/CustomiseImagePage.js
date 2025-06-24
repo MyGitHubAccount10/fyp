@@ -4,38 +4,91 @@ import './CustomiseImagePage.css';
 export default function CustomiseImagePage() {
   const [color, setColor] = useState('#FFD700');
   const [customText, setCustomText] = useState('My Skimboard');
-  const [uploadedImage, setUploadedImage] = useState(null);
-
+  const [images, setImages] = useState([]);
   const [textPosition, setTextPosition] = useState({ x: 50, y: 300 });
-  const [imagePosition, setImagePosition] = useState({ x: 60, y: 100 });
 
   const previewRef = useRef(null);
-  const dragging = useRef({ type: null, offsetX: 0, offsetY: 0 });
+  const dragging = useRef({ id: null, type: null, offsetX: 0, offsetY: 0 });
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setUploadedImage(URL.createObjectURL(file));
+      const url = URL.createObjectURL(file);
+      setImages((prev) => [
+        ...prev,
+        {
+          id: Date.now(),
+          src: url,
+          x: 60,
+          y: 100,
+        },
+      ]);
     }
   };
 
   const handleReset = () => {
     setColor('#FFD700');
     setCustomText('My Skimboard');
-    setUploadedImage(null);
+    setImages([]);
     setTextPosition({ x: 50, y: 300 });
-    setImagePosition({ x: 60, y: 100 });
   };
 
-  const handleMouseDown = (e, type) => {
-    dragging.current.type = type;
-    const bounds = previewRef.current.getBoundingClientRect();
-    dragging.current.offsetX = e.clientX - bounds.left;
-    dragging.current.offsetY = e.clientY - bounds.top;
+  const handleDownload = () => {
+    const preview = previewRef.current;
+    const canvas = document.createElement('canvas');
+    const scale = 2;
+    const width = preview.offsetWidth;
+    const height = preview.offsetHeight;
+
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+
+    // Fill background
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, width, height);
+
+    // Load and draw all images
+    const loadAll = images.map((img) => {
+      return new Promise((resolve) => {
+        const image = new Image();
+        image.crossOrigin = 'anonymous';
+        image.src = img.src;
+        image.onload = () => {
+          ctx.drawImage(image, img.x - 50, img.y - 50, 100, 100);
+          resolve();
+        };
+      });
+    });
+
+    Promise.all(loadAll).then(() => {
+      // Draw text
+      ctx.fillStyle = 'white';
+      ctx.font = '20px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(customText, textPosition.x, textPosition.y);
+
+      const link = document.createElement('a');
+      link.download = 'skimboard-design.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  };
+
+  const handleMouseDown = (e, type, id = null) => {
+    dragging.current = {
+      type,
+      id,
+      offsetX: e.nativeEvent.offsetX,
+      offsetY: e.nativeEvent.offsetY,
+    };
   };
 
   const handleMouseMove = (e) => {
     if (!dragging.current.type) return;
+
     const bounds = previewRef.current.getBoundingClientRect();
     const x = e.clientX - bounds.left;
     const y = e.clientY - bounds.top;
@@ -43,7 +96,11 @@ export default function CustomiseImagePage() {
     if (dragging.current.type === 'text') {
       setTextPosition({ x, y });
     } else if (dragging.current.type === 'image') {
-      setImagePosition({ x, y });
+      setImages((prev) =>
+        prev.map((img) =>
+          img.id === dragging.current.id ? { ...img, x, y } : img
+        )
+      );
     }
   };
 
@@ -78,7 +135,7 @@ export default function CustomiseImagePage() {
 
           <div className="action-buttons">
             <button onClick={handleReset}>Reset</button>
-            <button onClick={() => alert('Download available in next step!')}>Download</button>
+            <button onClick={handleDownload}>Download</button>
           </div>
         </div>
 
@@ -91,15 +148,16 @@ export default function CustomiseImagePage() {
             >
               {customText}
             </div>
-            {uploadedImage && (
+            {images.map((img) => (
               <img
-                src={uploadedImage}
+                key={img.id}
+                src={img.src}
                 alt="Uploaded"
                 className="draggable skimboard-image"
-                style={{ top: imagePosition.y, left: imagePosition.x }}
-                onMouseDown={(e) => handleMouseDown(e, 'image')}
+                style={{ top: img.y, left: img.x }}
+                onMouseDown={(e) => handleMouseDown(e, 'image', img.id)}
               />
-            )}
+            ))}
           </div>
         </div>
       </div>

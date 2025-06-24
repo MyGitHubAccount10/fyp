@@ -336,8 +336,9 @@ export default function CustomiseImagePage() {
         })
       );
     }
-  };
-  const handleMouseUp = () => {
+  };  const handleMouseUp = () => {
+    // Keep the selected element when finishing drag operations
+    // Only reset the dragging state, not the selection
     dragging.current = { 
       id: null, 
       type: null, 
@@ -593,6 +594,10 @@ export default function CustomiseImagePage() {
                 textShadow: textColor === '#FFFFFF' ? '2px 2px 4px rgba(0,0,0,0.8)' : '2px 2px 4px rgba(255,255,255,0.8)'
               }}
               onMouseDown={(e) => handleMouseDown(e, 'text')}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent event from bubbling to preview panel
+                setSelectedElement({ type: 'text' });
+              }}
             >
               {customText}
             </div>
@@ -612,8 +617,11 @@ export default function CustomiseImagePage() {
                   transform: `rotate(${img.rotation}deg)`,
                   opacity: img.opacity || 1,
                   zIndex: img.zIndex,
+                }}                onMouseDown={(e) => handleMouseDown(e, 'image', img.id)}
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent event from bubbling to preview panel
+                  setSelectedElement({ type: 'image', id: img.id });
                 }}
-                onMouseDown={(e) => handleMouseDown(e, 'image', img.id)}
                 onDoubleClick={() => handleDuplicateImage(img.id)}
               >
                 <img 

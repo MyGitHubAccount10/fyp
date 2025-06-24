@@ -152,22 +152,29 @@ export default function CustomiseImagePage() {
     setTextColor('#FFFFFF');
     setBackgroundPattern('solid');
     setSelectedElement(null);
-  };
-  const handleDownload = async () => {
+  };  const handleDownload = async () => {
     if (isLoading) return;
     
     setIsLoading(true);
     const preview = previewRef.current;
     const canvas = document.createElement('canvas');
     const scale = 3; // Higher resolution
-    const width = preview.offsetWidth;
-    const height = preview.offsetHeight;
+    
+    // Use the actual skimboard dimensions from CSS (280x450)
+    const width = 280;
+    const height = 450;
 
     canvas.width = width * scale;
     canvas.height = height * scale;
 
     const ctx = canvas.getContext('2d');
     ctx.scale(scale, scale);
+
+    // Create clipping path for skimboard shape (oval)
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(width / 2, height / 2, width / 2, height / 2, 0, 0, 2 * Math.PI);
+    ctx.clip();
 
     // Draw background with pattern/gradient support
     if (backgroundPattern === 'gradient') {
@@ -179,7 +186,13 @@ export default function CustomiseImagePage() {
       ctx.fillStyle = color;
     }
     
+    // Fill the entire canvas area
     ctx.fillRect(0, 0, width, height);
+
+    // Calculate scaling factors from preview to actual dimensions
+    const previewRect = preview.getBoundingClientRect();
+    const scaleX = width / previewRect.width;
+    const scaleY = height / previewRect.height;
 
     // Sort images by zIndex for proper layering
     const sortedImages = [...images].sort((a, b) => a.zIndex - b.zIndex);
@@ -193,14 +206,21 @@ export default function CustomiseImagePage() {
         image.onload = () => {
           ctx.save();
           ctx.globalAlpha = img.opacity || 1;
-          ctx.translate(img.x + img.width / 2, img.y + img.height / 2);
+          
+          // Scale positions and dimensions to match canvas
+          const scaledX = img.x * scaleX;
+          const scaledY = img.y * scaleY;
+          const scaledWidth = img.width * scaleX;
+          const scaledHeight = img.height * scaleY;
+          
+          ctx.translate(scaledX + scaledWidth / 2, scaledY + scaledHeight / 2);
           ctx.rotate((img.rotation * Math.PI) / 180);
           ctx.drawImage(
             image,
-            -img.width / 2,
-            -img.height / 2,
-            img.width,
-            img.height
+            -scaledWidth / 2,
+            -scaledHeight / 2,
+            scaledWidth,
+            scaledHeight
           );
           ctx.restore();
           resolve();
@@ -214,15 +234,21 @@ export default function CustomiseImagePage() {
       
       // Draw text with better styling
       ctx.fillStyle = textColor;
-      ctx.font = `bold ${fontSize}px ${fontFamily}`;
+      ctx.font = `bold ${fontSize * scaleX}px ${fontFamily}`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       
+      // Scale text position
+      const scaledTextX = textPosition.x * scaleX;
+      const scaledTextY = textPosition.y * scaleY;
+      
       // Add text stroke for better visibility
       ctx.strokeStyle = textColor === '#FFFFFF' ? '#000000' : '#FFFFFF';
-      ctx.lineWidth = 2;
-      ctx.strokeText(customText, textPosition.x, textPosition.y);
-      ctx.fillText(customText, textPosition.x, textPosition.y);
+      ctx.lineWidth = 2 * scaleX;
+      ctx.strokeText(customText, scaledTextX, scaledTextY);
+      ctx.fillText(customText, scaledTextX, scaledTextY);
+
+      ctx.restore(); // Restore from clipping
 
       const link = document.createElement('a');
       link.download = `skimboard-design-${Date.now()}.png`;

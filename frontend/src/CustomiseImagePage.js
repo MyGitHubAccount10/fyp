@@ -252,8 +252,7 @@ export default function CustomiseImagePage() {
 
     try {
       await Promise.all(loadAll);
-      
-      // Draw text with better styling
+        // Draw text with better styling
       ctx.fillStyle = textColor;
       ctx.font = `bold ${fontSize * scaleX}px ${fontFamily}`;
       ctx.textAlign = 'center';
@@ -263,10 +262,20 @@ export default function CustomiseImagePage() {
       const scaledTextX = textPosition.x * scaleX;
       const scaledTextY = textPosition.y * scaleY;
       
-      // Add text stroke for better visibility
-      ctx.strokeStyle = textColor === '#FFFFFF' ? '#000000' : '#FFFFFF';
-      ctx.lineWidth = 2 * scaleX;
-      ctx.strokeText(customText, scaledTextX, scaledTextY);
+      // Add subtle text stroke only if needed for contrast
+      if (textColor === '#FFFFFF' || textColor === '#ffffff') {
+        // White text gets dark stroke
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
+        ctx.lineWidth = Math.max(1, fontSize * scaleX * 0.05); // Proportional stroke width
+        ctx.strokeText(customText, scaledTextX, scaledTextY);
+      } else if (textColor === '#000000' || textColor === '#000') {
+        // Black text gets light stroke
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.lineWidth = Math.max(1, fontSize * scaleX * 0.05); // Proportional stroke width
+        ctx.strokeText(customText, scaledTextX, scaledTextY);
+      }
+      // For other colors, no stroke to avoid unwanted outlines
+      
       ctx.fillText(customText, scaledTextX, scaledTextY);
 
       ctx.restore(); // Restore from clipping

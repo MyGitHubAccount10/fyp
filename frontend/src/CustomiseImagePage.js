@@ -1,14 +1,15 @@
 import React, { useState, useRef, useCallback } from 'react';
 import './CustomiseImagePage.css';
 
-export default function CustomiseImagePage() {
-  const [color, setColor] = useState('#FFD700');
+export default function CustomiseImagePage() {  const [color, setColor] = useState('#FFD700');
   const [customText, setCustomText] = useState('My Skimboard');
   const [images, setImages] = useState([]);
   const [textPosition, setTextPosition] = useState({ x: 125, y: 350 });
   const [fontSize, setFontSize] = useState(20);
   const [fontFamily, setFontFamily] = useState('Arial');
   const [textColor, setTextColor] = useState('#FFFFFF');
+  const [textStrokeColor, setTextStrokeColor] = useState('#000000');
+  const [enableTextStroke, setEnableTextStroke] = useState(false);
   const [backgroundPattern, setBackgroundPattern] = useState('solid');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedElement, setSelectedElement] = useState(null);
@@ -20,8 +21,7 @@ export default function CustomiseImagePage() {
   const fileInputRef = useRef(null);
 
   // Save state to history for undo/redo functionality
-  const saveToHistory = useCallback(() => {
-    const currentState = {
+  const saveToHistory = useCallback(() => {    const currentState = {
       color,
       customText,
       images: JSON.parse(JSON.stringify(images)),
@@ -29,6 +29,8 @@ export default function CustomiseImagePage() {
       fontSize,
       fontFamily,
       textColor,
+      textStrokeColor,
+      enableTextStroke,
       backgroundPattern
     };
     
@@ -37,7 +39,6 @@ export default function CustomiseImagePage() {
     setHistory(newHistory);
     setHistoryIndex(newHistory.length - 1);
   }, [color, customText, images, textPosition, fontSize, fontFamily, textColor, backgroundPattern, history, historyIndex]);
-
   // Undo functionality
   const handleUndo = () => {
     if (historyIndex > 0) {
@@ -49,6 +50,8 @@ export default function CustomiseImagePage() {
       setFontSize(previousState.fontSize);
       setFontFamily(previousState.fontFamily);
       setTextColor(previousState.textColor);
+      setTextStrokeColor(previousState.textStrokeColor || '#000000');
+      setEnableTextStroke(previousState.enableTextStroke || false);
       setBackgroundPattern(previousState.backgroundPattern);
       setHistoryIndex(historyIndex - 1);
     }
@@ -65,6 +68,8 @@ export default function CustomiseImagePage() {
       setFontSize(nextState.fontSize);
       setFontFamily(nextState.fontFamily);
       setTextColor(nextState.textColor);
+      setTextStrokeColor(nextState.textStrokeColor || '#000000');
+      setEnableTextStroke(nextState.enableTextStroke || false);
       setBackgroundPattern(nextState.backgroundPattern);
       setHistoryIndex(historyIndex + 1);
     }
@@ -140,8 +145,7 @@ export default function CustomiseImagePage() {
         img.id === id ? { ...img, zIndex: minZ - 1 } : img
       )
     );
-  };
-  const handleReset = () => {
+  };  const handleReset = () => {
     saveToHistory();
     setColor('#FFD700');
     setCustomText('My Skimboard');
@@ -150,9 +154,11 @@ export default function CustomiseImagePage() {
     setFontSize(20);
     setFontFamily('Arial');
     setTextColor('#FFFFFF');
+    setTextStrokeColor('#000000');
+    setEnableTextStroke(false);
     setBackgroundPattern('solid');
     setSelectedElement(null);
-  };  const handleDownload = async () => {
+  };const handleDownload = async () => {
     if (isLoading) return;
     
     setIsLoading(true);
@@ -257,24 +263,16 @@ export default function CustomiseImagePage() {
       ctx.font = `bold ${fontSize * scaleX}px ${fontFamily}`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      
-      // Scale text position
+        // Scale text position
       const scaledTextX = textPosition.x * scaleX;
       const scaledTextY = textPosition.y * scaleY;
       
-      // Add subtle text stroke only if needed for contrast
-      if (textColor === '#FFFFFF' || textColor === '#ffffff') {
-        // White text gets dark stroke
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.8)';
-        ctx.lineWidth = Math.max(1, fontSize * scaleX * 0.05); // Proportional stroke width
-        ctx.strokeText(customText, scaledTextX, scaledTextY);
-      } else if (textColor === '#000000' || textColor === '#000') {
-        // Black text gets light stroke
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+      // Add text stroke if enabled
+      if (enableTextStroke) {
+        ctx.strokeStyle = textStrokeColor;
         ctx.lineWidth = Math.max(1, fontSize * scaleX * 0.05); // Proportional stroke width
         ctx.strokeText(customText, scaledTextX, scaledTextY);
       }
-      // For other colors, no stroke to avoid unwanted outlines
       
       ctx.fillText(customText, scaledTextX, scaledTextY);
 
@@ -524,9 +522,7 @@ export default function CustomiseImagePage() {
                 value={fontSize}
                 onChange={(e) => setFontSize(parseInt(e.target.value))}
               />
-            </label>
-
-            <label>
+            </label>            <label>
               Font Family:
               <select value={fontFamily} onChange={(e) => setFontFamily(e.target.value)}>
                 <option value="Arial">Arial</option>
@@ -540,6 +536,27 @@ export default function CustomiseImagePage() {
                 <option value="Roboto">Roboto</option>
               </select>
             </label>
+
+            <label>
+              <input 
+                type="checkbox" 
+                checked={enableTextStroke} 
+                onChange={(e) => setEnableTextStroke(e.target.checked)}
+                style={{ marginRight: '0.5rem' }}
+              />
+              Enable Text Stroke/Outline
+            </label>
+
+            {enableTextStroke && (
+              <label>
+                Stroke Color:
+                <input 
+                  type="color" 
+                  value={textStrokeColor} 
+                  onChange={(e) => setTextStrokeColor(e.target.value)} 
+                />
+              </label>
+            )}
           </div>
 
           {/* Image Controls */}
@@ -637,8 +654,7 @@ export default function CustomiseImagePage() {
             }}
             onClick={() => setSelectedElement(null)}
           >
-            {/* Text Element */}
-            <div
+            {/* Text Element */}            <div
               className={`draggable skimboard-text ${selectedElement?.type === 'text' ? 'selected' : ''}`}
               style={{ 
                 top: textPosition.y, 
@@ -647,7 +663,9 @@ export default function CustomiseImagePage() {
                 fontFamily: fontFamily,
                 color: textColor,
                 transform: 'translate(-50%, -50%)',
-                textShadow: textColor === '#FFFFFF' ? '2px 2px 4px rgba(0,0,0,0.8)' : '2px 2px 4px rgba(255,255,255,0.8)'
+                textShadow: enableTextStroke 
+                  ? `1px 1px 0 ${textStrokeColor}, -1px -1px 0 ${textStrokeColor}, 1px -1px 0 ${textStrokeColor}, -1px 1px 0 ${textStrokeColor}`
+                  : (textColor === '#FFFFFF' ? '2px 2px 4px rgba(0,0,0,0.8)' : '2px 2px 4px rgba(255,255,255,0.8)')
               }}
               onMouseDown={(e) => handleMouseDown(e, 'text')}
               onClick={(e) => {

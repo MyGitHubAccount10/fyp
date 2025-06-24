@@ -14,17 +14,21 @@ export default function CustomiseImagePage() {
     const file = e.target.files[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      setImages((prev) => [
-        ...prev,
-        {
-          id: Date.now(),
-          src: url,
-          x: 60,
-          y: 100,
-        },
-      ]);
-    }
-  };
+    setImages((prev) => [
+    ...prev,
+    {
+        id: Date.now(),
+        src: url,
+        x: 60,
+        y: 100,
+        width: 100,
+        height: 100,
+        rotation: 0,
+    },
+    ]);
+};
+};
+
 
   const handleDeleteImage = (id) => {
   setImages((prev) => prev.filter((img) => img.id !== id));
@@ -61,8 +65,18 @@ export default function CustomiseImagePage() {
         image.crossOrigin = 'anonymous';
         image.src = img.src;
         image.onload = () => {
-          ctx.drawImage(image, img.x - 50, img.y - 50, 100, 100);
-          resolve();
+            ctx.save();
+            ctx.translate(img.x + img.width / 2, img.y + img.height / 2);
+            ctx.rotate((img.rotation * Math.PI) / 180);
+            ctx.drawImage(
+            image,
+            -img.width / 2,
+            -img.height / 2,
+            img.width,
+            img.height
+            );
+            ctx.restore();
+            resolve();
         };
       });
     });
@@ -81,32 +95,57 @@ export default function CustomiseImagePage() {
     });
   };
 
-  const handleMouseDown = (e, type, id = null) => {
-    dragging.current = {
-      type,
-      id,
-      offsetX: e.nativeEvent.offsetX,
-      offsetY: e.nativeEvent.offsetY,
-    };
-  };
-
-  const handleMouseMove = (e) => {
-    if (!dragging.current.type) return;
-
+    const handleMouseDown = (e, type, id = null) => {
+    e.stopPropagation();
     const bounds = previewRef.current.getBoundingClientRect();
-    const x = e.clientX - bounds.left;
-    const y = e.clientY - bounds.top;
+    dragging.current = {
+        type,
+        id
+    };
+    };
 
-    if (dragging.current.type === 'text') {
-      setTextPosition({ x, y });
-    } else if (dragging.current.type === 'image') {
-      setImages((prev) =>
-        prev.map((img) =>
-          img.id === dragging.current.id ? { ...img, x, y } : img
-        )
-      );
-    }
-  };
+
+const handleMouseMove = (e) => {
+  if (!dragging.current.type) return;
+
+  const bounds = previewRef.current.getBoundingClientRect();
+  const x = e.clientX - bounds.left;
+  const y = e.clientY - bounds.top;
+
+  if (dragging.current.type === 'text') {
+    setTextPosition({ x, y });
+  } else if (dragging.current.type === 'image') {
+    setImages((prev) =>
+      prev.map((img) =>
+        img.id === dragging.current.id ? { ...img, x, y } : img
+      )
+    );
+  } else if (dragging.current.type === 'resize') {
+    setImages((prev) =>
+      prev.map((img) =>
+        img.id === dragging.current.id
+          ? {
+              ...img,
+              width: Math.max(30, x - img.x),
+              height: Math.max(30, y - img.y),
+            }
+          : img
+      )
+    );
+  } else if (dragging.current.type === 'rotate') {
+    setImages((prev) =>
+      prev.map((img) => {
+        if (img.id !== dragging.current.id) return img;
+        const centerX = img.x + img.width / 2;
+        const centerY = img.y + img.height / 2;
+        const angle = Math.atan2(y - centerY, x - centerX);
+        const degrees = (angle * 180) / Math.PI;
+        return { ...img, rotation: degrees };
+      })
+    );
+  }
+};
+
 
   const handleMouseUp = () => {
     dragging.current.type = null;
@@ -152,20 +191,37 @@ export default function CustomiseImagePage() {
             >
               {customText}
             </div>
+            {/* img */}
             {images.map((img) => (
             <div
                 key={img.id}
                 className="image-wrapper"
-                style={{ top: img.y, left: img.x }}
+                style={{
+                top: img.y,
+                left: img.x,
+                width: img.width,
+                height: img.height,
+                transform: `rotate(${img.rotation}deg)`,
+                }}
                 onMouseDown={(e) => handleMouseDown(e, 'image', img.id)}
             >
-                <img src={img.src} alt="Uploaded" className="skimboard-image" />
+                <img src={img.src} alt="Uploaded" className="skimboard-image" style={{ width: '100%', height: '100%' }} />
                 <button className="delete-btn" onClick={(e) => {
-                e.stopPropagation(); // prevent drag
+                e.stopPropagation();
                 handleDeleteImage(img.id);
                 }}>×</button>
+
+                <div
+                className="resize-handle"
+                onMouseDown={(e) => handleMouseDown(e, 'resize', img.id)}
+                />
+                <div
+                className="rotate-handle"
+                onMouseDown={(e) => handleMouseDown(e, 'rotate', img.id)}
+                />
             </div>
             ))}
+            {/* img */}
           </div>
         </div>
       </div>

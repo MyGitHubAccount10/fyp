@@ -134,3 +134,36 @@
 .delete-btn:hover {
   background-color: darkred;
 }
+
+/* Resize/Rotate */
+
+.image-wrapper {
+  position: absolute;
+  cursor: grab;
+  transform-origin: center center;
+}
+
+.resize-handle {
+  position: absolute;
+  right: -8px;
+  bottom: -8px;
+  width: 12px;
+  height: 12px;
+  background: #0bf;
+  border-radius: 2px;
+  cursor: nwse-resize;
+  z-index: 2;
+}
+
+.rotate-handle {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  background: #ff0;
+  border: 2px solid #333;
+  border-radius: 50%;
+  cursor: grab;
+}

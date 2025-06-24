@@ -254,14 +254,32 @@ export default function CustomiseImagePage() {
       saveToHistory();
     }
     
-    dragging.current = {
-      type,
-      id,
-      offsetX: e.clientX - bounds.left - (type === 'text' ? textPosition.x : 
-        images.find(img => img.id === id)?.x || 0),
-      offsetY: e.clientY - bounds.top - (type === 'text' ? textPosition.y : 
-        images.find(img => img.id === id)?.y || 0)
-    };
+    if (type === 'rotate' && id) {
+      const img = images.find(img => img.id === id);
+      if (img) {
+        const centerX = img.x + img.width / 2;
+        const centerY = img.y + img.height / 2;
+        const mouseX = e.clientX - bounds.left;
+        const mouseY = e.clientY - bounds.top;
+        const initialAngle = Math.atan2(mouseY - centerY, mouseX - centerX);
+        
+        dragging.current = {
+          type,
+          id,
+          initialAngle,
+          initialRotation: img.rotation
+        };
+      }
+    } else {
+      dragging.current = {
+        type,
+        id,
+        offsetX: e.clientX - bounds.left - (type === 'text' ? textPosition.x : 
+          images.find(img => img.id === id)?.x || 0),
+        offsetY: e.clientY - bounds.top - (type === 'text' ? textPosition.y : 
+          images.find(img => img.id === id)?.y || 0)
+      };
+    }
 
     if (type === 'image') {
       setSelectedElement({ type: 'image', id });
@@ -305,23 +323,29 @@ export default function CustomiseImagePage() {
               }
             : img
         )
-      );
-    } else if (dragging.current.type === 'rotate') {
+      );    } else if (dragging.current.type === 'rotate') {
       setImages((prev) =>
         prev.map((img) => {
           if (img.id !== dragging.current.id) return img;
           const centerX = img.x + img.width / 2;
           const centerY = img.y + img.height / 2;
-          const angle = Math.atan2(y - centerY, x - centerX);
-          const degrees = (angle * 180) / Math.PI;
-          return { ...img, rotation: degrees };
+          const currentAngle = Math.atan2(y - centerY, x - centerX);
+          const angleDifference = currentAngle - dragging.current.initialAngle;
+          const newRotation = dragging.current.initialRotation + (angleDifference * 180) / Math.PI;
+          return { ...img, rotation: newRotation };
         })
       );
     }
   };
-
   const handleMouseUp = () => {
-    dragging.current = { id: null, type: null, offsetX: 0, offsetY: 0 };
+    dragging.current = { 
+      id: null, 
+      type: null, 
+      offsetX: 0, 
+      offsetY: 0, 
+      initialAngle: 0, 
+      initialRotation: 0 
+    };
   };
 
   const handleKeyDown = (e) => {

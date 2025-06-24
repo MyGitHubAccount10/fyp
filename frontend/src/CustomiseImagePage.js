@@ -195,9 +195,7 @@ export default function CustomiseImagePage() {
     const scaleY = height / previewRect.height;
 
     // Sort images by zIndex for proper layering
-    const sortedImages = [...images].sort((a, b) => a.zIndex - b.zIndex);
-
-    // Load and draw all images
+    const sortedImages = [...images].sort((a, b) => a.zIndex - b.zIndex);    // Load and draw all images
     const loadAll = sortedImages.map((img) => {
       return new Promise((resolve) => {
         const image = new Image();
@@ -215,13 +213,36 @@ export default function CustomiseImagePage() {
           
           ctx.translate(scaledX + scaledWidth / 2, scaledY + scaledHeight / 2);
           ctx.rotate((img.rotation * Math.PI) / 180);
+            // Calculate aspect ratios for proper cover behavior
+          const imageAspect = image.width / image.height;
+          const targetAspect = scaledWidth / scaledHeight;
+          
+          let drawWidth, drawHeight;
+          
+          if (imageAspect > targetAspect) {
+            // Image is wider - scale to height and crop width (center the crop)
+            drawHeight = scaledHeight;
+            drawWidth = drawHeight * imageAspect;
+          } else {
+            // Image is taller - scale to width and crop height (center the crop)
+            drawWidth = scaledWidth;
+            drawHeight = drawWidth / imageAspect;
+          }
+          
+          // Create clipping region for the image area
+          ctx.beginPath();
+          ctx.rect(-scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
+          ctx.clip();
+          
+          // Draw the image centered (no offset needed - centering is automatic)
           ctx.drawImage(
             image,
-            -scaledWidth / 2,
-            -scaledHeight / 2,
-            scaledWidth,
-            scaledHeight
+            -drawWidth / 2,
+            -drawHeight / 2,
+            drawWidth,
+            drawHeight
           );
+          
           ctx.restore();
           resolve();
         };

@@ -61,3 +61,27 @@
   max-height: 60%;
   object-fit: contain;
 }
+
+/* --------------- */
+
+.action-buttons {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.action-buttons button {
+  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  background-color: #008cba;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-buttons button:hover {
+  background-color: #005f7a;
+}
+

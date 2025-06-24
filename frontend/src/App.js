@@ -35,7 +35,8 @@ import CustomerDetailsPage from './AdminSide/DDD_CustomerDetailsPage';
 import AddAdminPage from './AdminSide/DD_AddAdminPage';
 import AdminSettingsPage from './AdminSide/FAdminSettingsPage';
 import AdminProfilePage from './AdminSide/G_AdminProfilePage';
-import AdminSalesReportsPage from './AdminSide/SalesReportPage'; // If you have a sales reports page
+import AdminSalesReportsPage from './AdminSide/SalesReportPage';
+import CustomiseImagePage from './CustomiseImagePage';
 
 // ✅ 1. Import the new protected route component
 import AdminProtectedRoute from './AdminProtectedRoute'; // Make sure this path is correct
@@ -89,6 +90,7 @@ function App() {
         <Route path="admin-settings" element={<AdminProtectedRoute><AdminSettingsPage /></AdminProtectedRoute>} />
         <Route path="admin-profile" element={<AdminProtectedRoute><AdminProfilePage /></AdminProtectedRoute>} />
         <Route path="sales-report" element={<AdminProtectedRoute><AdminSalesReportsPage /></AdminProtectedRoute>} />
+        <Route path="customise-image" element={<CustomiseImagePage />} />
 
         {/* --- Catch-all 404 Route --- */}
         {/* This should always be the last route */}

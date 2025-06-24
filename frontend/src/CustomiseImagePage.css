@@ -62,7 +62,7 @@
   object-fit: contain;
 }
 
-/* --------------- */
+/* -------Download-------- */
 
 .action-buttons {
   margin-top: 1rem;
@@ -83,5 +83,27 @@
 
 .action-buttons button:hover {
   background-color: #005f7a;
+}
+
+
+/* ----------Drag------------- */
+
+.draggable {
+  position: absolute;
+  cursor: grab;
+}
+
+.skimboard-text {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 3px black;
+  user-select: none;
+}
+
+.skimboard-image {
+  max-width: 100px;
+  max-height: 100px;
+  user-select: none;
 }
 

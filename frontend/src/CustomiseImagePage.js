@@ -6,6 +6,9 @@ export default function CustomiseImagePage() {
   const [customText, setCustomText] = useState('My Skimboard');
   const [images, setImages] = useState([]);
   const [textPosition, setTextPosition] = useState({ x: 50, y: 300 });
+  const [fontSize, setFontSize] = useState(20);
+  const [fontFamily, setFontFamily] = useState('Arial');
+
 
   const previewRef = useRef(null);
   const dragging = useRef({ id: null, type: null, offsetX: 0, offsetY: 0 });
@@ -83,10 +86,11 @@ export default function CustomiseImagePage() {
 
     Promise.all(loadAll).then(() => {
       // Draw text
-      ctx.fillStyle = 'white';
-      ctx.font = '20px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(customText, textPosition.x, textPosition.y);
+        ctx.fillStyle = 'white';
+        ctx.font = `${fontSize}px ${fontFamily}`;
+        ctx.textAlign = 'center';
+        ctx.fillText(customText, textPosition.x, textPosition.y);
+
 
       const link = document.createElement('a');
       link.download = 'skimboard-design.png';
@@ -172,6 +176,31 @@ const handleMouseMove = (e) => {
           </label>
 
           <label>
+            Font Size: {fontSize}px
+            <input
+                type="range"
+                min="10"
+                max="60"
+                value={fontSize}
+                onChange={(e) => setFontSize(parseInt(e.target.value))}
+            />
+            </label>
+
+            <label>
+            Font Family:
+            <select value={fontFamily} onChange={(e) => setFontFamily(e.target.value)}>
+                <option value="Arial">Arial</option>
+                <option value="Comic Sans MS">Comic Sans</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Impact">Impact</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Verdana">Verdana</option>
+            </select>
+            </label>
+
+
+          <label>
             Upload Image:
             <input type="file" accept="image/*" onChange={handleImageUpload} />
           </label>
@@ -186,7 +215,10 @@ const handleMouseMove = (e) => {
           <div ref={previewRef} className="skimboard-preview" style={{ backgroundColor: color }}>
             <div
               className="draggable skimboard-text"
-              style={{ top: textPosition.y, left: textPosition.x }}
+              style={{ top: textPosition.y, 
+                left: textPosition.x, 
+                fontSize: `${fontSize}px`,
+                fontFamily: fontFamily, }}
               onMouseDown={(e) => handleMouseDown(e, 'text')}
             >
               {customText}

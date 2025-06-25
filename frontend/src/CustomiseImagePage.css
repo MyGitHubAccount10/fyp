@@ -13,6 +13,39 @@
   text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
 }
 
+.side-selector {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.side-button {
+  padding: 0.8rem 2rem;
+  border: 2px solid #3498db;
+  background: white;
+  color: #3498db;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.side-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+.side-button.active {
+  background: #3498db;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+}
+
 .skimboard-customiser {
   display: flex;
   justify-content: space-between;
@@ -138,10 +171,26 @@
 .preview-panel {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 2rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.side-indicator {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: #2c3e50;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.side-label {
+  color: #3498db;
+  font-size: 1.1em;
 }
 
 .skimboard-preview {

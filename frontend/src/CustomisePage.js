@@ -154,11 +154,11 @@ const CustomisePage = () => {
                         onBlur={() => setSizeError(validateSize(size))}
                         style={{...sizeError ? errorInputStyle : inputStyle, marginBottom: sizeError ? '0' : '15px'}}>
                         <option value="">Select</option>
-                        <option value="XS">Extra Small</option>
-                        <option value="S">Small</option>
-                        <option value="M">Medium</option>
-                        <option value="L">Large</option>
-                        <option value="XL">Extra Large</option>
+                        <option value="XS">Extra Small (900mm x 360mm)</option>
+                        <option value="S">Small (1000mm x 400mm)</option>
+                        <option value="M">Medium (1100mm x 440mm)</option>
+                        <option value="L">Large (1200mm x 480mm)</option>
+                        <option value="XL">Extra Large (1300mm x 520mm)</option>
                     </select>
                     {sizeError && <p style={errorMessageStyle}>{sizeError}</p>}
 

@@ -4,10 +4,8 @@ import Header from './Header';
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
 
-
 const CustomisePage = () => {
     const navigate = useNavigate();
-    const [page, setPage] = useState(1);
 
     const [type, setType] = useState('');
     const [shape, setShape] = useState('');
@@ -16,13 +14,21 @@ const CustomisePage = () => {
     const [thickness, setThickness] = useState('');
     const [topColor, setTopColor] = useState('');
     const [bottomColor, setBottomColor] = useState('');
-    const [price, setPrice] = useState(0);
+
+
+    const [typePrice, setTypePrice] = useState(0);
+    const [shapePrice, setShapePrice] = useState(0);
+    const [sizePrice, setSizePrice] = useState(0);
+    const [materialPrice, setMaterialPrice] = useState(0);
+    const [thicknessPrice, setThicknessPrice] = useState(0);
 
     const [typeError, setTypeError] = useState('');
     const [shapeError, setShapeError] = useState('');
     const [sizeError, setSizeError] = useState('');
     const [materialError, setMaterialError] = useState('');
     const [thicknessError, setThicknessError] = useState('');
+
+    const price = typePrice + shapePrice + sizePrice + materialPrice + thicknessPrice;
 
     const validateType = (type) => {
         if (!type) return 'Board type is required.';
@@ -66,50 +72,6 @@ const CustomisePage = () => {
     const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
     const errorMessageStyle = { color: '#e74c3c', fontSize: '0.875em', marginTop: '5px', marginBottom: '15px' };
     
-    useEffect(() => {
-        const typePrices = {
-            'Flatland': 50,
-            'Wave': 70,
-            'Hybrid': 90
-        };
-        const shapePrices = {
-            'Square Tail': 10,
-            'Round Tail': 15,
-            'Pin Tail': 20,
-            'Swallow Tail': 25
-        };
-        const materialPrices = {
-            'Foam Core': 40,
-            'Wood': 60,
-            'Epoxy Coating': 80,
-            'Fiberglass': 160,
-            'Carbon Fiber': 200,
-        };
-        const sizePrices = {
-            'XS': 5,
-            'S': 10,
-            'M': 15,
-            'L': 20,
-            'XL': 25
-        };
-        
-        const thicknessPrices = {
-            '3mm': 15,
-            '5mm': 25,
-            '7mm': 35,
-            '9mm': 45,
-            '11mm': 55
-        };
-
-        const typePrice = typePrices[type] || 0;
-        const shapePrice = shapePrices[shape] || 0;
-        const sizePrice = sizePrices[size] || 0;
-        const materialPrice = materialPrices[material] || 0;
-        const thicknessPrice = thicknessPrices[thickness] || 0;
-        const totalPrice = typePrice + shapePrice + sizePrice + materialPrice + thicknessPrice;
-        setPrice(totalPrice);
-    }, [type, shape, size, material, thickness]);
-    
     return (
         <>
             <Header />
@@ -118,7 +80,6 @@ const CustomisePage = () => {
                 <h2 style={{ fontWeight: 'bold', fontSize: '2em', marginBottom: '10px' }}>Customise Form</h2>
                 <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>Customise Your Skimboard!</p>
                         
-                { page === 1 && (
                     <form onSubmit={handleSubmit} noValidate>
 
                     <button
@@ -133,7 +94,12 @@ const CustomisePage = () => {
                     <select
                         name="type"
                         value={type}
-                        onChange={e => setType(e.target.value)}
+                        onChange={e => {
+                            setType(e.target.value)
+                            if (e.target.value === 'Flatland') setTypePrice(150);
+                            else if (e.target.value === 'Wave') setTypePrice(200);
+                            else if (e.target.value === 'Hybrid') setTypePrice(250);
+                            else setTypePrice(0);}}
                         onBlur={() => setTypeError(validateType(type))}
                         style={{...typeError ? errorInputStyle : inputStyle, marginBottom: typeError ? '0' : '15px'}}>
                         <option value="">Select</option>
@@ -147,7 +113,13 @@ const CustomisePage = () => {
                     <select
                         name="shape"
                         value={shape}
-                        onChange={e => setShape(e.target.value)}
+                        onChange={e => {
+                            setShape(e.target.value)
+                            if (e.target.value === 'Square Tail') setShapePrice(10);
+                            else if (e.target.value === 'Round Tail') setShapePrice(15);
+                            else if (e.target.value === 'Pin Tail') setShapePrice(20);
+                            else if (e.target.value === 'Swallow Tail') setShapePrice(25);
+                            else setShapePrice(0);}}
                         onBlur={() => setShapeError(validateShape(shape))}
                         style={{...shapeError ? errorInputStyle : inputStyle, marginBottom: shapeError ? '0' : '15px'}}>
                         <option value="">Select</option>
@@ -162,7 +134,14 @@ const CustomisePage = () => {
                     <select
                         name="size"
                         value={size}
-                        onChange={e => setSize(e.target.value)}
+                        onChange={e => {
+                            setSize(e.target.value)
+                            if (e.target.value === 'XS') setSizePrice(10);
+                            else if (e.target.value === 'S') setSizePrice(15);
+                            else if (e.target.value === 'M') setSizePrice(20);
+                            else if (e.target.value === 'L') setSizePrice(25);
+                            else if (e.target.value === 'XL') setSizePrice(30);
+                            else setSizePrice(0);}}
                         onBlur={() => setSizeError(validateSize(size))}
                         style={{...sizeError ? errorInputStyle : inputStyle, marginBottom: sizeError ? '0' : '15px'}}>
                         <option value="">Select</option>
@@ -178,7 +157,14 @@ const CustomisePage = () => {
                     <select
                         name="material"
                         value={material}
-                        onChange={e => setMaterial(e.target.value)}
+                        onChange={e => {
+                            setMaterial(e.target.value)
+                            if (e.target.value === 'Foam Core') setMaterialPrice(10);
+                            else if (e.target.value === 'Wood') setMaterialPrice(20);
+                            else if (e.target.value === 'Epoxy Coating') setMaterialPrice(30);
+                            else if (e.target.value === 'Fiberglass') setMaterialPrice(40);
+                            else if (e.target.value === 'Carbon Fiber') setMaterialPrice(50);
+                            else setMaterialPrice(0);}}
                         onBlur={() => setMaterialError(validateMaterial(material))}
                         style={{...materialError ? errorInputStyle : inputStyle, marginBottom: materialError ? '0' : '15px'}}>
                         <option value="">Select</option>
@@ -194,7 +180,14 @@ const CustomisePage = () => {
                     <select
                         name="thickness"
                         value={thickness}
-                        onChange={e => setThickness(e.target.value)}
+                        onChange={e => {
+                            setThickness(e.target.value)
+                            if (e.target.value === '3mm') setThicknessPrice(10);
+                            else if (e.target.value === '5mm') setThicknessPrice(15);
+                            else if (e.target.value === '7mm') setThicknessPrice(20);
+                            else if (e.target.value === '9mm') setThicknessPrice(25);
+                            else if (e.target.value === '11mm') setThicknessPrice(30);
+                            else setThicknessPrice(0);}}
                         onBlur={() => setThicknessError(validateThickness(thickness))}
                         style={{...thicknessError ? errorInputStyle : inputStyle, marginBottom: thicknessError ? '0' : '15px'}}>
                         <option value="">Select</option>
@@ -224,15 +217,13 @@ const CustomisePage = () => {
 
                     <p>Price: ${price}</p>
 
-
                     <button
                         type="submit"
                         className="complete-purchase-btn"
                         style={{ backgroundColor: '#333', color: '#fff', margin: '12px', padding: '12px' }}>
                         Complete Custom Order
                     </button>
-                    </form>   
-                )}
+                    </form>
                 </div>
             </div>
             <Footer />

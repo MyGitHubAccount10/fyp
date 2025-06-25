@@ -281,6 +281,29 @@
   font-size: 1rem !important;
 }
 
+.add-to-order-btn {
+  background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%) !important;
+  color: white !important;
+  border: none;
+  grid-column: 1 / -1;
+  font-size: 1rem !important;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+}
+
+.add-to-order-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(253, 126, 20, 0.4);
+}
+
+.add-to-order-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .help-text {
   background: #e8f4fd;
   padding: 1rem;

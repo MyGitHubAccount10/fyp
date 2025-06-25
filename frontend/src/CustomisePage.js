@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
+import { useNavigate } from 'react-router-dom';
+
 
 const CustomisePage = () => {
+    const navigate = useNavigate();
     const [page, setPage] = useState(1);
 
     const [type, setType] = useState('');
@@ -215,7 +218,7 @@ const CustomisePage = () => {
                     <button
                         type="submit"
                         className="complete-purchase-btn"
-                        onClick={() => setPage(2)}
+                        onClick={() => navigate('/customise-image')}
                         style={{ backgroundColor: '#333', color: '#fff', margin: '12px', padding: '12px' }}>
                         Add Custom Image (Optional)
                     </button>

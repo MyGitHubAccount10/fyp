@@ -1,7 +1,10 @@
 import React, { useState, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './CustomiseImagePage.css';
 
 export default function CustomiseImagePage() {
+  const navigate = useNavigate();
+  
   // Current side being edited
   const [currentSide, setCurrentSide] = useState('top');
   
@@ -477,6 +480,157 @@ export default function CustomiseImagePage() {
     link.click();
   };
 
+  const handleAddToCustomise = async () => {
+    if (isLoading) return;
+    
+    setIsLoading(true);
+    
+    try {
+      // Generate both sides as data URLs
+      const topSideImage = await generateSideImage('top', sideData.top);
+      const bottomSideImage = await generateSideImage('bottom', sideData.bottom);
+      
+      // Navigate back to CustomisePage with the images
+      navigate('/customise', {
+        state: {
+          customImages: {
+            topSide: topSideImage,
+            bottomSide: bottomSideImage,
+            timestamp: Date.now()
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Failed to generate images:', error);
+      alert('Failed to generate images. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const generateSideImage = async (side, data) => {
+    const canvas = document.createElement('canvas');
+    const scale = 2; // Good resolution for preview
+    
+    // Use the actual skimboard dimensions from CSS (280x450)
+    const width = 280;
+    const height = 450;
+
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+
+    // Create clipping path for skimboard shape (oval)
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(width / 2, height / 2, width / 2, height / 2, 0, 0, 2 * Math.PI);
+    ctx.clip();
+
+    // Draw background with pattern/gradient support
+    if (data.backgroundPattern === 'gradient') {
+      const gradient = ctx.createLinearGradient(0, 0, width, height);
+      gradient.addColorStop(0, data.color);
+      gradient.addColorStop(1, adjustBrightness(data.color, -20));
+      ctx.fillStyle = gradient;
+    } else {
+      ctx.fillStyle = data.color;
+    }
+    
+    // Fill the entire canvas area
+    ctx.fillRect(0, 0, width, height);
+
+    // Calculate scaling factors from preview to actual dimensions
+    const previewRect = previewRef.current.getBoundingClientRect();
+    const scaleX = width / previewRect.width;
+    const scaleY = height / previewRect.height;
+
+    // Sort images by zIndex for proper layering
+    const sortedImages = [...data.images].sort((a, b) => a.zIndex - b.zIndex);
+
+    // Load and draw all images
+    const loadAll = sortedImages.map((img) => {
+      return new Promise((resolve) => {
+        const image = new Image();
+        image.crossOrigin = 'anonymous';
+        image.src = img.src;
+        image.onload = () => {
+          ctx.save();
+          ctx.globalAlpha = img.opacity || 1;
+          
+          // Scale positions and dimensions to match canvas
+          const scaledX = img.x * scaleX;
+          const scaledY = img.y * scaleY;
+          const scaledWidth = img.width * scaleX;
+          const scaledHeight = img.height * scaleY;
+          
+          ctx.translate(scaledX + scaledWidth / 2, scaledY + scaledHeight / 2);
+          ctx.rotate((img.rotation * Math.PI) / 180);
+          
+          // Calculate aspect ratios for proper cover behavior
+          const imageAspect = image.width / image.height;
+          const targetAspect = scaledWidth / scaledHeight;
+          
+          let drawWidth, drawHeight;
+          
+          if (imageAspect > targetAspect) {
+            // Image is wider - scale to height and crop width (center the crop)
+            drawHeight = scaledHeight;
+            drawWidth = drawHeight * imageAspect;
+          } else {
+            // Image is taller - scale to width and crop height (center the crop)
+            drawWidth = scaledWidth;
+            drawHeight = drawWidth / imageAspect;
+          }
+          
+          // Create clipping region for the image area
+          ctx.beginPath();
+          ctx.rect(-scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
+          ctx.clip();
+          
+          // Draw the image centered
+          ctx.drawImage(
+            image,
+            -drawWidth / 2,
+            -drawHeight / 2,
+            drawWidth,
+            drawHeight
+          );
+          
+          ctx.restore();
+          resolve();
+        };
+        image.onerror = () => resolve(); // Continue even if image fails to load
+      });
+    });
+
+    await Promise.all(loadAll);
+    
+    // Draw text with better styling
+    ctx.fillStyle = data.textColor;
+    ctx.font = `bold ${data.fontSize * scaleX}px ${data.fontFamily}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    // Scale text position
+    const scaledTextX = data.textPosition.x * scaleX;
+    const scaledTextY = data.textPosition.y * scaleY;
+    
+    // Add text stroke if enabled
+    if (data.enableTextStroke) {
+      ctx.strokeStyle = data.textStrokeColor;
+      ctx.lineWidth = Math.max(1, data.fontSize * scaleX * 0.05);
+      ctx.strokeText(data.customText, scaledTextX, scaledTextY);
+    }
+    
+    ctx.fillText(data.customText, scaledTextX, scaledTextY);
+
+    ctx.restore(); // Restore from clipping
+
+    return canvas.toDataURL('image/png', 0.9);
+  };
+
   // Helper function to adjust color brightness
   const adjustBrightness = (hex, percent) => {
     const num = parseInt(hex.replace('#', ''), 16);
@@ -841,19 +995,26 @@ export default function CustomiseImagePage() {
               className="download-btn"
             >
               {isLoading ? '⏳ Generating...' : `💾 Download ${currentSide.toUpperCase()} Side`}
-            </button>
-            <button 
+            </button>            <button 
               onClick={handleDownloadBothSides}
               disabled={isLoading}
               className="download-btn"
               title="Download Both Sides"
             >
               {isLoading ? '⏳ Generating...' : '📥 Download Both Sides'}
+            </button>            <button 
+              onClick={handleAddToCustomise}
+              disabled={isLoading}
+              className="add-to-order-btn"
+              title="Add These Custom Images to Your Skimboard Order"
+            >
+              {isLoading ? '⏳ Processing...' : '🎨 Add These Custom Images'}
             </button>
           </div>          <div className="help-text">
             <small>
               💡 Tips: Switch between Top/Bottom sides • Drag elements to move • Use handles to resize/rotate • 
-              Press Delete to remove selected image • Ctrl+Z/Y for undo/redo • Download individual sides or both
+              Press Delete to remove selected image • Ctrl+Z/Y for undo/redo • Download individual sides or both •
+              Use "Add These Custom Images" to add your design to your skimboard order
             </small>
           </div>
         </div>        <div className="preview-panel">

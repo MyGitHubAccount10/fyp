@@ -2,10 +2,14 @@ import React, { useEffect, useState } from 'react';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const CustomisePage = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Check if custom images were passed from CustomiseImagePage
+    const customImages = location.state?.customImages || null;
 
     const [type, setType] = useState('');
     const [shape, setShape] = useState('');
@@ -79,16 +83,85 @@ const CustomisePage = () => {
                 <div style={{ flex: 1, maxWidth: '500px' }}>
                 <h2 style={{ fontWeight: 'bold', fontSize: '2em', marginBottom: '10px' }}>Customise Form</h2>
                 <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>Customise Your Skimboard!</p>
-                        
-                    <form onSubmit={handleSubmit} noValidate>
+                          <form onSubmit={handleSubmit} noValidate>
 
-                    <button
-                        type="submit"
-                        className="complete-purchase-btn"
-                        onClick={() => navigate('/customise-image')}
-                        style={{ backgroundColor: '#fff', color: '#333', margin: '12px', padding: '12px',marginBottom:'50px' }}>
-                        Add Custom Image (Optional)
-                    </button>
+                    {/* Custom Images Section */}
+                    {customImages ? (
+                        <div style={{ 
+                            backgroundColor: '#f8f9fa', 
+                            border: '2px solid #28a745', 
+                            borderRadius: '8px', 
+                            padding: '20px', 
+                            marginBottom: '30px' 
+                        }}>
+                            <h3 style={{ color: '#28a745', marginBottom: '15px', textAlign: 'center' }}>
+                                ✅ Custom Images Added Successfully!
+                            </h3>
+                            <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                                <div style={{ textAlign: 'center' }}>
+                                    <h4 style={{ marginBottom: '10px', color: '#333' }}>Top Side</h4>
+                                    <img 
+                                        src={customImages.topSide} 
+                                        alt="Top side design" 
+                                        style={{ 
+                                            width: '140px', 
+                                            height: '225px', 
+                                            borderRadius: '50%', 
+                                            border: '3px solid #28a745',
+                                            objectFit: 'cover'
+                                        }} 
+                                    />
+                                </div>
+                                <div style={{ textAlign: 'center' }}>
+                                    <h4 style={{ marginBottom: '10px', color: '#333' }}>Bottom Side</h4>
+                                    <img 
+                                        src={customImages.bottomSide} 
+                                        alt="Bottom side design" 
+                                        style={{ 
+                                            width: '140px', 
+                                            height: '225px', 
+                                            borderRadius: '50%', 
+                                            border: '3px solid #28a745',
+                                            objectFit: 'cover'
+                                        }} 
+                                    />
+                                </div>
+                            </div>
+                            <div style={{ textAlign: 'center', marginTop: '15px' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => navigate('/customise-image')}
+                                    style={{ 
+                                        backgroundColor: '#ffc107', 
+                                        color: '#000', 
+                                        border: 'none',
+                                        padding: '8px 16px',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer',
+                                        fontSize: '0.9em'
+                                    }}>
+                                    Edit Custom Images
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <button
+                            type="button"
+                            onClick={() => navigate('/customise-image')}
+                            style={{ 
+                                backgroundColor: '#fff', 
+                                color: '#333', 
+                                margin: '12px', 
+                                padding: '12px',
+                                marginBottom:'50px',
+                                border: '2px dashed #ccc',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                width: '100%'
+                            }}>
+                            🎨 Add Custom Image (Optional)
+                        </button>
+                    )}
 
                     <label>Board Type:</label>
                     <select

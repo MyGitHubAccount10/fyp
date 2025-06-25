@@ -333,12 +333,12 @@ h2 {
   align-items: center;
   white-space: nowrap;
 }
-.item-actions .delete-btn {
+.item-actions .delete {
   border-color: #ffdede;
   background-color: #fff;
   color: red;
 }
-.item-actions .save-btn {
+.item-actions .save {
   border-color: #ffeaa7;
   background-color: #fff;
   color: #f7b500;
@@ -507,31 +507,26 @@ h2 {
   flex-direction: column;
   gap: 10px;
 }
-.btn-move-to-cart-later {
-  background-color: #FFFDE7;
+.move-to-cart-later {
   color: #F9A825;
-  border: 1px solid #FDD835;
   padding: 10px 15px;
-  border-radius: 20px;
   font-weight: 500;
   text-align: center;
   cursor: pointer;
   font-size: 0.95em;
 }
-.btn-move-to-cart-later:hover {
-  background-color: #FFF9C4;
+.move-to-cart-later:hover {
+  color: #FFFDE7;
 }
-.btn-delete-later {
-  background-color: transparent;
+.delete-later {
   color: red;
-  border: none;
-  text-decoration: underline;
+  padding: 10px 15px;
+  font-weight: 500;
+  text-align: center;
   cursor: pointer;
-  font-size: 0.9em;
-  padding: 5px 0;
-  align-self: flex-start;
+  font-size: 0.95em;
 }
-.btn-delete-later:hover {
+.delete-later:hover {
   color: darkred;
 }
 

@@ -14,8 +14,8 @@ const CustomisePage = () => {
     const [size, setSize] = useState('');
     const [material, setMaterial] = useState('');
     const [thickness, setThickness] = useState('');
-    const [topColor, setTopColor] = useState('');
-    const [bottomColor, setBottomColor] = useState('');
+    const [topColor, setTopColor] = useState('#000000');
+    const [bottomColor, setBottomColor] = useState('#000000');
 
 
     const [typePrice, setTypePrice] = useState(0);
@@ -81,7 +81,7 @@ const CustomisePage = () => {
             customise_price: parseFloat(price.toFixed(2))
         };
         
-        dispatch({ type: 'SET_CUSTOMISE', payload: customItem });
+        dispatch({ type: 'SET_CUSTOM_ITEM', payload: customItem });
         navigate('/place-order');
     }
     const inputStyle = { display: 'block', width: '100%', margin: '12px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };

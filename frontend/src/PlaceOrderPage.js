@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from './hooks/useAuthContext';
 import { useCartContext } from './hooks/useCartContext';
@@ -42,6 +42,8 @@ function PlaceOrderPage() {
         total: 0,
     });
 
+    const alertShown = useRef(false);
+
     // --- MODIFIED: Simplified Guard Logic ---
     // The component now only renders after the auth check is complete,
     // so we can directly check the status of user and cartItems.
@@ -54,6 +56,16 @@ function PlaceOrderPage() {
 
         // Guard 2: Cart must not be empty.
         if (cartItems.length === 0 && !customItem) {
+            navigate('/');
+            return;
+        }
+
+        if (cartItems.length > 0 && customItem && !alertShown.current) {
+            // If both cartItems and customItem exist, show an alert and redirect.
+            alertShown.current = true; // Prevents multiple alerts.
+            dispatch({ type: 'CLEAR_CART' });
+            customiseDispatch({ type: 'CLEAR_CUSTOM_ITEM' });
+            alert('Your cart and custom skimboard have been cleared due to a conflict. Please order separately.');
             navigate('/');
             return;
         }
@@ -72,7 +84,7 @@ function PlaceOrderPage() {
 
 
     useEffect(() => {
-        if (cartItems.length > 0) {
+        if (!customItem && cartItems.length > 0) {
             const calculatedSubtotal = cartItems.reduce((sum, item) => {
                 const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
                 return sum + item.quantity * itemPrice;
@@ -89,7 +101,21 @@ function PlaceOrderPage() {
                 total: calculatedTotal,
             });
         }
-    }, [cartItems]);
+
+        else if (customItem && cartItems.length === 0) {
+            const customPrice = typeof customItem.customise_price === 'string' ? parseFloat(customItem.customise_price.replace('$', '')) : customItem.customise_price;
+            const calculatedSubtotal = customPrice;
+            const calculatedGst = customPrice * GST_RATE;
+            const calculatedTotal = customPrice + SHIPPING_FEE + calculatedGst;
+            setOrderSummary({
+                items: [customItem],
+                subtotal: calculatedSubtotal,
+                shippingFee: SHIPPING_FEE,
+                gst: calculatedGst,
+                total: calculatedTotal,
+            });
+        }
+    }, [cartItems, customItem]);
     
     const getUserIdFromToken = (token) => {
         try {
@@ -253,25 +279,39 @@ function PlaceOrderPage() {
                                 {orderSummary.items.map(item => {
                                     const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
                                     const uniqueKey = `${item.id || item.product_id}-${item.size}`;
-                                    return (
-                                        <div className="summary-item" key={uniqueKey}>
-                                            <span>{item.name} (Size: {item.size}, x{item.quantity})</span>
-                                            <span>S${(item.quantity * itemPrice).toFixed(2)}</span>
-                                        </div>
-                                    );
+                                    if (cartItems.length > 0) {
+                                        return (
+                                            <div className="summary-item" key={uniqueKey}>
+                                                <span>{item.name} (Size: {item.size}, x{item.quantity})</span>
+                                                <span>S${(item.quantity * itemPrice).toFixed(2)}</span>
+                                            </div>
+                                        );
+                                    }
                                 })}
                                 {customItem && (
-                                    <div className="summary-item">
-                                        <span>Customise Skimboard</span>
-                                        <span>Type: {customItem.type}</span>
-                                        <span>Shape: {customItem.shape}</span>
-                                        <span>Size: {customItem.size}</span>
-                                        <span>Material: {customItem.material}</span>
-                                        <span>Thickness: {customItem.thickness}</span>
-                                        <span>Top Color: {customItem.top_color}</span>
-                                        <span>Bottom Color: {customItem.bottom_color}</span>
-                                        <span>S${parseFloat(customItem.customise_price).toFixed(2)}</span>
-                                    </div>
+                                    <>
+                                        <div className="summary-line">
+                                            <span>Type: {customItem.board_type}</span>
+                                        </div>
+                                        <div className="summary-line">
+                                            <span>Shape: {customItem.board_shape}</span>
+                                        </div>
+                                        <div className="summary-line">
+                                            <span>Size: {customItem.board_size}</span>
+                                        </div>
+                                        <div className="summary-line">
+                                            <span>Material: {customItem.material}</span>
+                                        </div>
+                                        <div className="summary-line">
+                                            <span>Thickness: {customItem.thickness}</span>
+                                        </div>
+                                        <div className="summary-line">
+                                            <span>Top Colour: {customItem.top_color}</span>
+                                        </div>
+                                        <div className="summary-line">
+                                            <span>Bottom Colour: {customItem.bottom_color}</span>
+                                        </div>
+                                    </>
                                 )}
                             </div>
                             <hr className="summary-hr" />

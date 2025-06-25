@@ -4,12 +4,13 @@ export const CustomiseContext = createContext();
 
 export const customiseReducer = (state, action) => {
     switch (action.type) {
-        case 'SET_CUSTOMISE':
+        case 'SET_CUSTOM_ITEM':
             return {
-                customItem: action.payload
+                customItem: action.payload,
+                updatedAt: new Date().toISOString()
             };
 
-        case 'CLEAR_CUSTOMISE':
+        case 'CLEAR_CUSTOM_ITEM':
             return {
                 customItem: null
             };

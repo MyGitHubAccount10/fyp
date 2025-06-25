@@ -68,6 +68,7 @@ export const CartContextProvider = ({ children }) => {
     useEffect(() => {
         try {
             localStorage.setItem('cart', JSON.stringify(state.cartItems));
+            localStorage.setItem('cartUpdatedAt', new Date().toISOString());
         } catch (error) {
             console.error("Could not save cart to localStorage", error);
         }

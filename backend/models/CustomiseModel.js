@@ -39,9 +39,6 @@ const customiseSchema = new Schema({
   customise_price: {
     type: Number,
     required: true,
-    set: v => {
-      return Number(v).toFixed(2);
-    }
   },
 }, { timestamps: true })
 

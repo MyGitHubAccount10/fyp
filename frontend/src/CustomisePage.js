@@ -3,9 +3,11 @@ import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 import { useNavigate } from 'react-router-dom';
+import { useCustomiseContext } from './hooks/useCustomiseContext';
 
 const CustomisePage = () => {
     const navigate = useNavigate();
+    const { dispatch } = useCustomiseContext();
 
     const [type, setType] = useState('');
     const [shape, setShape] = useState('');
@@ -67,6 +69,20 @@ const CustomisePage = () => {
         if (typeError || shapeError || sizeError || materialError || thicknessError) {
             return;
         }
+
+        const customItem = {
+            board_type: type,
+            board_shape: shape,
+            board_size: size,
+            material,
+            thickness,
+            top_color: topColor,
+            bottom_color: bottomColor,
+            customise_price: parseFloat(price.toFixed(2))
+        };
+        
+        dispatch({ type: 'SET_CUSTOMISE', payload: customItem });
+        navigate('/place-order');
     }
     const inputStyle = { display: 'block', width: '100%', margin: '12px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
     const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };

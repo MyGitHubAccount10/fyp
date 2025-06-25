@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from './hooks/useAuthContext';
 import { useCartContext } from './hooks/useCartContext';
+import { useCustomiseContext } from './hooks/useCustomiseContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -22,6 +23,7 @@ function PlaceOrderPage() {
     // MODIFIED: We no longer need authIsReady here, as the context handles the initial loading.
     const { user } = useAuthContext();
     const { cartItems, dispatch } = useCartContext();
+    const {customItem, dispatch: customiseDispatch} = useCustomiseContext();
 
     const [shippingDetails, setShippingDetails] = useState({
         fullName: '',
@@ -51,7 +53,7 @@ function PlaceOrderPage() {
         }
 
         // Guard 2: Cart must not be empty.
-        if (cartItems.length === 0) {
+        if (cartItems.length === 0 && !customItem) {
             navigate('/');
             return;
         }
@@ -66,7 +68,7 @@ function PlaceOrderPage() {
                 shippingAddress: userData.shipping_address || '',
             });
         }
-    }, [user, cartItems, navigate]); // REMOVED: authIsReady is no longer a dependency.
+    }, [user, cartItems, customItem, navigate]); // REMOVED: authIsReady is no longer a dependency.
 
 
     useEffect(() => {
@@ -181,6 +183,7 @@ function PlaceOrderPage() {
             }
 
             dispatch({ type: 'CLEAR_CART' });
+            customiseDispatch({ type: 'CLEAR_CUSTOM_ITEM' });
             alert('Order placed successfully!');
             navigate('/order-history');
         } catch (error) {
@@ -193,7 +196,7 @@ function PlaceOrderPage() {
     // because the entire component won't render until the context is ready.
     
     // If guards are redirecting, this prevents rendering the form with bad data.
-    if (cartItems.length === 0 || !user) {
+    if (!user || (cartItems.length === 0 && !customItem)) {
         return null; 
     }
 
@@ -257,6 +260,19 @@ function PlaceOrderPage() {
                                         </div>
                                     );
                                 })}
+                                {customItem && (
+                                    <div className="summary-item">
+                                        <span>Customise Skimboard</span>
+                                        <span>Type: {customItem.type}</span>
+                                        <span>Shape: {customItem.shape}</span>
+                                        <span>Size: {customItem.size}</span>
+                                        <span>Material: {customItem.material}</span>
+                                        <span>Thickness: {customItem.thickness}</span>
+                                        <span>Top Color: {customItem.top_color}</span>
+                                        <span>Bottom Color: {customItem.bottom_color}</span>
+                                        <span>S${parseFloat(customItem.customise_price).toFixed(2)}</span>
+                                    </div>
+                                )}
                             </div>
                             <hr className="summary-hr" />
                             <div className="summary-line">

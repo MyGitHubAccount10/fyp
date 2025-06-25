@@ -120,6 +120,15 @@ const CustomisePage = () => {
                         
                 { page === 1 && (
                     <form onSubmit={handleSubmit} noValidate>
+
+                    <button
+                        type="submit"
+                        className="complete-purchase-btn"
+                        onClick={() => navigate('/customise-image')}
+                        style={{ backgroundColor: '#fff', color: '#333', margin: '12px', padding: '12px',marginBottom:'50px' }}>
+                        Add Custom Image (Optional)
+                    </button>
+
                     <label>Board Type:</label>
                     <select
                         name="type"
@@ -215,13 +224,6 @@ const CustomisePage = () => {
 
                     <p>Price: ${price}</p>
 
-                    <button
-                        type="submit"
-                        className="complete-purchase-btn"
-                        onClick={() => navigate('/customise-image')}
-                        style={{ backgroundColor: '#333', color: '#fff', margin: '12px', padding: '12px' }}>
-                        Add Custom Image (Optional)
-                    </button>
 
                     <button
                         type="submit"

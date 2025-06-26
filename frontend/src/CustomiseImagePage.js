@@ -2,7 +2,7 @@
 // variable to tell the canva(A drawable div container <canva>) what 
 // to display/do
 
-// Brightness
+// Adjust Brightness
 
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
@@ -24,16 +24,16 @@ const DEFAULT_DESIGN = {
   backgroundPattern: 'solid'
 };
 
-// Helper function to adjust color brightness (It is used to create gradients)
-// const adjustBrightness = (hex, percent) => {
+// A function to adjust color brightness (It is used to create gradients)
+// const createGradient = (hex, percent) => {
 //   const num = parseInt(hex.replace('#', ''), 16);
 //   const amt = Math.round(2.55 * percent);
 //   const R = (num >> 16) + amt;
 //   const G = (num >> 8 & 0x00FF) + amt;
 //   const B = (num & 0x0000FF) + amt;
 //   return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-//     (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-//     (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+//      (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+//      (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
 // };
 
 // Download an image file
@@ -66,7 +66,7 @@ const generateSkimboardImage = async (designData, previewElement, scale = 2) => 
   // if (designData.backgroundPattern === 'gradient') {
   //   const gradient = canvaContext.createLinearGradient(0, 0, width, height);
   //   gradient.addColorStop(0, designData.color);
-  //   gradient.addColorStop(1, adjustBrightness(designData.color, -20));
+  //   gradient.addColorStop(1, createGradient(designData.color, -20));
   //   canvaContext.fillStyle = gradient;
   // } else {
   //   canvaContext.fillStyle = designData.color;
@@ -804,7 +804,7 @@ export default function CustomiseImagePage() {
               }}
               // style={{ 
               //   background: currentDesign.backgroundPattern === 'gradient' 
-              //     ? `linear-gradient(135deg, ${currentDesign.color}, ${adjustBrightness(currentDesign.color, -20)})` 
+              //     ? `linear-gradient(135deg, ${currentDesign.color}, ${createGradient(currentDesign.color, -20)})` 
               //     : currentDesign.color 
               // }}
               onClick={() => setSelectedElement(null)}

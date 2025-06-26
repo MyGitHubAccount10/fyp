@@ -323,9 +323,8 @@ const CustomisePage = () => {
 
                     <p>Price: ${price}</p>
 
-
                     <button
-                        type="cancel"
+                        type="button"
                         className="complete-purchase-btn"
                         onClick={() => {
                             window.scrollTo(0, 0);

@@ -23,18 +23,23 @@ const DEFAULT_DESIGN = {
   enableTextStroke: false,
   backgroundPattern: 'solid'
 };
-
+//-
 // A function to adjust color brightness (It is used to create gradients)
+// clamp () is to make sure Red, Green and Blue values are between 0 and 255(as that is how computers interpret colors)
+// const clamp = (value) => Math.max(0, Math.min(255, value));
+
 // const createGradient = (hex, percent) => {
 //   const num = parseInt(hex.replace('#', ''), 16);
 //   const amt = Math.round(2.55 * percent);
-//   const R = (num >> 16) + amt;
-//   const G = (num >> 8 & 0x00FF) + amt;
-//   const B = (num & 0x0000FF) + amt;
-//   return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-//      (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-//      (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+
+//   const r = clamp((num >> 16) + amt);
+//   const g = clamp((num >> 8 & 0xFF) + amt);
+//   const b = clamp((num & 0xFF) + amt);
+
+//   return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 // };
+
+//-
 
 // Download an image file
 const downloadImage = (dataUrl, filename) => {

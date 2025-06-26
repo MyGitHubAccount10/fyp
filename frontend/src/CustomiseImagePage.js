@@ -23,6 +23,9 @@ const DEFAULT_DESIGN = {
   enableTextStroke: false,
   backgroundPattern: 'solid'
 };
+
+// Backend URL configuration
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000';
 //-
 // A function to adjust color brightness (It is used to create gradients)
 // clamp () is to make sure Red, Green and Blue values are between 0 and 255(as that is how computers interpret colors)
@@ -147,7 +150,10 @@ const drawImages = async (canvaContext, images, scaleX, scaleY) => {
         canvaContext.restore();
         resolve();
       };
-      image.onerror = () => resolve();
+      image.onerror = () => {
+        console.error('Failed to load image:', img.src);
+        resolve(); // Continue even if one image fails
+      };
     });
   });
 
@@ -367,17 +373,54 @@ export default function CustomiseImagePage() {
     }
   };
   // Handle uploading new images
-  const addImages = (files) => {
+  const addImages = async (files) => {
     if (!files || files.length === 0) return;
 
+    // Filter only image files
+    const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+    if (imageFiles.length === 0) {
+      alert('Please select only image files.');
+      return;
+    }
+
+    // Check file sizes (5MB limit per file)
+    const oversizedFiles = imageFiles.filter(file => file.size > 5 * 1024 * 1024);
+    if (oversizedFiles.length > 0) {
+      alert(`Some files are too large. Maximum size is 5MB per file.\nOversized files: ${oversizedFiles.map(f => f.name).join(', ')}`);
+      return;
+    }
+
     saveToHistory({ currentSide, designs });
+    setIsLoading(true);
     
-    // Create image objects for each uploaded file
-    const newImages = Array.from(files)
-      .filter(file => file.type.startsWith('image/'))
-      .map((file, index) => ({
+    try {
+      // Create FormData to send files to backend
+      const formData = new FormData();
+      imageFiles.forEach(file => {
+        formData.append('images', file);
+      });
+
+      // Upload files to backend using multer
+      const response = await fetch(`${BACKEND_URL}/api/customiseImg/upload-multiple`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: 'Upload failed' }));
+        throw new Error(errorData.error || `Server error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      if (!result.files || result.files.length === 0) {
+        throw new Error('No files were processed by the server');
+      }
+      
+      // Create image objects for each uploaded file
+      const newImages = result.files.map((file, index) => ({
         id: Date.now() + index,
-        src: URL.createObjectURL(file),
+        src: `${BACKEND_URL}${file.url}`, // Use server URL
         x: 60 + (index * 20),  // Offset each image slightly
         y: 100 + (index * 20),
         width: 80,
@@ -386,20 +429,44 @@ export default function CustomiseImagePage() {
         opacity: 1,
         zIndex: currentImages.length + index,
       }));
-    
-    if (newImages.length > 0) {
-      updateImages([...currentImages, ...newImages]);
-    }
-    
-    // Clear the file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+      
+      if (newImages.length > 0) {
+        updateImages([...currentImages, ...newImages]);
+        console.log(`✅ Successfully uploaded ${newImages.length} image(s)`);
+      }
+      
+    } catch (error) {
+      console.error('Upload failed:', error);
+      
+      // Show specific error messages
+      if (error.message.includes('Failed to fetch')) {
+        alert('Cannot connect to server. Please make sure the backend is running on port 4000.');
+      } else if (error.message.includes('Not an image')) {
+        alert('Please upload only image files (PNG, JPG, GIF, etc.)');
+      } else if (error.message.includes('File too large')) {
+        alert('One or more files are too large. Maximum size is 5MB per file.');
+      } else {
+        alert(`Upload failed: ${error.message}`);
+      }
+    } finally {
+      setIsLoading(false);
+      // Clear the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
   // Delete an image
   const deleteImage = (imageId) => {
     saveToHistory({ currentSide, designs });
+    const imageToDelete = currentImages.find(img => img.id === imageId);
+    
+    // Clean up blob URLs if they exist (for old client-side uploads)
+    if (imageToDelete && imageToDelete.src.startsWith('blob:')) {
+      URL.revokeObjectURL(imageToDelete.src);
+    }
+    
     updateImages(currentImages.filter(img => img.id !== imageId));
     setSelectedElement(null);
   };
@@ -539,6 +606,19 @@ export default function CustomiseImagePage() {
       deleteImage(selectedElement.id);
     }
   };
+
+  // Cleanup blob URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      // Clean up any blob URLs to prevent memory leaks
+      const allImages = [...designs.top.images, ...designs.bottom.images];
+      allImages.forEach(img => {
+        if (img.src.startsWith('blob:')) {
+          URL.revokeObjectURL(img.src);
+        }
+      });
+    };
+  }, []);
 
   // Setup keyboard shortcuts
   useEffect(() => {
@@ -703,8 +783,14 @@ export default function CustomiseImagePage() {
                   accept="image/*" 
                   multiple
                   onChange={(e) => addImages(e.target.files)} 
+                  disabled={isLoading}
                 />
               </label>
+              {isLoading && (
+                <div className="upload-status">
+                  ⏳ Uploading images...
+                </div>
+              )}
               
               {selectedElement && selectedElement.type === 'image' && (
                 <div className="image-controls">

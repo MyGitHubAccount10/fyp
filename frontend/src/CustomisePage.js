@@ -115,7 +115,7 @@ const CustomisePage = () => {
                         
                     <form onSubmit={handleSubmit} noValidate>
                     
-                                        <p>You may choose to customise your skimboard {' '}
+                    <p>You may choose to customise your skimboard {' '}
                         <Link 
                             to="/customise-image"
                             onClick={() => {

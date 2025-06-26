@@ -134,7 +134,7 @@ function PlaceOrderPage() {
                 URL.revokeObjectURL(bottomImagePreview);
             }
         };
-    }, [cartItems, customItem, topImagePreview, bottomImagePreview]);
+    }, [cartItems, customItem]);
     
     const getUserIdFromToken = (token) => {
         try {

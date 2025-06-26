@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -55,6 +55,11 @@ const CustomisePage = () => {
 
         updateImagesFromContext();
     }, [customItem]);
+
+    useEffect(() => {
+        setTopImageError(validateTopImage(topImageFile));
+        setBottomImageError(validateBottomImage(bottomImageFile));
+    }, [topImageFile, bottomImageFile]);
 
     const [type, setType] = useState('');
     const [shape, setShape] = useState('');
@@ -171,6 +176,7 @@ const CustomisePage = () => {
                     <label> {!topImageFile ? 'Top Image:' : 'Selected Top Image:'}</label>
                     <input
                         type="file"
+                        id="topImage"
                         name="topImage"
                         onChange={e => {
                             const file = e.target.files[0];
@@ -182,17 +188,29 @@ const CustomisePage = () => {
                                 setTopImageName('');
                                 setTopImageFile(null);
                                 setTopImagePreview(null);
+                                setTopImageError(validateTopImage(topImageFile)); // Reset error if no file selected
                             }
+                            e.target.value = null; // Reset the file input after selection
                         }}
-                        style={!topImageFile ? inputStyle : { display: "none" }}
-                    />
-                    {topImageName && <p style={{ marginBottom: '15px' }}>{topImageName}</p>}
+                        className='file-input-hidden'
+                        />
+                        <label 
+                            htmlFor='topImage' 
+                            className='file-input-label' 
+                            style={inputStyle}>
+                        <span className='file-input-button'>Choose File</span>
+                            <span className='file-input-text'>
+                                {topImageFile ? topImageName : 'No Top Image Selected'}
+                            </span>
+                        </label>
+                        
                     {topImagePreview && <img src={topImagePreview} alt="Top Preview" style={{ width: '100%', height: 'auto', marginBottom: '15px' }} />}
                     {topImageError && <p style={errorMessageStyle}>{topImageError}</p>}
 
                     <label> {!bottomImageFile ? 'Bottom Image:' : 'Selected Bottom Image:'}</label>
                     <input
                         type="file"
+                        id="bottomImage"
                         name="bottomImage"
                         onChange={e => {
                             const file = e.target.files[0];
@@ -205,10 +223,17 @@ const CustomisePage = () => {
                                 setBottomImageFile(null);
                                 setBottomImagePreview(null);
                             }
+                            e.target.value = null; // Reset the file input after selection  
                         }}
-                        style={!bottomImageFile ? inputStyle : { display: "none" }}
-                    />
-                    {bottomImageName && <p style={{ marginBottom: '15px' }}>{bottomImageName}</p>}
+                        className='file-input-hidden'
+                        />
+                        <label htmlFor='bottomImage' className='file-input-label' style={inputStyle}>
+                            <span className='file-input-button'>Choose File</span>
+                            <span className='file-input-text'>
+                                {bottomImageFile ? bottomImageName : 'No Bottom Image Selected'}
+                            </span>
+                        </label>
+
                     {bottomImagePreview && <img src={bottomImagePreview} alt="Bottom Preview" style={{ width: '100%', height: 'auto', marginBottom: '15px' }} />}
                     {bottomImageError && <p style={errorMessageStyle}>{bottomImageError}</p>}
                     

@@ -28,11 +28,11 @@ const customiseSchema = new Schema({
     type: String,
     required: true
   },
-  top_color: {
+  top_image: {
     type: String,
     required: true
   },
-  bottom_color: {
+  bottom_image: {
     type: String,
     required: true
   },

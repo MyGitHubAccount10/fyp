@@ -71,8 +71,8 @@ function OrderHistoryPage() {
                                         board_size: customiseData.board_size,
                                         material: customiseData.material,
                                         thickness: customiseData.thickness,
-                                        top_color: customiseData.top_color,
-                                        bottom_color: customiseData.bottom_color,
+                                        top_image: customiseData.top_image,
+                                        bottom_image: customiseData.bottom_image,
                                         customise_price: customiseData.customise_price,
                                     };
                                     items.push(customiseItem);
@@ -171,8 +171,8 @@ function OrderHistoryPage() {
                                                                 <span>Size: {item.board_size}</span>
                                                                 <span>Material: {item.material}</span>
                                                                 <span>Thickness: {item.thickness}</span>
-                                                                <span>Top Color: {item.top_color}</span>
-                                                                <span>Bottom Color: {item.bottom_color}</span>
+                                                                <span>Top Image: <img src={item.top_image} alt="Top Customisation" className="order-item-image" /></span>
+                                                                <span>Bottom Image: <img src={item.bottom_image} alt="Bottom Customisation" className="order-item-image" /></span>
                                                                 <span>Price: S${item.customise_price.toFixed(2)}</span>
                                                             </div>
                                                         )}

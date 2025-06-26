@@ -53,8 +53,8 @@ const createCustomise = async (req, res) => {
         board_size,
         material,
         thickness,
-        top_color,
-        bottom_color,
+        top_image,
+        bottom_image,
         customise_price,
     } = req.body;
     
@@ -66,8 +66,8 @@ const createCustomise = async (req, res) => {
             board_size,
             material,
             thickness,
-            top_color,
-            bottom_color,
+            top_image,
+            bottom_image,
             customise_price
         });
         res.status(200).json(customise);

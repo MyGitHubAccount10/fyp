@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useCustomiseContext } from './hooks/useCustomiseContext';
 
 const CustomisePage = () => {
@@ -14,8 +14,8 @@ const CustomisePage = () => {
     const [size, setSize] = useState('');
     const [material, setMaterial] = useState('');
     const [thickness, setThickness] = useState('');
-    const [topColor, setTopColor] = useState('#000000');
-    const [bottomColor, setBottomColor] = useState('#000000');
+    const [topImage, setTopImage] = useState(null);
+    const [bottomImage, setBottomImage] = useState(null);
 
 
     const [typePrice, setTypePrice] = useState(0);
@@ -29,6 +29,8 @@ const CustomisePage = () => {
     const [sizeError, setSizeError] = useState('');
     const [materialError, setMaterialError] = useState('');
     const [thicknessError, setThicknessError] = useState('');
+    const [topImageError, setTopImageError] = useState('');
+    const [bottomImageError, setBottomImageError] = useState('');
 
     const price = typePrice + shapePrice + sizePrice + materialPrice + thicknessPrice;
 
@@ -52,6 +54,14 @@ const CustomisePage = () => {
         if (!thickness) return 'Thickness is required.';
     }
 
+    const validateTopImage = (topImage) => {
+        if (!topImage) return 'Top image is required.';
+    }
+
+    const validateBottomImage = (bottomImage) => {
+        if (!bottomImage) return 'Bottom image is required.';
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -59,14 +69,19 @@ const CustomisePage = () => {
         const shapeError = validateShape(shape);
         const sizeError = validateSize(size);
         const materialError = validateMaterial(material);
-        
+        const thicknessError = validateThickness(thickness);
+        const topImageError = validateTopImage(topImage);
+        const bottomImageError = validateBottomImage(bottomImage);
+
         setTypeError(typeError);
         setShapeError(shapeError);
         setSizeError(sizeError);
         setMaterialError(materialError);
         setThicknessError(validateThickness(thickness));
+        setTopImageError(topImageError);
+        setBottomImageError(bottomImageError);
 
-        if (typeError || shapeError || sizeError || materialError || thicknessError) {
+        if (typeError || shapeError || sizeError || materialError || thicknessError || topImageError || bottomImageError) {
             return;
         }
 
@@ -76,8 +91,8 @@ const CustomisePage = () => {
             board_size: size,
             material,
             thickness,
-            top_color: topColor,
-            bottom_color: bottomColor,
+            top_image: topImage,
+            bottom_image: bottomImage,
             customise_price: parseFloat(price.toFixed(2))
         };
         
@@ -97,15 +112,50 @@ const CustomisePage = () => {
                 <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>Customise Your Skimboard!</p>
                         
                     <form onSubmit={handleSubmit} noValidate>
+                    
+                                        <p>You may choose to customise your skimboard {' '}
+                        <Link 
+                            to="/customise-image"
+                            onClick={() => {
+                            window.scrollTo(0, 0);
+                        }}>
+                            here
+                        </Link>
+                        {' '} before uploading images.
+                    </p>
 
-                    <button
-                        type="submit"
-                        className="complete-purchase-btn"
-                        onClick={() => navigate('/customise-image')}
-                        style={{ backgroundColor: '#fff', color: '#333', margin: '12px', padding: '12px',marginBottom:'50px' }}>
-                        Add Custom Image (Optional)
-                    </button>
+                    <label>Top Image:</label>
+                    <input
+                        type="file"
+                        name="topImage"
+                        onChange={e => {
+                            const file = e.target.files[0];
+                            if (file) {
+                                setTopImage(URL.createObjectURL(file));
+                            } else {
+                                setTopImage(null);
+                            }
+                        }}
+                        style={inputStyle}
+                    />
+                    {topImageError && <p style={errorMessageStyle}>{topImageError}</p>}
 
+                    <label>Bottom Image:</label>
+                    <input
+                        type="file"
+                        name="bottomImage"
+                        onChange={e => {
+                            const file = e.target.files[0];
+                            if (file) {
+                                setBottomImage(URL.createObjectURL(file));
+                            } else {
+                                setBottomImage(null);
+                            }
+                        }}
+                        style={inputStyle}
+                    />
+                    {bottomImageError && <p style={errorMessageStyle}>{bottomImageError}</p>}
+                    
                     <label>Board Type:</label>
                     <select
                         name="type"
@@ -214,22 +264,6 @@ const CustomisePage = () => {
                         <option value="11mm">Ultra Thick 11mm</option>
                     </select>
                     {thicknessError && <p style={errorMessageStyle}>{thicknessError}</p>}
-
-                    <label>Top Color:</label>
-                    <input
-                        type="color"
-                        name="topColor"
-                        value={topColor}
-                        style={{...inputStyle, padding: '0px'}}
-                        onChange={e => setTopColor(e.target.value)} required />
-                    
-                    <label>Bottom Color:</label>
-                    <input
-                        type="color"
-                        name="bottomColor"
-                        value={bottomColor}
-                        style={{...inputStyle, padding: '0px'}}
-                        onChange={e => setBottomColor(e.target.value)} required/>
 
                     <p>Price: ${price}</p>
 

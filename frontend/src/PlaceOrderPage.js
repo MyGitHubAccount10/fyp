@@ -217,8 +217,8 @@ function PlaceOrderPage() {
                     board_size: customItem.board_size,
                     material: customItem.material,
                     thickness: customItem.thickness,
-                    top_color: customItem.top_color,
-                    bottom_color: customItem.bottom_color,
+                    top_image: customItem.top_image,
+                    bottom_image: customItem.bottom_image,
                     customise_price: customisePrice.toFixed(2)
                 };
 
@@ -333,10 +333,12 @@ function PlaceOrderPage() {
                                             <span>Thickness: {customItem.thickness}</span>
                                         </div>
                                         <div className="summary-line">
-                                            <span>Top Colour: {customItem.top_color}</span>
+                                            <span>Top Layer Image</span>
+                                            <img className="order-item-image" src={customItem.top_image} alt="Top Customisation" />
                                         </div>
                                         <div className="summary-line">
-                                            <span>Bottom Colour: {customItem.bottom_color}</span>
+                                            <span>Bottom Layer Image</span>
+                                            <img className="order-item-image" src={customItem.bottom_image} alt="Bottom Customisation" />
                                         </div>
                                     </>
                                 )}

@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const cors = require('cors'); // <--- ✅ Add this line
 
 const categoryRoutes = require('./routes/CategoryRoute');
-const customiseImgRoutes = require('./routes/CustomiseImgRoute');
 const customiseRoutes = require('./routes/CustomiseRoute');
 const orderProductRoutes = require('./routes/OrderProductRoute');
 const orderRoutes = require('./routes/OrderRoute');
@@ -56,7 +55,6 @@ try {
 }
 
 app.use('/api/category', categoryRoutes);
-app.use('/api/customiseImg', customiseImgRoutes);
 app.use('/api/customise', customiseRoutes);
 app.use('/api/order-products', orderProductRoutes);
 app.use('/api/orders', orderRoutes);

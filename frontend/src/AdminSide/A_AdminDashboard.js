@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AdminHeader from '../AdminHeader';
 import { useNavigate } from 'react-router-dom';
 // AdminStyles.css is imported in AdminLayout.js and/or App.js, so no need to import here
@@ -74,32 +74,201 @@ const PencilIcon = ({ size = 18, color = "currentColor" }) => (
     </svg>
 );
 
-// Dummy Data
-const salesData = {
-    totalSalesMonth: 12583,
-    newOrdersToday: 15,
-    pendingFulfillment: 8,
-    lowStockItems: 3,
-    outOfStockItems: 5, // Assuming this is the fifth card
+// Dummy Data - will be replaced with real data
+const initialSalesData = {
+    totalSalesMonth: 0,
+    newOrdersToday: 0,
+    pendingFulfillment: 0,
+    lowStockItems: 0,
+    outOfStockItems: 0,
+    dailySales: [],
 };
 
-const recentOrders = [
-    { id: 'TSU1024', customer: 'Jane Doe', date: '2026-5-18', total: 189.99, status: 'Shipped' },
-    { id: 'TSU1023', customer: 'Rob Banks', date: '2026-5-18', total: 75.50, status: 'Processing' },
-    { id: 'TSU1022', customer: 'Tom Holland', date: '2024-3-21', total: 250.00, status: 'Order Complete' },
-     // Add more dummy orders if needed to fill the table
-];
+const initialRecentOrders = [];
 
 function AdminDashboard() {
     const navigate = useNavigate();
-    // In a real application, you would fetch data here using useEffect
+    const [salesData, setSalesData] = useState(initialSalesData);
+    const [recentOrders, setRecentOrders] = useState(initialRecentOrders);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
+    // Fetch dashboard data on component mount
+    useEffect(() => {
+        fetchDashboardData();
+    }, []);
+
+    const fetchDashboardData = async () => {
+        try {
+            setLoading(true);
+            
+            // Get admin user token
+            const adminUser = JSON.parse(localStorage.getItem('admin_user'));
+            if (!adminUser || !adminUser.token) {
+                throw new Error('No admin authentication found');
+            }
+
+            // Fetch orders data
+            const ordersResponse = await fetch('http://localhost:4000/api/orders/admin/all', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${adminUser.token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!ordersResponse.ok) {
+                throw new Error('Failed to fetch orders data');
+            }
+
+            const ordersData = await ordersResponse.json();
+
+            // Try to fetch products data (optional)
+            let productsData = [];
+            try {
+                const productsResponse = await fetch('http://localhost:4000/api/product', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (productsResponse.ok) {
+                    productsData = await productsResponse.json();
+                }
+            } catch (productError) {
+                console.warn('Failed to fetch products data:', productError);
+                // Continue without products data
+            }
+
+            // Process the data
+            processOrders(ordersData);
+            processProducts(productsData);
+            setError('');
+        } catch (error) {
+            console.error('Error fetching dashboard data:', error);
+            setError('Failed to load dashboard data');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const processOrders = (ordersData) => {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+        // Calculate total sales for this month
+        const thisMonthOrders = ordersData.filter(order => {
+            const orderDate = new Date(order.createdAt);
+            return orderDate >= thisMonth;
+        });
+        const totalSalesMonth = thisMonthOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+
+        // Calculate new orders today
+        const todayOrders = ordersData.filter(order => {
+            const orderDate = new Date(order.createdAt);
+            return orderDate >= today;
+        });
+        const newOrdersToday = todayOrders.length;
+
+        // Calculate pending fulfillment
+        const pendingOrders = ordersData.filter(order => 
+            order.status_id?.status_name === 'Pending' || 
+            order.status_id?.status_name === 'Processing' ||
+            order.status_id?.status_name === 'Confirmed'
+        );
+        const pendingFulfillment = pendingOrders.length;
+
+        setSalesData({
+            totalSalesMonth: Math.round(totalSalesMonth),
+            newOrdersToday,
+            pendingFulfillment,
+            lowStockItems: 0, // Will be updated by processProducts
+            outOfStockItems: 0, // Will be updated by processProducts
+        });
+
+        // Set recent orders (last 5 orders)
+        const recentOrdersData = ordersData
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 5)
+            .map(order => ({
+                id: order._id?.slice(-8) || 'N/A',
+                customer: order.user_id?.full_name || order.user_id?.username || 'N/A',
+                date: new Date(order.createdAt).toLocaleDateString(),
+                total: order.total_amount || 0,
+                status: order.status_id?.status_name || 'Pending'
+            }));
+
+        setRecentOrders(recentOrdersData);
+        
+        // Generate daily sales data for chart
+        generateDailySalesChart(ordersData);
+    };
+
+    const generateDailySalesChart = (ordersData) => {
+        const dailyData = {};
+        const last7Days = [];
+        
+        // Create array of last 7 days
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const dateStr = date.toISOString().split('T')[0];
+            last7Days.push(dateStr);
+            dailyData[dateStr] = 0;
+        }
+        
+        // Aggregate sales by date
+        ordersData.forEach(order => {
+            const orderDate = new Date(order.createdAt).toISOString().split('T')[0];
+            if (dailyData.hasOwnProperty(orderDate)) {
+                dailyData[orderDate] += order.total_amount || 0;
+            }
+        });
+        
+        const chartData = last7Days.map(date => ({
+            date,
+            amount: dailyData[date]
+        }));
+        
+        setSalesData(prev => ({ ...prev, dailySales: chartData }));
+    };
+
+    const processProducts = (productsData) => {
+        setProducts(productsData);
+        
+        // Calculate low stock and out of stock items
+        const lowStockItems = productsData.filter(product => 
+            product.stock > 0 && product.stock <= 10
+        ).length;
+        
+        const outOfStockItems = productsData.filter(product => 
+            product.stock === 0
+        ).length;
+
+        setSalesData(prev => ({
+            ...prev,
+            lowStockItems,
+            outOfStockItems
+        }));
+    };
+
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+        }).format(amount || 0);
+    };
     // Function to get status class (reusing or similar to ManageProductsPage)
     const getStatusClass = (status) => {
         switch (status) {
-            case 'Shipped': return 'status-shipped';
-            case 'Processing': return 'status-processing';
-            case 'Order Complete': return 'status-complete'; // New status class
+            case 'Delivered':
+            case 'Completed': return 'status-shipped';
+            case 'Processing':
+            case 'Confirmed': return 'status-processing';
+            case 'Pending': return 'status-complete';
             default: return '';
         }
     };
@@ -109,7 +278,48 @@ function AdminDashboard() {
      const handleViewOrders = () => { navigate('/all-orders'); };
      const handleManageInventory = () => { navigate('/all-products'); };
      const handleReviewDesigns = () => { navigate('/admin/custom-designs'); };
-     const handleViewFullSales = () => { navigate('/admin/sales-reports'); };
+     const handleViewFullSales = () => { navigate('/sales-report'); };
+
+    if (loading) {
+        return (
+            <div className="admin-dashboard-page">
+                <AdminHeader />
+                <div className="manage-products-page">
+                    <div style={{ textAlign: 'center', padding: '50px' }}>
+                        Loading dashboard...
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="admin-dashboard-page">
+                <AdminHeader />
+                <div className="manage-products-page">
+                    <div style={{ textAlign: 'center', padding: '50px', color: 'red' }}>
+                        {error}
+                        <br />
+                        <button 
+                            onClick={fetchDashboardData}
+                            style={{ 
+                                marginTop: '10px', 
+                                padding: '10px 20px', 
+                                backgroundColor: '#FA704C',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Retry
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
 
 
@@ -125,7 +335,7 @@ function AdminDashboard() {
                         <div className="stat-icon icon-sales"><MoneyIcon color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Total Sales (Month)</div>
-                            <div className="stat-value">${salesData.totalSalesMonth.toLocaleString()}</div>
+                            <div className="stat-value">{formatCurrency(salesData.totalSalesMonth)}</div>
                         </div>
                     </div>
                     <div className="stat-card" onClick={() => navigate('/all-orders')}>
@@ -196,17 +406,25 @@ function AdminDashboard() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {recentOrders.map(order => (
-                                    <tr key={order.id}>
-                                        <td>{order.id}</td>
-                                        <td>{order.customer}</td>
-                                        <td>{order.date}</td>
-                                        <td>${order.total.toFixed(2)}</td>
-                                        <td className={getStatusClass(order.status)}>{order.status}</td>
+                                {recentOrders.length > 0 ? (
+                                    recentOrders.map(order => (
+                                        <tr key={order.id}>
+                                            <td>{order.id}</td>
+                                            <td>{order.customer}</td>
+                                            <td>{order.date}</td>
+                                            <td>{formatCurrency(order.total)}</td>
+                                            <td className={getStatusClass(order.status)}>{order.status}</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="5" style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                                            No recent orders found
+                                        </td>
                                     </tr>
-                                ))}
+                                )}
                                 {/* Add placeholder rows if needed */}
-                                {recentOrders.length < 3 && Array.from({ length: 3 - recentOrders.length }).map((_, i) => (
+                                {recentOrders.length > 0 && recentOrders.length < 3 && Array.from({ length: 3 - recentOrders.length }).map((_, i) => (
                                     <tr key={`order-placeholder-${i}`}>
                                         <td>-</td>
                                         <td>-</td>
@@ -227,8 +445,47 @@ function AdminDashboard() {
 
                 <div className="dashboard-section sales-snapshot">
                     <h3 className="section-title">Sales Snapshot (Last 7 Days)</h3>
-                    <div className="sales-chart-placeholder">
-                        [Sales Chart Placeholder]
+                    <div style={{ height: '200px', display: 'flex', alignItems: 'end', gap: '10px', padding: '20px 0' }}>
+                        {salesData.dailySales && salesData.dailySales.length > 0 ? (
+                            salesData.dailySales.map((day, index) => {
+                                const maxAmount = Math.max(...salesData.dailySales.map(d => d.amount));
+                                const height = maxAmount > 0 ? (day.amount / maxAmount) * 150 : 0;
+                                return (
+                                    <div key={index} style={{ 
+                                        display: 'flex', 
+                                        flexDirection: 'column', 
+                                        alignItems: 'center',
+                                        flex: 1
+                                    }}>
+                                        <div style={{
+                                            backgroundColor: '#FA704C',
+                                            width: '100%',
+                                            height: `${height}px`,
+                                            borderRadius: '4px 4px 0 0',
+                                            marginBottom: '5px',
+                                            minHeight: '2px'
+                                        }}></div>
+                                        <div style={{ fontSize: '12px', color: '#666', textAlign: 'center' }}>
+                                            {new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                                        </div>
+                                        <div style={{ fontSize: '11px', color: '#999', textAlign: 'center' }}>
+                                            ${day.amount.toFixed(0)}
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <div style={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                width: '100%', 
+                                height: '100%',
+                                color: '#666'
+                            }}>
+                                No sales data available
+                            </div>
+                        )}
                     </div>
                     <div className="section-footer-link">
                         <a href="#" className="view-all-link" onClick={(e) => {e.preventDefault(); handleViewFullSales();}}>

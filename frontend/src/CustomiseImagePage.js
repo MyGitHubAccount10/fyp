@@ -2,6 +2,8 @@
 // variable to tell the canva(A drawable div container <canva>) what 
 // to display/do
 
+// Brightness
+
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +24,7 @@ const DEFAULT_DESIGN = {
   backgroundPattern: 'solid'
 };
 
-// Helper function to adjust color brightness
+// Helper function to adjust color brightness (It is used to create gradients)
 const adjustBrightness = (hex, percent) => {
   const num = parseInt(hex.replace('#', ''), 16);
   const amt = Math.round(2.55 * percent);

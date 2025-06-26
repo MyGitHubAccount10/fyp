@@ -46,26 +46,26 @@ const generateSkimboardImage = async (designData, previewElement, scale = 2) => 
   canvas.width = width * scale;
   canvas.height = height * scale;
 
-  const ctx = canvas.getContext('2d');
-  ctx.scale(scale, scale);
+  const canvaContext = canvas.getContext('2d');
+  canvaContext.scale(scale, scale);
 
   // Create clipping path for skimboard shape (oval)
-  ctx.save();
-  ctx.beginPath();
-  ctx.ellipse(width / 2, height / 2, width / 2, height / 2, 0, 0, 2 * Math.PI);
-  ctx.clip();
+  canvaContext.save();
+  canvaContext.beginPath();
+  canvaContext.ellipse(width / 2, height / 2, width / 2, height / 2, 0, 0, 2 * Math.PI);
+  canvaContext.clip();
 
   // Draw background
   if (designData.backgroundPattern === 'gradient') {
-    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    const gradient = canvaContext.createLinearGradient(0, 0, width, height);
     gradient.addColorStop(0, designData.color);
     gradient.addColorStop(1, adjustBrightness(designData.color, -20));
-    ctx.fillStyle = gradient;
+    canvaContext.fillStyle = gradient;
   } else {
-    ctx.fillStyle = designData.color;
+    canvaContext.fillStyle = designData.color;
   }
   
-  ctx.fillRect(0, 0, width, height);
+  canvaContext.fillRect(0, 0, width, height);
 
   // Calculate scaling factors
   const previewRect = previewElement.getBoundingClientRect();
@@ -74,33 +74,33 @@ const generateSkimboardImage = async (designData, previewElement, scale = 2) => 
 
   // Draw images
   const sortedImages = [...designData.images].sort((a, b) => a.zIndex - b.zIndex);
-  await drawImages(ctx, sortedImages, scaleX, scaleY);
+  await drawImages(canvaContext, sortedImages, scaleX, scaleY);
 
   // Draw text
-  drawText(ctx, designData, scaleX, scaleY);
+  drawText(canvaContext, designData, scaleX, scaleY);
 
-  ctx.restore();
+  canvaContext.restore();
   return canvas.toDataURL('image/png', 0.9);
 };
 
 // Helper function to draw images on canvas
-const drawImages = async (ctx, images, scaleX, scaleY) => {
+const drawImages = async (canvaContext, images, scaleX, scaleY) => {
   const loadAll = images.map((img) => {
     return new Promise((resolve) => {
       const image = new Image();
       image.crossOrigin = 'anonymous';
       image.src = img.src;
       image.onload = () => {
-        ctx.save();
-        ctx.globalAlpha = img.opacity || 1;
+        canvaContext.save();
+        canvaContext.globalAlpha = img.opacity || 1;
         
         const scaledX = img.x * scaleX;
         const scaledY = img.y * scaleY;
         const scaledWidth = img.width * scaleX;
         const scaledHeight = img.height * scaleY;
         
-        ctx.translate(scaledX + scaledWidth / 2, scaledY + scaledHeight / 2);
-        ctx.rotate((img.rotation * Math.PI) / 180);
+        canvaContext.translate(scaledX + scaledWidth / 2, scaledY + scaledHeight / 2);
+        canvaContext.rotate((img.rotation * Math.PI) / 180);
         
         // Calculate aspect ratios for proper cover behavior
         const imageAspect = image.width / image.height;
@@ -117,11 +117,11 @@ const drawImages = async (ctx, images, scaleX, scaleY) => {
         }
         
         // Create clipping region
-        ctx.beginPath();
-        ctx.rect(-scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
-        ctx.clip();
+        canvaContext.beginPath();
+        canvaContext.rect(-scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
+        canvaContext.clip();
         
-        ctx.drawImage(
+        canvaContext.drawImage(
           image,
           -drawWidth / 2,
           -drawHeight / 2,
@@ -129,7 +129,7 @@ const drawImages = async (ctx, images, scaleX, scaleY) => {
           drawHeight
         );
         
-        ctx.restore();
+        canvaContext.restore();
         resolve();
       };
       image.onerror = () => resolve();
@@ -140,22 +140,22 @@ const drawImages = async (ctx, images, scaleX, scaleY) => {
 };
 
 // Helper function to draw text on canvas
-const drawText = (ctx, designData, scaleX, scaleY) => {
-  ctx.fillStyle = designData.textColor;
-  ctx.font = `bold ${designData.fontSize * scaleX}px ${designData.fontFamily}`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
+const drawText = (canvaContext, designData, scaleX, scaleY) => {
+  canvaContext.fillStyle = designData.textColor;
+  canvaContext.font = `bold ${designData.fontSize * scaleX}px ${designData.fontFamily}`;
+  canvaContext.textAlign = 'center';
+  canvaContext.textBaseline = 'middle';
   
   const scaledTextX = designData.textPosition.x * scaleX;
   const scaledTextY = designData.textPosition.y * scaleY;
   
   if (designData.enableTextStroke) {
-    ctx.strokeStyle = designData.textStrokeColor;
-    ctx.lineWidth = Math.max(1, designData.fontSize * scaleX * 0.05);
-    ctx.strokeText(designData.customText, scaledTextX, scaledTextY);
+    canvaContext.strokeStyle = designData.textStrokeColor;
+    canvaContext.lineWidth = Math.max(1, designData.fontSize * scaleX * 0.05);
+    canvaContext.strokeText(designData.customText, scaledTextX, scaledTextY);
   }
   
-  ctx.fillText(designData.customText, scaledTextX, scaledTextY);
+  canvaContext.fillText(designData.customText, scaledTextX, scaledTextY);
 };
 
 export default function CustomiseImagePage() {

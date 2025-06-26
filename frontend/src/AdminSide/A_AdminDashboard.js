@@ -110,7 +110,7 @@ function AdminDashboard() {
             }
 
             // Fetch orders data
-            const ordersResponse = await fetch('http://localhost:4000/api/orders/admin/all', {
+            const ordersResponse = await fetch('/api/orders/admin/all', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${adminUser.token}`,
@@ -127,7 +127,7 @@ function AdminDashboard() {
             // Try to fetch products data (optional)
             let productsData = [];
             try {
-                const productsResponse = await fetch('http://localhost:4000/api/product', {
+                const productsResponse = await fetch('/api/product', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -239,14 +239,26 @@ function AdminDashboard() {
     const processProducts = (productsData) => {
         setProducts(productsData);
         
-        // Calculate low stock and out of stock items
-        const lowStockItems = productsData.filter(product => 
-            product.stock > 0 && product.stock <= 10
+        // Helper function to get product status (same logic as AllProductsPage)
+        const getProductStatus = (product) => {
+            if (product.warehouse_quantity === 0) return 'Out of Stock';
+            if (product.warehouse_quantity <= (product.threshold || 10)) return 'Limited Stock';
+            return 'In Stock';
+        };
+        
+        // Calculate low stock and out of stock items using the same logic as AllProductsPage
+        const outOfStockItems = productsData.filter(product => 
+            getProductStatus(product) === 'Out of Stock'
         ).length;
         
-        const outOfStockItems = productsData.filter(product => 
-            product.stock === 0
+        const lowStockItems = productsData.filter(product => 
+            getProductStatus(product) === 'Limited Stock'
         ).length;
+
+        // Debug logging
+        console.log('Products data:', productsData.length);
+        console.log('Out of stock items:', outOfStockItems);
+        console.log('Low stock items:', lowStockItems);
 
         setSalesData(prev => ({
             ...prev,
@@ -352,14 +364,14 @@ function AdminDashboard() {
                             <div className="stat-value">{salesData.pendingFulfillment}</div>
                         </div>
                     </div>
-                    <div className="stat-card stat-warning" onClick={() => navigate('/all-products')}> {/* Added warning class for alert icons */}
+                    <div className="stat-card stat-warning" onClick={() => navigate('/all-products')} title={`${salesData.lowStockItems} products with limited stock`}> {/* Added warning class for alert icons */}
                         <div className="stat-icon icon-low-stock"><AlertTriangleIcon color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Low Stock Items</div>
                             <div className="stat-value">{salesData.lowStockItems}</div>
                         </div>
                     </div>
-                    <div className="stat-card stat-danger" onClick={() => navigate('/all-products')}> {/* Added danger class for potentially critical alerts */}
+                    <div className="stat-card stat-danger" onClick={() => navigate('/all-products')} title={`${salesData.outOfStockItems} products are out of stock`}> {/* Added danger class for potentially critical alerts */}
                         <div className="stat-icon icon-out-stock"><AlertTriangleIcon color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Out of Stock Items</div>

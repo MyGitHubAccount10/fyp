@@ -104,7 +104,7 @@ function AllProductsPage() {
     // Step 1: Wrap the handleFilter function in useCallback.
     // List its dependencies: allProducts, searchTerm, selectedCategory, and selectedStatus.
     const getStatus = useCallback((product) => {
-        if (product.warehouse_quantity === 0) return 'No Stock';
+        if (product.warehouse_quantity === 0) return 'Out of Stock';
         if (product.warehouse_quantity <= product.threshold) return 'Limited Stock';
         return 'In Stock';
     }, []);
@@ -144,7 +144,7 @@ function AllProductsPage() {
         switch (status) {
             case 'In Stock': return 'status-in-stock';
             case 'Limited Stock': return 'status-limited-stock';
-            case 'No Stock': return 'status-no-stock';
+            case 'Out of Stock': return 'status-no-stock';
             default: return '';
         }
     };
@@ -214,7 +214,7 @@ function AllProductsPage() {
                         <option value="All Statuses">All Statuses</option>
                         <option value="In Stock">In Stock</option>
                         <option value="Limited Stock">Limited Stock</option>
-                        <option value="No Stock">No Stock</option>
+                        <option value="Out of Stock">Out of Stock</option>
                     </select>
                 </div>
             </div>

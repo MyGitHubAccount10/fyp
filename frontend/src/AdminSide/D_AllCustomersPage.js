@@ -340,36 +340,35 @@ const handleFilter = () => {
             </div>
             </div>                {/* Users Table */}
             <div className="orders-table-container">
-                <table className="orders-table">                    
+                <table className="orders-table" style={{ tableLayout: 'fixed', width: '100%' }}>                    
                     <thead>                        
                         <tr>
-                            <th>Role</th>
-                            <th>Username</th>
-                            <th>Email</th>
-                            <th>Phone Number</th>
-                            <th>Shipping Address</th>
-                            <th>Status</th>
-                            <th>Created At</th>
-                            <th className="action-column">Action</th>
+                            <th style={{ width: '100px', maxWidth: '100px' }}>Role</th>
+                            <th style={{ width: '120px', maxWidth: '120px' }}>Username</th>
+                            <th style={{ width: '180px', maxWidth: '180px' }}>Email</th>
+                            <th style={{ width: '120px', maxWidth: '120px' }}>Phone Number</th>
+                            <th style={{ width: '200px', maxWidth: '200px' }}>Shipping Address</th>
+                            <th style={{ width: '80px', maxWidth: '80px' }}>Status</th>
+                            <th style={{ width: '100px', maxWidth: '100px' }}>Created At</th>
+                            <th className="action-column" style={{ width: '150px', maxWidth: '150px' }}>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {currentUsers.length > 0 ? (                             
                             currentUsers.map(user => (
                                 <tr key={user._id} style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>
-                                    <td>{user.role_name}</td>
-                                    <td>{user.username}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.phone_number}</td>
-                                    <td style={{ maxWidth: '200px', wordBreak: 'break-word' }}>{user.shipping_address}</td>
-                                    <td>
+                                    <td style={{ maxWidth: '100px', wordBreak: 'break-word' }}>{user.role_name}</td>
+                                    <td style={{ maxWidth: '120px', wordBreak: 'break-word' }}>{user.username}</td>
+                                    <td style={{ maxWidth: '180px', wordBreak: 'break-word' }}>{user.email}</td>
+                                    <td style={{ maxWidth: '120px', wordBreak: 'break-word' }}>{user.phone_number}</td>
+                                    <td style={{ maxWidth: '200px', wordBreak: 'break-word', whiteSpace: 'normal' }}>{user.shipping_address}</td>
+                                    <td style={{ maxWidth: '80px' }}>
                                         <span className={`badge ${user.status === 'banned' ? 'badge-red' : 'badge-green'}`}>
                                             {user.status || 'active'}
                                         </span>
                                     </td>
-                                    {/* Created At */}
-                                    <td>{new Date(user.createdAt).toLocaleDateString()}</td>                                    <td className="action-column">
-                                        <div className="action-icons">
+                                    <td style={{ maxWidth: '100px', whiteSpace: 'nowrap' }}>{new Date(user.createdAt).toLocaleDateString()}</td>                                    <td className="action-column" style={{ maxWidth: '150px' }}>
+                                        <div className="action-icons" style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', justifyContent: 'center' }}>
                                             {/* Show edit button based on permissions */}
                                             {isSuperAdmin ? (
                                                 // Super Admin can edit anyone
@@ -400,8 +399,9 @@ const handleFilter = () => {
                                                             onClick={() => handleBanUser(user._id, user.status, user.role_name)} 
                                                             title={user.status === 'banned' ? 'Unban User' : 'Ban User'} 
                                                             className={user.status === 'banned' ? 'unban-btn' : 'delete-btn'}
+                                                            style={{ whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px' }}
                                                         >
-                                                            <BanIcon size={16} color="white" />
+                                                            <BanIcon size={14} color="white" />
                                                             {user.status === 'banned' ? 'Unban' : 'Ban'}
                                                         </button>
                                                     );
@@ -412,8 +412,9 @@ const handleFilter = () => {
                                                                 onClick={() => handleBanUser(user._id, user.status, user.role_name)} 
                                                                 title={user.status === 'banned' ? 'Unban User' : 'Ban User'} 
                                                                 className={user.status === 'banned' ? 'unban-btn' : 'delete-btn'}
+                                                                style={{ whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px' }}
                                                             >
-                                                                <BanIcon size={16} color="white" />
+                                                                <BanIcon size={14} color="white" />
                                                                 {user.status === 'banned' ? 'Unban' : 'Ban'}
                                                             </button>
                                                         );
@@ -423,9 +424,9 @@ const handleFilter = () => {
                                                                 disabled
                                                                 title="Only Super Admins can ban/unban Admin users"
                                                                 className="disabled-btn"
-                                                                style={{ opacity: 0.5, cursor: 'not-allowed' }}
+                                                                style={{ opacity: 0.5, cursor: 'not-allowed', whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px' }}
                                                             >
-                                                                <BanIcon size={16} color="#6c757d" />
+                                                                <BanIcon size={14} color="#6c757d" />
                                                             </button>
                                                         );
                                                     }

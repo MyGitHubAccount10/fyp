@@ -25,16 +25,16 @@ const DEFAULT_DESIGN = {
 };
 
 // Helper function to adjust color brightness (It is used to create gradients)
-const adjustBrightness = (hex, percent) => {
-  const num = parseInt(hex.replace('#', ''), 16);
-  const amt = Math.round(2.55 * percent);
-  const R = (num >> 16) + amt;
-  const G = (num >> 8 & 0x00FF) + amt;
-  const B = (num & 0x0000FF) + amt;
-  return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-    (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-    (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
-};
+// const adjustBrightness = (hex, percent) => {
+//   const num = parseInt(hex.replace('#', ''), 16);
+//   const amt = Math.round(2.55 * percent);
+//   const R = (num >> 16) + amt;
+//   const G = (num >> 8 & 0x00FF) + amt;
+//   const B = (num & 0x0000FF) + amt;
+//   return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+//     (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+//     (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+// };
 
 // Download an image file
 const downloadImage = (dataUrl, filename) => {
@@ -63,14 +63,17 @@ const generateSkimboardImage = async (designData, previewElement, scale = 2) => 
   canvaContext.clip();
 
   // Draw background
-  if (designData.backgroundPattern === 'gradient') {
-    const gradient = canvaContext.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, designData.color);
-    gradient.addColorStop(1, adjustBrightness(designData.color, -20));
-    canvaContext.fillStyle = gradient;
-  } else {
-    canvaContext.fillStyle = designData.color;
-  }
+  // if (designData.backgroundPattern === 'gradient') {
+  //   const gradient = canvaContext.createLinearGradient(0, 0, width, height);
+  //   gradient.addColorStop(0, designData.color);
+  //   gradient.addColorStop(1, adjustBrightness(designData.color, -20));
+  //   canvaContext.fillStyle = gradient;
+  // } else {
+  //   canvaContext.fillStyle = designData.color;
+  // }
+
+       canvaContext.fillStyle = designData.color;
+
   
   canvaContext.fillRect(0, 0, width, height);
 
@@ -794,11 +797,16 @@ export default function CustomiseImagePage() {
             <div
               ref={previewRef} 
               className="skimboard-preview" 
-              style={{ 
+                style={{ 
                 background: currentDesign.backgroundPattern === 'gradient' 
-                  ? `linear-gradient(135deg, ${currentDesign.color}, ${adjustBrightness(currentDesign.color, -20)})` 
+                  ? `linear-gradient(135deg, ${currentDesign.color}, ${currentDesign.color}, -20deg)` 
                   : currentDesign.color 
               }}
+              // style={{ 
+              //   background: currentDesign.backgroundPattern === 'gradient' 
+              //     ? `linear-gradient(135deg, ${currentDesign.color}, ${adjustBrightness(currentDesign.color, -20)})` 
+              //     : currentDesign.color 
+              // }}
               onClick={() => setSelectedElement(null)}
             >
               {/* Text Element */}

@@ -13,6 +13,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CustomiseImagePage.css';
 import Header from './Header';
+import { useCustomiseContext } from './hooks/useCustomiseContext';
 
 // Default settings for a new skimboard design
 const DEFAULT_DESIGN = {
@@ -185,6 +186,7 @@ const drawText = (canvaContext, designData, scaleX, scaleY) => {
 
 export default function CustomiseImagePage() {
   const navigate = useNavigate();
+  const { dispatch } = useCustomiseContext();
   
   // Which side we're currently editing (top or bottom)
   const [currentSide, setCurrentSide] = useState('top');
@@ -564,16 +566,10 @@ export default function CustomiseImagePage() {
     try {
       const topSideImage = await generateSkimboardImage(designs.top, previewRef.current, 2);
       const bottomSideImage = await generateSkimboardImage(designs.bottom, previewRef.current, 2);
-      
-      navigate('/customise', {
-        state: {
-          customImages: {
-            topSide: topSideImage,
-            bottomSide: bottomSideImage,
-            timestamp: Date.now()
-          }
-        }
-      });
+
+      dispatch({ type: 'SET_TOP_IMAGE', payload: topSideImage });
+      dispatch({ type: 'SET_BOTTOM_IMAGE', payload: bottomSideImage });
+      navigate('/customise');
     } catch (error) {
       console.error('Failed to generate images:', error);
       alert('Failed to generate images. Please try again.');

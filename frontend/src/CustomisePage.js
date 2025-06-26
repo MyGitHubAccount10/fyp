@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -7,12 +7,48 @@ import { useCustomiseContext } from './hooks/useCustomiseContext';
 
 const CustomisePage = () => {
     const navigate = useNavigate();
-    const { dispatch } = useCustomiseContext();
+    const { customItem, dispatch } = useCustomiseContext();
 
     const [topImageFile, setTopImageFile] = useState(null);
     const [bottomImageFile, setBottomImageFile] = useState(null);
-    const [topImagePreview, setTopImagePreview] = useState(null);
-    const [bottomImagePreview, setBottomImagePreview] = useState(null);
+    const [topImagePreview, setTopImagePreview] = useState(customItem ? customItem.top_image : null);
+    const [bottomImagePreview, setBottomImagePreview] = useState(customItem ? customItem.bottom_image : null);
+
+    // Helper function to convert Data URL to File object using fetch
+    const dataURLtoFile = async (dataurl, filename) => {
+        const response = await fetch(dataurl);
+        const blob = await response.blob(); // Get the Blob from the response
+        const mimeType = blob.type; // Extract MIME type from the Blob
+
+        // Create a File object from the Blob
+        return new File([blob], filename, { type: mimeType });
+    };
+
+    useEffect(() => {
+        const updateImagesFromContext = async () => {
+            if (customItem) {
+                if (customItem.top_image) {
+                    const file = await dataURLtoFile(customItem.top_image, `top_custom_${Date.now()}.png`);
+                    setTopImageFile(file);
+                    setTopImagePreview(customItem.top_image); // Data URL is still the preview
+                } else {
+                    setTopImageFile(null);
+                    setTopImagePreview(null);
+                }
+                if (customItem.bottom_image) {
+                    const file = await dataURLtoFile(customItem.bottom_image, `bottom_custom_${Date.now()}.png`);
+                    setBottomImageFile(file);
+                    setBottomImagePreview(customItem.bottom_image); // Data URL is still the preview
+                } else {
+                    setBottomImageFile(null);
+                    setBottomImagePreview(null);
+                }
+                // ... (rest of your customItem updates)
+            }
+        };
+
+        updateImagesFromContext();
+    }, [customItem]);
 
     const [type, setType] = useState('');
     const [shape, setShape] = useState('');

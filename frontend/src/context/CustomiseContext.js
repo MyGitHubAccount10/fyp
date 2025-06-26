@@ -10,6 +10,26 @@ export const customiseReducer = (state, action) => {
                 updatedAt: new Date().toISOString()
             };
 
+        case 'SET_TOP_IMAGE':
+            return {
+                ...state,
+                customItem: {
+                    ...state.customItem,
+                    top_image: action.payload
+                },
+                updatedAt: new Date().toISOString()
+            };
+
+        case 'SET_BOTTOM_IMAGE':
+            return {
+                ...state,
+                customItem: {
+                    ...state.customItem,
+                    bottom_image: action.payload
+                },
+                updatedAt: new Date().toISOString()
+            };
+
         case 'CLEAR_CUSTOM_ITEM':
             return {
                 customItem: null

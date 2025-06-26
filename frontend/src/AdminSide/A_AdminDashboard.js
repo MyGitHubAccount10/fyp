@@ -7,8 +7,6 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-// Placeholder Icons (reusing some from AdminSidebar/ManageProducts, adding new ones)
-const DashboardIcon = () => <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 3H20C20.5304 3 21.0391 3.21071 21.4142 3.58579C21.7893 3.96086 22 4.46957 22 5V19C22 19.5304 21.7893 20.0391 21.4142 20.4142C21.0391 20.7893 20.5304 21 20 21H4C3.46957 21 2.96086 20.7893 2.58579 20.4142C2.21071 20.0391 2 19.5304 2 19V5C2 4.46957 2.21071 3.96086 2.58579 3.58579C2.96086 3.21071 3.46957 3 4 3H10ZM10 3V21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 const MoneyIcon = ({ color = "currentColor", size = 24 }) => (
   <svg
     viewBox="0 0 24 24"
@@ -124,7 +122,7 @@ function AdminDashboard() {
 
             const ordersData = await ordersResponse.json();
 
-            // Try to fetch products data (optional)
+            // Fetch products data
             let productsData = [];
             try {
                 const productsResponse = await fetch('/api/product', {
@@ -175,21 +173,19 @@ function AdminDashboard() {
 
         // Calculate pending fulfillment
         const pendingOrders = ordersData.filter(order => 
-            order.status_id?.status_name === 'Pending' || 
+            order.status_id?.status_name === 'Order Placed' ||
             order.status_id?.status_name === 'Processing' ||
             order.status_id?.status_name === 'Confirmed'
         );
         const pendingFulfillment = pendingOrders.length;
 
         setSalesData({
-            totalSalesMonth: Math.round(totalSalesMonth),
+            totalSalesMonth: Math.round(totalSalesMonth), 
             newOrdersToday,
-            pendingFulfillment,
-            lowStockItems: 0, // Will be updated by processProducts
-            outOfStockItems: 0, // Will be updated by processProducts
+            pendingFulfillment
         });
 
-        // Set recent orders (last 5 orders)
+        // Fetch recent orders (up to 5)
         const recentOrdersData = ordersData
             .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             .slice(0, 5)
@@ -204,10 +200,10 @@ function AdminDashboard() {
         setRecentOrders(recentOrdersData);
         
         // Generate daily sales data for chart
-        generateDailySalesChart(ordersData);
+        generateSalesChartForAWeek(ordersData);
     };
 
-    const generateDailySalesChart = (ordersData) => {
+    const generateSalesChartForAWeek = (ordersData) => {
         const dailyData = {};
         const last7Days = [];
         
@@ -239,7 +235,7 @@ function AdminDashboard() {
     const processProducts = (productsData) => {
         setProducts(productsData);
         
-        // Helper function to get product status (same logic as AllProductsPage)
+        // Getting product status
         const getProductStatus = (product) => {
             if (product.warehouse_quantity === 0) return 'Out of Stock';
             if (product.warehouse_quantity <= (product.threshold || 10)) return 'Limited Stock';
@@ -255,7 +251,7 @@ function AdminDashboard() {
             getProductStatus(product) === 'Limited Stock'
         ).length;
 
-        // Debug logging
+        // Console output to show products amt
         console.log('Products data:', productsData.length);
         console.log('Out of stock items:', outOfStockItems);
         console.log('Low stock items:', lowStockItems);
@@ -267,12 +263,14 @@ function AdminDashboard() {
         }));
     };
 
+    // Set currency to Singapore Dollar
     const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat('en-SG', {
             style: 'currency',
             currency: 'SGD'
         }).format(amount || 0);
     };
+
     // Function to get status class (reusing or similar to ManageProductsPage)
     const getStatusClass = (status) => {
         switch (status) {
@@ -285,12 +283,13 @@ function AdminDashboard() {
         }
     };
 
-     // Simple handlers for quick action buttons (replace with actual routing/logic)
-     const handleAddProduct = () => { navigate('/add-product'); };
-     const handleViewOrders = () => { navigate('/all-orders'); };
-     const handleManageInventory = () => { navigate('/all-products'); };
-     const handleReviewDesigns = () => { navigate('/admin/custom-designs'); };
-     const handleViewFullSales = () => { navigate('/sales-report'); };
+     // Reusable navigation functions
+     const navigatetoAddP = () => { navigate('/add-product'); };
+     const navigatetoAllO = () => { navigate('/all-orders'); };
+     const navigatetoAllP = () => { navigate('/all-products'); };
+     const navigatetoSales = () => { navigate('/sales-report'); };
+     const navigatetoAllC = () => { navigate('/all-customers'); };
+     const navigatetoAddAdmin = () => { navigate('/add-admin'); };
 
     if (loading) {
         return (
@@ -305,108 +304,76 @@ function AdminDashboard() {
         );
     }
 
-    if (error) {
-        return (
-            <div className="admin-dashboard-page">
-                <AdminHeader />
-                <div className="manage-products-page">
-                    <div style={{ textAlign: 'center', padding: '50px', color: 'red' }}>
-                        {error}
-                        <br />
-                        <button 
-                            onClick={fetchDashboardData}
-                            style={{ 
-                                marginTop: '10px', 
-                                padding: '10px 20px', 
-                                backgroundColor: '#FA704C',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '4px',
-                                cursor: 'pointer'
-                            }}
-                        >
-                            Retry
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-
-
     return (
-        <div className="admin-dashboard-page"> {/* Page-specific class */}
+        <div> 
         <AdminHeader />
-            <div className="manage-products-page"> {/* Container for padding */}
-                <h2 className="page-title">Admin Dashboard</h2> {/* Reuse page-title class */}
+            <div className="manage-products-page"> 
+                <h2 className="page-title">Admin Dashboard</h2> 
 
                 <div className="dashboard-stats">
 
-                    <div className="stat-card" onClick={() => navigate('/sales-report')}>
+                    <div className="stat-card" onClick={navigatetoSales}>
                         <div className="stat-icon icon-sales"><MoneyIcon color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Total Sales (Month)</div>
                             <div className="stat-value">{formatCurrency(salesData.totalSalesMonth)}</div>
                         </div>
                     </div>
-                    <div className="stat-card" onClick={() => navigate('/all-orders')}>
+                    <div className="stat-card" onClick={navigatetoAllO}>
                         <div className="stat-icon icon-new-orders"><NewStarIcon color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">New Orders (Today)</div>
                             <div className="stat-value">{salesData.newOrdersToday}</div>
                         </div>
                     </div>
-                    <div className="stat-card"  onClick={() => navigate('/all-orders')}>
+                    <div className="stat-card"  onClick={navigatetoAllO}>
                         <div className="stat-icon icon-fulfillment"><ClockIcon color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Pending Fulfillment</div>
                             <div className="stat-value">{salesData.pendingFulfillment}</div>
                         </div>
                     </div>
-                    <div className="stat-card stat-warning" onClick={() => navigate('/all-products')} title={`${salesData.lowStockItems} products with limited stock`}> {/* Added warning class for alert icons */}
+                    <div className="stat-card stat-warning" onClick={navigatetoAllP}>
                         <div className="stat-icon icon-low-stock"><AlertTriangleIcon color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Low Stock Items</div>
                             <div className="stat-value">{salesData.lowStockItems}</div>
                         </div>
                     </div>
-                    <div className="stat-card stat-danger" onClick={() => navigate('/all-products')} title={`${salesData.outOfStockItems} products are out of stock`}> {/* Added danger class for potentially critical alerts */}
+                    <div className="stat-card stat-danger" onClick={navigatetoAllP}>
                         <div className="stat-icon icon-out-stock"><AlertTriangleIcon color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Out of Stock Items</div>
                             <div className="stat-value">{salesData.outOfStockItems}</div>
                         </div>
                     </div>
-                    {/* Add more stat cards if they exist beyond the visible area */}
+                    {/* End of stat cards */}
                 </div>
 
-                <div className="dashboard-section quick-actions">
+                <div className="dashboard-section">
                     <h3 className="section-title">Quick Actions</h3>
                     <div className="quick-action-buttons">
-                        <button className="btn-quick-action btn-add-product" onClick={handleAddProduct}>
+                        <button className="btn-quick-action" onClick={navigatetoAddP}>
                             <PlusCircleIcon color="#FA704C" /> Add New Product
                         </button>
-                        <button className="btn-quick-action btn-view-orders" onClick={handleViewOrders}>
+                        <button className="btn-quick-action" onClick={navigatetoAllP}>
+                            <HomeIcon color="#FA704C" /> Manage Inventory
+                        </button>
+                        <button className="btn-quick-action" onClick={navigatetoAllO}>
                             <EyeIcon color="#FA704C" /> View All Orders
                         </button>
-                        <button className="btn-quick-action btn-manage-inventory" onClick={handleManageInventory}>
-                            <HomeIcon color="#FA704C" /> Manage Products
+                        <button className="btn-quick-action" onClick={navigatetoAllC}>
+                            <PencilIcon color="#FA704C" /> View All Customers
                         </button>
-                        {/* <button className="btn-quick-action btn-review-designs" onClick={handleReviewDesigns}>
-                            <PencilIcon color="#FA704C" /> Review Custom Designs
-                        </button> */}
-                        {/* <button className="btn-quick-action btn-view-sales" onClick={handleViewFullSales}>
-                            <MoneyIcon  size={32} /> View Full Sales Report
-                        </button> */}
-
-                        
+                        <button className="btn-quick-action" onClick={navigatetoAddAdmin}>
+                            <PencilIcon color="#FA704C" /> Add an Admin/User
+                        </button>
                     </div>
                 </div>
 
-                <div className="dashboard-section recent-orders">
+                <div className="dashboard-section">
                     <h3 className="section-title">Recent Orders</h3>
-                    <div className="table-container"> {/* Wrap table for potential overflow */}
+                    <div>
                         <table className="recent-orders-table">
                             <thead>
                                 <tr>
@@ -430,32 +397,23 @@ function AdminDashboard() {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="5" style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                                        <td colSpan="5" style={{ textAlign: 'center', padding: '20px', color: 'grey' }}>
                                             No recent orders found
                                         </td>
                                     </tr>
                                 )}
-                                {/* Add placeholder rows if needed */}
-                                {recentOrders.length > 0 && recentOrders.length < 3 && Array.from({ length: 3 - recentOrders.length }).map((_, i) => (
-                                    <tr key={`order-placeholder-${i}`}>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                    </tr>
-                                ))}
                             </tbody>
                         </table>
                     </div>
                     <div className="section-footer-link">
-                        <a href="#" className="view-all-link" onClick={(e) => {e.preventDefault(); handleViewOrders();}}>
-                            View All Orders {">"}
+                        <a href="#" className="view-all-link" onClick={(e) => {e.preventDefault(); navigatetoAllO();}}>
+                            View All Orders {"->"}
                         </a>
                     </div>
                 </div>
 
-                <div className="dashboard-section sales-snapshot">
+                {/* Sales Snapshot */}
+                <div className="dashboard-section">
                     <h3 className="section-title">Sales Snapshot (Last 7 Days)</h3>
                     <div style={{ height: '200px', display: 'flex', alignItems: 'end', gap: '10px', padding: '20px 0' }}>
                         {salesData.dailySales && salesData.dailySales.length > 0 ? (
@@ -500,13 +458,12 @@ function AdminDashboard() {
                         )}
                     </div>
                     <div className="section-footer-link">
-                        <a href="#" className="view-all-link" onClick={(e) => {e.preventDefault(); handleViewFullSales();}}>
-                            View Full Sales Report {">"}
+                        <a href="#" className="view-all-link" onClick={(e) => {e.preventDefault(); navigatetoSales();}}>
+                            View Full Sales Report {"->"}
                         </a>
                     </div>
                 </div>
 
-                {/* Add other dashboard sections here */}
 
             </div>
         </div>

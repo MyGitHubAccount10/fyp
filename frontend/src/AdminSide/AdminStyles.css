@@ -250,6 +250,7 @@ const adminStylesCss = `
 .dashboard-section .table-container table { /* Reuse or adapt table styles */
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed; /* Fix table layout to prevent overflow */
 }
 
 .recent-orders-table th,
@@ -257,6 +258,10 @@ const adminStylesCss = `
     text-align: left;
     padding: 12px 15px;
     border-bottom: 1px solid #eee;
+    word-wrap: break-word; /* Break long words */
+    overflow: hidden; /* Hide overflow content */
+    text-overflow: ellipsis; /* Show ... for truncated text */
+    max-width: 0; /* Allow text-overflow to work */
 }
 .recent-orders-table th {
     background-color: #f8f9fa;
@@ -933,17 +938,6 @@ const adminStylesCss = `
 
 
 
-/* `;
-
-// Inject CSS into the document head
-if (typeof document !== 'undefined') {
-  const style = document.createElement('style');
-  style.type = 'text/css';
-  style.appendChild(document.createTextNode(adminStylesCss));
-  document.head.appendChild(style);
-} */
-
-
 
 /* src/AdminSide/AdminStyles.css */
 
@@ -1009,10 +1003,6 @@ input[type="password"]::-ms-clear {
 /* ----------------------------------------------------------------- */
 
 
-/* 
-  Ensure you still have the styles for our custom button from the last step.
-  They should look like this:
-*/
 
 .password-input-wrapper {
   position: relative;

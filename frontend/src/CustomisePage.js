@@ -9,14 +9,16 @@ const CustomisePage = () => {
     const navigate = useNavigate();
     const { dispatch } = useCustomiseContext();
 
+    const [topImageFile, setTopImageFile] = useState(null);
+    const [bottomImageFile, setBottomImageFile] = useState(null);
+    const [topImagePreview, setTopImagePreview] = useState(null);
+    const [bottomImagePreview, setBottomImagePreview] = useState(null);
+
     const [type, setType] = useState('');
     const [shape, setShape] = useState('');
     const [size, setSize] = useState('');
     const [material, setMaterial] = useState('');
     const [thickness, setThickness] = useState('');
-    const [topImage, setTopImage] = useState(null);
-    const [bottomImage, setBottomImage] = useState(null);
-
 
     const [typePrice, setTypePrice] = useState(0);
     const [shapePrice, setShapePrice] = useState(0);
@@ -54,12 +56,12 @@ const CustomisePage = () => {
         if (!thickness) return 'Thickness is required.';
     }
 
-    const validateTopImage = (topImage) => {
-        if (!topImage) return 'Top image is required.';
+    const validateTopImage = (topImageFile) => {
+        if (!topImageFile) return 'Top image is required.';
     }
 
-    const validateBottomImage = (bottomImage) => {
-        if (!bottomImage) return 'Bottom image is required.';
+    const validateBottomImage = (bottomImageFile) => {
+        if (!bottomImageFile) return 'Bottom image is required.';
     }
 
     const handleSubmit = (e) => {
@@ -70,8 +72,8 @@ const CustomisePage = () => {
         const sizeError = validateSize(size);
         const materialError = validateMaterial(material);
         const thicknessError = validateThickness(thickness);
-        const topImageError = validateTopImage(topImage);
-        const bottomImageError = validateBottomImage(bottomImage);
+        const topImageError = validateTopImage(topImageFile);
+        const bottomImageError = validateBottomImage(bottomImageFile);
 
         setTypeError(typeError);
         setShapeError(shapeError);
@@ -91,8 +93,8 @@ const CustomisePage = () => {
             board_size: size,
             material,
             thickness,
-            top_image: topImage,
-            bottom_image: bottomImage,
+            top_image: topImageFile,
+            bottom_image: bottomImageFile,
             customise_price: parseFloat(price.toFixed(2))
         };
         
@@ -131,13 +133,16 @@ const CustomisePage = () => {
                         onChange={e => {
                             const file = e.target.files[0];
                             if (file) {
-                                setTopImage(URL.createObjectURL(file));
+                                setTopImageFile(file);
+                                setTopImagePreview(URL.createObjectURL(file));
                             } else {
-                                setTopImage(null);
+                                setTopImageFile(null);
+                                setTopImagePreview(null);
                             }
                         }}
                         style={inputStyle}
                     />
+                    {topImagePreview && <img src={topImagePreview} alt="Top Preview" style={{ width: '100%', height: 'auto', marginBottom: '15px' }} />}
                     {topImageError && <p style={errorMessageStyle}>{topImageError}</p>}
 
                     <label>Bottom Image:</label>
@@ -147,13 +152,16 @@ const CustomisePage = () => {
                         onChange={e => {
                             const file = e.target.files[0];
                             if (file) {
-                                setBottomImage(URL.createObjectURL(file));
+                                setBottomImageFile(file);
+                                setBottomImagePreview(URL.createObjectURL(file));
                             } else {
-                                setBottomImage(null);
+                                setBottomImageFile(null);
+                                setBottomImagePreview(null);
                             }
                         }}
                         style={inputStyle}
                     />
+                    {bottomImagePreview && <img src={bottomImagePreview} alt="Bottom Preview" style={{ width: '100%', height: 'auto', marginBottom: '15px' }} />}
                     {bottomImageError && <p style={errorMessageStyle}>{bottomImageError}</p>}
                     
                     <label>Board Type:</label>

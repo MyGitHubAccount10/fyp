@@ -53,10 +53,19 @@ const createCustomise = async (req, res) => {
         board_size,
         material,
         thickness,
-        top_image,
-        bottom_image,
         customise_price,
     } = req.body;
+
+    const top_image = req.files && req.files['top_image'] ? req.files.top_image[0].filename : null;
+    const bottom_image = req.files && req.files['bottom_image'] ? req.files.bottom_image[0].filename : null;
+
+    if (!top_image) {
+        return res.status(400).json({error: 'Top image is required'});
+    }
+
+    if (!bottom_image) {
+        return res.status(400).json({error: 'Bottom image is required'});
+    }
     
     try {
         const customise = await Customise.create({
@@ -101,9 +110,16 @@ const updateCustomise = async (req, res) => {
         return res.status(404).json({error: 'Invalid customise ID'});
     }
 
-    const customise = await Customise.findOneAndUpdate({_id: id}, {
-        ...req.body
-    });
+    const updates = {...req.body};
+    if (req.files && req.files.top_image) {
+        updates.top_image = req.files.top_image[0].filename;
+    }
+
+    if (req.files && req.files.bottom_image) {
+        updates.bottom_image = req.files.bottom_image[0].filename;
+    }
+
+    const customise = await Customise.findOneAndUpdate({_id: id}, updates, { new: true });
 
     if (!customise) {
         return res.status(404).json({error: 'Customise not found'});

@@ -165,16 +165,20 @@ function OrderHistoryPage() {
                                                             </>
                                                         )}
                                                         { item.type === 'customise' && (
-                                                            <div className="order-item-info">
-                                                                <span>Board Type: {item.board_type}</span>
-                                                                <span>Shape: {item.board_shape}</span>
-                                                                <span>Size: {item.board_size}</span>
-                                                                <span>Material: {item.material}</span>
-                                                                <span>Thickness: {item.thickness}</span>
-                                                                <span>Top Image: <img src={item.top_image} alt="Top Customisation" className="order-item-image" /></span>
-                                                                <span>Bottom Image: <img src={item.bottom_image} alt="Bottom Customisation" className="order-item-image" /></span>
-                                                                <span>Price: S${item.customise_price.toFixed(2)}</span>
-                                                            </div>
+                                                            <>
+                                                                <span>Top Image:</span> 
+                                                                <img src={`/images/customise/${item.top_image}`} alt="Top Customisation" className="order-item-image" />
+                                                                <span>Bottom Image:</span> 
+                                                                <img src={`/images/customise/${item.bottom_image}`} alt="Bottom Customisation" className="order-item-image" />
+                                                                <div className="order-item-info">
+                                                                    <span>Board Type: {item.board_type}</span>
+                                                                    <span>Shape: {item.board_shape}</span>
+                                                                    <span>Size: {item.board_size}</span>
+                                                                    <span>Material: {item.material}</span>
+                                                                    <span>Thickness: {item.thickness}</span>
+                                                                    <span>Price: S${item.customise_price.toFixed(2)}</span>
+                                                                </div>
+                                                            </>
                                                         )}
                                                     </li>
                                                 ))

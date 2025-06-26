@@ -42,6 +42,8 @@ function PlaceOrderPage() {
         total: 0,
     });
 
+    const [topImagePreview, setTopImagePreview] = useState(null);
+    const [bottomImagePreview, setBottomImagePreview] = useState(null);
     const alertShown = useRef(false);
 
     // --- MODIFIED: Simplified Guard Logic ---
@@ -107,6 +109,14 @@ function PlaceOrderPage() {
             const calculatedSubtotal = customPrice;
             const calculatedGst = customPrice * GST_RATE;
             const calculatedTotal = customPrice + SHIPPING_FEE + calculatedGst;
+
+            if (customItem.top_image) {
+                setTopImagePreview(URL.createObjectURL(customItem.top_image));
+            }
+
+            if (customItem.bottom_image) {
+                setBottomImagePreview(URL.createObjectURL(customItem.bottom_image));
+            }
             setOrderSummary({
                 items: [customItem],
                 subtotal: calculatedSubtotal,
@@ -115,7 +125,16 @@ function PlaceOrderPage() {
                 total: calculatedTotal,
             });
         }
-    }, [cartItems, customItem]);
+
+        return () => {
+            if (topImagePreview) {
+                URL.revokeObjectURL(topImagePreview);
+            }
+            if (bottomImagePreview) {
+                URL.revokeObjectURL(bottomImagePreview);
+            }
+        };
+    }, [cartItems, customItem, topImagePreview, bottomImagePreview]);
     
     const getUserIdFromToken = (token) => {
         try {
@@ -210,28 +229,36 @@ function PlaceOrderPage() {
 
             if (customItem && cartItems.length === 0) {
                 const customisePrice = typeof customItem.customise_price === 'string' ? parseFloat(customItem.customise_price.replace(/[$,]/g, '')) : parseFloat(customItem.customise_price);
-                const customiseData = {
-                    order: orderId,
-                    board_type: customItem.board_type,
-                    board_shape: customItem.board_shape,
-                    board_size: customItem.board_size,
-                    material: customItem.material,
-                    thickness: customItem.thickness,
-                    top_image: customItem.top_image,
-                    bottom_image: customItem.bottom_image,
-                    customise_price: customisePrice.toFixed(2)
-                };
+                const customiseFormData = new FormData();
+                customiseFormData.append('order', orderId);
+                customiseFormData.append('board_type', customItem.board_type);
+                customiseFormData.append('board_shape', customItem.board_shape);
+                customiseFormData.append('board_size', customItem.board_size);
+                customiseFormData.append('material', customItem.material);
+                customiseFormData.append('thickness', customItem.thickness);
+                customiseFormData.append('customise_price', customisePrice.toFixed(2));
+                
+                if (customItem.top_image) {
+                    customiseFormData.append('top_image', customItem.top_image);
+                }
+
+                if (customItem.bottom_image) {
+                    customiseFormData.append('bottom_image', customItem.bottom_image);
+                }
 
                 const customiseResponse = await fetch('/api/customise', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`},
-                    body: JSON.stringify(customiseData)
+                    headers: { 'Authorization': `Bearer ${user.token}`},
+                    body: customiseFormData
                 });
 
                 if (!customiseResponse.ok) {
                     const errorResult = await customiseResponse.json();
                     throw new Error(errorResult.error || 'Failed to add the custom item to the order.');
                 }
+
+                const customiseResult = await customiseResponse.json();
+                customiseDispatch({ type: 'SET_CUSTOM_ITEM', payload: customiseResult });
             }
 
 
@@ -334,11 +361,11 @@ function PlaceOrderPage() {
                                         </div>
                                         <div className="summary-line">
                                             <span>Top Layer Image</span>
-                                            <img className="order-item-image" src={customItem.top_image} alt="Top Customisation" />
+                                            {topImagePreview && <img className="order-item-image" src={topImagePreview} alt="Top Customisation" />}
                                         </div>
                                         <div className="summary-line">
                                             <span>Bottom Layer Image</span>
-                                            <img className="order-item-image" src={customItem.bottom_image} alt="Bottom Customisation" />
+                                            {bottomImagePreview && <img className="order-item-image" src={bottomImagePreview} alt="Bottom Customisation" />}
                                         </div>
                                     </>
                                 )}

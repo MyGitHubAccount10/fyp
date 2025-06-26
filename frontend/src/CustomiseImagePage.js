@@ -1,3 +1,8 @@
+// canvaContext(ctx: short form) is basically a commonly named React 
+// variable to tell the canva(A drawable div container <canva>) what 
+// to display/do
+
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CustomiseImagePage.css';

@@ -270,7 +270,7 @@ function AdminDashboard() {
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
-            currency: 'USD'
+            currency: 'SGD'
         }).format(amount || 0);
     };
     // Function to get status class (reusing or similar to ManageProductsPage)

@@ -208,6 +208,33 @@ function PlaceOrderPage() {
                 }
             }
 
+            if (customItem && cartItems.length === 0) {
+                const customisePrice = typeof customItem.customise_price === 'string' ? parseFloat(customItem.customise_price.replace(/[$,]/g, '')) : parseFloat(customItem.customise_price);
+                const customiseData = {
+                    order: orderId,
+                    board_type: customItem.board_type,
+                    board_shape: customItem.board_shape,
+                    board_size: customItem.board_size,
+                    material: customItem.material,
+                    thickness: customItem.thickness,
+                    top_color: customItem.top_color,
+                    bottom_color: customItem.bottom_color,
+                    customise_price: customisePrice.toFixed(2)
+                };
+
+                const customiseResponse = await fetch('/api/customise', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`},
+                    body: JSON.stringify(customiseData)
+                });
+
+                if (!customiseResponse.ok) {
+                    const errorResult = await customiseResponse.json();
+                    throw new Error(errorResult.error || 'Failed to add the custom item to the order.');
+                }
+            }
+
+
             dispatch({ type: 'CLEAR_CART' });
             customiseDispatch({ type: 'CLEAR_CUSTOM_ITEM' });
             alert('Order placed successfully!');

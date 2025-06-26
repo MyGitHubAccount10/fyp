@@ -15,8 +15,8 @@ const PencilIcon = ({ size = 18, color = "currentColor" }) => (
 );
 const BanIcon = ({ size = 18, color = "currentColor" }) => (
   <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
-    <circle cx="12" cy="12" r="9" stroke={color} strokeWidth="2" />
-    <line x1="7" y1="7" x2="17" y2="17" stroke={color} strokeWidth="2" strokeLinecap="round" />
+    <circle cx="12" cy="12" r="10" stroke={color} strokeWidth="2" />
+    <path d="m4.9 4.9 14.2 14.2" stroke={color} strokeWidth="2" strokeLinecap="round" />
   </svg>
 );
 
@@ -133,7 +133,7 @@ function AllCustomersPage() {
     const handleEditUser = (user) => {
         console.log("Editing user:", user);
         // Check if current user has permission to edit this specific user
-        const canEdit = isSuperAdmin || (currentUserRole === 'Admin' && user.role_name !== 'Admin' && user.role_name !== 'Super Admin' && user.role_name !== 'Super-Admin');
+        const canEdit = isSuperAdmin || (currentUserRole === 'Admin' && user.role_name === 'Customer');
         
         // Navigate to customer details page with edit permission info
         Navigate(`/customer-details/${user._id}`, { 
@@ -340,10 +340,10 @@ const handleFilter = () => {
             </div>
             </div>                {/* Users Table */}
             <div className="orders-table-container">
-                <table className="orders-table">                    <thead>                        <tr>
-                            <th>ID</th>
+                <table className="orders-table">                    
+                    <thead>                        
+                        <tr>
                             <th>Role</th>
-                            <th>Full Name</th>
                             <th>Username</th>
                             <th>Email</th>
                             <th>Phone Number</th>
@@ -354,10 +354,10 @@ const handleFilter = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentUsers.length > 0 ? (                             currentUsers.map(user => (                                <tr key={user._id} style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>
-                                    <td>{user._id}</td>
+                        {currentUsers.length > 0 ? (                             
+                            currentUsers.map(user => (
+                                <tr key={user._id} style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>
                                     <td>{user.role_name}</td>
-                                    <td>{user.full_name}</td>
                                     <td>{user.username}</td>
                                     <td>{user.email}</td>
                                     <td>{user.phone_number}</td>
@@ -367,37 +367,72 @@ const handleFilter = () => {
                                             {user.status || 'active'}
                                         </span>
                                     </td>
+                                    {/* Created At */}
                                     <td>{new Date(user.createdAt).toLocaleDateString()}</td>                                    <td className="action-column">
                                         <div className="action-icons">
                                             {/* Show edit button based on permissions */}
-                                            {(isSuperAdmin || (currentUserRole === 'Admin' && user.role_name !== 'Admin' && user.role_name !== 'Super Admin' && user.role_name !== 'Super-Admin')) ? (
+                                            {isSuperAdmin ? (
+                                                // Super Admin can edit anyone
                                                 <button onClick={() => handleEditUser(user)} title="Edit User">
                                                     <PencilIcon />
                                                 </button>
+                                            ) : currentUserRole === 'Admin' ? (
+                                                // Admin can only edit customers
+                                                user.role_name === 'Customer' ? (
+                                                    <button onClick={() => handleEditUser(user)} title="Edit User">
+                                                        <PencilIcon />
+                                                    </button>
+                                                ) : (
+                                                    <button onClick={() => handleEditUser(user)} title="View User (Edit restricted for Admin users)">
+                                                        <PencilIcon />
+                                                    </button>
+                                                )
                                             ) : (
-                                                <button onClick={() => handleEditUser(user)} title="View User (Edit restricted for Admin users)">
+                                                <button onClick={() => handleEditUser(user)} title="View User">
                                                     <PencilIcon />
                                                 </button>
                                             )}
                                             {/* Show ban/unban button based on permissions */}
-                                            {(isSuperAdmin || (currentUserRole === 'Admin' && user.role_name !== 'Admin' && user.role_name !== 'Super Admin' && user.role_name !== 'Super-Admin')) ? (
-                                                <button 
-                                                    onClick={() => handleBanUser(user._id, user.status, user.role_name)} 
-                                                    title={user.status === 'banned' ? 'Unban User' : 'Ban User'} 
-                                                    className={user.status === 'banned' ? 'unban-btn' : 'delete-btn'}
-                                                >
-                                                    <BanIcon />
-                                                </button>
-                                            ) : (
-                                                <button 
-                                                    disabled
-                                                    title={isSuperAdmin ? "Ban/Unban User" : "Only Super Admins can ban/unban Admin users"}
-                                                    className="disabled-btn"
-                                                    style={{ opacity: 0.5, cursor: 'not-allowed' }}
-                                                >
-                                                    <BanIcon />
-                                                </button>
-                                            )}
+                                            {(() => {
+                                                if (isSuperAdmin) {
+                                                    return (
+                                                        <button 
+                                                            onClick={() => handleBanUser(user._id, user.status, user.role_name)} 
+                                                            title={user.status === 'banned' ? 'Unban User' : 'Ban User'} 
+                                                            className={user.status === 'banned' ? 'unban-btn' : 'delete-btn'}
+                                                        >
+                                                            <BanIcon size={16} color="white" />
+                                                            {user.status === 'banned' ? 'Unban' : 'Ban'}
+                                                        </button>
+                                                    );
+                                                } else if (currentUserRole === 'Admin') {
+                                                    if (user.role_name === 'Customer') {
+                                                        return (
+                                                            <button 
+                                                                onClick={() => handleBanUser(user._id, user.status, user.role_name)} 
+                                                                title={user.status === 'banned' ? 'Unban User' : 'Ban User'} 
+                                                                className={user.status === 'banned' ? 'unban-btn' : 'delete-btn'}
+                                                            >
+                                                                <BanIcon size={16} color="white" />
+                                                                {user.status === 'banned' ? 'Unban' : 'Ban'}
+                                                            </button>
+                                                        );
+                                                    } else {
+                                                        return (
+                                                            <button 
+                                                                disabled
+                                                                title="Only Super Admins can ban/unban Admin users"
+                                                                className="disabled-btn"
+                                                                style={{ opacity: 0.5, cursor: 'not-allowed' }}
+                                                            >
+                                                                <BanIcon size={16} color="#6c757d" />
+                                                            </button>
+                                                        );
+                                                    }
+                                                } else {
+                                                    return null;
+                                                }
+                                            })()}
                                         </div>
                                     </td>
                                 </tr>

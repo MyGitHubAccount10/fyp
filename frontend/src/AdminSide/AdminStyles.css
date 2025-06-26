@@ -87,6 +87,37 @@ const adminStylesCss = `
     color: #f1673a; /* Theme color on hover */
 }
 
+/* Override action-icons styles for specific button types */
+.manage-products-page .action-icons .delete-btn,
+.manage-products-page .action-icons .unban-btn,
+.manage-products-page .action-icons .disabled-btn {
+    background: revert !important;
+    border: revert !important;
+    padding: revert !important;
+    color: revert !important;
+    font-size: revert !important;
+    position: static !important;
+    float: none !important;
+    display: inline-flex !important;
+}
+
+/* Ensure action column and icons container have proper positioning */
+.action-column,
+.orders-table .action-column,
+.orders-table td.action-column {
+    position: relative !important;
+    overflow: visible !important;
+}
+
+.action-icons {
+    position: relative !important;
+    display: flex !important;
+    gap: 10px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+}
+
 /* // ---------------------------------------------------------------------
 
 // ---------------------------------------------------------------------
@@ -541,96 +572,136 @@ const adminStylesCss = `
 
 /* Disabled button styles */
 .disabled-btn {
-  background-color: #f8f9fa;
-  color: #6c757d;
-  border: 1px solid #dee2e6;
-  cursor: not-allowed;
+  background-color: #f8f9fa !important;
+  color: #6c757d !important;
+  border: 1px solid #dee2e6 !important;
+  cursor: not-allowed !important;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 14px !important;
 }
 
 .disabled-btn:hover {
-  background-color: #f8f9fa;
-  color: #6c757d;
+  background-color: #f8f9fa !important;
+  color: #6c757d !important;
+}
+
+/* Ban/Delete button styles */
+.delete-btn {
+  background-color: #dc3545 !important;
+  color: white !important;
+  border: 1px solid #dc3545 !important;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 14px !important;
+}
+
+.delete-btn:hover {
+  background-color: #c82333 !important;
+  border-color: #bd2130 !important;
+}
+
+.delete-btn svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
 }
 
 /* Unban button styles */
 .unban-btn {
-  background-color: #28a745;
-  color: white;
-  border: 1px solid #28a745;
+  background-color: #28a745 !important;
+  color: white !important;
+  border: 1px solid #28a745 !important;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 14px !important;
 }
 
 .unban-btn:hover {
-  background-color: #218838;
-  border-color: #1e7e34;
+  background-color: #218838 !important;
+  border-color: #1e7e34 !important;
 }
 
-/* Responsive adjustments for Add Product Page (within existing media queries) */
-@media (max-width: 992px) {
-     .add-product-main-column { min-width: 300px; }
-     .add-product-sidebar-panel { min-width: 200px; }
+.unban-btn svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
 }
 
-@media (max-width: 768px) {
-    .add-product-form-layout {
-        flex-direction: column; /* Stack columns vertically */
-        gap: 20px; /* Adjust gap when stacked */
-    }
-    .add-product-main-column,
-    .add-product-sidebar-panel {
-        flex: none; /* Remove flex grow/shrink */
-        width: 100%; /* Take full width when stacked */
-        min-width: auto; /* Remove min-width constraint */
-        gap: 20px; /* Gap between cards already defined */
-    }
-
-    .btn-back-to-products {
-        font-size: 0.85em;
-        padding: 6px 12px;
-    }
-     .btn-back-to-products svg {
-        width: 14px;
-        height: 14px;
-     }
-
-      .form-section-card {
-        padding: 15px; /* Reduce padding on smaller screens */
-    }
-     .section-card-title {
-         font-size: 1em;
-         margin-bottom: 15px;
-     }
-     /* Reuse form-group, label, input styles - already somewhat responsive */
-
-     .form-actions-vertical {
-        gap: 10px; /* Reduce button gap */
-     }
-     .btn-save-product,
-     .btn-cancel-product {
-         font-size: 0.95em;
-         padding: 10px 15px;
-     }
+/* Disabled button styles */
+.disabled-btn {
+  background-color: #f8f9fa !important;
+  color: #6c757d !important;
+  border: 1px solid #dee2e6 !important;
+  cursor: not-allowed !important;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  font-size: 14px !important;
 }
 
-@media (max-width: 480px) {
-     .form-section-card {
-        padding: 10px;
-    }
-     .section-card-title {
-         font-size: 0.95em;
-         margin-bottom: 10px;
-     }
-     .radio-label {
-        font-size: 0.9em;
-     }
-     .file-input-button,
-     .file-input-text {
-        font-size: 0.85em;
-     }
-      .btn-save-product,
-     .btn-cancel-product {
-         font-size: 0.9em;
-         padding: 8px 12px;
-     }
+.disabled-btn:hover {
+  background-color: #f8f9fa !important;
+  color: #6c757d !important;
+}
+
+.disabled-btn svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+/* Table layout and column width controls */
+.orders-table {
+    table-layout: fixed !important;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Specific column width controls for users table */
+.orders-table th:nth-child(1), .orders-table td:nth-child(1) { width: 10%; } /* Role */
+.orders-table th:nth-child(2), .orders-table td:nth-child(2) { width: 12%; } /* Username */
+.orders-table th:nth-child(3), .orders-table td:nth-child(3) { width: 18%; } /* Email */
+.orders-table th:nth-child(4), .orders-table td:nth-child(4) { width: 12%; } /* Phone */
+.orders-table th:nth-child(5), .orders-table td:nth-child(5) { width: 20%; } /* Address */
+.orders-table th:nth-child(6), .orders-table td:nth-child(6) { width: 8%; } /* Status */
+.orders-table th:nth-child(7), .orders-table td:nth-child(7) { width: 10%; } /* Created */
+.orders-table th:nth-child(8), .orders-table td:nth-child(8) { width: 10%; } /* Action */
+
+/* Text overflow handling for specific columns */
+.orders-table td:nth-child(3) { /* Email column */
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    max-width: 0 !important;
+    white-space: normal !important;
+}
+
+.orders-table td:nth-child(2) { /* Username column */
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
 }
 
 /* --- Orders Page Styles --- */
@@ -728,6 +799,7 @@ const adminStylesCss = `
 .orders-table { /* Reuse or adapt product-table styles */
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed; /* Fix table layout to prevent cells from expanding */
 }
 
 .orders-table th,
@@ -735,6 +807,8 @@ const adminStylesCss = `
     text-align: left;
     padding: 12px 15px;
     border-bottom: 1px solid #eee;
+    position: relative; /* Ensure cells have positioning context */
+    vertical-align: middle; /* Center content vertically */
      /* white-space: nowrap; Prevent text wrapping in cells */
 }
 
@@ -971,4 +1045,37 @@ input[type="password"]::-ms-clear {
 
 .password-toggle-btn:focus {
   outline: none;
+}
+
+/* Responsive table handling for smaller screens */
+@media (max-width: 1024px) {
+    .orders-table th:nth-child(3), .orders-table td:nth-child(3) { width: 15%; } /* Email smaller */
+    .orders-table th:nth-child(5), .orders-table td:nth-child(5) { width: 15%; } /* Address smaller */
+}
+
+@media (max-width: 768px) {
+    .orders-table-container {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .orders-table {
+        min-width: 800px; /* Minimum table width to maintain readability */
+    }
+    
+    .orders-table th, .orders-table td {
+        padding: 8px 6px;
+        font-size: 0.85em;
+    }
+}
+
+@media (max-width: 480px) {
+    .orders-table {
+        min-width: 600px;
+    }
+    
+    .orders-table th, .orders-table td {
+        padding: 6px 4px;
+        font-size: 0.8em;
+    }
 }

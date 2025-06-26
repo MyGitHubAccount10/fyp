@@ -3,12 +3,15 @@ const express = require('express');
 const {
     getCustomise,
     getCustomises,
+    getCustomiseByOrder,
     createCustomise,
     deleteCustomise,
     updateCustomise
 } = require('../controllers/CustomiseController');
 
 const router = express.Router();
+
+router.get('/by-order/:orderId', getCustomiseByOrder);
 
 router.get('/', getCustomises);
 

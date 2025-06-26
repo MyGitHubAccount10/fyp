@@ -24,6 +24,26 @@ const getCustomise = async (req, res) => {
     res.status(200).json(customise);
 }
 
+const getCustomiseByOrder = async (req, res) => {
+    const {orderId} = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(orderId)) {
+        return res.status(404).json({error: 'Invalid order ID'});
+    }
+
+    try {
+        const customise = await Customise.findOne({ order: orderId });
+
+        if (!customise) {
+            return res.status(200).json(null);
+        }
+
+        res.status(200).json(customise);
+    } catch (error) {
+        console.error('Error fetching customises by order:', error);
+        res.status(500).json({ error: `Server error while fetching customise data: ${error.message}` });
+    }
+}
 // Create a new customise
 const createCustomise = async (req, res) => {
     const {
@@ -95,6 +115,7 @@ const updateCustomise = async (req, res) => {
 module.exports = {
     getCustomises,
     getCustomise,
+    getCustomiseByOrder,
     createCustomise,
     deleteCustomise,
     updateCustomise

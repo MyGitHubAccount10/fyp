@@ -34,26 +34,55 @@ function OrderHistoryPage() {
                             });
                             const statusData = statusResponse.ok ? await statusResponse.json() : { status_name: 'Unknown' };
 
-                            const itemsResponse = await fetch(`/api/order-products/by-order/${order._id}`, {
+                            const [itemsResponse, customiseResponse] = await Promise.all([
+                                fetch(`/api/order-products/by-order/${order._id}`, {
                                 headers: { 'Authorization': `Bearer ${user.token}` }
-                            });
-                            if (!itemsResponse.ok) throw new Error(`Failed to fetch items for order ${order._id}`);
+                            }),
+                                fetch(`/api/customise/by-order/${order._id}`, {
+                                    headers: { 'Authorization': `Bearer ${user.token}` }
+                                })
+                            ]);
+
+                            let items = [];
+                            if (itemsResponse.ok) {
                             const itemsData = await itemsResponse.json();
 
                             // ✅ FIX: The data mapping now correctly reads from the 'product_image' field
                             // that your backend is providing, instead of a non-existent 'images' array.
                             const formattedItems = itemsData.map(item => ({
                                 ...item,
+                                type: 'product',
                                 // Safely access populated product data, with fallbacks
                                 product_name: item.product_id ? item.product_id.product_name : 'Product Not Found',
                                 // Use the 'product_image' field directly, with a fallback
                                 product_image: item.product_id ? item.product_id.product_image : 'default.jpg'
                             }));
+                            items = [...items, ...formattedItems];
+                            }
+
+                            if (customiseResponse.ok) {
+                                const customiseData = await customiseResponse.json();
+                                if (customiseData) {
+                                    const customiseItem = {
+                                        _id: customiseData._id,
+                                        type: 'customise',
+                                        board_type: customiseData.board_type,
+                                        board_shape: customiseData.board_shape,
+                                        board_size: customiseData.board_size,
+                                        material: customiseData.material,
+                                        thickness: customiseData.thickness,
+                                        top_color: customiseData.top_color,
+                                        bottom_color: customiseData.bottom_color,
+                                        customise_price: customiseData.customise_price,
+                                    };
+                                    items.push(customiseItem);
+                                }
+                            }
 
                             return {
                                 ...order,
                                 status: statusData.status_name,
-                                items: formattedItems
+                                items: items
                             };
                         } catch (err) {
                             console.error(`Failed to process details for order ${order._id}:`, err);
@@ -126,11 +155,27 @@ function OrderHistoryPage() {
                                             {order.items && order.items.length > 0 ? (
                                                 order.items.map(item => (
                                                     <li key={item._id} className="order-item-detail">
-                                                        <img src={`/images/${item.product_image}`} alt={item.product_name} className="order-item-image" />
-                                                        <div className="order-item-info">
-                                                            <span>{item.product_name} (Qty: {item.order_qty}, Size: {item.order_size || 'N/A'})</span>
-                                                            <span>S${(item.order_unit_price * item.order_qty).toFixed(2)}</span>
-                                                        </div>
+                                                        { item.type === 'product' && (
+                                                            <>
+                                                                <img src={`/images/${item.product_image}`} alt={item.product_name} className="order-item-image" />
+                                                                <div className="order-item-info">
+                                                                    <span>{item.product_name} (Qty: {item.order_qty}, Size: {item.order_size || 'N/A'})</span>
+                                                                    <span>S${(item.order_unit_price * item.order_qty).toFixed(2)}</span>
+                                                                </div>
+                                                            </>
+                                                        )}
+                                                        { item.type === 'customise' && (
+                                                            <div className="order-item-info">
+                                                                <span>Board Type: {item.board_type}</span>
+                                                                <span>Shape: {item.board_shape}</span>
+                                                                <span>Size: {item.board_size}</span>
+                                                                <span>Material: {item.material}</span>
+                                                                <span>Thickness: {item.thickness}</span>
+                                                                <span>Top Color: {item.top_color}</span>
+                                                                <span>Bottom Color: {item.bottom_color}</span>
+                                                                <span>Price: S${item.customise_price.toFixed(2)}</span>
+                                                            </div>
+                                                        )}
                                                     </li>
                                                 ))
                                             ) : (

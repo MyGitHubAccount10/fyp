@@ -26,18 +26,18 @@ const DEFAULT_DESIGN = {
 //-
 // A function to adjust color brightness (It is used to create gradients)
 // clamp () is to make sure Red, Green and Blue values are between 0 and 255(as that is how computers interpret colors)
-// const clamp = (value) => Math.max(0, Math.min(255, value));
+const clamp = (value) => Math.max(0, Math.min(255, value));
 
-// const createGradient = (hex, percent) => {
-//   const num = parseInt(hex.replace('#', ''), 16);
-//   const amt = Math.round(2.55 * percent);
+const createGradient = (hex, percent) => {
+  const num = parseInt(hex.replace('#', ''), 16);
+  const amt = Math.round(2.55 * percent);
 
-//   const r = clamp((num >> 16) + amt);
-//   const g = clamp((num >> 8 & 0xFF) + amt);
-//   const b = clamp((num & 0xFF) + amt);
+  const r = clamp((num >> 16) + amt);
+  const g = clamp((num >> 8 & 0xFF) + amt);
+  const b = clamp((num & 0xFF) + amt);
 
-//   return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
-// };
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+};
 
 //-
 
@@ -68,14 +68,14 @@ const generateSkimboardImage = async (designData, previewElement, scale = 2) => 
   canvaContext.clip();
 
   // Draw background
-  // if (designData.backgroundPattern === 'gradient') {
-  //   const gradient = canvaContext.createLinearGradient(0, 0, width, height);
-  //   gradient.addColorStop(0, designData.color);
-  //   gradient.addColorStop(1, createGradient(designData.color, -20));
-  //   canvaContext.fillStyle = gradient;
-  // } else {
-  //   canvaContext.fillStyle = designData.color;
-  // }
+  if (designData.backgroundPattern === 'gradient') {
+    const gradient = canvaContext.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, designData.color);
+    gradient.addColorStop(1, createGradient(designData.color, -20));
+    canvaContext.fillStyle = gradient;
+  } else {
+    canvaContext.fillStyle = designData.color;
+  }
 
        canvaContext.fillStyle = designData.color;
 
@@ -802,18 +802,13 @@ export default function CustomiseImagePage() {
             <div
               ref={previewRef} 
               className="skimboard-preview" 
-                style={{ 
+              style={{ 
                 background: currentDesign.backgroundPattern === 'gradient' 
-                  ? `linear-gradient(135deg, ${currentDesign.color}, ${currentDesign.color}, -20deg)` 
+                  ? `linear-gradient(135deg, ${currentDesign.color}, ${createGradient(currentDesign.color, -20)})` 
                   : currentDesign.color 
               }}
-              // style={{ 
-              //   background: currentDesign.backgroundPattern === 'gradient' 
-              //     ? `linear-gradient(135deg, ${currentDesign.color}, ${createGradient(currentDesign.color, -20)})` 
-              //     : currentDesign.color 
-              // }}
               onClick={() => setSelectedElement(null)}
-            >
+              >
               {/* Text Element */}
               <div
                 className={`draggable skimboard-text ${selectedElement?.type === 'text' ? 'selected' : ''}`}

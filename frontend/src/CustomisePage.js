@@ -9,6 +9,8 @@ const CustomisePage = () => {
     const navigate = useNavigate();
     const { customItem, dispatch } = useCustomiseContext();
 
+    const [topImageName, setTopImageName] = useState('');
+    const [bottomImageName, setBottomImageName] = useState('');
     const [topImageFile, setTopImageFile] = useState(null);
     const [bottomImageFile, setBottomImageFile] = useState(null);
     const [topImagePreview, setTopImagePreview] = useState(customItem ? customItem.top_image : null);
@@ -29,17 +31,21 @@ const CustomisePage = () => {
             if (customItem) {
                 if (customItem.top_image) {
                     const file = await dataURLtoFile(customItem.top_image, `top_custom_${Date.now()}.png`);
+                    setTopImageName(file.name);
                     setTopImageFile(file);
                     setTopImagePreview(customItem.top_image); // Data URL is still the preview
                 } else {
+                    setTopImageName('');
                     setTopImageFile(null);
                     setTopImagePreview(null);
                 }
                 if (customItem.bottom_image) {
                     const file = await dataURLtoFile(customItem.bottom_image, `bottom_custom_${Date.now()}.png`);
+                    setBottomImageName(file.name);
                     setBottomImageFile(file);
                     setBottomImagePreview(customItem.bottom_image); // Data URL is still the preview
                 } else {
+                    setBottomImageName('');
                     setBottomImageFile(null);
                     setBottomImagePreview(null);
                 }
@@ -162,41 +168,47 @@ const CustomisePage = () => {
                         {' '} before uploading images.
                     </p>
 
-                    <label>Top Image:</label>
+                    <label> {!topImageFile ? 'Top Image:' : 'Selected Top Image:'}</label>
                     <input
                         type="file"
                         name="topImage"
                         onChange={e => {
                             const file = e.target.files[0];
                             if (file) {
+                                setTopImageName(file.name);
                                 setTopImageFile(file);
                                 setTopImagePreview(URL.createObjectURL(file));
                             } else {
+                                setTopImageName('');
                                 setTopImageFile(null);
                                 setTopImagePreview(null);
                             }
                         }}
-                        style={inputStyle}
+                        style={!topImageFile ? inputStyle : { display: "none" }}
                     />
+                    {topImageName && <p style={{ marginBottom: '15px' }}>{topImageName}</p>}
                     {topImagePreview && <img src={topImagePreview} alt="Top Preview" style={{ width: '100%', height: 'auto', marginBottom: '15px' }} />}
                     {topImageError && <p style={errorMessageStyle}>{topImageError}</p>}
 
-                    <label>Bottom Image:</label>
+                    <label> {!bottomImageFile ? 'Bottom Image:' : 'Selected Bottom Image:'}</label>
                     <input
                         type="file"
                         name="bottomImage"
                         onChange={e => {
                             const file = e.target.files[0];
                             if (file) {
+                                setBottomImageName(file.name);
                                 setBottomImageFile(file);
                                 setBottomImagePreview(URL.createObjectURL(file));
                             } else {
+                                setBottomImageName('');
                                 setBottomImageFile(null);
                                 setBottomImagePreview(null);
                             }
                         }}
-                        style={inputStyle}
+                        style={!bottomImageFile ? inputStyle : { display: "none" }}
                     />
+                    {bottomImageName && <p style={{ marginBottom: '15px' }}>{bottomImageName}</p>}
                     {bottomImagePreview && <img src={bottomImagePreview} alt="Bottom Preview" style={{ width: '100%', height: 'auto', marginBottom: '15px' }} />}
                     {bottomImageError && <p style={errorMessageStyle}>{bottomImageError}</p>}
                     
@@ -311,6 +323,32 @@ const CustomisePage = () => {
 
                     <p>Price: ${price}</p>
 
+
+                    <button
+                        type="cancel"
+                        className="complete-purchase-btn"
+                        onClick={() => {
+                            window.scrollTo(0, 0);
+                            setTopImageName('');
+                            setTopImageFile(null);
+                            setTopImagePreview(null);
+                            setBottomImageName('');
+                            setBottomImageFile(null);
+                            setBottomImagePreview(null);
+                            setType('');
+                            setShape('');
+                            setSize('');
+                            setMaterial('');
+                            setThickness('');
+                            setTypePrice(0);
+                            setShapePrice(0);
+                            setSizePrice(0);
+                            setMaterialPrice(0);
+                            setThicknessPrice(0);
+                        }}
+                        style={{ backgroundColor: '#333', color: '#fff', margin: '12px', padding: '12px' }}>
+                        Reset Custom Order
+                    </button>        
                     <button
                         type="submit"
                         className="complete-purchase-btn"

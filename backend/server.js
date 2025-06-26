@@ -5,6 +5,7 @@ const cors = require('cors'); // <--- ✅ Add this line
 
 const categoryRoutes = require('./routes/CategoryRoute');
 const customiseRoutes = require('./routes/CustomiseRoute');
+const customiseImgRoutes = require('./routes/CustomiseImgRoute');
 const orderProductRoutes = require('./routes/OrderProductRoute');
 const orderRoutes = require('./routes/OrderRoute');
 const productRoutes = require('./routes/ProductRoute');
@@ -56,6 +57,7 @@ try {
 
 app.use('/api/category', categoryRoutes);
 app.use('/api/customise', customiseRoutes);
+app.use('/api/customise-img', customiseImgRoutes);
 app.use('/api/order-products', orderProductRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/product', productRoutes);

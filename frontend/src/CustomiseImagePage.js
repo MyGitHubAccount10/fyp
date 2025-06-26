@@ -405,7 +405,7 @@ export default function CustomiseImagePage() {
       });
 
       // Upload files to backend using multer
-      const response = await fetch(`${BACKEND_URL}/api/customiseImg/upload-multiple`, {
+      const response = await fetch(`${BACKEND_URL}/api/customise-img/upload-multiple`, {
         method: 'POST',
         body: formData,
       });

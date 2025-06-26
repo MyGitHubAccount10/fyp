@@ -2,8 +2,12 @@
 // variable to tell the canva(A drawable div container <canva>) what 
 // to display/do
 
-// Adjust Brightness
 
+//Disclaimer:
+//This file along with CustomiseImagePage.css is made with conjoined efforts of ChatGPT and GitHub Copilot
+// The code structure and logic have been influenced by a certain customize t-shirt website.
+// but the implementation is original and unique to this project.
+// It is thoroughly examined and tested to ensure that it is bug free and works as intended.
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';

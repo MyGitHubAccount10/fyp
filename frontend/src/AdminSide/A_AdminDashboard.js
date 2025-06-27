@@ -1,3 +1,9 @@
+// This js file is made by ai. But is heavily edited in accordance to fair use.
+// It is also heavilly tested to work as intended by me
+// Prompts includes: why does these not work, how to make this work, submitting error messages, how does these lines of codes work. Where can i find these part of the code. How to fix it. Make these Page look like the image provided.(did like 7 tries before, before it finally worked, and then started coding. I did took note of the css because each file has its own css and it was too long, so i chose the pages between the products, orders and customers with the best css, and reused it for all 3 pages, deleted the ones that are no longer used, and create divs to accomodate the new ones. I did also a lot some of my own css, and edited some that was not looking/working as intended. Magority of it was overflowing text. Which apparently the ai is really bad at fixing)
+// Output such as giving me codes(which still fails majority of the time) and giving me suggestions on how to fix it. And also gives ingenius improvement tht i did not thought of.
+
+
 import React, { useState, useEffect } from 'react';
 import AdminHeader from '../AdminHeader';
 import { useNavigate } from 'react-router-dom';
@@ -92,10 +98,11 @@ function AdminDashboard() {
 
     const clacOrders = (orders) => {
         const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds());
         const month = new Date(now.getFullYear(), now.getMonth(), 1);
         let totalMonthlySales = 0;
         let newOrdersToday = 0;
+        console.log('today:', today);
 
         orders.forEach(order => {
         const orderDate = new Date(order.createdAt);
@@ -107,6 +114,8 @@ function AdminDashboard() {
 
         // Count orders for today
         if (orderDate >= today) {
+            // This helps to ensure that the order is counted only if it was created today
+            // and the reason it is comparing if the orderDate is greater than or equal to today
             newOrdersToday++;
         }
         });

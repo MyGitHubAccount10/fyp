@@ -154,7 +154,7 @@ const adminStylesCss = `
 
 .stat-card {
     background-color: #fff;
-    padding: 20px;
+    padding: 10px;
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
     display: flex;
@@ -196,22 +196,20 @@ const adminStylesCss = `
     color: #333;
 }
 
-.dashboard-section {
-    background-color: #fff;
+.card {
+    background-color: #ffffff;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    box-shadow: 0 1px 4px #0000002a;
     margin-bottom: 30px;
 }
 
-.dashboard-section .section-title {
-    font-size: 1.3em;
+.card .section-title {
     font-weight: bold;
     margin-top: 0;
-    margin-bottom: 20px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
-    color: #333;
+    border-bottom: 1px solid #868686;
+    color: #000000;
 }
 
 .quick-action-buttons {
@@ -259,9 +257,7 @@ const adminStylesCss = `
     padding: 12px 15px;
     border-bottom: 1px solid #eee;
     word-wrap: break-word; /* Break long words */
-    overflow: hidden; /* Hide overflow content */
-    text-overflow: ellipsis; /* Show ... for truncated text */
-    max-width: 0; /* Allow text-overflow to work */
+    text-overflow: ellipsis; 
 }
 .recent-orders-table th {
     background-color: #f8f9fa;
@@ -270,34 +266,17 @@ const adminStylesCss = `
     color: #555;
     text-transform: uppercase;
 }
-.recent-orders-table tbody tr:last-child td {
-    border-bottom: none;
-}
 
-.sales-chart-placeholder {
-    background-color: #e0e0e0; /* Grey placeholder color */
-    height: 200px; /* Example height */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #555;
-    font-size: 1.1em;
-    border-radius: 4px;
-    margin-bottom: 15px;
-}
-
-.section-footer-link {
-    text-align: left;
+.coloured-link {
     margin-top: 10px;
-}
-.view-all-link {
-    color: #f1673a; /* Theme color */
+    color: #f1673a;
     text-decoration: none;
     font-weight: 500;
-    font-size: 0.95em;
+    font-size: 15px;
 }
-.view-all-link:hover {
+.coloured-link:hover {
     text-decoration: underline;
+    cursor: pointer;
 }
 
 

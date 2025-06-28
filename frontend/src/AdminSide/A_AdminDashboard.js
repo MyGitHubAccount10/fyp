@@ -338,7 +338,8 @@ function AdminDashboard() {
                                             <td>
                                                 <div className="coloured-link" 
                                                 onClick={() => navigatetoIndividualOrder(order.id)}
-                                                title={`Full ID: ${order.id}` }
+                                                title={`Konami code: Up, Up, Down, Down, Left, Right, Left, Right, B, A.`}
+                                                    // `Full ID: ${order.id}` }
                                                 >
                                                     {order.shortId}
                                                 </div>

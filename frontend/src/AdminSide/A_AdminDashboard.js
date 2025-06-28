@@ -36,7 +36,6 @@ function AdminDashboard() {
     const navigate = useNavigate();
     const [useSalesData, setUseSalesData] = useState(initialSalesData);
     const [recentOrders, setRecentOrders] = useState(initialRecentOrders);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     // Fetch data once per reload
@@ -46,13 +45,21 @@ function AdminDashboard() {
 
     const fetchData = async () => {
         try {
-            setLoading(true);
             
             // Check if admin has logged in
             const checkAdmin = JSON.parse(localStorage.getItem('admin_user'));
             if (!checkAdmin || !checkAdmin.token) {
-                setError('This admin has not logged in yet.');
+                return;
             }
+
+            // Fetch products dtat
+            const productsRes = await fetch('/api/product', {
+                headers: {
+                    'Authorization': `Bearer ${checkAdmin.token}`,// Get admin stuff
+                    'Content-Type': 'application/json'
+                }
+            });
+            const products = await productsRes.json();
 
             // Fetch orders data
             const ordersRes = await fetch('/api/orders/admin/all', {
@@ -62,39 +69,33 @@ function AdminDashboard() {
                     'Content-Type': 'application/json'
                 }
             });
-
-            if (!ordersRes.ok) {
-                setError('Load Order Failded. Please try again later.');
-            }
-
             const orders = await ordersRes.json();
 
-            // Fetch product datas
-            let fetchProducts = [];
-            try {
-                const productsRes = await fetch('/api/product', {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                fetchProducts = await productsRes.json();
-
-            } catch (err) {
-                console.warn('Failed to fetch products data:', err);
-            }
-
-            // IMPORTANT! Uses the fetched data
+            // Process data separately
+            calcProducts(products);
             calcOrders(orders);
-            processProducts(fetchProducts);
+
             setError('');
         } catch (err) {
             console.error('Error fetching dashboard data:', err);
             setError('Failed to load dashboard data');
-        } finally {
-            setLoading(false);
-        }
+        } 
     };
+
+    
+    const calcProducts = (products) => {
+        const outOfStockItems = products.filter(p => p.warehouse_quantity === 0).length;
+        const lowStockItems = products.filter(p => 
+            p.warehouse_quantity > 0 && p.warehouse_quantity <= (p.threshold || 10)
+        ).length;
+
+        setUseSalesData(prev => ({
+            ...prev,
+            lowStockItems,
+            outOfStockItems
+        }));
+    };
+
 
     const calcOrders = (orders) => {
         const now = new Date();
@@ -197,36 +198,6 @@ function AdminDashboard() {
         setUseSalesData(prev => ({ ...prev, dailySales: chartData }));
     };
 
-    const processProducts = (iCanCallThisAnythingIWant) => {
-        
-        // Getting product status
-        const getProductStatus = (thiszItem) => {
-            if (thiszItem.warehouse_quantity === 0) return 'Out of Stock';
-            if (thiszItem.warehouse_quantity <= (thiszItem.threshold || 10)) return 'Limited Stock';
-            return 'In Stock';
-        };
-        
-        // Calculate low stock and out of stock items using the same logic as AllProductsPage
-        const outOfStockItems = iCanCallThisAnythingIWant.filter(product => 
-            getProductStatus(product) === 'Out of Stock'
-        ).length;
-        
-        const lowStockItems = iCanCallThisAnythingIWant.filter(product => 
-            getProductStatus(product) === 'Limited Stock'
-        ).length;
-
-        // Console output to check if its right
-        console.log('Products data:', iCanCallThisAnythingIWant.length);
-        console.log('Out of stock items:', outOfStockItems);
-        console.log('Low stock items:', lowStockItems);
-
-        setUseSalesData(prev => ({
-            ...prev,
-            lowStockItems,
-            outOfStockItems
-        }));
-    };
-
     // Set currency to Singapore Dollar (Could be changed to US dollar) 
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-SG', {
@@ -259,19 +230,7 @@ function AdminDashboard() {
      const navigatetoIndividualOrder = (orderId) => { navigate(`/order-details/${orderId}`); };
 
 
-     // This shows when you reload the page, but it have not yet fetched the datas
-    if (loading) {
-        return (
-            <div className="admin-dashboard-page">
-                <AdminHeader />
-                <div>
-                    <div style={{ textAlign: 'center', paddingTop: '50px', flex: 1 }}>
-                        Loading dashboard...
-                    </div>
-                </div>
-            </div>
-        );
-    }
+
 
 // ------------------------RETURN ---------------------------------------
 // ------------------------RETURN ---------------------------------------
@@ -289,6 +248,11 @@ function AdminDashboard() {
     return (
         <div> 
         <AdminHeader />
+                {error && (
+                    <div style={{ textAlign: 'center', paddingTop: '50px', flex: 1 }}>
+                    {error}
+                    </div>
+        )}
             <div className="manage-products-page"> 
                 <h2 className="page-title">Admin Dashboard</h2> 
 
@@ -371,7 +335,14 @@ function AdminDashboard() {
                                 {recentOrders.length > 0 ? (
                                     recentOrders.map(order => (
                                         <tr key={order.id}>
-                                            <td><div className="coloured-link" onClick={() => navigatetoIndividualOrder(order.id)}>{order.shortId}</div></td>
+                                            <td>
+                                                <div className="coloured-link" 
+                                                onClick={() => navigatetoIndividualOrder(order.id)}
+                                                title={`Full ID: ${order.id}` }
+                                                >
+                                                    {order.shortId}
+                                                </div>
+                                            </td>
                                             <td>{order.customer}</td>
                                             <td>{order.date}</td>
                                             <td>{formatCurrency(order.total)}</td>
@@ -422,7 +393,7 @@ function AdminDashboard() {
                                             {day.month}, <strong style={{ fontSize: '10px' }}>{day.week}</strong>
                                         </div>
                                         <div style={{ fontSize: '11px', color: 'grey', textAlign: 'center' }}>
-                                            ${day.amount.toFixed(0)}
+                                            {formatCurrency(day.amount)}
                                         </div>
                                     </div>
                                 );

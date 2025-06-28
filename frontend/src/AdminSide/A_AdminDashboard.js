@@ -34,7 +34,7 @@ const initialRecentOrders = [];
 
 function AdminDashboard() {
     const navigate = useNavigate();
-    const [salesData, setSalesData] = useState(initialSalesData);
+    const [useSalesData, setUseSalesData] = useState(initialSalesData);
     const [recentOrders, setRecentOrders] = useState(initialRecentOrders);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -70,7 +70,7 @@ function AdminDashboard() {
             const orders = await ordersRes.json();
 
             // Fetch product datas
-            let deezProducts = [];
+            let fetchProducts = [];
             try {
                 const productsRes = await fetch('/api/product', {
                     headers: {
@@ -78,15 +78,15 @@ function AdminDashboard() {
                     }
                 });
 
-                deezProducts = await productsRes.json();
+                fetchProducts = await productsRes.json();
 
             } catch (err) {
                 console.warn('Failed to fetch products data:', err);
             }
 
             // IMPORTANT! Uses the fetched data
-            clacOrders(orders);
-            processProducts(deezProducts);
+            calcOrders(orders);
+            processProducts(fetchProducts);
             setError('');
         } catch (err) {
             console.error('Error fetching dashboard data:', err);
@@ -96,13 +96,14 @@ function AdminDashboard() {
         }
     };
 
-    const clacOrders = (orders) => {
+    const calcOrders = (orders) => {
         const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes(), now.getSeconds());
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         const month = new Date(now.getFullYear(), now.getMonth(), 1);
         let totalMonthlySales = 0;
         let newOrdersToday = 0;
-        console.log('today:', today);
+        console.log('Start of today:', today);
+        console.log('now:', now);
 
         orders.forEach(order => {
         const orderDate = new Date(order.createdAt);
@@ -128,11 +129,12 @@ function AdminDashboard() {
         );
         const pendingFulfillment = pendingOrders.length;
 
-        setSalesData({
+        setUseSalesData(prev => ({
+            ...prev,
             totalMonthlySales: Math.round(totalMonthlySales), 
             newOrdersToday,
             pendingFulfillment
-        });
+        }));
 
         // Fetch recent orders (up to 5)
         const fiveRecentOrdersUWU = orders
@@ -141,15 +143,15 @@ function AdminDashboard() {
             // Map 5 orders
             .slice(0, 5)
             .map(order => {
-                const id = order._id || 'Nyaa fu~';
+                const id = order._id || 'N/A Nyaa fu~';
                 // Shorten the order ID to better fit in the table
-                const shortId = order._id?.slice(-8) || 'Nyaa~';
+                const shortId = order._id?.slice(-8) || 'N/A Nyaa~';
                 // Use full_name or username, or fallback to 'N/A'
-                const customer = order.user_id?.full_name || order.user_id?.username || 'N/Mystewy';
+                const customer = order.user_id?.full_name || order.user_id?.username || 'N/A Mystewy';
                 // Rewrite to js format
                 const date= new Date(order.createdAt).toLocaleDateString();
                 const total= order.total_amount || 0;
-                const status= order.status_id?.status_name || 'Unknyown';
+                const status= order.status_id?.status_name || 'N/A Unknyown';
 
                 return { id, shortId, customer, date, total, status };
             });
@@ -192,7 +194,7 @@ function AdminDashboard() {
             amount: dailyData[dateObj.fullDate]
         }));
         
-        setSalesData(prev => ({ ...prev, dailySales: chartData }));
+        setUseSalesData(prev => ({ ...prev, dailySales: chartData }));
     };
 
     const processProducts = (iCanCallThisAnythingIWant) => {
@@ -218,7 +220,7 @@ function AdminDashboard() {
         console.log('Out of stock items:', outOfStockItems);
         console.log('Low stock items:', lowStockItems);
 
-        setSalesData(prev => ({
+        setUseSalesData(prev => ({
             ...prev,
             lowStockItems,
             outOfStockItems
@@ -296,35 +298,35 @@ function AdminDashboard() {
                         <div className="stat-icon icon-sales"><FaDollarSign color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Total Sales (Month)</div>
-                            <div className="stat-value">{formatCurrency(salesData.totalMonthlySales)}</div>
+                            <div className="stat-value">{formatCurrency(useSalesData.totalMonthlySales)}</div>
                         </div>
                     </div>
                     <div className="stat-card" onClick={navigatetoAllO}>
                         <div className="stat-icon icon-new-orders"><GoPackage color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">New Orders (Today)</div>
-                            <div className="stat-value">{salesData.newOrdersToday}</div>
+                            <div className="stat-value">{useSalesData.newOrdersToday}</div>
                         </div>
                     </div>
                     <div className="stat-card"  onClick={navigatetoAllO}>
                         <div className="stat-icon icon-fulfillment"><FaRegClock color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Pending Fulfillment</div>
-                            <div className="stat-value">{salesData.pendingFulfillment}</div>
+                            <div className="stat-value">{useSalesData.pendingFulfillment}</div>
                         </div>
                     </div>
                     <div className="stat-card stat-warning" onClick={navigatetoAllP}>
                         <div className="stat-icon icon-low-stock"><PiSealWarning color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Low Stock Items</div>
-                            <div className="stat-value">{salesData.lowStockItems}</div>
+                            <div className="stat-value">{useSalesData.lowStockItems}</div>
                         </div>
                     </div>
                     <div className="stat-card stat-danger" onClick={navigatetoAllP}>
                         <div className="stat-icon icon-out-stock"><CgDanger color="white" size={30} /></div>
                         <div className="stat-info">
                             <div className="stat-label">Out of Stock Items</div>
-                            <div className="stat-value">{salesData.outOfStockItems}</div>
+                            <div className="stat-value">{useSalesData.outOfStockItems}</div>
                         </div>
                     </div>
                     {/* End of stat cards */}
@@ -397,9 +399,9 @@ function AdminDashboard() {
                 <div className="card">
                     <h3 className="section-title">Sales Snapshot (Last 7 Days)</h3>
                     <div style={{ height: '200px', display: 'flex', alignItems: 'end', gap: '10px', padding: '20px 0' }}>
-                        {salesData.dailySales && salesData.dailySales.length > 0 ? (
-                            salesData.dailySales.map((day, index) => {
-                                const maxAmount = Math.max(...salesData.dailySales.map(d => d.amount));
+                        {useSalesData.dailySales && useSalesData.dailySales.length > 0 ? (
+                            useSalesData.dailySales.map((day, index) => {
+                                const maxAmount = Math.max(...useSalesData.dailySales.map(d => d.amount));
                                 const height = maxAmount > 0 ? (day.amount / maxAmount) * 150 : 0;
                                 return (
                                     <div key={index} style={{ 

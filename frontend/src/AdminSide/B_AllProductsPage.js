@@ -34,41 +34,6 @@ function AllProductsPage() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
 
-    const [useProducts, setUseProducts] = useState([]);
-
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
-        try {
-
-            
-            // Check if admin has logged in
-            const checkAdmin = JSON.parse(localStorage.getItem('admin_user'));
-            // Fetch product datas
-            let fetchProducts = [];
-            try {
-                const productsRes = await fetch('/api/product', {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                fetchProducts = await productsRes.json();
-
-            } catch (err) {
-                console.warn('Failed to fetch products data:', err);
-            }
-
-            // IMPORTANT! Uses the fetched data
-        } catch (err) {
-            console.error('Error fetching dashboard data:', err);
-        } 
-    };
-
-
-
 
 
 // -----------------------------------------------------------------------------------
@@ -115,7 +80,7 @@ function AllProductsPage() {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
 
-     const navigatetoAddeP = () => { navigate('/add-product'); };
+    const navigateToEditProduct = (productId) => { navigate(`/edit-product/${productId}`); };
 
     const handleDeleteProduct = async (productId) => {
         if (window.confirm(`Are you sure you want to delete this product? This action cannot be undone.`)) {
@@ -227,29 +192,53 @@ function AllProductsPage() {
         setCurrentImageIndex(0);
     };
 
+// ------          -------------RETURN ---------------------------------------
+// ------  -----     -----------RETURN ---------------------------------------
+// ------  -----     ----------RETURN ---------------------------------------
+// ------  ---     -------------RETURN ---------------------------------------
+// ------  --     ----------RETURN ---------------------------------------
+// ------      ------------RETURN ---------------------------------------
+// ------  ----------------RETURN ---------------------------------------
+// ------      ------------RETURN ---------------------------------------
+// ------  --     --------RETURN ---------------------------------------
+// ------  -----    -------RETURN ---------------------------------------
+// ------  -------    -----RETURN ---------------------------------------
+// ------  --------    ---RETURN ---------------------------------------
+
+
+
     return (<>
         <AdminHeader />
         <div className="manage-products-page">
             <div className="title-row">
                 <h2>All Products</h2>
-                <button onClick={handleAddProduct} className="btn-add-new">
-                    <MdEdit size={18} color="white" />
+                <button onClick={handleAddProduct} className="add-new-btn">
+                    <MdEdit size={18} color="white"/>
                     Add New Product
                 </button>
             </div>
             
-            <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)', marginBottom: '20px', display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-                <div style={{ flex: '3 1 300px', boxSizing: 'border-box' }}>
-                    <input type="text" placeholder="Search by name..." className="search-input" style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ccc', boxSizing: 'border-box' }} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+            <div className='card'>
+                <div className="card-input">
+                    <input type="text" placeholder="Search by name..."  
+                    value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 </div>
-                <div style={{ display: 'flex', flex: '1 1 400px', gap: '10px', flexWrap: 'wrap' }}>
-                    <select className="category-select" style={{ flex: '1 1 150px', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
+                <div style={{ display: 'flex', flexWrap: 'wrap'}}>
+                    {/* All Categories */}
+                    <select
+                        value={selectedCategory} 
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        style={{
+                            flex: '1',
+                            padding: '10px',
+                            }}>
                         <option value="All Categories">All Categories</option>
                         {categories.map(category => (
                             <option key={category._id} value={category._id}>{category.category_name}</option>
                         ))}
                     </select>
-                    <select className="category-select" style={{ flex: '1 1 150px', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
+                    {/* All Statuses */}
+                    <select style={{ flex: '1', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
                         <option value="All Statuses">All Statuses</option>
                         <option value="In Stock">In Stock</option>
                         <option value="Limited Stock">Limited Stock</option>
@@ -300,8 +289,8 @@ function AllProductsPage() {
                 </div>
             )}
 
-            <div className="orders-table-container">
-                <table className="orders-table">
+            <div className="card" style={{ overflowX: 'auto'}}>
+                <table className="my-table">
                     <thead>
                         <tr>
                             <th>Image</th>
@@ -337,7 +326,7 @@ function AllProductsPage() {
                             </td>
                             <td className="action-column">
                                 <div className="action-icons">
-                                    <button onClick={() => navigatetoAddeP(product)} title="Edit Product"><MdEdit size={24}/></button>
+                                    <button onClick={() => navigateToEditProduct(product)} title="Edit Product"><MdEdit size={24}/></button>
                                     <button onClick={() => handleDeleteProduct(product._id)} title="Delete Product" ><IoMdTrash size={24} /></button>
                                 </div>
                             </td>

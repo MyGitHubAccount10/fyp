@@ -5,12 +5,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
-const BackIcon = ({ color = "currentColor" }) => (
-  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M19 12H5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M12 19L5 12L12 5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
+import { FaAngleLeft } from "react-icons/fa";
+
 
 function OrderDetailPage() {
   const navigate = useNavigate();
@@ -215,14 +211,14 @@ function OrderDetailPage() {
   }
 
   return (
-    <div className="add-product-page">
+    <div>
             <AdminHeader />
         <div className="manage-products-page">
 
             <div className="title-row">
                 <h2>Order Details</h2> {/* Title from the image */}
-                <button onClick={handleBack} className="btn-add-new">
-                    <BackIcon size={18} color="white" />
+                <button onClick={handleBack} className="add-new-btn">
+                    <FaAngleLeft size={18} color="white" />
                     Back to All Orders
                 </button>
             </div>

@@ -294,8 +294,9 @@ function AdminDashboard() {
                     </div>
         )}
             <div className="manage-products-page"> 
-                <h2 className="page-title">Admin Dashboard</h2> 
-
+                <div className="title-row">
+                <h2>Admin Dashboard</h2>
+                </div>
                 <div className="dashboard-stats">
 
                     <div className="stat-card" onClick={navigatetoSales}>
@@ -338,7 +339,7 @@ function AdminDashboard() {
                 {/* ---------------------------------------------------------------------- */}
 
                 <div className="card">
-                    <h3 className="section-title">Quick Actions</h3>
+                    <h3 className="card-title">Quick Actions</h3>
                     <div className="quick-action-buttons">
                         <button className="btn-quick-action" onClick={navigatetoAddP}>
                             <IoIosAddCircle color="#FA704C" /> Add New Product
@@ -359,9 +360,9 @@ function AdminDashboard() {
                 </div>
 
                 <div className="card">
-                    <h3 className="section-title">Recent Orders</h3>
+                    <h3 className="card-title">Recent Orders</h3>
                     <div>
-                        <table className="recent-orders-table">
+                        <table className="my-table">
                             <thead>
                                 <tr>
                                     <th>Order ID</th>
@@ -409,7 +410,7 @@ function AdminDashboard() {
 
                 {/* Sales Snapshot */}
                 <div className="card">
-                    <h3 className="section-title">Sales Snapshot (Last 7 Days)</h3>
+                    <h3 className="card-title">Sales Snapshot (Last 7 Days)</h3>
                     <div style={{ height: '200px', display: 'flex', alignItems: 'end', gap: '10px', padding: '20px 0' }}>
                         {useSalesData.dailySales && useSalesData.dailySales.length > 0 ? (
                             useSalesData.dailySales.map((day, index) => {

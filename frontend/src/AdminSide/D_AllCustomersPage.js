@@ -226,6 +226,14 @@ const handleFilter = () => {
                         <div className="title-row">
                             <div>
                                 <h2>All Users</h2>
+
+                            </div>
+                            <button onClick={handleAddAdmin} className="add-new-btn">
+                                <PencilIcon size={18} color="white" />
+                                Add New User
+                            </button>
+                            </div>
+                            <div>
                                 {currentUserRole && (
                                     <p style={{ color: '#666', fontSize: '14px', margin: '5px 0' }}>
                                         Logged in as: <strong>{currentUserRole}</strong>
@@ -241,11 +249,6 @@ const handleFilter = () => {
                                         )}
                                     </p>
                                 )}
-                            </div>
-                            <button onClick={handleAddAdmin} className="btn-add-new">
-                                <PencilIcon size={18} color="white" />
-                                Add New User
-                            </button>
                         </div>
 
                 {/* Filter row */}
@@ -338,9 +341,10 @@ const handleFilter = () => {
                 {'Next >>'}
                 </button>
             </div>
-            </div>                {/* Users Table */}
-            <div className="orders-table-container">
-                <table className="orders-table" style={{ tableLayout: 'fixed', width: '100%' }}>                    
+            </div>                
+            {/* Users Table */}
+            <div className='card' style={{ overflowX: 'auto', marginBottom: '20px' }}>
+                <table className="my-table" style={{ tableLayout: 'fixed', width: '100%' }}>                    
                     <thead>                        
                         <tr>
                             <th style={{ width: '100px', maxWidth: '100px' }}>Role</th>

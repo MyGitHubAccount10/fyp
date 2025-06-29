@@ -5,12 +5,8 @@ import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
-const BackIcon = ({ color = "currentColor" }) => (
-  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M19 12H5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    <path d="M12 19L5 12L12 5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
+import { FaAngleLeft } from "react-icons/fa";
+
 
 function UserDetailPage() {
   const navigate = useNavigate();
@@ -211,7 +207,7 @@ function UserDetailPage() {
           </div>
           <div style={{ textAlign: 'center' }}>
             <button onClick={handleBack} className="btn-add-new">
-              <BackIcon size={18} color="white" />
+              <FaAngleLeft size={18} color="white" />
               Back to All Users
             </button>
           </div>
@@ -223,7 +219,8 @@ function UserDetailPage() {
   return (
     <div className="add-product-page">
       <AdminHeader />
-      <div className="manage-products-page">        <div className="title-row">
+      <div className="manage-products-page">        
+        <div className="title-row">
           <div>
             <h2>User Details</h2>
             {!canEdit && (
@@ -244,7 +241,7 @@ function UserDetailPage() {
           <div style={{ display: 'flex', gap: '10px' }}>
             {!isEditing ? (
               canEdit ? (
-                <button onClick={handleEdit} className="btn-add-new">
+                <button onClick={handleEdit} className="add-new-btn">
                   Edit User
                 </button>
               ) : (
@@ -262,21 +259,22 @@ function UserDetailPage() {
               )
             ) : (
               <>
-                <button onClick={handleSave} className="btn-add-new">
+                <button onClick={handleSave} className="add-new-btn">
                   Save Changes
                 </button>
-                <button onClick={handleCancel} className="btn-add-new" style={{ backgroundColor: '#6c757d' }}>
+                <button onClick={handleCancel} className="add-new-btn" style={{ backgroundColor: '#6c757d' }}>
                   Cancel
                 </button>
               </>
             )}
-            <button onClick={handleBack} className="btn-add-new">
-              <BackIcon size={18} color="white" />
+            <button onClick={handleBack} className="add-new-btn">
+              <FaAngleLeft size={18} color="white" />
               Back to All Users
             </button>
           </div>
         </div>
 
+{/* ----------------------------------------- */}
         <form className="add-product-form">
           <div className="add-product-form-layout">
 

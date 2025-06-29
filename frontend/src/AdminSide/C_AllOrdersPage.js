@@ -230,8 +230,8 @@ function AllOrdersPage() {
 </div>
 
             {/* Orders Table */}
-            <div className="orders-table-container">
-                <table className="orders-table">
+            <div className='card'>
+                <table className="my-table">
                     <thead>
                         <tr>
                             <th>Order ID</th>

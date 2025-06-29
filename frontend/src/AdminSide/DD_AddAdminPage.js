@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
-const BackIcon = (props) => <svg {...props} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 12H5M12 19L5 12 12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
+import { FaAngleLeft } from "react-icons/fa";
 const PencilIcon = (props) => <svg {...props} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17 3c.262-.263.59-.51.958-.656a3.69 3.69 0 013.178.656c.624.625.928 1.47.914 2.32-.014.85-.318 1.695-.914 2.32L10.35 18.36 2 22l3.64-8.35L17 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 // --- CORRECTED ICON DEFINITIONS ---
 const EyeIcon = ({ size = 20, ...props }) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
@@ -126,16 +126,17 @@ function AddAdminPage() {
          !isSuperAdmin && !roles.some(r => r.role_name === 'Customer') ? (
           <div style={{ textAlign: 'center', padding: '50px' }}>
             <h2>Access Restricted</h2> <p>You don't have permission to create new users.</p>
-            <button onClick={handleBack} className="btn-add-new"><BackIcon size={18} /> Back to All Users</button>
+            <button onClick={handleBack} className="add-new-btn"><FaAngleLeft size={18} /> Back to All Users</button>
           </div>
         ) : (
           <>
-            <div className="title-row">
-              <div>
+            <div>
+              <div className="title-row">
                 <h2>{isSuperAdmin ? 'Add New User' : 'Add New Customer'}</h2>
-                <p style={{ color: '#666', fontSize: '14px', margin: '5px 0' }}>Logged in as: <strong>{currentUserRole}</strong></p>
+              <button onClick={handleBack} className="add-new-btn"><FaAngleLeft size={18} /> Back to All Users</button>
               </div>
-              <button onClick={handleBack} className="btn-add-new"><BackIcon size={18} /> Back to All Users</button>
+              <p style={{ color: '#666', fontSize: '14px', margin: '5px 0' }}>Logged in as: <strong>{currentUserRole}</strong></p>
+
             </div>
             <form onSubmit={handleSubmit} noValidate>
               <div className="add-product-form-layout">

@@ -19,45 +19,45 @@ const adminStylesCss = `
     padding-bottom: 20px;
 }
 .manage-products-page .title-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.manage-products-page .page-header-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.manage-products-page .page-title {
-    font-size: 1.5em;
+    font-size: 16px;
     font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-
-.manage-products-page .btn-add-new {
+.manage-products-page .add-new-btn {
     background-color: #f1673a; /* Theme color */
     color: white;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 0.95em;
+    font-size: 15px;
     font-weight: 500;
     display: flex;
     align-items: center;
     transition: background-color 0.2s ease;
+    gap: 8px;
 }
-.manage-products-page .btn-add-new:hover {
+/* Media queries moved to end of file */
+
+.manage-products-page .add-new-btn:hover {
     background-color: #e0562a;
 }
-.manage-products-page .btn-add-new svg {
-    width: 18px;
-    height: 18px;
-    margin-right: 8px;
-    fill: white; /* Ensure icon is white */
+.manage-products-page .card-input {
+    flex: 2;
+    box-sizing: border-box;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.manage-products-page .card-input input {
+    width: 100%; /* Ensure input fills container */
+    padding: 10px; /* Consistent padding */
+    border-radius: 6px; /* Rounded corners */
+    border: 1px solid #ccc; /* Light border */
+    box-sizing: border-box; /* Include padding/border in width */
 }
 
 .manage-products-page .category-select {
@@ -139,8 +139,7 @@ const adminStylesCss = `
 //Important styles for main admin page */
 /* Admin Global Styles */
 
-@media (max-width: 480px) {
-}
+/* Media queries moved to end of file */
 
 /* Add padding to the body or main wrapper to account for fixed header and sidebar */
 /* This is handled by .admin-body-wrapper padding-top and .admin-main-content margin-left */
@@ -204,13 +203,17 @@ const adminStylesCss = `
     margin-bottom: 30px;
 }
 
-.card .section-title {
+.card .card-title {
+    font-size: 1.1em;
     font-weight: bold;
     margin-top: 0;
+    margin-bottom: 20px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #868686;
-    color: #000000;
+    border-bottom: 1px solid #eee;
+    color: #333;
+
 }
+
 
 .quick-action-buttons {
     display: grid; /* Use grid for the buttons */
@@ -244,22 +247,21 @@ const adminStylesCss = `
     stroke: white; /* Ensure icon colors are white */
 }
 
-.recent-orders-table,
+.my-table,
 .dashboard-section .table-container table { /* Reuse or adapt table styles */
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed; /* Fix table layout to prevent overflow */
 }
 
-.recent-orders-table th,
-.recent-orders-table td {
+.my-table th,
+.my-table td {
     text-align: left;
     padding: 12px 15px;
-    border-bottom: 1px solid #eee;
     word-wrap: break-word; /* Break long words */
     text-overflow: ellipsis; 
 }
-.recent-orders-table th {
+.my-table th {
     background-color: #f8f9fa;
     font-weight: bold;
     font-size: 0.9em;
@@ -281,59 +283,9 @@ const adminStylesCss = `
 
 
 
-/* Responsive adjustments for Dashboard (within media queries in AdminStyles.css) */
-@media (max-width: 768px) {
-    .dashboard-stats {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjust min width for smaller screens */
-        gap: 15px;
-    }
-    .stat-card {
-        padding: 15px;
-        flex-direction: column; /* Stack icon and info on smaller screens */
-        text-align: center;
-    }
-    .stat-card .stat-icon { margin-bottom: 5px; }
-    .stat-card .stat-info { text-align: center; } /* Ensure info is centered */
+/* Media queries moved to end of file */
 
-     .quick-action-buttons {
-         grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); /* Adjust quick button min width */
-         gap: 10px;
-     }
-     .btn-quick-action {
-        font-size: 0.9em;
-        padding: 10px 15px;
-     }
-      .recent-orders-table th,
-      .recent-orders-table td {
-        padding: 8px 10px;
-        font-size: 0.9em;
-      }
-}
-
-@media (max-width: 480px) {
-    .dashboard-stats {
-         grid-template-columns: 1fr; /* Stack stat cards on very small screens */
-         gap: 10px;
-    }
-    .quick-action-buttons {
-        grid-template-columns: 1fr; /* Stack quick action buttons */
-         gap: 8px;
-    }
-    .dashboard-section {
-        padding: 15px;
-    }
-     .dashboard-section .section-title {
-         font-size: 1.1em;
-         margin-bottom: 15px;
-     }
-     .recent-orders-table th,
-      .recent-orders-table td {
-        font-size: 0.85em;
-     }
-    .view-all-link {
-        font-size: 0.9em;
-    }
-}
+/* Media queries moved to end of file */
 
 /* // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
@@ -377,16 +329,6 @@ const adminStylesCss = `
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
     /* Margin/Gap between cards is handled by the parent flex container */
-}
-
-.section-card-title { /* Style for h3 inside the cards */
-    font-size: 1.1em;
-    font-weight: bold;
-    margin-top: 0;
-    margin-bottom: 20px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
-    color: #333;
 }
 
 
@@ -657,36 +599,7 @@ const adminStylesCss = `
   vertical-align: middle !important;
 }
 
-/* Table layout and column width controls */
-.orders-table {
-    table-layout: fixed !important;
-    width: 100%;
-    border-collapse: collapse;
-}
 
-/* Specific column width controls for users table */
-.orders-table th:nth-child(1), .orders-table td:nth-child(1) { width: 10%; } /* Role */
-.orders-table th:nth-child(2), .orders-table td:nth-child(2) { width: 12%; } /* Username */
-.orders-table th:nth-child(3), .orders-table td:nth-child(3) { width: 18%; } /* Email */
-.orders-table th:nth-child(4), .orders-table td:nth-child(4) { width: 12%; } /* Phone */
-.orders-table th:nth-child(5), .orders-table td:nth-child(5) { width: 20%; } /* Address */
-.orders-table th:nth-child(6), .orders-table td:nth-child(6) { width: 8%; } /* Status */
-.orders-table th:nth-child(7), .orders-table td:nth-child(7) { width: 10%; } /* Created */
-.orders-table th:nth-child(8), .orders-table td:nth-child(8) { width: 10%; } /* Action */
-
-/* Text overflow handling for specific columns */
-.orders-table td:nth-child(3) { /* Email column */
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
-    max-width: 0 !important;
-    white-space: normal !important;
-}
-
-.orders-table td:nth-child(2) { /* Username column */
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
-    white-space: normal !important;
-}
 
 /* --- Orders Page Styles --- */
 
@@ -743,85 +656,12 @@ const adminStylesCss = `
      /* appearance: none;
      -webkit-appearance: none; */
 }
-/* Style for custom calendar icon if used */
-/* .filter-bar .date-input-wrapper .calendar-icon {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none; // Prevent icon from interfering with clicks
-    color: #555;
-} */
 
 
-.filter-bar .btn-apply-filters {
-    background-color: #f1673a; /* Theme color */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.95em;
-    font-weight: 500;
-    transition: background-color 0.2s ease;
-    /* Ensure button doesn't shrink excessively */
-    flex-shrink: 0;
-}
-.filter-bar .btn-apply-filters:hover {
-    background-color: #e0562a;
-}
 
 
-.orders-table-container { /* Reuse or adapt product-table-container styles */
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
-    overflow-x: auto; /* Allow horizontal scrolling on small screens */
-}
 
-.orders-table { /* Reuse or adapt product-table styles */
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed; /* Fix table layout to prevent cells from expanding */
-}
 
-.orders-table th,
-.orders-table td {
-    text-align: left;
-    padding: 12px 15px;
-    border-bottom: 1px solid #eee;
-    position: relative; /* Ensure cells have positioning context */
-    vertical-align: middle; /* Center content vertically */
-     /* white-space: nowrap; Prevent text wrapping in cells */
-}
-
-.orders-table th { /* Reuse or adapt product-table th styles */
-    background-color: #f8f9fa;
-    font-weight: bold;
-    font-size: 0.9em;
-    color: #555;
-    text-transform: uppercase;
-}
-
-.orders-table tbody tr:last-child td {
-    border-bottom: none;
-}
-
-/* Link button style for 'View Details' */
-.orders-table .link-button {
-    background: none;
-    border: none;
-    padding: 0;
-    margin: 0;
-    color: #007bff; /* Bootstrap primary blue or similar link color */
-    text-decoration: underline;
-    cursor: pointer;
-    font-size: 0.9em;
-}
-.orders-table .link-button:hover {
-    color: #0056b3;
-}
 
 /* Specific Order Status colors with badge-like styling */
 .status-shipped, .status-delivered { 
@@ -1016,33 +856,205 @@ input[type="password"]::-ms-clear {
   outline: none;
 }
 
-/* Responsive table handling for smaller screens */
+/* Media queries moved to end of file */
+
+/* ========================================================================= */
+/* RESPONSIVE MEDIA QUERIES - ORGANIZED BY BREAKPOINT                      */
+/* ========================================================================= */
+
+/* Large Tablets - 1024px and down */
 @media (max-width: 1024px) {
-    .orders-table th:nth-child(3), .orders-table td:nth-child(3) { width: 15%; } /* Email smaller */
-    .orders-table th:nth-child(5), .orders-table td:nth-child(5) { width: 15%; } /* Address smaller */
+
+    .orders-table th:nth-child(1), .orders-table td:nth-child(1) { 
+        width: 8%; /* Phone smaller */
+    }
+    .orders-table th:nth-child(2), .orders-table td:nth-child(2) { 
+        width: 10%; /* Address smaller */
+    }
+    .orders-table th:nth-child(3), .orders-table td:nth-child(3) { 
+        width: 8%; /* Email smaller */
+    }
+    .orders-table th:nth-child(4), .orders-table td:nth-child(4) { 
+        width: 8%; /* Phone smaller */
+    }
+    .orders-table th:nth-child(5), .orders-table td:nth-child(5) { 
+        width: 5%; /* Address smaller */
+    }
+    .orders-table th:nth-child(6), .orders-table td:nth-child(6) { 
+        width: 8%; /* Status smaller */
+    }
+    .orders-table th:nth-child(7), .orders-table td:nth-child(7) { 
+        width: 8%; /* Created smaller */
+    }
 }
 
+/* Medium screens - 768px and down */
 @media (max-width: 768px) {
+    /* Manage Products Page */
+    .manage-products-page {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .manage-products-page .title-row {
+        font-size: 14px;
+    }
+    .manage-products-page .add-new-btn {
+        gap: 8px;
+        font-size: 14px;
+    }
+    .card {
+        padding: 10px;
+        font-size: 14px;
+    }
+    .stat-card {
+        padding: 15px;
+        font-size: 14px;
+    }
+
+    /* Dashboard Stats */
+    .dashboard-stats {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    .stat-card {
+        padding: 15px;
+        flex-direction: column;
+        text-align: center;
+    }
+    .stat-card .stat-icon { 
+        margin-bottom: 5px; 
+    }
+    .stat-card .stat-info { 
+        text-align: center; 
+    }
+
+    /* Quick Action Buttons */
+    .quick-action-buttons {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+    }
+    .btn-quick-action {
+        font-size: 0.9em;
+        padding: 10px 15px;
+    }
+
+
+}
+
+
+
+@media (max-width: 600px) {
+    /* Manage Products Page */
+    .manage-products-page {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .manage-products-page .title-row {
+        font-size: 14px;
+    }
+    .manage-products-page .add-new-btn {
+        gap: 8px;
+        font-size: 14px;
+    }
+    .card {
+        padding: 10px;
+        font-size: 14px;
+    }
+    .stat-card {
+        padding: 15px;
+        font-size: 14px;
+    }
+
+    /* Dashboard Stats */
+    .dashboard-stats {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+    }
+    .stat-card {
+        padding: 15px;
+        flex-direction: column;
+        text-align: center;
+    }
+    .stat-card .stat-icon { 
+        margin-bottom: 5px; 
+    }
+    .stat-card .stat-info { 
+        text-align: center; 
+    }
+
+    /* Quick Action Buttons */
+    .quick-action-buttons {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+    }
+    .btn-quick-action {
+        font-size: 0.9em;
+        padding: 10px 15px;
+    }
+
+    /* Tables */
+    .my-table th,
+    .my-table td {
+        padding: 8px 10px;
+        font-size: 0.9em;
+    }
+
     .orders-table-container {
         overflow-x: auto !important;
         -webkit-overflow-scrolling: touch;
     }
-    
-    .orders-table {
-        min-width: 800px; /* Minimum table width to maintain readability */
-    }
-    
     .orders-table th, .orders-table td {
-        padding: 8px 6px;
-        font-size: 0.85em;
+        padding: 12px 6px;
+        font-size: 14px;
+        word-wrap: break-word; /* Break long words */
+        text-overflow: ellipsis; 
+
     }
+    .orders-table svg{
+        width: 16px; /* Smaller icon size */
+        height: 16px;
+    }
+
+
+
 }
 
+
+/* Small screens - 480px and down */
 @media (max-width: 480px) {
+    /* Dashboard Stats */
+    .dashboard-stats {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    /* Quick Action Buttons */
+    .quick-action-buttons {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    /* Dashboard Section */
+    .dashboard-section {
+        padding: 15px;
+    }
+    .dashboard-section .section-title {
+        font-size: 1.1em;
+        margin-bottom: 15px;
+    }
+
+    /* Tables */
+    .my-table th,
+    .my-table td {
+        font-size: 0.85em;
+    }
+    .view-all-link {
+        font-size: 0.9em;
+    }
+
     .orders-table {
         min-width: 600px;
     }
-    
     .orders-table th, .orders-table td {
         padding: 6px 4px;
         font-size: 0.8em;

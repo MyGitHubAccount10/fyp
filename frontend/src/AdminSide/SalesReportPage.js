@@ -282,7 +282,7 @@ function SalesReportPage() {
             <div className="manage-products-page">
                 <div className="title-row">
                     <h2>Sales Report</h2>
-                    <button onClick={exportToCSV} className="btn-add-new">
+                    <button onClick={exportToCSV} className="add-new-btn">
                         <DownloadIcon size={18} color="white" />
                         Export CSV
                     </button>
@@ -355,7 +355,7 @@ function SalesReportPage() {
                     gap: '20px',
                     marginBottom: '30px'
                 }}>
-                    <div className="form-section-card">
+                    <div className="card">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                             <div style={{ 
                                 backgroundColor: '#28a745', 
@@ -374,7 +374,7 @@ function SalesReportPage() {
                         </div>
                     </div>
 
-                    <div className="form-section-card">
+                    <div className="card">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                             <div style={{ 
                                 backgroundColor: '#007bff', 
@@ -393,7 +393,7 @@ function SalesReportPage() {
                         </div>
                     </div>
 
-                    <div className="form-section-card">
+                    <div className="card">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                             <div style={{ 
                                 backgroundColor: '#17a2b8', 
@@ -412,7 +412,7 @@ function SalesReportPage() {
                         </div>
                     </div>
 
-                    <div className="form-section-card">
+                    <div className="card">
                         <div style={{ padding: '20px 0' }}>
                             <h4 style={{ margin: '0 0 15px 0' }}>Order Status</h4>
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
@@ -435,8 +435,8 @@ function SalesReportPage() {
                     marginBottom: '30px'
                 }}>
                     {/* Daily Sales Chart */}
-                    <div className="form-section-card">
-                        <h3 className="section-card-title">Daily Sales (Last 7 Days)</h3>
+                    <div className="card">
+                        <h3 className="card-title">Daily Sales (Last 7 Days)</h3>
                         <div style={{ height: '200px', display: 'flex', alignItems: 'end', gap: '10px', padding: '20px 0' }}>
                             {reportData.dailySales.map((day, index) => {
                                 const maxAmount = Math.max(...reportData.dailySales.map(d => d.amount));
@@ -469,8 +469,8 @@ function SalesReportPage() {
                     </div>
 
                     {/* Monthly Sales Chart */}
-                    <div className="form-section-card">
-                        <h3 className="section-card-title">Monthly Sales (Last 6 Months)</h3>
+                    <div className="card">
+                        <h3 className="card-title">Monthly Sales (Last 6 Months)</h3>
                         <div style={{ height: '200px', display: 'flex', alignItems: 'end', gap: '10px', padding: '20px 0' }}>
                             {reportData.monthlySales.map((month, index) => {
                                 const maxAmount = Math.max(...reportData.monthlySales.map(m => m.amount));
@@ -504,10 +504,10 @@ function SalesReportPage() {
                 </div>
 
                 {/* Recent Orders Table */}
-                <div className="form-section-card">
-                    <h3 className="section-card-title">Recent Orders</h3>
-                    <div className="orders-table-container">
-                        <table className="orders-table">
+                <div className="card">
+                    <h3 className="card-title">Recent Orders</h3>
+                    <div>
+                        <table className="my-table">
                             <thead>
                                 <tr>
                                     <th>Order ID</th>

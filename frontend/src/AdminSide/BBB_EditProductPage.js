@@ -3,18 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
-const BackIcon = ({ color = "currentColor" }) => (
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M19 12H5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M12 19L5 12L12 5" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-);
+import { FaAngleLeft } from "react-icons/fa";
 
-const PencilIcon = ({ size = 18, color = "currentColor" }) => (
-    <svg viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
-        <path d="M17 3C17.26 2.74 17.59 2.53 17.96 2.38C18.33 2.24 18.73 2.15 19.14 2.14C19.55 2.12 19.96 2.18 20.35 2.30C20.74 2.42 21.10 2.60 21.41 2.91C21.73 3.22 21.98 3.59 22.10 3.98C22.22 4.37 22.27 4.78 22.26 5.19C22.24 5.60 22.16 6.00 22.01 6.37C21.87 6.74 21.66 7.06 21.40 7.33L10.35 18.36L2 22L5.64 13.65L17 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-);
+import { MdEdit } from "react-icons/md";
+
 
 function EditProductPage() {
     const { id } = useParams();
@@ -170,13 +162,13 @@ function EditProductPage() {
     const handleCancel = () => handleBack();
 
     return (
-        <div className="add-product-page">
+        <div>
             <AdminHeader />
             <div className="manage-products-page">
                 <div className="title-row">
                     <h2>Edit Product</h2>
-                    <button onClick={handleBack} className="btn-add-new">
-                        <BackIcon size={18} color="white" />
+                    <button onClick={handleBack} className="add-new-btn">
+                        <FaAngleLeft size={18} color="white" />
                         Back to All Products
                     </button>
                 </div>
@@ -372,7 +364,7 @@ function EditProductPage() {
                                 <h3 className="section-card-title">Update Product</h3>
                                 <div className="form-actions-vertical">
                                     <button type="submit" className="btn-save-product">
-                                        <PencilIcon size={18} color="white" />
+                                        <MdEdit size={18} color="white" />
                                         Save Changes
                                     </button>
                                     <button type="button" onClick={handleCancel} className="btn-cancel-product">Cancel</button>

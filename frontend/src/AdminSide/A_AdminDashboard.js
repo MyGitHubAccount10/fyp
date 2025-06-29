@@ -38,6 +38,43 @@ function AdminDashboard() {
     const [recentOrders, setRecentOrders] = useState(initialRecentOrders);
     const [error, setError] = useState('');
 
+     //-------------------------------------------------------------------
+    const [keySequence, setKeySequence] = useState([]);
+    const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'KeyB', 'KeyA'];
+
+    useEffect(() => {
+        const handleKeyPress = (event) => {
+            setKeySequence(prev => {
+                // Add new key to sequence
+                const newSequence = [...prev, event.code];
+                
+                // Keep only last 10 keys to match Konami code length
+                if (newSequence.length > 10) {
+                    newSequence.shift();
+                }
+                
+                // Check if Konami code is entered
+                if (JSON.stringify(newSequence) === JSON.stringify(konamiCode)) {
+                    alert('Easter Egg Triggered! Going to Easter Egg Page now!');
+                    navigate('/customise-image');
+                    setKeySequence([]); // Resset
+                }
+                
+                return newSequence;
+            });
+        };
+
+        window.addEventListener('keydown', handleKeyPress);
+        
+        return () => {
+            window.removeEventListener('keydown', handleKeyPress);
+        };
+    }, [navigate, konamiCode]);
+
+
+    // --------------------------------------------------------------
+
+
     // Fetch data once per reload
     useEffect(() => {
         fetchData();
@@ -49,14 +86,17 @@ function AdminDashboard() {
             // Check if admin has logged in
             const checkAdmin = JSON.parse(localStorage.getItem('admin_user'));
             if (!checkAdmin || !checkAdmin.token) {
+                setError('Please log in again');
+                navigate('/admin-login');
                 return;
             }
 
             // Fetch products dtat
             const productsRes = await fetch('/api/product', {
                 headers: {
-                    'Authorization': `Bearer ${checkAdmin.token}`,// Get admin stuff
+                    'Authorization': `Bearer ${checkAdmin.token}`,
                     'Content-Type': 'application/json'
+
                 }
             });
             const products = await productsRes.json();

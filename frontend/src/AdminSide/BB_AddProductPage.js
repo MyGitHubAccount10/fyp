@@ -7,11 +7,8 @@ import AdminHeader from '../AdminHeader';
 
 // Placeholder Icons (reusing from AdminHeader/ManageProducts)
 import { FaAngleLeft } from "react-icons/fa";
-const PencilIcon = ({ size = 18, color = "currentColor" }) => (
-    <svg viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg" width={size} height={size}>
-        <path d="M17 3C17.2626 2.7374 17.5893 2.52942 17.9573 2.38285C18.3253 2.23629 18.7259 2.15325 19.1365 2.13815C19.5471 2.12304 19.9576 2.17623 20.3485 2.29581C20.7394 2.41539 21.1013 2.59878 21.4142 2.91168C21.7271 3.22458 21.9795 3.5865 22.0991 3.97744C22.2187 4.36838 22.2719 4.77888 22.2568 5.18947C22.2418 5.60006 22.1587 6.00066 22.0121 6.36867C21.8656 6.73668 21.6576 7.0634 21.395 7.326L10.35 18.36L2 22L5.64 13.65L17 3Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-);
+import { MdEdit } from "react-icons/md";
+
 
 
 function AddProductPage() {
@@ -335,7 +332,7 @@ function AddProductPage() {
                          {/* Save and Cancel Buttons */}
                         <div className="form-actions-vertical"> {/* Use a vertical layout for buttons */}
                             <button type="submit" className="btn-save-product">
-                                 <PencilIcon size={18} color="white" />
+                                 <MdEdit size={18} color="white" />
                                  Save Product
                             </button>
                             <button type="button" onClick={handleCancel} className="btn-cancel-product">Cancel</button>

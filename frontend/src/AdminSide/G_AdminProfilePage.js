@@ -5,8 +5,8 @@ import '../Website.css';
 import AdminHeader from '../AdminHeader';
 import Footer from '../Footer';
 
-const EyeIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
-const EyeOffIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>;
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
 
 function AdminProfilePage() {
     const [personalInfo, setPersonalInfo] = useState({ fullName: '', username: '', email: '', phoneNumber: '' });
@@ -226,7 +226,7 @@ function AdminProfilePage() {
                             <div className="password-input-wrapper">
                                 <input type={isNewPasswordVisible ? 'text' : 'password'} id="newPassword" name="newPassword" value={passwordChange.newPassword} onChange={handlePasswordFormChange} onBlur={(e) => setPasswordChangeErrors(p => ({...p, newPassword: validateNewPassword(e.target.value)}))} className={passwordChangeErrors.newPassword ? 'input-error' : ''} />
                                 <button type="button" className="password-toggle-btn" onClick={() => setIsNewPasswordVisible(p => !p)}>
-                                    {isNewPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
+                                    {isNewPasswordVisible ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
                                 </button>
                             </div>
                             {passwordChangeErrors.newPassword ? <p style={errorMessageStyle}>{passwordChangeErrors.newPassword}</p> : <small className="form-text text-muted">Must be at least 8 characters long.</small>}
@@ -236,7 +236,7 @@ function AdminProfilePage() {
                             <div className="password-input-wrapper">
                                 <input type={isConfirmPasswordVisible ? 'text' : 'password'} id="confirmNewPassword" name="confirmNewPassword" value={passwordChange.confirmNewPassword} onChange={handlePasswordFormChange} onBlur={(e) => setPasswordChangeErrors(p => ({...p, confirmNewPassword: validateConfirmPassword(passwordChange.newPassword, e.target.value)}))} className={passwordChangeErrors.confirmNewPassword ? 'input-error' : ''} />
                                 <button type="button" className="password-toggle-btn" onClick={() => setIsConfirmPasswordVisible(p => !p)}>
-                                    {isConfirmPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
+                                    {isConfirmPasswordVisible ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
                                 </button>
                             </div>
                             {passwordChangeErrors.confirmNewPassword && <p style={errorMessageStyle}>{passwordChangeErrors.confirmNewPassword}</p>}

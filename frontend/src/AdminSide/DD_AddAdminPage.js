@@ -6,10 +6,10 @@ import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
 import { FaAngleLeft } from "react-icons/fa";
-const PencilIcon = (props) => <svg {...props} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17 3c.262-.263.59-.51.958-.656a3.69 3.69 0 013.178.656c.624.625.928 1.47.914 2.32-.014.85-.318 1.695-.914 2.32L10.35 18.36 2 22l3.64-8.35L17 3z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>;
-// --- CORRECTED ICON DEFINITIONS ---
-const EyeIcon = ({ size = 20, ...props }) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>;
-const EyeOffIcon = ({ size = 20, ...props }) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>;
+import { FaBan } from "react-icons/fa";
+
+import { FaEye } from "react-icons/fa";
+import { FaEyeSlash } from "react-icons/fa";
 
 const ADMIN_ROLE_ID = '6849291d57e7f26973c9fb3e';
 
@@ -176,7 +176,7 @@ function AddAdminPage() {
                       <div className="password-input-wrapper">
                         <input type={isPasswordVisible ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} onBlur={handleBlur} placeholder="Enter password" className={errors.password ? 'input-error' : ''}/>
                         <button type="button" className="password-toggle-btn" onClick={() => setIsPasswordVisible(p => !p)}>
-                            {isPasswordVisible ? <EyeOffIcon size={20}/> : <EyeIcon size={20}/>}
+                            {isPasswordVisible ? <FaEyeSlash size={20}/> : <FaEye size={20}/>}
                         </button>
                       </div>
                       {errors.password && <p style={errorMessageStyle}>{errors.password}</p>}
@@ -186,7 +186,7 @@ function AddAdminPage() {
                       <div className="password-input-wrapper">
                         <input type={isConfirmPasswordVisible ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} onBlur={handleBlur} placeholder="Confirm password" className={errors.confirmPassword ? 'input-error' : ''}/>
                         <button type="button" className="password-toggle-btn" onClick={() => setIsConfirmPasswordVisible(p => !p)}>
-                            {isConfirmPasswordVisible ? <EyeOffIcon size={20}/> : <EyeIcon size={20}/>}
+                            {isConfirmPasswordVisible ? <FaEyeSlash size={20}/> : <FaEye size={20}/>}
                         </button>
                       </div>
                       {errors.confirmPassword && <p style={errorMessageStyle}>{errors.confirmPassword}</p>}
@@ -207,7 +207,7 @@ function AddAdminPage() {
                   <div className="form-section-card">
                     <h3 className="section-card-title">Create Account</h3>
                     <div className="form-actions-vertical">
-                      <button type="submit" className="btn-save-product"><PencilIcon size={18} /> {isSuperAdmin ? 'Create User' : 'Create Customer'}</button>
+                      <button type="submit" className="btn-save-product"><FaBan size={18} /> {isSuperAdmin ? 'Create User' : 'Create Customer'}</button>
                       <button type="button" onClick={handleCancel} className="btn-cancel-product">Cancel</button>
                     </div>
                   </div>

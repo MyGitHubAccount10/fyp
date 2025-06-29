@@ -1,6 +1,4 @@
-/* // The CSS is included as a string within the JS file
-const adminStylesCss = `
---- Admin Global & Body --- */
+/* -------- Page Specific: Manage Products -------- */
 
 /* Product image in allproductpage */
 .admin-product-image {
@@ -11,8 +9,6 @@ const adminStylesCss = `
   cursor: pointer;
 }
 
-
-/* --- Page Specific: Manage Products --- */
 .manage-products-page {
     padding-left: 100px;
     padding-right: 100px;
@@ -25,6 +21,7 @@ const adminStylesCss = `
     justify-content: space-between;
     align-items: center;
 }
+
 .manage-products-page .add-new-btn {
     background-color: #f1673a; /* Theme color */
     color: white;
@@ -39,8 +36,6 @@ const adminStylesCss = `
     transition: background-color 0.2s ease;
     gap: 8px;
 }
-/* Media queries moved to end of file */
-
 .manage-products-page .add-new-btn:hover {
     background-color: #e0562a;
 }
@@ -60,6 +55,8 @@ const adminStylesCss = `
     box-sizing: border-box; /* Include padding/border in width */
 }
 
+/* ---------V---------- */
+
 .manage-products-page .category-select {
     padding: 10px 15px;
     border: 1px solid #ccc;
@@ -69,6 +66,8 @@ const adminStylesCss = `
     cursor: pointer;
     min-width: 150px; /* Ensure min-width before wrapping */
 }
+
+/* ---------^---------- */
 
 .manage-products-page .action-icons {
     display: flex;
@@ -87,36 +86,19 @@ const adminStylesCss = `
     color: #f1673a; /* Theme color on hover */
 }
 
+/* ---------V---------- */
+
+
 /* Override action-icons styles for specific button types */
-.manage-products-page .action-icons .delete-btn,
-.manage-products-page .action-icons .unban-btn,
-.manage-products-page .action-icons .disabled-btn {
-    background: revert !important;
-    border: revert !important;
-    padding: revert !important;
-    color: revert !important;
-    font-size: revert !important;
-    position: static !important;
-    float: none !important;
-    display: inline-flex !important;
-}
-
-/* Ensure action column and icons container have proper positioning */
-.action-column,
-.orders-table .action-column,
-.orders-table td.action-column {
-    position: relative !important;
-    overflow: visible !important;
-}
-
 .action-icons {
-    position: relative !important;
-    display: flex !important;
     gap: 10px !important;
     align-items: center !important;
     justify-content: flex-start !important;
     width: 100% !important;
 }
+
+/* ---------^---------- */
+
 
 /* // ---------------------------------------------------------------------
 
@@ -136,13 +118,8 @@ const adminStylesCss = `
 
 // ---------------------------------------------------------------------
 
-//Important styles for main admin page */
-/* Admin Global Styles */
-
-/* Media queries moved to end of file */
-
-/* Add padding to the body or main wrapper to account for fixed header and sidebar */
-/* This is handled by .admin-body-wrapper padding-top and .admin-main-content margin-left */
+/* ---------V---------- */ 
+/* Not that needed to be changed */
 
 .dashboard-stats {
     display: grid; /* Use grid for flexible layout */
@@ -195,6 +172,11 @@ const adminStylesCss = `
     color: #333;
 }
 
+/* Not that needed to be changed */
+/* ---------^---------- */ 
+
+
+
 .card {
     background-color: #ffffff;
     padding: 20px;
@@ -214,6 +196,7 @@ const adminStylesCss = `
 
 }
 
+/* ---------V---------- */ 
 
 .quick-action-buttons {
     display: grid; /* Use grid for the buttons */
@@ -247,8 +230,10 @@ const adminStylesCss = `
     stroke: white; /* Ensure icon colors are white */
 }
 
-.my-table,
-.dashboard-section .table-container table { /* Reuse or adapt table styles */
+/* ---------^---------- */ 
+
+
+.my-table { /* Reuse or adapt table styles */
     width: 100%;
     border-collapse: collapse;
     table-layout: fixed; /* Fix table layout to prevent overflow */
@@ -283,9 +268,6 @@ const adminStylesCss = `
 
 
 
-/* Media queries moved to end of file */
-
-/* Media queries moved to end of file */
 
 /* // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
@@ -294,7 +276,8 @@ const adminStylesCss = `
 // ---------------------------------------------------------------------
 // --------------------------------------------------------------------- */
 
-
+/* ---------*---------- */ 
+/* Continue here */
 
 
 
@@ -331,26 +314,15 @@ const adminStylesCss = `
     /* Margin/Gap between cards is handled by the parent flex container */
 }
 
+.section-card-title {
+    margin-top: 0;
+    padding-bottom: 12px;
+    font-size: 1.25em;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
 
-/* Reuse form-group, label, input, select, textarea styles from AdminStyles */
-/* Specific styles for radio buttons */
-.radio-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px; /* Space between radio options */
-}
-.radio-label {
-    display: flex;
-    align-items: center;
-    font-weight: normal; /* Reset font weight from form-group label */
-    cursor: pointer;
-    font-size: 0.95em;
-    color: #555;
-}
-.radio-label input[type="radio"] {
-    margin-right: 8px;
-    /* Customize radio button appearance if needed, but default is fine */
-}
+
 
 /* Specific styles for file upload area */
 .file-upload-area {
@@ -454,6 +426,8 @@ const adminStylesCss = `
 .btn-cancel-product:hover {
      background-color: #ced4da;
 }
+
+/* ---------V---------- */
 
 
 /* Badge styles for user status */

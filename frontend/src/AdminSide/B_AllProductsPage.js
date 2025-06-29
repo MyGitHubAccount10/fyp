@@ -326,7 +326,7 @@ function AllProductsPage() {
                             </td>
                             <td>
                                 <div className="action-icons">
-                                    <button onClick={() => navigateToEditProduct(product)} title="Edit Product"><MdEdit size={24}/></button>
+                                    <button onClick={() => navigateToEditProduct(product._id)} title="Edit Product"><MdEdit size={24}/></button>
                                     <button onClick={() => handleDeleteProduct(product._id)} title="Delete Product" ><IoMdTrash size={24} /></button>
                                 </div>
                             </td>

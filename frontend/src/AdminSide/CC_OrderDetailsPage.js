@@ -30,8 +30,8 @@ function OrderDetailPage() {
         const adminUser = JSON.parse(localStorage.getItem('admin_user'));
         if (!adminUser || !adminUser.token) {
           throw new Error('No admin user found');
-        }        // Fetch order details and statuses in parallel
-        const [orderResponse, statusesResponse, orderProductsResponse] = await Promise.all([
+        }        // Fetch order details, statuses, regular products, AND custom items
+        const [orderResponse, statusesResponse, orderProductsResponse, customItemsResponse] = await Promise.all([
           fetch(`http://localhost:4000/api/orders/${orderId}`, {
             method: 'GET',
             headers: {
@@ -51,6 +51,14 @@ function OrderDetailPage() {
               'Authorization': `Bearer ${adminUser.token}`,
               'Content-Type': 'application/json'
             }
+          }),
+          // Fetch custom items for this order
+          fetch(`http://localhost:4000/api/customise/by-order/${orderId}`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${adminUser.token}`,
+              'Content-Type': 'application/json'
+            }
           })
         ]);
 
@@ -64,15 +72,17 @@ function OrderDetailPage() {
         const orderData = await orderResponse.json();
         const statusData = await statusesResponse.json();
         const orderProductsData = orderProductsResponse.ok ? await orderProductsResponse.json() : [];
-          // Combine order data with products
+        const customItemsData = customItemsResponse.ok ? await customItemsResponse.json() : [];
+        
+        // Fix: Ensure custom items is always an array
+        const customItemsArray = Array.isArray(customItemsData) ? customItemsData : (customItemsData ? [customItemsData] : []);
+        
+          // Combine order data with both products and custom items
         const orderWithProducts = {
           ...orderData,
-          order_products: orderProductsData
+          order_products: orderProductsData,
+          custom_items: customItemsArray
         };
-        
-        // Debug: Log the order data to see product images
-        console.log('Order with products:', orderWithProducts);
-        console.log('Order products:', orderProductsData);
         
         setOrder(orderWithProducts);
         setAvailableStatuses(statusData);
@@ -143,8 +153,21 @@ function OrderDetailPage() {
   const handleBack = () => {
     navigate('/all-orders');
   };  const calculateSubtotal = () => {
-    if (!order || !order.order_products) return '0.00';
-    return order.order_products.reduce((sum, item) => sum + (parseFloat(item.order_unit_price || 0) * parseInt(item.order_qty || 0)), 0).toFixed(2);
+    if (!order) return '0.00';
+    
+    let total = 0;
+    
+    // Add regular products
+    if (order.order_products && Array.isArray(order.order_products)) {
+      total += order.order_products.reduce((sum, item) => sum + (parseFloat(item.order_unit_price || 0) * parseInt(item.order_qty || 0)), 0);
+    }
+    
+    // Add custom items
+    if (order.custom_items && Array.isArray(order.custom_items)) {
+      total += order.custom_items.reduce((sum, item) => sum + parseFloat(item.customise_price || 0), 0);
+    }
+    
+    return total.toFixed(2);
   };
 
   const getStatusBadgeClass = (status) => {
@@ -280,12 +303,16 @@ function OrderDetailPage() {
                   />
                 </div>
               </div>
-            )}            {/* Card: Order Items */}
+            )}            
+            {/* Card: Order Items */}
             <div className="form-section-card">
               <h3 className="section-card-title">Items Ordered</h3>
+              
               <div className="order-items-list">
-                {order.order_products && order.order_products.length > 0 ? (                  order.order_products.map((item, index) => (
-                    <div key={index} className="order-item-row" style={{ 
+                {/* Regular Products */}
+                {order.order_products && Array.isArray(order.order_products) && order.order_products.length > 0 && 
+                  order.order_products.map((item, index) => (
+                    <div key={`product-${index}`} className="order-item-row" style={{ 
                       display: 'flex', 
                       alignItems: 'center', 
                       gap: '10px',
@@ -345,7 +372,102 @@ function OrderDetailPage() {
                       </div>
                     </div>
                   ))
-                ) : (
+                }
+                
+                {/* Custom Items */}
+                {order.custom_items && Array.isArray(order.custom_items) && order.custom_items.length > 0 && 
+                  order.custom_items.map((item, index) => (
+                    <div key={`custom-${index}`} className="order-item-row" style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '10px',
+                      marginBottom: '10px',
+                      padding: '8px',
+                      backgroundColor: '#fff3cd',
+                      borderRadius: '4px',
+                      border: '1px solid #ffeaa7'
+                    }}>
+                      {/* Custom item images */}
+                      <div style={{ display: 'flex', gap: '5px' }}>
+                        {item.top_image && (
+                          <img
+                            src={`/uploads/${item.top_image}`}
+                            alt="Custom Top Design"
+                            onClick={() => setModalImage(`/uploads/${item.top_image}`)}
+                            style={{
+                              width: '40px',
+                              height: '40px',
+                              objectFit: 'cover',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              border: '1px solid #ddd'
+                            }}
+                          />
+                        )}
+                        {item.bottom_image && (
+                          <img
+                            src={`/uploads/${item.bottom_image}`}
+                            alt="Custom Bottom Design"
+                            onClick={() => setModalImage(`/uploads/${item.bottom_image}`)}
+                            style={{
+                              width: '40px',
+                              height: '40px',
+                              objectFit: 'cover',
+                              borderRadius: '4px',
+                              cursor: 'pointer',
+                              border: '1px solid #ddd'
+                            }}
+                          />
+                        )}
+                        {!item.top_image && !item.bottom_image && (
+                          <div style={{
+                            width: '40px',
+                            height: '40px',
+                            backgroundColor: '#f0f0f0',
+                            borderRadius: '4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '10px'
+                          }}>
+                            Custom
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ 
+                          wordWrap: 'break-word', 
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          fontWeight: 'bold'
+                        }}>
+                          Custom Skimboard
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#666' }}>
+                          {item.board_type} • {item.board_shape} • {item.board_size}
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#666' }}>
+                          {item.material} • {item.thickness}
+                        </div>
+                      </div>
+                      
+                      <div style={{ 
+                        flexShrink: 0,
+                        marginLeft: '10px',
+                        textAlign: 'right',
+                        minWidth: 'fit-content'
+                      }}>
+                        1 × ${parseFloat(item.customise_price || 0).toFixed(2)}
+                      </div>
+                    </div>
+                  ))
+                }
+                
+                {/* Show "No items" only if both arrays are empty or invalid */}
+                {((!order.order_products || !Array.isArray(order.order_products) || order.order_products.length === 0) && 
+                  (!order.custom_items || !Array.isArray(order.custom_items) || order.custom_items.length === 0)) && (
                   <p>No items found for this order.</p>
                 )}
               </div>              <hr />

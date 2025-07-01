@@ -1,15 +1,17 @@
 // LoginPage.js
 
 import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom'; // MODIFIED: Import router hooks
-import { useAuthContext } from './hooks/useAuthContext';     // MODIFIED: Import auth context hook
+// --- MODIFIED: Added useNavigate to handle the new button's action ---
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuthContext } from './hooks/useAuthContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 
-// --- Icons for password toggle ---
+// ... (EyeIcon and EyeOffIcon components remain the same) ...
 const EyeIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
 const EyeOffIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>;
+
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -20,11 +22,11 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  // MODIFIED: Use hooks for navigation and state management
   const navigate = useNavigate();
   const location = useLocation();
   const { dispatch } = useAuthContext();
 
+  // ... (validation functions remain the same) ...
   const validateEmail = (email) => {
     if (!email) return 'Email is required.';
     if (!/^\S+@\S+\.\S+$/.test(email)) return 'Please enter a valid email format.';
@@ -35,6 +37,7 @@ const LoginPage = () => {
     if (!pass) return 'Password is required.';
     return '';
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,7 +53,6 @@ const LoginPage = () => {
 
     setIsLoading(true);
     try {
-      // MODIFIED: Use relative path for API call
       const response = await fetch('/api/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -65,12 +67,9 @@ const LoginPage = () => {
         throw new Error('Access Denied. Your account has been banned. Please contact an administrator.');
       }
       
-      // MODIFIED: Correct login logic
-      // 1. Save the user to local storage for session persistence
       localStorage.setItem('user', JSON.stringify(data));
-      // 2. Update the auth context to inform the app of the login
       dispatch({ type: 'LOGIN', payload: data });
-      // 3. Navigate the user to their intended destination, or the homepage
+
       const from = location.state?.from || '/';
       navigate(from, { replace: true });
 
@@ -81,6 +80,13 @@ const LoginPage = () => {
       setIsLoading(false);
     }
   };
+
+  // --- ADDED: Handler to navigate to the sign-up page ---
+  const handleGoToSignUp = () => {
+    // We pass the location state along so the signup page knows where to redirect back to
+    navigate('/signup', { state: location.state });
+  };
+
 
   const inputStyle = { display: 'block', width: '100%', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
   const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
@@ -95,6 +101,7 @@ const LoginPage = () => {
           <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>Login to your account!</p>
 
           <form onSubmit={handleSubmit} noValidate>
+            {/* ... (email and password inputs remain the same) ... */}
             <input
               type="email"
               placeholder="Enter your email"
@@ -140,6 +147,24 @@ const LoginPage = () => {
               </button>
             </div>
             {apiError && <div className="error" style={{ color: 'red', marginTop: '10px' }}>{apiError}</div>}
+            
+            {/* --- MODIFIED: Added a button to redirect to the sign-up page --- */}
+            <div style={{ marginTop: '20px' }}>
+              <button
+                type="button"
+                className="update-cart-btn"
+                onClick={handleGoToSignUp}
+                style={{
+                  width: '100%',
+                  backgroundColor: '#f0f0f0',
+                  color: '#333',
+                  border: '1px solid #ccc'
+                }}
+              >
+                Don't have an account? Sign Up
+              </button>
+            </div>
+
           </form>
         </div>
       </div>

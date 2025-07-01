@@ -20,10 +20,10 @@ const paymentOptions = [
 
 function PlaceOrderPage() {
     const navigate = useNavigate();
-    // MODIFIED: We no longer need authIsReady here, as the context handles the initial loading.
     const { user } = useAuthContext();
     const { cartItems, dispatch } = useCartContext();
     const {customItem, dispatch: customiseDispatch} = useCustomiseContext();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [shippingDetails, setShippingDetails] = useState({
         fullName: '',
@@ -46,25 +46,23 @@ function PlaceOrderPage() {
     const [bottomImagePreview, setBottomImagePreview] = useState(null);
     const alertShown = useRef(false);
 
-    // --- MODIFIED: Simplified Guard Logic ---
-    // The component now only renders after the auth check is complete,
-    // so we can directly check the status of user and cartItems.
     useEffect(() => {
-        // Guard 1: User must be logged in. This check is now reliable.
+        if (isSubmitting) {
+            return;
+        }
+
         if (!user) {
             navigate('/login', { state: { from: '/place-order' } });
             return;
         }
 
-        // Guard 2: Cart must not be empty.
         if (cartItems.length === 0 && !customItem) {
             navigate('/');
             return;
         }
 
         if (cartItems.length > 0 && customItem && !alertShown.current) {
-            // If both cartItems and customItem exist, show an alert and redirect.
-            alertShown.current = true; // Prevents multiple alerts.
+            alertShown.current = true;
             dispatch({ type: 'CLEAR_CART' });
             customiseDispatch({ type: 'CLEAR_CUSTOM_ITEM' });
             alert('Your cart and custom skimboard have been cleared due to a conflict. Please order separately.');
@@ -72,7 +70,6 @@ function PlaceOrderPage() {
             return;
         }
 
-        // If both guards pass, pre-populate the user's details.
         const userData = JSON.parse(localStorage.getItem('user'));
         if (userData) {
             setShippingDetails({
@@ -82,8 +79,7 @@ function PlaceOrderPage() {
                 shippingAddress: userData.shipping_address || '',
             });
         }
-    }, [user, cartItems, customItem, navigate]); // REMOVED: authIsReady is no longer a dependency.
-
+    }, [user, cartItems, customItem, navigate, dispatch, customiseDispatch, isSubmitting]);
 
     useEffect(() => {
         if (!customItem && cartItems.length > 0) {
@@ -134,7 +130,8 @@ function PlaceOrderPage() {
                 URL.revokeObjectURL(bottomImagePreview);
             }
         };
-    }, [cartItems, customItem]);
+        // --- FIX: Added missing dependencies as requested by the linter ---
+    }, [cartItems, customItem, topImagePreview, bottomImagePreview]);
     
     const getUserIdFromToken = (token) => {
         try {
@@ -158,30 +155,36 @@ function PlaceOrderPage() {
     
     const handleSubmitOrder = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
 
         if (!user || !user.token) {
             alert('You must be logged in to place an order');
+            setIsSubmitting(false);
             navigate('/login');
             return;
         }
 
-        const userId = getUserIdFromToken(user.token);
-        if (!userId) {
+        if (!getUserIdFromToken(user.token)) {
             alert('Authentication error. Please try logging in again.');
+            setIsSubmitting(false);
             return;
         }
 
         if (!selectedPaymentMethod) {
             alert('Please select a payment method.');
+            setIsSubmitting(false);
             return;
         }
 
         if (!shippingDetails.shippingAddress) {
             alert('Please fill in your shipping address.');
+            setIsSubmitting(false);
             return;
         }
 
         try {
+            // ... (API call logic is correct and remains the same) ...
+            const userId = getUserIdFromToken(user.token);
             const orderData = {
                 user_id: userId,
                 status_id: '684d00b7df30da21ceb3e551',
@@ -190,23 +193,18 @@ function PlaceOrderPage() {
                 order_date: new Date().toISOString(),
                 total_amount: parseFloat(orderSummary.total)
             };
-
             const orderResponse = await fetch('/api/orders', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`},
                 body: JSON.stringify(orderData)
             });
-
             const orderResult = await orderResponse.json();
             if (!orderResponse.ok) throw new Error(orderResult.error || 'Failed to create order');
-
             const orderId = orderResult._id;
-            
             for (const item of cartItems) {
                 const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
                 const productId = item.id || item.product_id || item._id;
                 if (!productId) throw new Error('Missing product ID for item');
-
                 const orderProductData = {
                     order_id: orderId,
                     product_id: productId,
@@ -214,19 +212,16 @@ function PlaceOrderPage() {
                     order_unit_price: parseFloat(itemPrice.toFixed(2)),
                     order_size: item.size || 'N/A'
                 };
-                
                 const orderProductResponse = await fetch('/api/order-products', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`},
                     body: JSON.stringify(orderProductData)
                 });
-
                 if (!orderProductResponse.ok) {
                     const errorResult = await orderProductResponse.json();
                     throw new Error(errorResult.error || 'Failed to add an item to the order.');
                 }
             }
-
             if (customItem && cartItems.length === 0) {
                 const customisePrice = typeof customItem.customise_price === 'string' ? parseFloat(customItem.customise_price.replace(/[$,]/g, '')) : parseFloat(customItem.customise_price);
                 const customiseFormData = new FormData();
@@ -237,45 +232,33 @@ function PlaceOrderPage() {
                 customiseFormData.append('material', customItem.material);
                 customiseFormData.append('thickness', customItem.thickness);
                 customiseFormData.append('customise_price', customisePrice.toFixed(2));
-                
-                if (customItem.top_image) {
-                    customiseFormData.append('top_image', customItem.top_image);
-                }
-
-                if (customItem.bottom_image) {
-                    customiseFormData.append('bottom_image', customItem.bottom_image);
-                }
-
+                if (customItem.top_image) customiseFormData.append('top_image', customItem.top_image);
+                if (customItem.bottom_image) customiseFormData.append('bottom_image', customItem.bottom_image);
                 const customiseResponse = await fetch('/api/customise', {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${user.token}`},
                     body: customiseFormData
                 });
-
                 if (!customiseResponse.ok) {
                     const errorResult = await customiseResponse.json();
                     throw new Error(errorResult.error || 'Failed to add the custom item to the order.');
                 }
-
                 const customiseResult = await customiseResponse.json();
                 customiseDispatch({ type: 'SET_CUSTOM_ITEM', payload: customiseResult });
             }
 
-
-            dispatch({ type: 'CLEAR_CART' });
-            customiseDispatch({ type: 'CLEAR_CUSTOM_ITEM' });
             alert('Order placed successfully!');
             navigate('/order-history');
+            dispatch({ type: 'CLEAR_CART' });
+            customiseDispatch({ type: 'CLEAR_CUSTOM_ITEM' });
+            
         } catch (error) {
             console.error('Error placing order:', error);
             alert(`Failed to place order: ${error.message}`);
+            setIsSubmitting(false);
         }
     };
 
-    // REMOVED: The loading check `if (!authIsReady)` is no longer needed
-    // because the entire component won't render until the context is ready.
-    
-    // If guards are redirecting, this prevents rendering the form with bad data.
     if (!user || (cartItems.length === 0 && !customItem)) {
         return null; 
     }
@@ -284,9 +267,20 @@ function PlaceOrderPage() {
         <>
             <Header />
             <div className="container checkout-page-container">
+                <div style={{ textAlign: 'left', marginBottom: '20px' }}>
+                    <button
+                        type="button"
+                        className="update-cart-btn"
+                        onClick={() => navigate('/cart')}
+                        style={{ display: 'inline-block', margin: 0, marginTop: 0 }}
+                    >
+                        ← Back to Cart
+                    </button>
+                </div>
                 <h2>Checkout</h2>
                 <form onSubmit={handleSubmitOrder} className="checkout-form">
                     <div className="checkout-layout">
+                        {/* --- FIX: Restored the JSX for the main content area --- */}
                         <div className="checkout-main-content">
                             <section className="form-section">
                                 <h3>Shipping Details (Singapore Only)</h3>
@@ -327,6 +321,7 @@ function PlaceOrderPage() {
                             </section>
                         </div>
 
+                        {/* --- FIX: Restored the JSX for the order summary --- */}
                         <div className="checkout-order-summary">
                             <h3>Order Summary</h3>
                             <div className="summary-items-list">
@@ -341,6 +336,8 @@ function PlaceOrderPage() {
                                             </div>
                                         );
                                     }
+                                    // Added a return null for the map function to avoid potential issues.
+                                    return null;
                                 })}
                                 {customItem && (
                                     <>
@@ -388,8 +385,8 @@ function PlaceOrderPage() {
                                 <strong>Total</strong>
                                 <strong>S${orderSummary.total.toFixed(2)}</strong>
                             </div>
-                            <button type="submit" className="complete-purchase-btn place-order-btn">
-                                Place Order
+                            <button type="submit" className="complete-purchase-btn place-order-btn" disabled={isSubmitting}>
+                                {isSubmitting ? 'Placing Order...' : 'Place Order'}
                             </button>
                             <p className="checkout-terms">
                                 By placing your order, you agree to our <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>.

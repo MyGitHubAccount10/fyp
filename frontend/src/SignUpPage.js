@@ -1,19 +1,27 @@
+// SignUpPage.js
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// --- MODIFIED: Import useLocation and useAuthContext ---
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuthContext } from './hooks/useAuthContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 
+// ... (EyeIcon, EyeOffIcon, CUSTOMER_ROLE_ID remain the same) ...
 const EyeIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
 const EyeOffIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>;
-
 const CUSTOMER_ROLE_ID = '6849293057e7f26973c9fb40';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
+  // --- ADDED: Initialize hooks for location and auth context ---
+  const location = useLocation();
+  const { dispatch } = useAuthContext();
   
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  // ... (all other state variables remain the same) ...
   const [phone, setPhone] = useState('');
   const [shippingAddress, setShippingAddress] = useState('');
   const [username, setUsername] = useState('');
@@ -31,7 +39,12 @@ const SignUpPage = () => {
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+  
+  // --- ADDED: isLoading state for the submit button ---
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState(null);
 
+  // ... (all validation functions and handlers remain the same) ...
   const validateFullName = (name) => {
     if (!name) return `Full Name is required.`;
     if (!/^[a-zA-Z\s]*$/.test(name)) {
@@ -98,7 +111,9 @@ const SignUpPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setApiError(null); // Reset API error on new submission
     
+    // ... (validation logic remains the same) ...
     const fNameError = validateFullName(fullName);
     const emailErr = validateEmail(email);
     const phoneErr = validatePhone(phone);
@@ -120,6 +135,8 @@ const SignUpPage = () => {
       return;
     }
 
+    setIsLoading(true); // --- ADDED: Set loading state
+
     const userData = {
       full_name: fullName,
       email,
@@ -139,13 +156,21 @@ const SignUpPage = () => {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Failed to sign up');
 
-      alert('Account created successfully! You will be redirected to the homepage.');
+      // --- MODIFIED: The new, correct way to handle successful signup ---
+      // 1. Save user data to localStorage for session persistence
       localStorage.setItem('user', JSON.stringify(result));
-      window.location.href = '/';
+      // 2. Update the AuthContext so the app knows the user is logged in
+      dispatch({ type: 'LOGIN', payload: result });
+      // 3. Navigate to the intended destination (e.g., /place-order) or the homepage
+      const from = location.state?.from || '/';
+      navigate(from, { replace: true });
 
-    // ✅ FIX: Removed the incorrect "=>" from the catch block
     } catch (err) {
-      alert(`Error signing up: ${err.message}`);
+      // Set the API error to display it to the user
+      setApiError(err.message);
+      console.error(`Error signing up: ${err.message}`);
+    } finally {
+      setIsLoading(false); // --- ADDED: Unset loading state
     }
   };
 
@@ -162,6 +187,7 @@ const SignUpPage = () => {
           <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>Create a new account!</p>
           <form onSubmit={handleSubmit} noValidate>
             
+            {/* ... (all input fields remain the same) ... */}
             <input
               type="text"
               placeholder="Enter your full name"
@@ -254,10 +280,14 @@ const SignUpPage = () => {
               <button
                 type="submit"
                 className="complete-purchase-btn"
-                style={{ flexGrow: 1, backgroundColor: '#333', color: '#fff' }}>
-                Sign Up
+                style={{ flexGrow: 1, backgroundColor: '#333', color: '#fff' }}
+                disabled={isLoading} // --- ADDED: Disable button while loading
+                >
+                {isLoading ? 'Signing Up...' : 'Sign Up'}
               </button>
             </div>
+            {/* --- ADDED: Display API errors to the user --- */}
+            {apiError && <p style={{...errorMessageStyle, textAlign: 'center'}}>{apiError}</p>}
           </form>
         </div>
       </div>

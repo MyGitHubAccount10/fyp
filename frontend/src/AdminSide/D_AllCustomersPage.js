@@ -335,7 +335,7 @@ const handleFilter = () => {
                     <thead>                        
                         <tr>
                             <th style={{ width: '100px', maxWidth: '100px' }}>Role</th>
-                            <th style={{ width: '120px', maxWidth: '120px' }}>Username</th>
+                            <th style={{ width: '120px', maxWidth: '120px' }}>User</th>
                             <th style={{ width: '180px', maxWidth: '180px' }}>Email</th>
                             <th style={{ width: '120px', maxWidth: '120px' }}>Phone Number</th>
                             <th style={{ width: '200px', maxWidth: '200px' }}>Shipping Address</th>
@@ -349,7 +349,7 @@ const handleFilter = () => {
                             currentUsers.map(user => (
                                 <tr key={user._id} style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>
                                     <td style={{ maxWidth: '100px', wordBreak: 'break-word' }}>{user.role_name}</td>
-                                    <td style={{ maxWidth: '120px', wordBreak: 'break-word' }}>{user.username}</td>
+                                    <td style={{ maxWidth: '120px', wordBreak: 'break-word' }}>{user.full_name}</td>
                                     <td style={{ maxWidth: '180px', wordBreak: 'break-word' }}>{user.email}</td>
                                     <td style={{ maxWidth: '120px', wordBreak: 'break-word' }}>{user.phone_number}</td>
                                     <td style={{ maxWidth: '200px', wordBreak: 'break-word', whiteSpace: 'normal' }}>{user.shipping_address}</td>

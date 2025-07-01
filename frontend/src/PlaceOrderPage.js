@@ -121,17 +121,7 @@ function PlaceOrderPage() {
                 total: calculatedTotal,
             });
         }
-
-        return () => {
-            if (topImagePreview) {
-                URL.revokeObjectURL(topImagePreview);
-            }
-            if (bottomImagePreview) {
-                URL.revokeObjectURL(bottomImagePreview);
-            }
-        };
-        // --- FIX: Added missing dependencies as requested by the linter ---
-    }, [cartItems, customItem, topImagePreview, bottomImagePreview]);
+    }, [cartItems, customItem]);
     
     const getUserIdFromToken = (token) => {
         try {

@@ -285,7 +285,7 @@ function OrderDetailPage() {
                   onClick={(e) => e.stopPropagation()}                  style={{
                     backgroundColor: 'white',
                     borderRadius: '8px',
-                    maxWidth: '80vw',
+                    maxWidth: '20vw',
                     maxHeight: '80vh',
                     display: 'flex',
                     alignItems: 'center',

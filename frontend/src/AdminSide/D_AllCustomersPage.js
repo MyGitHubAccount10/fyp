@@ -212,7 +212,7 @@ const handleFilter = () => {
                     <>
                         <div className="title-row">
                             <div>
-                                <h2>All Users</h2>
+                                <h2>Users</h2>
 
                             </div>
                             <button onClick={handleAddAdmin} className="add-new-btn">

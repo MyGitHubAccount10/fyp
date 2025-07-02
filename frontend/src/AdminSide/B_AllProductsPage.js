@@ -211,7 +211,7 @@ function AllProductsPage() {
         <AdminHeader />
         <div className="manage-products-page">
             <div className="title-row">
-                <h2>All Products</h2>
+                <h2>Products</h2>
                 <button onClick={handleAddProduct} className="add-new-btn">
                     <MdEdit size={18} color="white"/>
                     Add New Product

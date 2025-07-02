@@ -129,13 +129,13 @@ function AllOrdersPage() {
     return (<>
               <AdminHeader />
         <div className='manage-products-page'>
-            <h2 >All Orders</h2>
+            <h2 >Orders</h2>
 
             {/* Filter Bar */}
             <div className="filter-bar">
                 <input
                     type="text"
-                    placeholder="Search"
+                    placeholder="Search by Order ID or Customer Name"
                     className="filter-input search-input" // Reuse search-input style if applicable
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}

@@ -247,7 +247,13 @@ function AllProductsPage() {
                 </div>
             </div>
 
-            <div className="pagination-controls" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 0", flexWrap: "wrap", gap: "12px" }}>
+            <div className="pagination-controls" 
+                style={{ display: "flex", 
+                         justifyContent: "space-between",  
+                         alignItems: "center", 
+                         padding: "16px 0", 
+                         flexWrap: "wrap", 
+                         gap: "12px" }}>
                 <span style={{ fontSize: "16px" }}>Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong></span>
                 <div style={{ display: "flex", gap: "10px" }}>
                     <button onClick={handlePrevPage} disabled={currentPage === 1} className="pagination-button">{'<< Prev'}</button>
@@ -256,18 +262,58 @@ function AllProductsPage() {
             </div>
 
             {modalImage && currentProduct && (
-                <div className="modal-overlay" onClick={closeModal} style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'rgba(0, 0, 0, 0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-                    <button onClick={closeModal} style={{ position: 'absolute', top: '20px', right: '20px', background: 'rgba(0, 0, 0, 0.5)', border: 'none', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1001 }}>
+                // Black Background
+                <div className="modal-overlay" 
+                        onClick={closeModal} 
+                        style={{ position: 'fixed', 
+                                 top: 0, 
+                                 left: 0, 
+                                 width: '100vw', 
+                                 height: '100vh', 
+                                 backgroundColor: 'rgba(0, 0, 0, 0.8)', 
+                                 display: 'flex', 
+                                 alignItems: 'center', 
+                                 justifyContent: 'center', 
+                                 zIndex: 1000 }}>
+                    {/* The X button */}
+                    <button onClick={closeModal} 
+                            style={{ position: 'absolute', 
+                                     top: '20px', 
+                                     right: '20px', 
+                                     background: 'rgba(0, 0, 0, 0.5)', 
+                                     border: 'none', 
+                                     borderRadius: '50%', 
+                                     width: '40px', 
+                                     height: '40px', 
+                                     display: 'flex', 
+                                     alignItems: 'center', 
+                                     justifyContent: 'center', 
+                                     cursor: 'pointer', 
+                                     zIndex: 1001 }}>
                         <IoClose size={28} color='white' />
-                    </button>                
-                    <div onClick={(e) => e.stopPropagation()} style={{ position: 'relative', backgroundColor: 'white', borderRadius: '8px', width: '70vw', height: '70vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px', boxSizing: 'border-box' }}>
+                    </button>
+                    {/* Left and Right Arrow */}
+                    <div onClick={(e) => e.stopPropagation()} 
+                         style={{ position: 'relative', 
+                         backgroundColor: 'white', 
+                         borderRadius: '8px', 
+                         width: '70vw', 
+                         height: '70vh', 
+                         display: 'flex', 
+                         flexDirection: 'column', 
+                         alignItems: 'center', 
+                         justifyContent: 'center', 
+                         padding: '20px', 
+                         boxSizing: 'border-box' }}>
                         {getProductImages(currentProduct).length > 1 && (
                             <>
                                 <button onClick={goToPreviousImage} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0, 0, 0, 0.7)', border: 'none', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1002, transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.9)'} onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.7)'}><FaAngleLeft size={24} color="white" /></button>
                                 <button onClick={goToNextImage} style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0, 0, 0, 0.7)', border: 'none', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1002, transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.9)'} onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.7)'}><FaAngleRight size={24} color="white" /></button>
                             </>
                         )}
+                        {/* Product Name */}
                         <h3 style={{ margin: '0 0 15px 0', textAlign: 'center', color: '#333' }}>{currentProduct.product_name}</h3>
+                        {/* Product Image */}
                         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', minHeight: '0' }}>
                             <img
                                 src={modalImage}
@@ -277,6 +323,7 @@ function AllProductsPage() {
                                 style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '4px' }}
                             />
                         </div>
+                        {/* Thumbnail Navigation */}
                         {getProductImages(currentProduct).length > 1 && (
                             <div style={{ display: 'flex', gap: '8px', marginTop: '15px', alignItems: 'center' }}>
                                 {getProductImages(currentProduct).map((_, index) => (
@@ -288,7 +335,7 @@ function AllProductsPage() {
                     </div>
                 </div>
             )}
-
+            {/* Products Table */}
             <div className="card" style={{ overflowX: 'auto'}}>
                 <table className="my-table">
                     <thead>

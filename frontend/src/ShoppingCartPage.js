@@ -88,7 +88,7 @@ function ShoppingCartPage() {
                             const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
                             const imageUrl = `/images/${item.image}`;
                             return (
-                                <div className="cart-item" key={`${item.id}`}>
+                                <div className="cart-item" key={`${item.id}-${item.size}`}>
                                     <img src={imageUrl} alt={item.name} />
                                     <div className="item-info">
                                         <strong>{item.name}</strong>

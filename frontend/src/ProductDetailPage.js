@@ -17,7 +17,7 @@ const ProductDetailPage = () => {
   const [similarProducts, setSimilarProducts] = useState([]);
   const [selectedImage, setSelectedImage] = useState('');
   const [productImages, setProductImages] = useState([]);
-  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedSize, setSelectedSize] = useState('M');
   const [quantity, setQuantity] = useState(1);
   // MODIFIED: This 'stock' will now represent what's available for the user to add.
   const [stock, setStock] = useState(0);
@@ -99,11 +99,6 @@ const ProductDetailPage = () => {
   const handleAddToCart = () => {
     const isAccessory = product.category.category_name === 'Accessories';
     const size = isAccessory ? 'N/A' : selectedSize;
-    if (!isAccessory && !selectedSize) {
-      // If the product requires size selection and none is selected, show an alert
-      alert('Please select a size before adding to cart.');
-      return;
-    }
     dispatch({
       type: 'ADD_TO_CART',
       payload: { id: product._id, name: product.product_name, price: product.product_price, size: size, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
@@ -114,11 +109,6 @@ const ProductDetailPage = () => {
   const handleBuyNow = () => {
     const isAccessory = product.category.category_name === 'Accessories';
     const size = isAccessory ? 'N/A' : selectedSize;
-    if (!isAccessory && !selectedSize) {
-      // If the product requires size selection and none is selected, show an alert
-      alert('Please select a size before placing your order.');
-      return;
-    }
     dispatch({
       type: 'ADD_TO_CART',
       payload: { id: product._id, name: product.product_name, price: product.product_price, size: size, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }

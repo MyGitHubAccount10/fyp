@@ -359,27 +359,27 @@ const handleFilter = () => {
                                         </span>
                                     </td>
                                     <td style={{ maxWidth: '100px', whiteSpace: 'nowrap' }}>{new Date(user.createdAt).toLocaleDateString()}</td>                                    <td className="action-column" style={{ maxWidth: '150px' }}>
-                                        <div className="action-icons" style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                                        <div className="actionButton" >
                                             {/* Show edit button based on permissions */}
                                             {isSuperAdmin ? (
                                                 // Super Admin can edit anyone
                                                 <button onClick={() => handleEditUser(user)} title="Edit User">
-                                                    <MdEdit size={18} />
+                                                    <MdEdit />
                                                 </button>
                                             ) : currentUserRole === 'Admin' ? (
                                                 // Admin can only edit customers
                                                 user.role_name === 'Customer' ? (
                                                     <button onClick={() => handleEditUser(user)} title="Edit User">
-                                                        <MdEdit size={18} />
+                                                        <MdEdit  />
                                                     </button>
                                                 ) : (
                                                     <button onClick={() => handleEditUser(user)} title="View User (Edit restricted for Admin users)">
-                                                        <MdEdit size={18} />
+                                                        <MdEdit />
                                                     </button>
                                                 )
                                             ) : (
                                                 <button onClick={() => handleEditUser(user)} title="View User">
-                                                    <MdEdit size={18} />
+                                                    <MdEdit />
                                                 </button>
                                             )}
                                             {/* Show ban/unban button based on permissions */}
@@ -390,7 +390,7 @@ const handleFilter = () => {
                                                             onClick={() => handleBanUser(user._id, user.status, user.role_name)} 
                                                             title={user.status === 'banned' ? 'Unban User' : 'Ban User'} 
                                                         >
-                                                            <FaBan size={14} />
+                                                            <FaBan className='smallerban'/>
                                                         </button>
                                                     );
                                                 } else if (currentUserRole === 'Admin') {
@@ -402,7 +402,7 @@ const handleFilter = () => {
                                                                 className={user.status === 'banned' ? 'unban-btn' : 'delete-btn'}
                                                                 style={{ whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px' }}
                                                             >
-                                                                <FaBan size={14}/>
+                                                                <FaBan />
                                                                 {user.status === 'banned' ? 'Unban' : 'Ban'}
                                                             </button>
                                                         );
@@ -414,7 +414,7 @@ const handleFilter = () => {
                                                                 className="disabled-btn"
                                                                 style={{ opacity: 0.5, cursor: 'not-allowed', whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px' }}
                                                             >
-                                                                <FaBan size={14}/>
+                                                                <FaBan />
                                                             </button>
                                                         );
                                                     }

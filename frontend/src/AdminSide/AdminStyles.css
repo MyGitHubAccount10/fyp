@@ -69,20 +69,30 @@
 
 /* ---------^---------- */
 
-.manage-products-page .action-icons {
+.manage-products-page .actionButton {
     display: flex;
     gap: 10px;
+    align-items: center;
+    justify-content: center; 
+
 }
-.manage-products-page .action-icons button {
+.manage-products-page .actionButton button {
     background: none;
     border: none;
     cursor: pointer;
     padding: 0; /* Remove button default padding */
-    font-size: 1em; /* Icon size */
     color: #555; /* Default icon color */
     transition: color 0.2s ease;
 }
-.manage-products-page .action-icons button:hover {
+.manage-products-page .actionButton button svg {
+    width: 40px; 
+    height: 40px;
+}
+.smallerban{
+    width: 11px;
+    height: 15px;
+}
+.manage-products-page .actionButton button:hover {
     color: #f1673a; /* Theme color on hover */
 }
 
@@ -90,12 +100,7 @@
 
 
 /* Override action-icons styles for specific button types */
-.action-icons {
-    gap: 10px !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    width: 100% !important;
-}
+
 
 /* ---------^---------- */
 
@@ -244,13 +249,13 @@
     text-align: center;
     padding: 12px 15px;
     word-wrap: break-word; /* Break long words */
-    text-overflow: ellipsis; 
+    text-overflow: ellipsis;
+    font-size: 17px;
+
 }
 .my-table th {
-    background-color: #f8f9fa;
-    font-weight: bold;
-    font-size: 0.9em;
-    color: #555;
+    background-color: #f3efef65;
+    color: black;
     text-transform: uppercase;
 }
 
@@ -836,30 +841,37 @@ input[type="password"]::-ms-clear {
 /* RESPONSIVE MEDIA QUERIES - ORGANIZED BY BREAKPOINT                      */
 /* ========================================================================= */
 
+
+
+
+
 /* Large Tablets - 1024px and down */
 @media (max-width: 1024px) {
-
-    .orders-table th:nth-child(1), .orders-table td:nth-child(1) { 
-        width: 8%; /* Phone smaller */
-    }
-    .orders-table th:nth-child(2), .orders-table td:nth-child(2) { 
-        width: 10%; /* Address smaller */
-    }
-    .orders-table th:nth-child(3), .orders-table td:nth-child(3) { 
-        width: 8%; /* Email smaller */
-    }
-    .orders-table th:nth-child(4), .orders-table td:nth-child(4) { 
-        width: 8%; /* Phone smaller */
-    }
-    .orders-table th:nth-child(5), .orders-table td:nth-child(5) { 
-        width: 5%; /* Address smaller */
-    }
-    .orders-table th:nth-child(6), .orders-table td:nth-child(6) { 
-        width: 8%; /* Status smaller */
-    }
-    .orders-table th:nth-child(7), .orders-table td:nth-child(7) { 
-        width: 8%; /* Created smaller */
-    }
+    .manage-products-page .actionButton {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center; 
+}
+.manage-products-page .actionButton button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0; /* Remove button default padding */
+    color: #555; /* Default icon color */
+    transition: color 0.2s ease;
+}
+.manage-products-page .actionButton button svg {
+    width: 20px; 
+    height: 20px;
+}
+.smallerban{
+    width: 15px;
+    height: 15px;
+}
+.manage-products-page .actionButton button:hover {
+    color: #f1673a; /* Theme color on hover */
+}
 }
 
 /* Medium screens - 768px and down */
@@ -914,6 +926,8 @@ input[type="password"]::-ms-clear {
 
 
 }
+
+
 
 
 
@@ -972,6 +986,10 @@ input[type="password"]::-ms-clear {
         padding: 12px 6px;
         font-size: 10px;
         /* font-size: 0.8em; */
+    }
+    .my-table svg{
+        width: 16px; /* Smaller icon size */
+        height: 16px;
     }
 
     .orders-table-container {

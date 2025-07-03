@@ -170,7 +170,8 @@ function AllOrdersPage() {
                          // placeholder="dd/mm/yy"
                         className="date-input"
                     />
-                 </div>                <button onClick={handleApplyFilters} className="btn-apply-filters">
+                 </div>                
+                 <button onClick={handleApplyFilters} className="btn-apply-filters">
                     Apply Filters
                 </button>
             </div>
@@ -262,7 +263,7 @@ function AllOrdersPage() {
                                         {order.status_id?.status_name || 'Processing'}
                                     </td>
                                     <td>
-                                        <div className="action-icons">
+                                        <div className="actionButton">
                                             <button onClick={() => handleViewDetails(order._id)} className="link-button"><MdEdit size={24} /></button>
                                         </div>
                                     </td>

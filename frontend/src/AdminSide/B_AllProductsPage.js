@@ -363,7 +363,7 @@ function AllProductsPage() {
             )}
             {/* Products Table */}
             <div className="card" style={{ overflowX: 'auto'}}>
-                <table className="orders-table">
+                <table className="my-table">
                     <thead>
                         <tr>
                             <th>Image</th>
@@ -372,7 +372,7 @@ function AllProductsPage() {
                             <th>Price</th>
                             <th>Stock</th>
                             <th>Status</th>
-                            <th className="action-column">Action</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -398,8 +398,8 @@ function AllProductsPage() {
                                 </span>
                             </td>
                             <td>
-                                <div className="action-icons">
-                                    <button onClick={() => navigateToEditProduct(product._id)} title="Edit Product"><MdEdit size={24}/></button>
+                                <div className="actionButton" style={{ height: '100px', display: 'flex', gap: '10px', justifyContent: 'center', alignItems: 'center' }}>
+                                    <button onClick={() => navigateToEditProduct(product._id)} title="Edit Product"><MdEdit size={39}/></button>
                                     <button onClick={() => handleDeleteProduct(product._id)} title="Delete Product" ><IoMdTrash size={24} /></button>
                                 </div>
                             </td>
@@ -416,7 +416,14 @@ function AllProductsPage() {
                 </table>
             </div>
         </div>
+                                        <div className="actionButton">
+                                    <button onClick={() => navigateToEditProduct()} title="Edit Product"><MdEdit size={24}/></button>
+                                    <button onClick={() => handleDeleteProduct()} title="Delete Product" ><IoMdTrash size={24} /></button>
+                                </div>
     </>);
 }
+
+
+
 
 export default AllProductsPage;

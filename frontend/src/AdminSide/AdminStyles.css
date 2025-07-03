@@ -250,8 +250,7 @@
     padding: 12px 15px;
     word-wrap: break-word; /* Break long words */
     text-overflow: ellipsis;
-    font-size: 17px;
-
+    font-size: 17px!important; 
 }
 .my-table th {
     background-color: #f3efef65;
@@ -872,14 +871,17 @@ input[type="password"]::-ms-clear {
 .manage-products-page .actionButton button:hover {
     color: #f1673a; /* Theme color on hover */
 }
+.my-table td, .my-table th{
+    font-size: 12px!important; 
+}
 }
 
 /* Medium screens - 768px and down */
 @media (max-width: 768px) {
     /* Manage Products Page */
     .manage-products-page {
-        padding-left: 20px;
-        padding-right: 20px;
+        padding-left: 50px;
+        padding-right: 50px;
     }
     .manage-products-page .title-row {
         font-size: 14px;
@@ -922,6 +924,11 @@ input[type="password"]::-ms-clear {
     .btn-quick-action {
         font-size: 0.9em;
         padding: 10px 15px;
+    }
+
+    .my-table td, .my-table th{
+    font-size: 13px!important; 
+    padding: 8px 8px!important; /* Adjust padding for smaller screens */
     }
 
 
@@ -984,7 +991,7 @@ input[type="password"]::-ms-clear {
     .my-table th,
     .my-table td {
         padding: 12px 6px;
-        font-size: 10px;
+        font-size: 12px!important; 
         /* font-size: 0.8em; */
     }
     .my-table svg{

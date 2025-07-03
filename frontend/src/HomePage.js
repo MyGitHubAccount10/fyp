@@ -46,7 +46,7 @@ const HomePage = () => {
   };
 
   const handleCustomise = () => {
-    navigate('/customise'); // Navigate to the Customise page
+    navigate('/customise-image'); // Navigate to the Customise page
   }
 
   useEffect(() => {

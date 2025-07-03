@@ -241,7 +241,7 @@
 
 .my-table th,
 .my-table td {
-    text-align: left;
+    text-align: center;
     padding: 12px 15px;
     word-wrap: break-word; /* Break long words */
     text-overflow: ellipsis; 
@@ -969,8 +969,9 @@ input[type="password"]::-ms-clear {
     /* Tables */
     .my-table th,
     .my-table td {
-        padding: 8px 10px;
-        font-size: 0.9em;
+        padding: 12px 6px;
+        font-size: 10px;
+        /* font-size: 0.8em; */
     }
 
     .orders-table-container {

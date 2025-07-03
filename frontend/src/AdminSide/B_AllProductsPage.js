@@ -328,7 +328,7 @@ function AllProductsPage() {
                                 alt={`${currentProduct.product_name} preview ${currentImageIndex + 1}`}
                                 style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '4px' }}
                             />
-                            {/* Product Name Overlay - WhatsApp style */}
+                            {/* Product Name Overlay */}
                             <div style={{ 
                                 position: 'absolute',
                                 bottom: '20px',
@@ -363,7 +363,7 @@ function AllProductsPage() {
             )}
             {/* Products Table */}
             <div className="card" style={{ overflowX: 'auto'}}>
-                <table className="my-table">
+                <table className="orders-table">
                     <thead>
                         <tr>
                             <th>Image</th>

@@ -292,11 +292,9 @@ function AllProductsPage() {
                                      zIndex: 1001 }}>
                         <IoClose size={28} color='white' />
                     </button>
-                    {/* Left and Right Arrow */}
-                    <div onClick={(e) => e.stopPropagation()} 
-                         style={{ position: 'relative', 
-                         backgroundColor: 'white', 
-                         borderRadius: '8px', 
+                    {/* Left and Right Arrow And the name, pic, page num for modal content */}
+                    <div style={{ position: 'relative', 
+                         borderRadius: '8px',
                          width: '70vw', 
                          height: '70vh', 
                          display: 'flex', 
@@ -307,14 +305,22 @@ function AllProductsPage() {
                          boxSizing: 'border-box' }}>
                         {getProductImages(currentProduct).length > 1 && (
                             <>
-                                <button onClick={goToPreviousImage} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0, 0, 0, 0.7)', border: 'none', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1002, transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.9)'} onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.7)'}><FaAngleLeft size={24} color="white" /></button>
-                                <button onClick={goToNextImage} style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0, 0, 0, 0.7)', border: 'none', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1002, transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.9)'} onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.7)'}><FaAngleRight size={24} color="white" /></button>
+                                <button onClick={(e) => { e.stopPropagation(); goToPreviousImage(); }} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0, 0, 0, 0.7)', border: 'none', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1002, transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.9)'} onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.7)'}><FaAngleLeft size={24} color="white" /></button>
+                                <button onClick={(e) => { e.stopPropagation(); goToNextImage(); }} style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0, 0, 0, 0.7)', border: 'none', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1002, transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.9)'} onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.7)'}><FaAngleRight size={24} color="white" /></button>
                             </>
                         )}
-                        {/* Product Name */}
-                        <h3 style={{ margin: '0 0 15px 0', textAlign: 'center', color: '#333' }}>{currentProduct.product_name}</h3>
-                        {/* Product Image */}
-                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', minHeight: '0' }}>
+                        {/* Product Image with Overlaid Name */}
+                        <div onClick={(e) => e.stopPropagation()} style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            width: 'fit-content',
+                            height: 'fit-content',
+                            maxWidth: '90%',
+                            maxHeight: '80%',
+                            position: 'relative',
+                            margin: 'auto'
+                        }}>
                             <img
                                 src={modalImage}
                                 // --- FIX #2: The Image Alt Text Warning ---
@@ -322,10 +328,30 @@ function AllProductsPage() {
                                 alt={`${currentProduct.product_name} preview ${currentImageIndex + 1}`}
                                 style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '4px' }}
                             />
+                            {/* Product Name Overlay - WhatsApp style */}
+                            <div style={{ 
+                                position: 'absolute',
+                                bottom: '20px',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                background: 'rgba(0, 0, 0, 0.8)',
+                                color: 'white',
+                                padding: '12px 20px',
+                                borderRadius: '8px',
+                                fontSize: '16px',
+                                fontWeight: '500',
+                                textAlign: 'center',
+                                maxWidth: '80%',
+                                backdropFilter: 'blur(4px)',
+                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)'
+                            }}>
+                                {currentProduct.product_name}
+                            </div>
                         </div>
                         {/* Thumbnail Navigation */}
                         {getProductImages(currentProduct).length > 1 && (
-                            <div style={{ display: 'flex', gap: '8px', marginTop: '15px', alignItems: 'center' }}>
+                            <div onClick={(e) => e.stopPropagation()} style={{ display: 'flex', gap: '8px', marginTop: '15px', alignItems: 'center' }}>
                                 {getProductImages(currentProduct).map((_, index) => (
                                     <button key={index} onClick={() => { setCurrentImageIndex(index); setModalImage(`/images/${getProductImages(currentProduct)[index]}`); }} style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc', cursor: 'pointer', transition: 'background-color 0.2s' }} />
                                 ))}

@@ -17,7 +17,7 @@ const ProductDetailPage = () => {
   const [similarProducts, setSimilarProducts] = useState([]);
   const [selectedImage, setSelectedImage] = useState('');
   const [productImages, setProductImages] = useState([]);
-  const [selectedSize, setSelectedSize] = useState('M');
+  const [selectedSize, setSelectedSize] = useState('');
   const [quantity, setQuantity] = useState(1);
   // MODIFIED: This 'stock' will now represent what's available for the user to add.
   const [stock, setStock] = useState(0);
@@ -97,17 +97,31 @@ const ProductDetailPage = () => {
   };
 
   const handleAddToCart = () => {
+    const isAccessory = product.category.category_name === 'Accessories';
+    const size = isAccessory ? 'N/A' : selectedSize;
+    if (!isAccessory && !selectedSize) {
+      // If the product requires size selection and none is selected, show an alert
+      alert('Please select a size before adding to cart.');
+      return;
+    }
     dispatch({
       type: 'ADD_TO_CART',
-      payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
+      payload: { id: product._id, name: product.product_name, price: product.product_price, size: size, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
     });
     navigate('/cart');
   };
 
   const handleBuyNow = () => {
+    const isAccessory = product.category.category_name === 'Accessories';
+    const size = isAccessory ? 'N/A' : selectedSize;
+    if (!isAccessory && !selectedSize) {
+      // If the product requires size selection and none is selected, show an alert
+      alert('Please select a size before placing your order.');
+      return;
+    }
     dispatch({
       type: 'ADD_TO_CART',
-      payload: { id: product._id, name: product.product_name, price: product.product_price, size: selectedSize, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
+      payload: { id: product._id, name: product.product_name, price: product.product_price, size: size, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
     });
 
     if (user) {
@@ -179,7 +193,8 @@ const ProductDetailPage = () => {
             {/* --- MODIFIED: Conditional Rendering for Scenarios 1 & 2 --- */}
             {stock > 0 && (
               <>
-                <div className="product-options">
+                {product.category.category_name !== 'Accessories' && (
+                  <div className="product-options">
                     <div>
                       <span className="option-label">Size:</span>
                       {sizes.map(size => (
@@ -191,7 +206,8 @@ const ProductDetailPage = () => {
                       </button>
                       ))}
                     </div>
-                </div>
+                  </div>
+                )}
                 <div className="product-options">
                   <div>
                     <span className="option-label">Quantity:</span>

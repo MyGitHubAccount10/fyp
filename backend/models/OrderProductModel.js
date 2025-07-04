@@ -21,9 +21,25 @@ const orderproductSchema = new Schema({
     type: Number,
     required: true,
   },
+  order_type: {
+    type: String,
+    required: true,
+  },
+  order_shape: {
+    type: String,
+    required: true
+  },
   order_size: {
     type: String,
     required: true
+  },
+  order_material: {
+    type: String,
+    required: true
+  },
+  order_thickness: {
+    type: String,
+    required: true,
   }
 }, { timestamps: true })
 

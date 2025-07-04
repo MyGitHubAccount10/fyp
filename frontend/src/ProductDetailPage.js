@@ -17,7 +17,11 @@ const ProductDetailPage = () => {
   const [similarProducts, setSimilarProducts] = useState([]);
   const [selectedImage, setSelectedImage] = useState('');
   const [productImages, setProductImages] = useState([]);
+  const [selectedType, setSelectedType] = useState('Flatland');
+  const [selectedShape, setSelectedShape] = useState('Square Tail');
   const [selectedSize, setSelectedSize] = useState('M');
+  const [selectedMaterial, setSelectedMaterial] = useState('Cotton');
+  const [selectedThickness, setSelectedThickness] = useState('0.5mm');
   const [quantity, setQuantity] = useState(1);
   // MODIFIED: This 'stock' will now represent what's available for the user to add.
   const [stock, setStock] = useState(0);
@@ -84,8 +88,20 @@ const ProductDetailPage = () => {
     window.scrollTo(0, 0);
   }, [product, productId]);
 
+  const types = ['Flatland', 'Wave', 'Hybrid'];
+  const shapes = ['Square Tail', 'Round Tail', 'Pin Tail', 'Swallow Tail'];
   const sizes = ['XS', 'S', 'M', 'L', 'XL'];
+  const optionStyle = { display: 'block', width: '100%', margin: '12px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
 
+  const handleTypeSelect = (type) => {
+    setSelectedType(type);
+    setQuantity(1);
+  };
+
+  const handleShapeSelect = (shape) => {
+    setSelectedShape(shape);
+    setQuantity(1);
+  };
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
     setQuantity(1);
@@ -98,20 +114,44 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = () => {
     const isAccessory = product.category.category_name === 'Accessories';
+    const type = isAccessory ? 'N/A' : selectedType;
+    const shape = isAccessory ? 'N/A' : selectedShape;
     const size = isAccessory ? 'N/A' : selectedSize;
     dispatch({
       type: 'ADD_TO_CART',
-      payload: { id: product._id, name: product.product_name, price: product.product_price, size: size, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
+      payload: { 
+        id: product._id, 
+        name: product.product_name, 
+        price: product.product_price,
+        type: type,
+        shape: shape,
+        size: size,
+        quantity: quantity,
+        warehouse_quantity: product.warehouse_quantity,
+        image: product.product_image
+      }
     });
     navigate('/cart');
   };
 
   const handleBuyNow = () => {
     const isAccessory = product.category.category_name === 'Accessories';
+    const type = isAccessory ? 'N/A' : selectedType;
+    const shape = isAccessory ? 'N/A' : selectedShape;
     const size = isAccessory ? 'N/A' : selectedSize;
     dispatch({
       type: 'ADD_TO_CART',
-      payload: { id: product._id, name: product.product_name, price: product.product_price, size: size, quantity: quantity, warehouse_quantity: product.warehouse_quantity, image: product.product_image }
+      payload: { 
+        id: product._id, 
+        name: product.product_name, 
+        price: product.product_price,
+        type: type,
+        shape: shape,
+        size: size,
+        quantity: quantity,
+        warehouse_quantity: product.warehouse_quantity,
+        image: product.product_image
+      }
     });
 
     if (user) {
@@ -132,7 +172,7 @@ const ProductDetailPage = () => {
   }
 
   // Use the total warehouse quantity for the initial status display
-  const handlerStatus = () => {
+  const handleStatus = () => {
     if (stock === 0) {
         return 'No Stock';
     } else if (stock <= product.threshold) {
@@ -176,13 +216,43 @@ const ProductDetailPage = () => {
           <div className="product-details-content">
             <h1 className="product-name-detail">{product.product_name}</h1>
             <p className="product-price-detail">${parseFloat(product.product_price).toFixed(2)}</p>
-            <p className={handleStatusClass(handlerStatus())}>
-              <strong>{handlerStatus()}</strong>
+            <p className={handleStatusClass(handleStatus())}>
+              <strong>{handleStatus()}</strong>
             </p>
 
             {/* --- MODIFIED: Conditional Rendering for Scenarios 1 & 2 --- */}
             {stock > 0 && (
               <>
+                {product.category.category_name === 'Skimboards' && (
+                  <>
+                  <div className="product-options">
+                    <div>
+                      <span className="option-label">Type:</span>
+                      <select
+                        value={selectedType}
+                        onChange={(e) => handleTypeSelect(e.target.value)}
+                        style={optionStyle}>
+                        {types.map(type => (
+                          <option key={type} value={type}>{type}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="product-options"> 
+                    <div>
+                      <span className="option-label">Shape:</span>
+                      <select
+                        value={selectedShape}
+                        onChange={(e) => handleShapeSelect(e.target.value)}
+                        style={optionStyle}>
+                        {shapes.map(shape => (
+                          <option key={shape} value={shape}>{shape}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  </>
+                )}
                 {product.category.category_name !== 'Accessories' && (
                   <div className="product-options">
                     <div>

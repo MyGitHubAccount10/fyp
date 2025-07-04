@@ -58,7 +58,10 @@ const createOrderProduct = async (req, res) => {
         product_id,
         order_qty,
         order_unit_price,
-        order_size
+        order_shape,
+        order_size,
+        order_material,
+        order_thickness
     } = req.body;
     
     try {
@@ -81,7 +84,10 @@ const createOrderProduct = async (req, res) => {
             product_id,
             order_qty,
             order_unit_price,
-            order_size
+            order_shape,
+            order_size,
+            order_material,
+            order_thickness
         });
         res.status(200).json(orderProduct);
 

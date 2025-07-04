@@ -320,9 +320,25 @@ function PlaceOrderPage() {
                                     const uniqueKey = `${item.id || item.product_id}-${item.size}`;
                                     if (cartItems.length > 0) {
                                         return (
-                                            <div className="summary-item" key={uniqueKey}>
-                                                <span>{item.name} (Size: {item.size}, x{item.quantity})</span>
-                                                <span>S${(item.quantity * itemPrice).toFixed(2)}</span>
+                                            <div key={uniqueKey}>
+                                                <div className="summary-line">
+                                                    <strong>{item.name}</strong>  
+                                                </div>
+                                                <div className="summary-line">
+                                                    <span>Type: {item.type}</span>
+                                                </div>
+                                                <div className="summary-line">
+                                                    <span>Shape: {item.shape}</span>
+                                                </div>
+                                                <div className="summary-line">
+                                                    <span>Size: {item.size}</span>
+                                                </div>
+                                                <div className="summary-line">
+                                                    <span>Qty: {item.quantity}</span>
+                                                </div>
+                                                <div className="summary-line">
+                                                    <span>Price: S${(item.quantity * itemPrice).toFixed(2)}</span>
+                                                </div>
                                             </div>
                                         );
                                     }

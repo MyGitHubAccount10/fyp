@@ -30,25 +30,33 @@ function ShoppingCartPage() {
 
     }, [cartItems]);
 
-    const handleQuantityChange = (itemId, size, change) => {
-        const item = cartItems.find(item => item.id === itemId && item.size === size);
+    const handleQuantityChange = (itemId, type, shape, size, change) => {
+        const item = cartItems.find(item => 
+            item.id === itemId &&
+            item.type === type &&
+            item.shape === shape &&
+            item.size === size);
         if (item) {
             dispatch({
                 type: 'UPDATE_QUANTITY',
-                payload: { id: itemId, size: size, quantity: Math.max(1, item.quantity + change) }
+                payload: { id: itemId, type, shape, size, quantity: Math.max(1, item.quantity + change) }
             });
         }
     };
 
-    const handleDeleteItem = (itemId, size) => {
-        dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, size: size } });
+    const handleDeleteItem = (itemId, type, shape, size) => {
+        dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, type, shape, size } });
     };
 
-    const handleSaveForLater = (itemId, size) => {
-        const item = cartItems.find(item => item.id === itemId && item.size === size);
+    const handleSaveForLater = (itemId, type, shape, size) => {
+        const item = cartItems.find(item => 
+            item.id === itemId &&
+            item.type === type &&
+            item.shape === shape &&
+            item.size === size);
         if (item) {
             setSavedItems(prev => [...prev, item]);
-            dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, size: size } });
+            dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, type, shape, size } });
         }
     };
 
@@ -92,12 +100,14 @@ function ShoppingCartPage() {
                                     <img src={imageUrl} alt={item.name} />
                                     <div className="item-info">
                                         <strong>{item.name}</strong>
-                                        <span className="size-info">Size: {item.size}</span>
+                                        <span>Type: {item.type}</span>
+                                        <span>Shape: {item.shape}</span>
+                                        <span>Size: {item.size}</span>
                                     </div>
                                     <div className="item-actions">
                                         <div className="quantity-controls">
                                             <button 
-                                            onClick={() => handleQuantityChange(item.id, item.size, -1)} 
+                                            onClick={() => handleQuantityChange(item.id, item.type, item.shape, item.size, -1)} 
                                             disabled={item.quantity === 1}
                                             style={{
                                                 pointerEvents: item.quantity === 1 ? 'none' : 'auto', 
@@ -106,7 +116,7 @@ function ShoppingCartPage() {
                                             </button>
                                             <span>{item.quantity}</span>
                                             <button 
-                                            onClick={() => handleQuantityChange(item.id, item.size, 1)} 
+                                            onClick={() => handleQuantityChange(item.id, item.type, item.shape, item.size, 1)} 
                                             disabled={cartItems
                                                     .filter(cartItem => cartItem.id === item.id)
                                                     .reduce((acc, cartItem) => acc + cartItem.quantity, 0) >= item.warehouse_quantity}
@@ -120,8 +130,12 @@ function ShoppingCartPage() {
                                             <span>+</span>
                                             </button>
                                         </div>
-                                        <button className="action-btn delete" onClick={() => handleDeleteItem(item.id, item.size)}>Delete</button>
-                                        <button className="action-btn save" onClick={() => handleSaveForLater(item.id, item.size)}>Save for later</button>
+                                        <button className="action-btn delete" onClick={() => 
+                                            handleDeleteItem(item.id, item.type, item.shape, item.size)}>Delete
+                                        </button>
+                                        <button className="action-btn save" onClick={() => 
+                                            handleSaveForLater(item.id, item.type, item.shape, item.size)}>Save for later
+                                        </button>
                                     </div>
                                     <div className="price-tag">
                                         <span className="item-price-display">${(item.quantity * itemPrice).toFixed(2)}</span>

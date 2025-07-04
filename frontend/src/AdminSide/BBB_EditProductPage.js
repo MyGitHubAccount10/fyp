@@ -53,7 +53,8 @@ function EditProductPage() {
                     stockQuantity: data.warehouse_quantity || '',
                     threshold: data.threshold || '',
                     images: [],
-                    category: data.category || '',
+                    // Fix: Extract category ID from populated category object
+                    category: (typeof data.category === 'object' && data.category._id) ? data.category._id : data.category || '',
                 });
                 setExistingImageURLs([
                     `/images/${data.product_image}`,

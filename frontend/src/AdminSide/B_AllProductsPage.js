@@ -416,10 +416,6 @@ function AllProductsPage() {
                 </table>
             </div>
         </div>
-                                        <div className="actionButton">
-                                    <button onClick={() => navigateToEditProduct()} title="Edit Product"><MdEdit size={24}/></button>
-                                    <button onClick={() => handleDeleteProduct()} title="Delete Product" ><IoMdTrash size={24} /></button>
-                                </div>
     </>);
 }
 

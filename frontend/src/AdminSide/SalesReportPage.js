@@ -454,7 +454,7 @@ function SalesReportPage() {
                                             height: `${height}px`,
                                             borderRadius: '4px 4px 0 0',
                                             marginBottom: '5px',
-                                            minHeight: '2px'
+                                            minHeight: '0px'
                                         }}></div>
                                         <div style={{ fontSize: '12px', color: '#666', textAlign: 'center' }}>
                                             {new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}

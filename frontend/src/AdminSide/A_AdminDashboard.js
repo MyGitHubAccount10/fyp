@@ -429,7 +429,7 @@ function AdminDashboard() {
                                             height: `${height}px`,
                                             borderRadius: '4px 4px 0 0',
                                             marginBottom: '5px',
-                                            minHeight: '1px'
+                                            minHeight: '0px'
                                         }}></div>
                                         <div style={{ fontSize: '12px', color: 'black', textAlign: 'center' }}>
                                             {day.month}, <strong style={{ fontSize: '10px' }}>{day.week}</strong>

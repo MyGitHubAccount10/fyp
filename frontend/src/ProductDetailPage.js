@@ -119,6 +119,8 @@ const ProductDetailPage = () => {
     const type = isAccessory ? 'N/A' : selectedType;
     const shape = isAccessory ? 'N/A' : selectedShape;
     const size = isAccessory ? 'N/A' : selectedSize;
+    const material = isAccessory ? 'N/A' : selectedMaterial;
+    const thickness = isAccessory ? 'N/A' : selectedThickness;
     dispatch({
       type: 'ADD_TO_CART',
       payload: { 
@@ -128,8 +130,8 @@ const ProductDetailPage = () => {
         type: type,
         shape: shape,
         size: size,
-        material: selectedMaterial,
-        thickness: selectedThickness,
+        material: material,
+        thickness: thickness,
         quantity: quantity,
         warehouse_quantity: product.warehouse_quantity,
         image: product.product_image
@@ -143,6 +145,8 @@ const ProductDetailPage = () => {
     const type = isAccessory ? 'N/A' : selectedType;
     const shape = isAccessory ? 'N/A' : selectedShape;
     const size = isAccessory ? 'N/A' : selectedSize;
+    const material = isAccessory ? 'N/A' : selectedMaterial;
+    const thickness = isAccessory ? 'N/A' : selectedThickness;
     dispatch({
       type: 'ADD_TO_CART',
       payload: { 
@@ -152,8 +156,8 @@ const ProductDetailPage = () => {
         type: type,
         shape: shape,
         size: size,
-        material: selectedMaterial,
-        thickness: selectedThickness,
+        material: material,
+        thickness: thickness,
         quantity: quantity,
         warehouse_quantity: product.warehouse_quantity,
         image: product.product_image

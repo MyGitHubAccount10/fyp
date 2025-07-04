@@ -113,7 +113,7 @@ function ShoppingCartPage() {
                                     <div className="item-actions">
                                         <div className="quantity-controls">
                                             <button 
-                                            onClick={() => handleQuantityChange(item.id, item.type, item.shape, item.size, -1)} 
+                                            onClick={() => handleQuantityChange(item.id, item.type, item.shape, item.size, item.material, item.thickness, -1)} 
                                             disabled={item.quantity === 1}
                                             style={{
                                                 pointerEvents: item.quantity === 1 ? 'none' : 'auto', 
@@ -122,7 +122,7 @@ function ShoppingCartPage() {
                                             </button>
                                             <span>{item.quantity}</span>
                                             <button 
-                                            onClick={() => handleQuantityChange(item.id, item.type, item.shape, item.size, 1)} 
+                                            onClick={() => handleQuantityChange(item.id, item.type, item.shape, item.size, item.material, item.thickness, 1)} 
                                             disabled={cartItems
                                                     .filter(cartItem => cartItem.id === item.id)
                                                     .reduce((acc, cartItem) => acc + cartItem.quantity, 0) >= item.warehouse_quantity}

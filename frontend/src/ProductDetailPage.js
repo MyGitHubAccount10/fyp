@@ -97,16 +97,21 @@ const ProductDetailPage = () => {
 
   const handleTypeSelect = (type) => {
     setSelectedType(type);
-    setQuantity(1);
   };
 
   const handleShapeSelect = (shape) => {
     setSelectedShape(shape);
-    setQuantity(1);
   };
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
-    setQuantity(1);
+  };
+
+  const handleMaterialSelect = (material) => {
+    setSelectedMaterial(material);
+  };
+
+  const handleThicknessSelect = (thickness) => {
+    setSelectedThickness(thickness);
   };
 
   const handleQuantityChange = (amount) => {
@@ -285,7 +290,7 @@ const ProductDetailPage = () => {
                       <span className="option-label">Material:</span>
                       <select
                         value={selectedMaterial}
-                        onChange={(e) => setSelectedMaterial(e.target.value)}
+                        onChange={(e) => handleMaterialSelect(e.target.value)}
                         style={optionStyle}>
                         {materials.map(material => (
                           <option key={material} value={material}>{material}</option>
@@ -298,7 +303,7 @@ const ProductDetailPage = () => {
                       <span className="option-label">Thickness:</span>
                       <select
                         value={selectedThickness}
-                        onChange={(e) => setSelectedThickness(e.target.value)}
+                        onChange={(e) => handleThicknessSelect(e.target.value)}
                         style={optionStyle}>
                         {thicknesses.map(thickness => (
                           <option key={thickness} value={thickness}>{thickness}</option>

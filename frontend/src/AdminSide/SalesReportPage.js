@@ -110,7 +110,7 @@ function SalesReportPage() {
             order.status_id?.status_name === 'Completed' || order.status_id?.status_name === 'Delivered'
         ).length;
         const pendingOrders = filteredOrders.filter(order => 
-            order.status_id?.status_name === 'Pending' || order.status_id?.status_name === 'Processing'
+            order.status_id?.status_name === 'Order Placed' || order.status_id?.status_name === 'Processing' || order.status_id?.status_name === 'In Transit'
         ).length;
 
         // Generate daily sales data for the last 7 days

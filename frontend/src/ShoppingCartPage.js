@@ -30,46 +30,50 @@ function ShoppingCartPage() {
 
     }, [cartItems]);
 
-    const handleQuantityChange = (itemId, type, shape, size, change) => {
+    const handleQuantityChange = (itemId, type, shape, size, material, thickness, change) => {
         const item = cartItems.find(item => 
             item.id === itemId &&
             item.type === type &&
             item.shape === shape &&
-            item.size === size);
+            item.size === size &&
+            item.material === material &&
+            item.thickness === thickness);
         if (item) {
             dispatch({
                 type: 'UPDATE_QUANTITY',
-                payload: { id: itemId, type, shape, size, quantity: Math.max(1, item.quantity + change) }
+                payload: { id: itemId, type, shape, size, material, thickness, quantity: Math.max(1, item.quantity + change) }
             });
         }
     };
 
-    const handleDeleteItem = (itemId, type, shape, size) => {
-        dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, type, shape, size } });
+    const handleDeleteItem = (itemId, type, shape, size, material, thickness) => {
+        dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, type, shape, size, material, thickness } });
     };
 
-    const handleSaveForLater = (itemId, type, shape, size) => {
+    const handleSaveForLater = (itemId, type, shape, size, material, thickness) => {
         const item = cartItems.find(item => 
             item.id === itemId &&
             item.type === type &&
             item.shape === shape &&
-            item.size === size);
+            item.size === size &&
+            item.material === material &&
+            item.thickness === thickness);
         if (item) {
             setSavedItems(prev => [...prev, item]);
-            dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, type, shape, size } });
+            dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, type, shape, size, material, thickness } });
         }
     };
 
-    const handleMoveToCart = (itemId, size) => {
-        const item = savedItems.find(item => item.id === itemId && item.size === size);
+    const handleMoveToCart = (itemId, type, shape, size, material, thickness) => {
+        const item = savedItems.find(item => item.id === itemId && item.type === type && item.shape === shape && item.size === size && item.material === material && item.thickness === thickness);
         if (item) {
             dispatch({ type: 'ADD_TO_CART', payload: item });
-            setSavedItems(prev => prev.filter(savedItem => savedItem.id !== itemId || savedItem.size !== size));
+            setSavedItems(prev => prev.filter(savedItem => savedItem.id !== itemId || savedItem.type !== type || savedItem.shape !== shape || savedItem.size !== size || savedItem.material !== material || savedItem.thickness !== thickness));
         }
     };
 
-    const handleDeleteSavedItem = (itemId, size) => {
-        setSavedItems(prev => prev.filter(item => item.id !== itemId || item.size !== size));
+    const handleDeleteSavedItem = (itemId, type, shape, size, material, thickness) => {
+        setSavedItems(prev => prev.filter(item => item.id !== itemId || item.type !== type || item.shape !== shape || item.size !== size || item.material !== material || item.thickness !== thickness));
     };
 
     // --- CORRECTED LOGIC FOR SCENARIO 1 ---
@@ -103,6 +107,8 @@ function ShoppingCartPage() {
                                         <span>Type: {item.type}</span>
                                         <span>Shape: {item.shape}</span>
                                         <span>Size: {item.size}</span>
+                                        <span>Material: {item.material}</span>
+                                        <span>Thickness: {item.thickness}</span>
                                     </div>
                                     <div className="item-actions">
                                         <div className="quantity-controls">
@@ -131,10 +137,10 @@ function ShoppingCartPage() {
                                             </button>
                                         </div>
                                         <button className="action-btn delete" onClick={() => 
-                                            handleDeleteItem(item.id, item.type, item.shape, item.size)}>Delete
+                                            handleDeleteItem(item.id, item.type, item.shape, item.size, item.material, item.thickness)}>Delete
                                         </button>
                                         <button className="action-btn save" onClick={() => 
-                                            handleSaveForLater(item.id, item.type, item.shape, item.size)}>Save for later
+                                            handleSaveForLater(item.id, item.type, item.shape, item.size, item.material, item.thickness)}>Save for later
                                         </button>
                                     </div>
                                     <div className="price-tag">

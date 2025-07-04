@@ -15,7 +15,9 @@ export const cartReducer = (state, action) => {
         item.id === action.payload.id &&
         item.type === action.payload.type &&
         item.shape === action.payload.shape &&
-        item.size === action.payload.size
+        item.size === action.payload.size &&
+        item.material === action.payload.material &&
+        item.thickness === action.payload.thickness
       );
 
       if (existingItem) {
@@ -25,7 +27,9 @@ export const cartReducer = (state, action) => {
             item.id === action.payload.id &&
             item.type === action.payload.type &&
             item.shape === action.payload.shape &&
-            item.size === action.payload.size
+            item.size === action.payload.size &&
+            item.material === action.payload.material &&
+            item.thickness === action.payload.thickness
               ? { ...item, quantity: item.quantity + action.payload.quantity }
               : item
           )
@@ -45,7 +49,9 @@ export const cartReducer = (state, action) => {
           item.id === action.payload.id &&
           item.type === action.payload.type &&
           item.shape === action.payload.shape &&
-          item.size === action.payload.size
+          item.size === action.payload.size &&
+          item.material === action.payload.material &&
+          item.thickness === action.payload.thickness
             ? { ...item, quantity: action.payload.quantity }
             : item
         )
@@ -59,7 +65,9 @@ export const cartReducer = (state, action) => {
             item.id === action.payload.id &&
             item.type === action.payload.type &&
             item.shape === action.payload.shape &&
-            item.size === action.payload.size
+            item.size === action.payload.size &&
+            item.material === action.payload.material &&
+            item.thickness === action.payload.thickness
           )
         )
       };

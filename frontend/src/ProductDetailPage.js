@@ -91,6 +91,8 @@ const ProductDetailPage = () => {
   const types = ['Flatland', 'Wave', 'Hybrid'];
   const shapes = ['Square Tail', 'Round Tail', 'Pin Tail', 'Swallow Tail'];
   const sizes = ['XS', 'S', 'M', 'L', 'XL'];
+  const materials = ['Foam Core', 'Wood', 'Epoxy Coating', 'Fiberglass', 'Carbon Fiber'];
+  const thicknesses = ['3mm', '5mm', '7mm', '9mm', '11mm'];
   const optionStyle = { display: 'block', width: '100%', margin: '12px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
 
   const handleTypeSelect = (type) => {
@@ -126,6 +128,8 @@ const ProductDetailPage = () => {
         type: type,
         shape: shape,
         size: size,
+        material: selectedMaterial,
+        thickness: selectedThickness,
         quantity: quantity,
         warehouse_quantity: product.warehouse_quantity,
         image: product.product_image
@@ -148,6 +152,8 @@ const ProductDetailPage = () => {
         type: type,
         shape: shape,
         size: size,
+        material: selectedMaterial,
+        thickness: selectedThickness,
         quantity: quantity,
         warehouse_quantity: product.warehouse_quantity,
         image: product.product_image
@@ -267,6 +273,36 @@ const ProductDetailPage = () => {
                       ))}
                     </div>
                   </div>
+                )}
+                {product.category.category_name === 'Skimboards' && (
+                  <>
+                  <div className="product-options">
+                    <div>
+                      <span className="option-label">Material:</span>
+                      <select
+                        value={selectedMaterial}
+                        onChange={(e) => setSelectedMaterial(e.target.value)}
+                        style={optionStyle}>
+                        {materials.map(material => (
+                          <option key={material} value={material}>{material}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="product-options">
+                    <div>
+                      <span className="option-label">Thickness:</span>
+                      <select
+                        value={selectedThickness}
+                        onChange={(e) => setSelectedThickness(e.target.value)}
+                        style={optionStyle}>
+                        {thicknesses.map(thickness => (
+                          <option key={thickness} value={thickness}>{thickness}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  </>
                 )}
                 <div className="product-options">
                   <div>

@@ -337,6 +337,12 @@ function PlaceOrderPage() {
                                                     <span>Qty: {item.quantity}</span>
                                                 </div>
                                                 <div className="summary-line">
+                                                    <span>Material: {item.material}</span>
+                                                </div>
+                                                <div className="summary-line">
+                                                    <span>Thickness: {item.thickness}</span>
+                                                </div>
+                                                <div className="summary-line">
                                                     <span>Price: S${(item.quantity * itemPrice).toFixed(2)}</span>
                                                 </div>
                                             </div>

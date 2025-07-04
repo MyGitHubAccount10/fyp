@@ -172,18 +172,18 @@ function OrderDetailPage() {
 
   const getStatusBadgeClass = (status) => {
     switch (status) {
-      case 'Shipped':
       case 'Delivered':
-      case 'Completed':
         return 'badge badge-green';
       case 'Processing':
-      case 'In Transit':
+      case 'Order Placed':
         return 'badge badge-yellow';
-      case 'Cancelled':
-        return 'badge badge-red';
-      case 'Pending Payment':
-      case 'Pending':
+      case 'In Transit':
         return 'badge badge-blue';
+      case 'Declined':
+      case 'Returned to Sender':
+      case 'Attempted Delivery':
+        return 'badge badge-red';
+
       default:
         return 'badge badge-gray';
     }
@@ -259,7 +259,7 @@ function OrderDetailPage() {
                 month: 'long',
                 day: 'numeric'
               })}</p>
-              <p><strong>Status:</strong> <span className="badge badge-green">{order.status_id?.status_name || 'Processing'}</span></p>
+              <p><strong>Status:</strong> <span className={getStatusBadgeClass(order.status_id?.status_name)}>{order.status_id?.status_name || 'Processing'}</span></p>
             </div>
 
             {/* Image Modal Preview */}

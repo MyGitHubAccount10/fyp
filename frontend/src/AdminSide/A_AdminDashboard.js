@@ -166,7 +166,7 @@ function AdminDashboard() {
         const pendingOrders = orders.filter(order => 
             order.status_id?.status_name === 'Order Placed' ||
             order.status_id?.status_name === 'Processing' ||
-            order.status_id?.status_name === 'Confirmed'
+            order.status_id?.status_name === 'In Transit'
         );
         const pendingFulfillment = pendingOrders.length;
 
@@ -252,10 +252,10 @@ function AdminDashboard() {
         switch (status) {
             case 'Order Placed':
             case 'Delivered':
-            case 'Completed': return 'status-shipped';
             case 'Processing':
             case 'Confirmed': return 'status-processing';
             case 'Pending': return 'status-complete';
+            case 'In Transit': return 'status-in-transit';
             default: return '';
         }
     };

@@ -110,14 +110,13 @@ function AllOrdersPage() {
     };     // Function to get order status class
     const getOrderStatusClass = (status) => {
         switch (status) {
-            case 'Shipped': return 'status-shipped';
+            case 'Order Placed': return 'status-processing';
             case 'Processing': return 'status-processing';
+            case 'In Transit': return 'status-in-transit';
             case 'Delivered': return 'status-delivered';
-            case 'Cancelled': return 'status-cancelled';
-            case 'Pending Payment': return 'status-pending';
-            case 'Pending': return 'status-pending';
-            case 'Completed': return 'status-delivered';
-            case 'In Transit': return 'status-shipped';
+            case 'Declined': return 'status-declined';
+            case 'Returned to Sender': return 'status-declined';
+            case 'Attempted Delivery': return 'status-declined';
             default: return 'status-processing';
         }
     };    // Handler for 'View Details' link

@@ -391,9 +391,9 @@ function OrderDetailPage() {
                       <div style={{ display: 'flex', gap: '5px' }}>
                         {item.top_image && (
                           <img
-                            src={`/uploads/${item.top_image}`}
+                            src={`/images/customise/${item.top_image}`}
                             alt="Custom Top Design"
-                            onClick={() => setModalImage(`/uploads/${item.top_image}`)}
+                            onClick={() => setModalImage(`/images/customise/${item.top_image}`)}
                             style={{
                               width: '40px',
                               height: '40px',
@@ -406,9 +406,9 @@ function OrderDetailPage() {
                         )}
                         {item.bottom_image && (
                           <img
-                            src={`/uploads/${item.bottom_image}`}
+                            src={`/images/customise/${item.bottom_image}`}
                             alt="Custom Bottom Design"
-                            onClick={() => setModalImage(`/uploads/${item.bottom_image}`)}
+                            onClick={() => setModalImage(`/images/customise/${item.bottom_image}`)}
                             style={{
                               width: '40px',
                               height: '40px',

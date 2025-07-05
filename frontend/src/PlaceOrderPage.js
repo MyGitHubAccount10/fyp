@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from './hooks/useAuthContext';
 import { useCartContext } from './hooks/useCartContext';
@@ -42,10 +42,6 @@ function PlaceOrderPage() {
         total: 0,
     });
 
-    const [topImagePreview, setTopImagePreview] = useState(null);
-    const [bottomImagePreview, setBottomImagePreview] = useState(null);
-    const alertShown = useRef(false);
-
     useEffect(() => {
         if (isSubmitting) {
             return;
@@ -61,14 +57,6 @@ function PlaceOrderPage() {
             return;
         }
 
-        if (cartItems.length > 0 && customItem && !alertShown.current) {
-            alertShown.current = true;
-            dispatch({ type: 'CLEAR_CART' });
-            customiseDispatch({ type: 'CLEAR_CUSTOM_ITEM' });
-            alert('Your cart and custom skimboard have been cleared due to a conflict. Please order separately.');
-            navigate('/');
-            return;
-        }
 
         const userData = JSON.parse(localStorage.getItem('user'));
         if (userData) {
@@ -82,45 +70,31 @@ function PlaceOrderPage() {
     }, [user, cartItems, customItem, navigate, dispatch, customiseDispatch, isSubmitting]);
 
     useEffect(() => {
-        if (!customItem && cartItems.length > 0) {
-            const calculatedSubtotal = cartItems.reduce((sum, item) => {
+        const updateItem = [...cartItems]
+        let subtotal = 0;
+        if (cartItems.length > 0) {
+            subtotal += cartItems.reduce((sum, item) => {
                 const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
                 return sum + item.quantity * itemPrice;
             }, 0);
-
-            const calculatedGst = calculatedSubtotal * GST_RATE;
-            const calculatedTotal = calculatedSubtotal + SHIPPING_FEE + calculatedGst;
-
-            setOrderSummary({
-                items: cartItems,
-                subtotal: calculatedSubtotal,
-                shippingFee: SHIPPING_FEE,
-                gst: calculatedGst,
-                total: calculatedTotal,
-            });
         }
 
-        else if (customItem && cartItems.length === 0) {
-            const customPrice = typeof customItem.customise_price === 'string' ? parseFloat(customItem.customise_price.replace('$', '')) : customItem.customise_price;
-            const calculatedSubtotal = customPrice;
-            const calculatedGst = customPrice * GST_RATE;
-            const calculatedTotal = customPrice + SHIPPING_FEE + calculatedGst;
-
-            if (customItem.top_image) {
-                setTopImagePreview(URL.createObjectURL(customItem.top_image));
-            }
-
-            if (customItem.bottom_image) {
-                setBottomImagePreview(URL.createObjectURL(customItem.bottom_image));
-            }
-            setOrderSummary({
-                items: [customItem],
-                subtotal: calculatedSubtotal,
-                shippingFee: SHIPPING_FEE,
-                gst: calculatedGst,
-                total: calculatedTotal,
-            });
+        if (customItem) {
+            const customisePrice = typeof customItem.customise_price === 'string' ? parseFloat(customItem.customise_price.replace(/[$,]/g, '')) : parseFloat(customItem.customise_price);
+            subtotal += customisePrice;
+            updateItem.push(customItem);
         }
+        
+        const calculatedGst = subtotal * GST_RATE;
+        const calculatedTotal = subtotal + SHIPPING_FEE + calculatedGst;
+
+        setOrderSummary({
+            items: cartItems,
+            subtotal: subtotal,
+            shippingFee: SHIPPING_FEE,
+            gst: calculatedGst,
+            total: calculatedTotal,
+            });        
     }, [cartItems, customItem]);
     
     const getUserIdFromToken = (token) => {
@@ -321,9 +295,24 @@ function PlaceOrderPage() {
                                     if (cartItems.length > 0) {
                                         return (
                                             <div key={uniqueKey}>
-                                                <div className="summary-line">
+                                                {!item.topImagePreview && !item.bottomImagePreview &&(
+                                                   <div className="summary-line">
                                                     <strong>{item.name}</strong>  
-                                                </div>
+                                                    </div>
+                                                )}
+                                                { item.topImagePreview && item.bottomImagePreview && (
+                                                    <>
+                                                    <div className="summary-line">
+                                                        <strong>Customise Skimboard</strong>
+                                                    </div>
+                                                    <div className="summary-line">
+                                                        <span>Top Image:</span>
+                                                        <img src={item.topImagePreview} alt="Top" className="order-item-image" />
+                                                        <span>Bottom Image:</span>
+                                                        <img src={item.bottomImagePreview} alt="Bottom" className="order-item-image" />
+                                                    </div>
+                                                    </>
+                                                )}
                                                 <div className="summary-line">
                                                     <span>Type: {item.type}</span>
                                                 </div>
@@ -351,33 +340,6 @@ function PlaceOrderPage() {
                                     // Added a return null for the map function to avoid potential issues.
                                     return null;
                                 })}
-                                {customItem && (
-                                    <>
-                                        <div className="summary-line">
-                                            <span>Type: {customItem.board_type}</span>
-                                        </div>
-                                        <div className="summary-line">
-                                            <span>Shape: {customItem.board_shape}</span>
-                                        </div>
-                                        <div className="summary-line">
-                                            <span>Size: {customItem.board_size}</span>
-                                        </div>
-                                        <div className="summary-line">
-                                            <span>Material: {customItem.material}</span>
-                                        </div>
-                                        <div className="summary-line">
-                                            <span>Thickness: {customItem.thickness}</span>
-                                        </div>
-                                        <div className="summary-line">
-                                            <span>Top Layer Image</span>
-                                            {topImagePreview && <img className="order-item-image" src={topImagePreview} alt="Top Customisation" />}
-                                        </div>
-                                        <div className="summary-line">
-                                            <span>Bottom Layer Image</span>
-                                            {bottomImagePreview && <img className="order-item-image" src={bottomImagePreview} alt="Bottom Customisation" />}
-                                        </div>
-                                    </>
-                                )}
                             </div>
                             <hr className="summary-hr" />
                             <div className="summary-line">

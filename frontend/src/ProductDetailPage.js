@@ -20,8 +20,8 @@ const ProductDetailPage = () => {
   const [selectedType, setSelectedType] = useState('Flatland');
   const [selectedShape, setSelectedShape] = useState('Square Tail');
   const [selectedSize, setSelectedSize] = useState('M');
-  const [selectedMaterial, setSelectedMaterial] = useState('Cotton');
-  const [selectedThickness, setSelectedThickness] = useState('0.5mm');
+  const [selectedMaterial, setSelectedMaterial] = useState('Wood');
+  const [selectedThickness, setSelectedThickness] = useState('7mm');
   const [quantity, setQuantity] = useState(1);
   // MODIFIED: This 'stock' will now represent what's available for the user to add.
   const [stock, setStock] = useState(0);
@@ -222,7 +222,7 @@ const ProductDetailPage = () => {
                   onClick={() => setSelectedImage(img)}
                 />
               ))}
-            </div>            
+            </div>        
             <div className="product-main-image-container">
               <img src={`/images/${selectedImage}`} alt={product.product_name} className="product-main-image" />
             </div>

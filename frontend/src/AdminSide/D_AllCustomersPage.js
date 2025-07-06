@@ -9,6 +9,8 @@ import './AdminStyles.css';
 
 // Placeholder Icons
 import { MdEdit } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
+
 
 import { FaBan } from "react-icons/fa";
 
@@ -216,7 +218,7 @@ const handleFilter = () => {
 
                             </div>
                             <button onClick={handleAddAdmin} className="add-new-btn">
-                                <MdEdit size={18} color="white" />
+                                <FaEdit size={18} color="white" />
                                 Add New User
                             </button>
                             </div>
@@ -364,22 +366,22 @@ const handleFilter = () => {
                                             {isSuperAdmin ? (
                                                 // Super Admin can edit anyone
                                                 <button onClick={() => handleEditUser(user)} title="Edit User">
-                                                    <MdEdit />
+                                                    <FaEdit />
                                                 </button>
                                             ) : currentUserRole === 'Admin' ? (
                                                 // Admin can only edit customers
                                                 user.role_name === 'Customer' ? (
                                                     <button onClick={() => handleEditUser(user)} title="Edit User">
-                                                        <MdEdit  />
+                                                        <FaEdit  />
                                                     </button>
                                                 ) : (
                                                     <button onClick={() => handleEditUser(user)} title="View User (Edit restricted for Admin users)">
-                                                        <MdEdit />
+                                                        <FaEdit />
                                                     </button>
                                                 )
                                             ) : (
                                                 <button onClick={() => handleEditUser(user)} title="View User">
-                                                    <MdEdit />
+                                                    <FaEdit />
                                                 </button>
                                             )}
                                             {/* Show ban/unban button based on permissions */}

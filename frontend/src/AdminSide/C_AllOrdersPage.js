@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AdminHeader from '../AdminHeader'; 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { MdEdit } from "react-icons/md";
 
@@ -15,8 +15,24 @@ function AllOrdersPage() {
     const [endDate, setEndDate] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [ordersPerPage] = useState(10); // Fixed number of orders per page
-    const [loading, setLoading] = useState(true);    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
     const Navigate = useNavigate();
+    const location = useLocation();
+
+    // Get the page number and filters from location state when returning from edit page
+    useEffect(() => {
+        if (location.state?.returnToPage) {
+            setCurrentPage(location.state.returnToPage);
+        }
+        if (location.state?.filters) {
+            const { searchTerm: savedSearchTerm, selectedStatus: savedStatus, startDate: savedStartDate, endDate: savedEndDate } = location.state.filters;
+            setSearchTerm(savedSearchTerm);
+            setSelectedStatus(savedStatus);
+            setStartDate(savedStartDate);
+            setEndDate(savedEndDate);
+        }
+    }, [location.state]);
 
     // Fetch orders from API
     useEffect(() => {
@@ -92,7 +108,8 @@ function AllOrdersPage() {
     const indexOfLastOrder = currentPage * ordersPerPage;
     const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
     const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
-    const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);    const handleApplyFilters = () => {
+    const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);    
+    const handleApplyFilters = () => {
         console.log("Applying filters:", { searchTerm, selectedStatus, startDate, endDate });
         setCurrentPage(1); // Reset to first page on new filter
     };
@@ -119,16 +136,28 @@ function AllOrdersPage() {
             case 'Attempted Delivery': return 'status-declined';
             default: return 'status-processing';
         }
-    };    // Handler for 'View Details' link
+    };
+
+    // Handler for 'View Details' link
     const handleViewDetails = (orderId) => {
         console.log("Viewing details for order:", orderId);
-        Navigate(`/order-details/${orderId}`);
+        Navigate(`/order-details/${orderId}`, {
+            state: { 
+                returnToPage: currentPage,
+                filters: {
+                    searchTerm,
+                    selectedStatus,
+                    startDate,
+                    endDate
+                }
+            }
+        });
     };
 
     return (<>
               <AdminHeader />
         <div className='manage-products-page'>
-            <h2 >Orders</h2>
+            <h2>Orders</h2>
 
             {/* Filter Bar */}
             <div className="filter-bar">

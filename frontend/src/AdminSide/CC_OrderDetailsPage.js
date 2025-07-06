@@ -1,7 +1,7 @@
 // OrderDetailPage.js
 
 import {React, useState, useEffect} from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
@@ -11,6 +11,7 @@ import { FaAngleLeft } from "react-icons/fa";
 function OrderDetailPage() {
   const navigate = useNavigate();
   const { orderId } = useParams();
+  const location = useLocation();
   const [modalImage, setModalImage] = useState(null);  const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -151,7 +152,12 @@ function OrderDetailPage() {
     }
   };
   const handleBack = () => {
-    navigate('/all-orders');
+    navigate('/all-orders', {
+      state: {
+        returnToPage: location.state?.returnToPage,
+        filters: location.state?.filters
+      }
+    });
   };  const calculateSubtotal = () => {
     if (!order) return '0.00';
     

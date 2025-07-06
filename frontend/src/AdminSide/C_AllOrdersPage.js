@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import AdminHeader from '../AdminHeader'; 
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -17,8 +17,17 @@ function AllOrdersPage() {
     const [ordersPerPage] = useState(10); // Fixed number of orders per page
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [isRestoringState, setIsRestoringState] = useState(false);
     const Navigate = useNavigate();
     const location = useLocation();
+    
+    // Track previous filter values to detect actual changes
+    const prevFilters = useRef({
+        searchTerm: '',
+        selectedStatus: 'All Statuses',
+        startDate: '',
+        endDate: ''
+    });
 
     // Get the page number and filters from location state when returning from edit page
     useEffect(() => {
@@ -26,11 +35,16 @@ function AllOrdersPage() {
             setCurrentPage(location.state.returnToPage);
         }
         if (location.state?.filters) {
+            setIsRestoringState(true);
             const { searchTerm: savedSearchTerm, selectedStatus: savedStatus, startDate: savedStartDate, endDate: savedEndDate } = location.state.filters;
             setSearchTerm(savedSearchTerm);
             setSelectedStatus(savedStatus);
             setStartDate(savedStartDate);
             setEndDate(savedEndDate);
+        }
+        // Reset the flag after a brief delay to allow state restoration to complete
+        if (location.state?.returnToPage || location.state?.filters) {
+            setTimeout(() => setIsRestoringState(false), 100);
         }
     }, [location.state]);
 
@@ -88,6 +102,26 @@ function AllOrdersPage() {
         fetchData();
     }, []);
 
+    // Reset to page 1 whenever filters change (auto-filtering)
+    // But don't reset if we're currently restoring state from navigation
+    useEffect(() => {
+        const currentFilters = { searchTerm, selectedStatus, startDate, endDate };
+        
+        // Check if any filter actually changed (not just state restoration)
+        const filtersChanged = 
+            prevFilters.current.searchTerm !== searchTerm ||
+            prevFilters.current.selectedStatus !== selectedStatus ||
+            prevFilters.current.startDate !== startDate ||
+            prevFilters.current.endDate !== endDate;
+        
+        if (filtersChanged && !isRestoringState) {
+            setCurrentPage(1);
+        }
+        
+        // Update previous filters
+        prevFilters.current = currentFilters;
+    }, [searchTerm, selectedStatus, startDate, endDate, isRestoringState]);
+
     // Filtered orders based on current filters
     const filteredOrders = allOrders.filter(order => {        const matchesSearch = searchTerm.toLowerCase() === '' ||
                               order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -109,9 +143,14 @@ function AllOrdersPage() {
     const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
     const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
     const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);    
-    const handleApplyFilters = () => {
-        console.log("Applying filters:", { searchTerm, selectedStatus, startDate, endDate });
-        setCurrentPage(1); // Reset to first page on new filter
+
+    const handleResetFilters = () => {
+        console.log("Resetting filters");
+        setSearchTerm('');
+        setSelectedStatus('All Statuses');
+        setStartDate('');
+        setEndDate('');
+        setCurrentPage(1); // Reset to first page
     };
 
     const handleNextPage = () => {
@@ -199,8 +238,8 @@ function AllOrdersPage() {
                         className="date-input"
                     />
                  </div>                
-                 <button onClick={handleApplyFilters} className="btn-apply-filters">
-                    Apply Filters
+                 <button onClick={handleResetFilters} className="btn-apply-filters">
+                    Reset Filters
                 </button>
             </div>
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from './hooks/useAuthContext';
 import { useCartContext } from './hooks/useCartContext';
-import { useCustomiseContext } from './hooks/useCustomiseContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -22,8 +21,9 @@ function PlaceOrderPage() {
     const navigate = useNavigate();
     const { user } = useAuthContext();
     const { cartItems, dispatch } = useCartContext();
-    const {customItem, dispatch: customiseDispatch} = useCustomiseContext();
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const [customItem, setCustomItem] = useState([]);
 
     const [shippingDetails, setShippingDetails] = useState({
         fullName: '',
@@ -43,6 +43,10 @@ function PlaceOrderPage() {
     });
 
     useEffect(() => {
+        setCustomItem(cartItems.filter(item => item.topImagePreview && item.bottomImagePreview));
+    }, [cartItems]);
+
+    useEffect(() => {
         if (isSubmitting) {
             return;
         }
@@ -52,11 +56,10 @@ function PlaceOrderPage() {
             return;
         }
 
-        if (cartItems.length === 0 && !customItem) {
+        if (cartItems.length === 0) {
             navigate('/');
             return;
         }
-
 
         const userData = JSON.parse(localStorage.getItem('user'));
         if (userData) {
@@ -67,7 +70,7 @@ function PlaceOrderPage() {
                 shippingAddress: userData.shipping_address || '',
             });
         }
-    }, [user, cartItems, customItem, navigate, dispatch, customiseDispatch, isSubmitting]);
+    }, [user, cartItems, navigate, dispatch, isSubmitting]);
 
     useEffect(() => {
         const updateItem = [...cartItems]
@@ -79,10 +82,14 @@ function PlaceOrderPage() {
             }, 0);
         }
 
-        if (customItem) {
-            const customisePrice = typeof customItem.customise_price === 'string' ? parseFloat(customItem.customise_price.replace(/[$,]/g, '')) : parseFloat(customItem.customise_price);
+        if (customItem.length > 0) {
+            let customisePrice = 0;
+            customItem.forEach(item => {
+                const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
+                customisePrice += item.quantity * itemPrice;
+                updateItem.push(item);
+            });
             subtotal += customisePrice;
-            updateItem.push(customItem);
         }
         
         const calculatedGst = subtotal * GST_RATE;
@@ -166,16 +173,27 @@ function PlaceOrderPage() {
             if (!orderResponse.ok) throw new Error(orderResult.error || 'Failed to create order');
             const orderId = orderResult._id;
             for (const item of cartItems) {
+                const isCustom = !item.product_id && (item.topImagePreview && item.bottomImagePreview);
+                if (isCustom) {
+                    continue; // Skip custom items here, they will be handled separately
+                }
                 const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
                 const productId = item.id || item.product_id || item._id;
-                if (!productId) throw new Error('Missing product ID for item');
+                if (!productId) {
+                    continue; // Skip if no product ID is found
+                }
                 const orderProductData = {
                     order_id: orderId,
                     product_id: productId,
                     order_qty: parseInt(item.quantity, 10),
                     order_unit_price: parseFloat(itemPrice.toFixed(2)),
-                    order_size: item.size || 'N/A'
+                    order_type: item.type ? item.type : 'N/A',
+                    order_shape: item.shape ? item.shape : 'N/A',
+                    order_size: item.size ? item.size : 'N/A',
+                    order_material: item.material ? item.material : 'N/A',
+                    order_thickness: item.thickness ? item.thickness : 'N/A'
                 };
+                console.log('Sending order product:', orderProductData);
                 const orderProductResponse = await fetch('/api/order-products', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`},
@@ -186,36 +204,50 @@ function PlaceOrderPage() {
                     throw new Error(errorResult.error || 'Failed to add an item to the order.');
                 }
             }
-            if (customItem && cartItems.length === 0) {
-                const customisePrice = typeof customItem.customise_price === 'string' ? parseFloat(customItem.customise_price.replace(/[$,]/g, '')) : parseFloat(customItem.customise_price);
-                const customiseFormData = new FormData();
-                customiseFormData.append('order', orderId);
-                customiseFormData.append('board_type', customItem.board_type);
-                customiseFormData.append('board_shape', customItem.board_shape);
-                customiseFormData.append('board_size', customItem.board_size);
-                customiseFormData.append('material', customItem.material);
-                customiseFormData.append('thickness', customItem.thickness);
-                customiseFormData.append('customise_price', customisePrice.toFixed(2));
-                if (customItem.top_image) customiseFormData.append('top_image', customItem.top_image);
-                if (customItem.bottom_image) customiseFormData.append('bottom_image', customItem.bottom_image);
-                const customiseResponse = await fetch('/api/customise', {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${user.token}`},
-                    body: customiseFormData
-                });
-                if (!customiseResponse.ok) {
-                    const errorResult = await customiseResponse.json();
-                    throw new Error(errorResult.error || 'Failed to add the custom item to the order.');
+            
+            if (customItem.length > 0) {
+                // Helper function to convert Data URL to File object using fetch
+                const dataURLtoFile = async (dataurl, filename) => {
+                    const response = await fetch(dataurl);
+                    const blob = await response.blob(); // Get the Blob from the response
+                    const mimeType = blob.type; // Extract MIME type from the Blob
+
+                    // Create a File object from the Blob
+                    return new File([blob], filename, { type: mimeType });
+                };
+                
+                for (const item of customItem) {
+                    if (!item.topImagePreview) throw new Error('Custom item must have a top image file.');
+                    if (!item.bottomImagePreview) throw new Error('Custom item must have a bottom image file.');
+                    const customisePrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
+                    const topImageFile = await dataURLtoFile(item.topImagePreview, `top_custom_${Date.now()}.png`);
+                    const bottomImageFile = await dataURLtoFile(item.bottomImagePreview, `bottom_custom_${Date.now()}.png`);
+                    const customiseFormData = new FormData();
+                    customiseFormData.append('order', orderId);
+                    customiseFormData.append('board_type', item.type);
+                    customiseFormData.append('board_shape', item.shape);
+                    customiseFormData.append('board_size', item.size);
+                    customiseFormData.append('material', item.material);
+                    customiseFormData.append('thickness', item.thickness);
+                    customiseFormData.append('customise_qty', item.quantity);
+                    customiseFormData.append('customise_price', customisePrice.toFixed(2));
+                    customiseFormData.append('top_image', topImageFile);
+                    customiseFormData.append('bottom_image', bottomImageFile);
+                    const customiseResponse = await fetch('/api/customise', {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${user.token}`},
+                        body: customiseFormData
+                    });
+                    if (!customiseResponse.ok) {
+                        const errorResult = await customiseResponse.json();
+                        throw new Error(errorResult.error || 'Failed to add the custom item to the order.');
+                    }
                 }
-                const customiseResult = await customiseResponse.json();
-                customiseDispatch({ type: 'SET_CUSTOM_ITEM', payload: customiseResult });
             }
 
             alert('Order placed successfully!');
             navigate('/order-history');
             dispatch({ type: 'CLEAR_CART' });
-            customiseDispatch({ type: 'CLEAR_CUSTOM_ITEM' });
-            
         } catch (error) {
             console.error('Error placing order:', error);
             alert(`Failed to place order: ${error.message}`);
@@ -223,7 +255,7 @@ function PlaceOrderPage() {
         }
     };
 
-    if (!user || (cartItems.length === 0 && !customItem)) {
+    if (!user || cartItems.length === 0) {
         return null; 
     }
 
@@ -291,7 +323,7 @@ function PlaceOrderPage() {
                             <div className="summary-items-list">
                                 {orderSummary.items.map(item => {
                                     const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
-                                    const uniqueKey = `${item.id || item.product_id}-${item.size}`;
+                                    const uniqueKey = `${item.id || item.product_id}-${item.type}-${item.shape}-${item.size}-${item.material}-${item.thickness}-${item.topImagePreview}-${item.bottomImagePreview}`;
                                     if (cartItems.length > 0) {
                                         return (
                                             <div key={uniqueKey}>

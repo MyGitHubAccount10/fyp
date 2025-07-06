@@ -62,27 +62,28 @@ function OrderHistoryPage() {
 
                             if (customiseResponse.ok) {
                                 const customiseData = await customiseResponse.json();
-                                if (customiseData) {
-                                    const customiseItem = {
-                                        _id: customiseData._id,
+
+                                // Normalize to array: if it's not already an array, wrap it in one
+                                if (customiseData.length > 0) {
+                                    const formattedCustomiseItems = customiseData.map(item => ({
+                                        ...item,
                                         type: 'customise',
-                                        board_type: customiseData.board_type,
-                                        board_shape: customiseData.board_shape,
-                                        board_size: customiseData.board_size,
-                                        material: customiseData.material,
-                                        thickness: customiseData.thickness,
-                                        top_image: customiseData.top_image,
-                                        bottom_image: customiseData.bottom_image,
-                                        customise_price: customiseData.customise_price,
-                                    };
-                                    items.push(customiseItem);
+                                        top_image: item.top_image || 'default_top.jpg',
+                                        bottom_image: item.bottom_image || 'default_bottom.jpg',
+                                        board_type: item.board_type || 'Unknown',
+                                        board_shape: item.board_shape || 'Unknown',
+                                        board_size: item.board_size || 'Unknown',
+                                        material: item.material || 'Unknown',
+                                        thickness: item.thickness || 'Unknown',
+                                    }));
+                                    items = [...items, ...formattedCustomiseItems];
                                 }
                             }
 
                             return {
                                 ...order,
                                 status: statusData.status_name,
-                                items: items
+                                items: items,
                             };
                         } catch (err) {
                             console.error(`Failed to process details for order ${order._id}:`, err);
@@ -159,8 +160,14 @@ function OrderHistoryPage() {
                                                             <>
                                                                 <img src={`/images/${item.product_image}`} alt={item.product_name} className="order-item-image" />
                                                                 <div className="order-item-info">
-                                                                    <span>{item.product_name} (Qty: {item.order_qty}, Size: {item.order_size || 'N/A'})</span>
-                                                                    <span>S${(item.order_unit_price * item.order_qty).toFixed(2)}</span>
+                                                                    <strong>{item.product_name}</strong>
+                                                                    <span>Qty: {item.order_qty}</span>
+                                                                    <span>Type: {item.order_type}</span>
+                                                                    <span>Shape: {item.order_shape}</span>
+                                                                    <span>Size: {item.order_size}</span>
+                                                                    <span>Material: {item.order_material}</span>
+                                                                    <span>Thickness: {item.order_thickness}</span>
+                                                                    <span>Price: S${(item.order_unit_price * item.order_qty).toFixed(2)}</span>
                                                                 </div>
                                                             </>
                                                         )}
@@ -176,7 +183,8 @@ function OrderHistoryPage() {
                                                                     <span>Size: {item.board_size}</span>
                                                                     <span>Material: {item.material}</span>
                                                                     <span>Thickness: {item.thickness}</span>
-                                                                    <span>Price: S${item.customise_price.toFixed(2)}</span>
+                                                                    <span>Qty: {item.customise_qty}</span>
+                                                                    <span>Price: S${item.customise_price * item.customise_qty}</span>
                                                                 </div>
                                                             </>
                                                         )}

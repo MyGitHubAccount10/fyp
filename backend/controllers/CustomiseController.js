@@ -32,7 +32,7 @@ const getCustomiseByOrder = async (req, res) => {
     }
 
     try {
-        const customise = await Customise.findOne({ order: orderId });
+        const customise = await Customise.find({ order: orderId });
 
         if (!customise) {
             return res.status(200).json(null);
@@ -53,6 +53,7 @@ const createCustomise = async (req, res) => {
         board_size,
         material,
         thickness,
+        customise_qty,
         customise_price,
     } = req.body;
 
@@ -77,6 +78,7 @@ const createCustomise = async (req, res) => {
             thickness,
             top_image,
             bottom_image,
+            customise_qty,
             customise_price
         });
         res.status(200).json(customise);

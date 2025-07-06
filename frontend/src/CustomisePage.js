@@ -200,6 +200,8 @@ const CustomisePage = () => {
           size: selectedSize,
           material: selectedMaterial,
           thickness: selectedThickness,
+          topImageFile: topImageFile,
+          bottomImageFile: bottomImageFile,
           topImagePreview: topImagePreview,
           bottomImagePreview: bottomImagePreview,
           quantity: quantity,

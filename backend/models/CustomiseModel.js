@@ -36,9 +36,13 @@ const customiseSchema = new Schema({
     type: String,
     required: true
   },
-  customise_price: {
+  customise_qty: {
     type: Number,
     required: true,
+  },
+  customise_price: {
+    type: Number,
+    required: true
   },
 }, { timestamps: true })
 

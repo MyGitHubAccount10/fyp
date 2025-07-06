@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
@@ -10,6 +10,7 @@ import { MdEdit } from "react-icons/md";
 function EditProductPage() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({
@@ -151,14 +152,24 @@ function EditProductPage() {
                 ? '✅ Product updated successfully! Old images have been permanently deleted and replaced with new ones.'
                 : '✅ Product updated successfully!';
             alert(successMessage);
-            navigate('/all-products');
+            navigate('/all-products', { 
+                state: {
+                    returnToPage: location.state?.returnToPage,
+                    filters: location.state?.filters
+                }
+            });
         } catch (err) {
             console.error('Update error:', err);
             alert(`❌ Failed to update product: ${err.message}`);
         }
     };
 
-    const handleBack = () => navigate('/all-products');
+    const handleBack = () => navigate('/all-products', { 
+        state: {
+            returnToPage: location.state?.returnToPage,
+            filters: location.state?.filters
+        }
+    });
     const handleCancel = () => handleBack();
 
     return (

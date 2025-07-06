@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
@@ -13,7 +13,8 @@ import { MdEdit } from "react-icons/md";
 
 function AddProductPage() {
     const navigate = useNavigate();
-
+    const location = useLocation();
+    
     const [categories, setCategories] = useState([]);
     const [formData, setFormData] = useState({
         name: '',
@@ -123,7 +124,13 @@ function AddProductPage() {
             const result = await response.json();
             console.log('Product uploaded:', result);
             alert('✅ Product successfully uploaded!');
-            navigate('/all-products'); // go back to product list
+            // Navigate back with preserved state
+            navigate('/all-products', {
+                state: {
+                    returnToPage: location.state?.returnToPage,
+                    filters: location.state?.filters
+                }
+            });
         } catch (error) {
             console.error('Upload failed:', error);
             alert(`❌ Failed to upload product: ${error.message}`);
@@ -133,7 +140,12 @@ function AddProductPage() {
     // Function to handle back navigation
 
     const handleBack = () => {
-        navigate('/all-products');
+        navigate('/all-products', {
+            state: {
+                returnToPage: location.state?.returnToPage,
+                filters: location.state?.filters
+            }
+        });
     };
 
     const handleCancel = () => {

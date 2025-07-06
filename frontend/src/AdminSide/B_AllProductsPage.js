@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react'; // +++ ADD useCallback
 import AdminHeader from '../AdminHeader';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import './AdminStyles.css'; 
 
@@ -21,7 +21,6 @@ const initialProductsData = {
 
 function AllProductsPage() {
     const [allProducts, setAllProducts] = useState([]);
-    const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All Categories');
@@ -29,9 +28,23 @@ function AllProductsPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [productsPerPage] = useState(10);
     const navigate = useNavigate();
+    const location = useLocation();
     const [modalImage, setModalImage] = useState(null);
     const [currentProduct, setCurrentProduct] = useState(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+    // Get the page number and filters from location state when returning from edit/add page
+    useEffect(() => {
+        if (location.state?.returnToPage) {
+            setCurrentPage(location.state.returnToPage);
+        }
+        if (location.state?.filters) {
+            const { searchTerm: savedSearchTerm, selectedCategory: savedCategory, selectedStatus: savedStatus } = location.state.filters;
+            setSearchTerm(savedSearchTerm);
+            setSelectedCategory(savedCategory);
+            setSelectedStatus(savedStatus);
+        }
+    }, [location.state]);
 
 
 
@@ -49,7 +62,6 @@ function AllProductsPage() {
             .then(res => res.json())
             .then(data => {
                 setAllProducts(data);
-                setProducts(data);
             })
             .catch(err => {
                 console.error("Failed to fetch products:", err);
@@ -67,10 +79,43 @@ function AllProductsPage() {
             });
     }, []);
 
+    // Get product status helper function
+    const getStatus = useCallback((product) => {
+        if (product.warehouse_quantity === 0) return 'Out of Stock';
+        if (product.warehouse_quantity <= product.threshold) return 'Limited Stock';
+        return 'In Stock';
+    }, []);
+
+    // Real-time filtered products based on current filters (similar to AllOrdersPage pattern)
+    const filteredProducts = allProducts.filter(product => {
+        const matchesSearch = searchTerm === '' || 
+                             product.product_name.toLowerCase().includes(searchTerm.toLowerCase());
+
+        const matchesCategory = selectedCategory === 'All Categories' || 
+                               product.category === selectedCategory;
+
+        const productStatus = getStatus(product);
+        const matchesStatus = selectedStatus === 'All Statuses' || 
+                             productStatus === selectedStatus;
+
+        return matchesSearch && matchesCategory && matchesStatus;
+    });
+
+    // Pagination Logic based on filtered products (similar to AllOrdersPage pattern)
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
-    const totalPages = Math.ceil(products.length / productsPerPage);
+    const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+    const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+    const handleApplyFilters = () => {
+        console.log("Applying filters:", { searchTerm, selectedCategory, selectedStatus });
+        setCurrentPage(1); // Reset to first page on new filter
+    };
+
+    // Auto-apply filters when filter values change (similar to AllOrdersPage pattern)
+    useEffect(() => {
+        handleApplyFilters();
+    }, [searchTerm, selectedCategory, selectedStatus]);
 
     const handleNextPage = () => {
         if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -80,7 +125,18 @@ function AllProductsPage() {
         if (currentPage > 1) setCurrentPage(currentPage - 1);
     };
 
-    const navigateToEditProduct = (productId) => { navigate(`/edit-product/${productId}`); };
+    const navigateToEditProduct = (productId) => { 
+        navigate(`/edit-product/${productId}`, {
+            state: { 
+                returnToPage: currentPage,
+                filters: {
+                    searchTerm,
+                    selectedCategory,
+                    selectedStatus
+                }
+            }
+        });
+    };
 
     const handleDeleteProduct = async (productId) => {
         if (window.confirm(`Are you sure you want to delete this product? This action cannot be undone.`)) {
@@ -91,7 +147,6 @@ function AllProductsPage() {
                     throw new Error(`Failed to delete product: ${errorData.error || response.statusText}`);
                 }
                 setAllProducts(prevProducts => prevProducts.filter(p => p._id !== productId));
-                setProducts(prevProducts => prevProducts.filter(p => p._id !== productId));
                 alert("✅ Product deleted successfully!");
             } catch (error) {
                 console.error("Delete failed:", error);
@@ -101,43 +156,17 @@ function AllProductsPage() {
     };
 
     const handleAddProduct = () => {
-        navigate('/add-product');
+        navigate('/add-product', {
+            state: { 
+                returnToPage: currentPage,
+                filters: {
+                    searchTerm,
+                    selectedCategory,
+                    selectedStatus
+                }
+            }
+        });
     }
-
-    // --- FIX #1: The useEffect Dependency Warning ---
-    // Step 1: Wrap the handleFilter function in useCallback.
-    // List its dependencies: allProducts, searchTerm, selectedCategory, and selectedStatus.
-    const getStatus = useCallback((product) => {
-        if (product.warehouse_quantity === 0) return 'Out of Stock';
-        if (product.warehouse_quantity <= product.threshold) return 'Limited Stock';
-        return 'In Stock';
-    }, []);
-
-    const handleFilter = useCallback(() => {
-        let filtered = allProducts;
-
-        if (searchTerm) {
-            filtered = filtered.filter(product =>
-                product.product_name.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        }
-
-        if (selectedCategory !== 'All Categories') {
-            filtered = filtered.filter(product => product.category === selectedCategory);
-        }
-
-        if (selectedStatus !== 'All Statuses') {
-            filtered = filtered.filter(product => getStatus(product) === selectedStatus);
-        }
-
-        setProducts(filtered);
-        setCurrentPage(1);
-    }, [allProducts, searchTerm, selectedCategory, selectedStatus, getStatus]); // Dependencies of handleFilter
-
-    // Step 2: Now you can safely add handleFilter to the useEffect dependency array.
-    useEffect(() => {
-        handleFilter();
-    }, [handleFilter]); // <-- The missing dependency is now included and stable.
 
     const getCategory = (categoryID) => {
         const category = categories.find(cat => cat._id === categoryID);
@@ -244,6 +273,22 @@ function AllProductsPage() {
                         <option value="Limited Stock">Limited Stock</option>
                         <option value="Out of Stock">Out of Stock</option>
                     </select>
+                </div>
+            </div>
+
+            {/* Products Summary */}
+            <div className="products-summary" style={{ margin: '20px 0', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+                <h3 style={{ margin: '0 0 10px 0', fontSize: '1.2em', color: '#333' }}>Products Overview</h3>
+                <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
+                    <div>
+                        <strong>Total Products:</strong> <span style={{ color: '#007bff' }}>{allProducts.length}</span>
+                    </div>
+                    <div>
+                        <strong>Filtered Results:</strong> <span style={{ color: '#28a745' }}>{filteredProducts.length}</span>
+                    </div>
+                    <div>
+                        <strong>Current Page:</strong> <span style={{ color: '#6c757d' }}>{currentProducts.length}</span>
+                    </div>
                 </div>
             </div>
 

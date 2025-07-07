@@ -98,18 +98,18 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* Available Products Section */}
-        <section className="available-products-section container">
-          <h2 className="available-products-title">Available Products</h2>
-          <div className="available-products-grid">
+        {/* Popular Products Section */}
+        <section className="popular-products-section container">
+          <h2 className="popular-products-title">Popular Products</h2>
+          <div className="popular-products-grid">
             {products && products.filter(product => product.warehouse_quantity > 0 &&
-             product.warehouse_quantity > product.threshold).sort ((a, b) => {
-              return b.warehouse_quantity - a.warehouse_quantity; // Sort by warehouse quantity in descending order
-             }).slice(0, 3).map(product => (
+            product.warehouse_quantity > product.threshold)
+            .sort((a, b) => a.warehouse_quantity - b.warehouse_quantity)
+            .slice(0, 3).map(product => (
               <Link to={`/product/${product._id}`} key={product._id} style={{ textDecoration: 'none' }}>
-                <div className="available-product-card" key={product._id}>
-                  <img src={`/images/${product.product_image}`} alt={product.product_name} className="available-product-card-image" />
-                  <div className="available-product-card-caption">{product.product_name}</div>
+                <div className="popular-product-card" key={product._id}>
+                  <img src={`/images/${product.product_image}`} alt={product.product_name} className="popular-product-card-image" />
+                  <div className="popular-product-card-caption">{product.product_name}</div>
                 </div>
               </Link>
             ))}

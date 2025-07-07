@@ -73,7 +73,7 @@ const ProductDetailPage = () => {
           
           if (productResponse.ok) {
             const similar = json.filter(p =>
-              p.category === product.category && p._id !== productId
+              p.category.toString() === product.category._id.toString() && p._id !== productId
             );
             setSimilarProducts(similar);
           }

@@ -7,6 +7,8 @@ import { useProductsContext } from './hooks/useProductsContext';
 
 // Slideshow images for hero section
 const slideshowImages = [
+    '/images/PromoEdited.png',
+    '/images/Promo1.png',
     '/images/an1.jpeg',
     '/images/an2.jpeg',
     '/images/aizat1.jpeg',
@@ -71,7 +73,9 @@ const HomePage = () => {
 
   return (
     <>
+    <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
       <Header />
+      </div>
       {/* --- MAIN HOMEPAGE CONTENT --- */}
       <main className="homepage-content">
         {/* Hero Section */}

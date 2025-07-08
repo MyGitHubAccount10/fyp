@@ -13,6 +13,7 @@ const slideshowImages = [
     '/images/an2.jpeg',
     '/images/aizat1.jpeg',
     '/images/aizat2.jpeg',
+    '/images/WannaAdmin.png',
     // Add more image paths here if needed for the slideshow
 ];
 

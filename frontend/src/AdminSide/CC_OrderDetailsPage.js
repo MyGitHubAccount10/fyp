@@ -197,23 +197,28 @@ function OrderDetailPage() {
 
   // Loading state
   if (loading) {
-    return (
+    return (<>
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+                <AdminHeader />
+            </div>  
       <div className="add-product-page">
-        <AdminHeader />
-        <div className="manage-products-page">
+      
+            <div className="manage-products-page">
           <div style={{ textAlign: 'center', padding: '50px' }}>
             <h2>Loading order details...</h2>
           </div>
         </div>
       </div>
-    );
+    </>);
   }
 
   // Error state
   if (error) {
     return (
       <div className="add-product-page">
-        <AdminHeader />
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+                <AdminHeader />
+            </div>  
         <div className="manage-products-page">
           <div style={{ textAlign: 'center', padding: '50px' }}>
             <h2 style={{ color: 'red' }}>{error}</h2>
@@ -228,7 +233,9 @@ function OrderDetailPage() {
   if (!order) {
     return (
       <div className="add-product-page">
-        <AdminHeader />
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+                <AdminHeader />
+            </div>  
         <div className="manage-products-page">
           <div style={{ textAlign: 'center', padding: '50px' }}>
             <h2>Order not found</h2>
@@ -241,7 +248,9 @@ function OrderDetailPage() {
 
   return (
     <div>
-            <AdminHeader />
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+                <AdminHeader />
+            </div>  
         <div className="manage-products-page">
 
             <div className="title-row">

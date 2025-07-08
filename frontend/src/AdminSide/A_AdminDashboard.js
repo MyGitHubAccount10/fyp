@@ -287,7 +287,9 @@ function AdminDashboard() {
 
     return (
         <div> 
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
         <AdminHeader />
+            </div>
                 {error && (
                     <div style={{ textAlign: 'center', paddingTop: '50px', flex: 1 }}>
                     {error}

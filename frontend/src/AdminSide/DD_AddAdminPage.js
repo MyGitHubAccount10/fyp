@@ -120,8 +120,10 @@ function AddAdminPage() {
 
   return (
     <div className="add-product-page">
-      <AdminHeader />
-      <div className="manage-products-page">
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+                <AdminHeader />
+            </div>
+            <div className="manage-products-page">
         {currentUserRole === null ? ( <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div> ) :
          !isSuperAdmin && !roles.some(r => r.role_name === 'Customer') ? (
           <div style={{ textAlign: 'center', padding: '50px' }}>

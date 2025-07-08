@@ -96,7 +96,9 @@ const AdminLoginPage = () => {
 
   return (
     <>
-      <AdminHeader showNav={false} />
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+                <AdminHeader showNav={false} />
+            </div>  
       <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
         <div style={{ flex: 1, maxWidth: '450px' }}>
           <h2 style={{ fontWeight: 'bold', fontSize: '2em', marginBottom: '10px', textAlign: 'center' }}>

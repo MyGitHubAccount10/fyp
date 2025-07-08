@@ -147,7 +147,9 @@ function AdminProfilePage() {
 
     return (
         <>
-            <AdminHeader />
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+                <AdminHeader />
+            </div>  
             <div className="container user-profile-container">
                 <h2>Admin Profile</h2>
                 <div className="profile-section">

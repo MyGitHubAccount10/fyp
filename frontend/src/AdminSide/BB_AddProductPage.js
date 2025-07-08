@@ -157,7 +157,10 @@ function AddProductPage() {
 
     return (
         <> {/* Page-specific class */}
-            <AdminHeader />
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+        <AdminHeader />
+            </div>
+            
         <div className="manage-products-page">
             <div className="title-row">
                 <h2>Create a New Product</h2>

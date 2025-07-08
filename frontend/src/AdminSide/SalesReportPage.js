@@ -253,7 +253,9 @@ function SalesReportPage() {
     if (loading) {
         return (
             <div className="add-product-page">
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
                 <AdminHeader />
+            </div>  
                 <div className="manage-products-page">
                     <div style={{ textAlign: 'center', padding: '50px' }}>
                         Loading sales report...
@@ -266,7 +268,9 @@ function SalesReportPage() {
     if (error) {
         return (
             <div className="add-product-page">
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
                 <AdminHeader />
+            </div>  
                 <div className="manage-products-page">
                     <div style={{ textAlign: 'center', padding: '50px', color: 'red' }}>
                         {error}
@@ -278,7 +282,9 @@ function SalesReportPage() {
 
     return (
         <>
-            <AdminHeader />
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+                <AdminHeader />
+            </div>  
             <div className="manage-products-page">
                 <div className="title-row">
                     <h2>Sales Report</h2>

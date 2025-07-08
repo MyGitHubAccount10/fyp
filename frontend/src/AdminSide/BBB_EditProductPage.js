@@ -174,7 +174,9 @@ function EditProductPage() {
 
     return (
         <div>
-            <AdminHeader />
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+                <AdminHeader />
+            </div>
             <div className="manage-products-page">
                 <div className="title-row">
                     <h2>Edit Product</h2>

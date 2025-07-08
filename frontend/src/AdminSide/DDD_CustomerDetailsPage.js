@@ -189,7 +189,9 @@ function UserDetailPage() {
   if (loading) {
     return (
       <div className="add-product-page">
-        <AdminHeader />
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+                <AdminHeader />
+            </div>  
         <div className="manage-products-page">
           <div style={{ textAlign: 'center', padding: '50px' }}>Loading user details...</div>
         </div>
@@ -200,7 +202,9 @@ function UserDetailPage() {
   if (error || !user) {
     return (
       <div className="add-product-page">
-        <AdminHeader />
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+                <AdminHeader />
+            </div>  
         <div className="manage-products-page">
           <div style={{ textAlign: 'center', padding: '50px', color: 'red' }}>
             {error || 'User not found'}
@@ -218,7 +222,9 @@ function UserDetailPage() {
 
   return (
     <div className="add-product-page">
-      <AdminHeader />
+            <div style={{ position: 'sticky', zIndex: 1000}}>
+                <AdminHeader />
+            </div>  
       <div className="manage-products-page">        
         <div className="title-row">
           <div>

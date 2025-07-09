@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -33,7 +33,6 @@ const RightArrowIcon = () => (
 
 const HomePage = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const navigate = useNavigate();
   const { products, dispatch } = useProductsContext();
 
   const nextSlide = () => {
@@ -48,9 +47,13 @@ const HomePage = () => {
     );
   };
 
-  const handleCustomise = () => {
-    navigate('/customise-image'); // Navigate to the Customise page
-  }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 5000); // Change slide every 5 seconds
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
 
   useEffect(() => {
         console.log('HomePage useEffect triggered'); // Debug log
@@ -74,7 +77,7 @@ const HomePage = () => {
 
   return (
     <>
-    <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+      <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
       <Header />
       </div>
       {/* --- MAIN HOMEPAGE CONTENT --- */}
@@ -99,7 +102,6 @@ const HomePage = () => {
                     </button>
                 </>
             )}
-            <button onClick={handleCustomise} className="hero-cta-button">Customise Skimboards</button>
           </div>
         </section>
 

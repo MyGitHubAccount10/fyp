@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate} from 'react-router-dom';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -45,6 +45,11 @@ const CategoryPage = ({ categoryName }) => {
   const { products, dispatch } = useProductsContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate = useNavigate();
+  const handleCustomise = () => {
+    navigate('/customise-image'); // Navigate to the Customise page
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -111,7 +116,15 @@ const CategoryPage = ({ categoryName }) => {
       <div className="title-section">
         <h1 className="title">{categoryName}</h1>
       </div>
-      
+
+      <div className="hero-button-wrapper">
+        {categoryName === 'Skimboards' && (
+          <button onClick={handleCustomise} className="hero-cta-button">
+            Customise Skimboards
+          </button>
+        )}
+      </div>
+
       {/* This container will now correctly center its direct child */}
       <div className="product-grid-container">
         {renderContent()}

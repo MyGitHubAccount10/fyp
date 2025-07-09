@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCartContext } from './hooks/useCartContext';
-import { useAuthContext } from './hooks/useAuthContext'; // Import AuthContext
+import { useAuthContext } from './hooks/useAuthContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -11,7 +11,7 @@ import { GST_RATE } from './taxConstants';
 function ShoppingCartPage() {
     const navigate = useNavigate();
     const { cartItems, dispatch } = useCartContext();
-    const { user } = useAuthContext(); // Get user from context
+    const { user } = useAuthContext();
 
     const [subtotal, setSubtotal] = useState(0);
     const [gst, setGst] = useState(0);
@@ -69,24 +69,48 @@ function ShoppingCartPage() {
     };
 
     const handleMoveToCart = (itemId, type, shape, size, material, thickness, topImageFile, bottomImageFile) => {
-        const item = savedItems.find(item => item.id === itemId && item.type === type && item.shape === shape && item.size === size && item.material === material && item.thickness === thickness && item.topImageFile === topImageFile && item.bottomImageFile === bottomImageFile);
+        const item = savedItems.find(item => 
+            item.id === itemId && 
+            item.type === type && 
+            item.shape === shape && 
+            item.size === size && 
+            item.material === material && 
+            item.thickness === thickness && 
+            item.topImageFile === topImageFile && 
+            item.bottomImageFile === bottomImageFile
+        );
         if (item) {
             dispatch({ type: 'ADD_TO_CART', payload: item });
-            setSavedItems(prev => prev.filter(savedItem => savedItem.id !== itemId || savedItem.type !== type || savedItem.shape !== shape || savedItem.size !== size || savedItem.material !== material || savedItem.thickness !== thickness));
+            setSavedItems(prev => prev.filter(savedItem => !(
+                savedItem.id === itemId && 
+                savedItem.type === type && 
+                savedItem.shape === shape && 
+                savedItem.size === size && 
+                savedItem.material === material && 
+                savedItem.thickness === thickness &&
+                savedItem.topImageFile === topImageFile &&
+                savedItem.bottomImageFile === bottomImageFile
+            )));
         }
     };
 
     const handleDeleteSavedItem = (itemId, type, shape, size, material, thickness, topImageFile, bottomImageFile) => {
-        setSavedItems(prev => prev.filter(item => item.id !== itemId || item.type !== type || item.shape !== shape || item.size !== size || item.material !== material || item.thickness !== thickness || item.topImageFile !== topImageFile || item.bottomImageFile !== bottomImageFile));
+        setSavedItems(prev => prev.filter(item => !(
+            item.id === itemId && 
+            item.type === type && 
+            item.shape === shape && 
+            item.size === size && 
+            item.material === material && 
+            item.thickness === thickness &&
+            item.topImageFile === topImageFile &&
+            item.bottomImageFile === bottomImageFile
+        )));
     };
 
-    // --- CORRECTED LOGIC FOR SCENARIO 1 ---
     const handleCheckout = () => {
         if (user) {
             navigate('/place-order');
         } else {
-            // User isn't logged in. Redirect to login, and tell the login page
-            // to send the user to the PLACE ORDER page when they are done.
             navigate('/login', { state: { from: '/place-order' } });
         }
     };
@@ -105,7 +129,7 @@ function ShoppingCartPage() {
                             const isCustomItem = item.topImagePreview && item.bottomImagePreview;
                             const imageUrl = item.image ? `/images/${item.image}` : null;
                             return (
-                                <div className="cart-item" key={`${item.id}-${item.size}`}>
+                                <div className="cart-item" key={`${item.id}-${item.type}-${item.shape}-${item.size}-${item.material}-${item.thickness}`}>
                                     {isCustomItem && (
                                         <>
                                             <span>Top Image</span>
@@ -184,29 +208,46 @@ function ShoppingCartPage() {
                         opacity: cartItems.length === 0 ? 0.5 : 1 }}>Complete Purchase</button>
                 </div>
 
-                <div className="saved-items">
+                {/* --- UPDATED "SAVED FOR LATER" SECTION --- */}
+                <div className="recommended">
                     <h3>Saved for Later</h3>
                     {savedItems.length === 0 ? (
                         <p>You have no items saved for later.</p>
                     ) : (
-                        savedItems.map(item => {
-                            const imageUrl = `/images/${item.image}`;
-                            return (
-                                <div className="saved-item-card" key={`${item.id}-${item.size}`} style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '10px', marginBottom: '10px', backgroundColor: '#f9f9f9', width: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                    <img src={imageUrl} alt={item.name} style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '4px' }} />
-                                    <div className="item-info" style={{ textAlign: 'center', marginTop: '10px' }}>
-                                        <strong style={{ fontSize: '16px', color: '#333' }}>{item.name}</strong>
-                                        <p style={{ fontSize: '14px', color: '#666' }}>In stock</p>
-                                        <p style={{ fontSize: '14px', color: '#666' }}>Size: {item.size}</p>
-                                        <p style={{ fontSize: '16px', color: '#333', fontWeight: 'bold' }}>${item.price}</p>
+                        <div className="recommended-items-container">  
+                            {savedItems.map(item => {
+                                const imageUrl = `/images/${item.image}`;
+                                const itemPrice = typeof item.price === 'string' ? parseFloat(item.price) : item.price;
+
+                                return (
+                                    <div className="recommended-product-card" key={`${item.id}-${item.type}-${item.shape}-${item.size}-${item.material}-${item.thickness}`}>
+                                        <img src={imageUrl} alt={item.name} className="recommended-product-image" />
+                                        
+                                        <div className="recommended-product-content">
+                                            <div className="recommended-product-info">
+                                                <span className="recommended-product-name">{item.name}</span>
+                                                <span className="recommended-product-stock status-in-stock">In Stock</span>
+                                                <span className="recommended-product-size">Size: {item.size}</span>
+                                                <span className="recommended-product-price">${itemPrice.toFixed(2)}</span>
+                                            </div>
+                                            
+                                            <div className="recommended-product-actions">
+                                                <button 
+                                                    className="btn-order-action btn-secondary" 
+                                                    onClick={() => handleMoveToCart(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)}>
+                                                    Move to Cart
+                                                </button>
+                                                <button 
+                                                    className="btn-order-action" 
+                                                    onClick={() => handleDeleteSavedItem(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)}>
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div className="item-actions" style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                                        <button className="action-btn move-to-cart-later" onClick={() => handleMoveToCart(item.id, item.size)} style={{ backgroundColor: '#ffcc00', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', flex: '1', marginRight: '5px' }}>Move to Cart</button>
-                                        <button className="action-btn delete-later" onClick={() => handleDeleteSavedItem(item.id, item.size)} style={{ backgroundColor: '#ff6666', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', flex: '1' }}>Delete</button>
-                                    </div>
-                                </div>
-                            );
-                        })
+                                );
+                            })}
+                        </div>
                     )}
                 </div>
             </div>

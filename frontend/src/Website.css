@@ -459,79 +459,112 @@ h2 {
 /* --- Recommended ("Later") Section --- */
 .recommended {
   margin-top: 40px;
+  border-top: 1px solid #D9D9D9;
+  padding-top: 30px;
 }
 .recommended h3 {
   margin-top: 0;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   font-weight: 700;
-  font-size: 1.4em;
+  font-size: 1.6em;
+  color: #333;
 }
+
+/* This container now uses Flexbox to prevent stretching */
+.recommended-items-container {
+  display: flex;
+  flex-wrap: wrap; /* Allows items to wrap to the next line */
+  gap: 20px;       /* Space between cards */
+}
+
 .recommended-product-card {
   background-color: #fff;
-  border-radius: 8px;
+  border: 1px solid #eee;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  max-width: 250px; /* This will cause items to stack if container is not wide enough or not using flexbox for layout of cards */
-  margin-bottom: 15px; /* Add some space between cards if they stack */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  /* THIS IS THE KEY FIX: A fixed width for consistency */
+  width: 260px; 
 }
+
 .recommended-product-image {
   display: block;
   width: 100%;
-  height: 200px; /* Fixed height for consistency */
+  height: 220px;
   object-fit: cover;
   background-color: #D9D9D9;
 }
+
+/* The light-colored content area */
 .recommended-product-content {
-  background-color: #E0F2F1;
+  background-color: #FFF9F5; /* Light cream/off-white background */
   padding: 15px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
 }
+
 .recommended-product-info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  gap: 6px;
   margin-bottom: 15px;
+  text-align: center;
 }
+
 .recommended-product-name {
-  font-weight: 700;
-  font-size: 1.1em;
-  color: #00695C;
-}
-.recommended-product-price {
-  font-size: 1em;
+  font-weight: bold;
+  font-size: 1.2em;
   color: #000000;
+}
+
+.recommended-product-price {
+  font-size: 1.1em;
+  color: #333;
   font-weight: 500;
 }
+
 .recommended-product-stock,
 .recommended-product-size {
   font-size: 0.9em;
-  color: #0A7E8C;
+  color: #666;
 }
+
 .recommended-product-actions {
   display: flex;
-  flex-direction: column;
   gap: 10px;
 }
-.move-to-cart-later {
-  color: #F9A825;
+
+.recommended-product-actions .btn-order-action {
+  flex-grow: 1;
+  font-weight: bold;
+  font-size: 0.9em;
   padding: 10px 15px;
-  font-weight: 500;
-  text-align: center;
-  cursor: pointer;
-  font-size: 0.95em;
+  border-radius: 8px;
+  color: white;
+  transition: background-color 0.2s;
 }
-.move-to-cart-later:hover {
-  color: #FFFDE7;
+
+/* Red button for "Move to Cart" */
+.recommended-product-actions .btn-order-action.btn-secondary {
+  background-color: #e57373; /* A slightly softer red */
+  border: 1px solid #e57373;
 }
-.delete-later {
-  color: red;
-  padding: 10px 15px;
-  font-weight: 500;
-  text-align: center;
-  cursor: pointer;
-  font-size: 0.95em;
+.recommended-product-actions .btn-order-action.btn-secondary:hover {
+  background-color: #ef5350;
 }
-.delete-later:hover {
-  color: darkred;
+
+/* Yellow/Gold button for "Delete" */
+.recommended-product-actions .btn-order-action:not(.btn-secondary) {
+  background-color: #FBC02D; /* A nice gold/yellow */
+  border: 1px solid #FBC02D;
+}
+.recommended-product-actions .btn-order-action:not(.btn-secondary):hover {
+  background-color: #F9A825;
 }
 
 /* --- Footer --- */
@@ -2137,18 +2170,22 @@ select {
 }
 
 .similar-products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+  /* Change from grid to flex to prevent stretching */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .similar-product-card {
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    text-align: center;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  text-align: center;
+  /* ADD THIS LINE: A fixed width for consistency */
+  width: 220px; 
 }
+
 .similar-product-image {
     width: 100%;
     height: 180px;

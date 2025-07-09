@@ -2154,6 +2154,7 @@ select {
     height: 180px;
     object-fit: cover;
     background-color: #f0f0f0; /* Placeholder background */
+    display: block;
 }
 .similar-product-caption {
     background-color: #E0F2F1; /* Light teal from image */
@@ -2681,4 +2682,41 @@ input[type="password"]::-ms-clear {
 .btn-delete-account:hover {
     background-color: #c82333; /* A darker red on hover */
     border-color: #bd2130;
+}
+
+
+/* Add to Website.css */
+
+/* Add a transition to the existing .product-info rule */
+.product-info {
+  padding: 15px;
+  background-color: #E0F2F1; /* Light blue background for text */
+  text-align: center;
+  flex-grow: 1; /* Make info section take remaining space */
+  /* ADD THIS LINE for a smooth animation */
+  transition: background-color 0.2s ease;
+}
+
+/* ADD THIS NEW RULE to change the color on hover */
+.product-card:hover .product-info {
+  background-color: #B2DFDB; /* The same slightly darker teal from the button hover */
+}
+
+
+/* Add to Website.css */
+
+/* --- Add transition for smooth hover on Homepage and Product Detail cards --- */
+.popular-product-card-caption,
+.similar-product-caption {
+    transition: background-color 0.2s ease;
+}
+
+/* --- Add the darkening hover effect --- */
+
+/* For "Popular Products" on the HomePage */
+.popular-product-card:hover .popular-product-card-caption,
+
+/* For "Similar Products" on the ProductDetailPage */
+.similar-product-card:hover .similar-product-caption {
+    background-color: #B2DFDB; /* The same slightly darker teal color */
 }

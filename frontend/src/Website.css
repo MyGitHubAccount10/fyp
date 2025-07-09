@@ -459,112 +459,79 @@ h2 {
 /* --- Recommended ("Later") Section --- */
 .recommended {
   margin-top: 40px;
-  border-top: 1px solid #D9D9D9;
-  padding-top: 30px;
 }
 .recommended h3 {
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   font-weight: 700;
-  font-size: 1.6em;
-  color: #333;
+  font-size: 1.4em;
 }
-
-/* This container now uses Flexbox to prevent stretching */
-.recommended-items-container {
-  display: flex;
-  flex-wrap: wrap; /* Allows items to wrap to the next line */
-  gap: 20px;       /* Space between cards */
-}
-
 .recommended-product-card {
   background-color: #fff;
-  border: 1px solid #eee;
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  display: flex;
-  flex-direction: column;
-  /* THIS IS THE KEY FIX: A fixed width for consistency */
-  width: 260px; 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  max-width: 250px; /* This will cause items to stack if container is not wide enough or not using flexbox for layout of cards */
+  margin-bottom: 15px; /* Add some space between cards if they stack */
 }
-
 .recommended-product-image {
   display: block;
   width: 100%;
-  height: 220px;
+  height: 200px; /* Fixed height for consistency */
   object-fit: cover;
   background-color: #D9D9D9;
 }
-
-/* The light-colored content area */
 .recommended-product-content {
-  background-color: #FFF9F5; /* Light cream/off-white background */
+  background-color: #E0F2F1;
   padding: 15px;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  justify-content: space-between;
 }
-
 .recommended-product-info {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 6px;
+  gap: 4px;
   margin-bottom: 15px;
-  text-align: center;
 }
-
 .recommended-product-name {
-  font-weight: bold;
-  font-size: 1.2em;
-  color: #000000;
-}
-
-.recommended-product-price {
+  font-weight: 700;
   font-size: 1.1em;
-  color: #333;
+  color: #00695C;
+}
+.recommended-product-price {
+  font-size: 1em;
+  color: #000000;
   font-weight: 500;
 }
-
 .recommended-product-stock,
 .recommended-product-size {
   font-size: 0.9em;
-  color: #666;
+  color: #0A7E8C;
 }
-
 .recommended-product-actions {
   display: flex;
+  flex-direction: column;
   gap: 10px;
 }
-
-.recommended-product-actions .btn-order-action {
-  flex-grow: 1;
-  font-weight: bold;
-  font-size: 0.9em;
+.move-to-cart-later {
+  color: #F9A825;
   padding: 10px 15px;
-  border-radius: 8px;
-  color: white;
-  transition: background-color 0.2s;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.95em;
 }
-
-/* Red button for "Move to Cart" */
-.recommended-product-actions .btn-order-action.btn-secondary {
-  background-color: #e57373; /* A slightly softer red */
-  border: 1px solid #e57373;
+.move-to-cart-later:hover {
+  color: #FFFDE7;
 }
-.recommended-product-actions .btn-order-action.btn-secondary:hover {
-  background-color: #ef5350;
+.delete-later {
+  color: red;
+  padding: 10px 15px;
+  font-weight: 500;
+  text-align: center;
+  cursor: pointer;
+  font-size: 0.95em;
 }
-
-/* Yellow/Gold button for "Delete" */
-.recommended-product-actions .btn-order-action:not(.btn-secondary) {
-  background-color: #FBC02D; /* A nice gold/yellow */
-  border: 1px solid #FBC02D;
-}
-.recommended-product-actions .btn-order-action:not(.btn-secondary):hover {
-  background-color: #F9A825;
+.delete-later:hover {
+  color: darkred;
 }
 
 /* --- Footer --- */
@@ -2170,28 +2137,23 @@ select {
 }
 
 .similar-products-grid {
-  /* Change from grid to flex to prevent stretching */
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
 }
 
 .similar-product-card {
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  text-align: center;
-  /* ADD THIS LINE: A fixed width for consistency */
-  width: 220px; 
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    text-align: center;
 }
-
 .similar-product-image {
     width: 100%;
     height: 180px;
     object-fit: cover;
     background-color: #f0f0f0; /* Placeholder background */
-    display: block;
 }
 .similar-product-caption {
     background-color: #E0F2F1; /* Light teal from image */
@@ -2719,41 +2681,4 @@ input[type="password"]::-ms-clear {
 .btn-delete-account:hover {
     background-color: #c82333; /* A darker red on hover */
     border-color: #bd2130;
-}
-
-
-/* Add to Website.css */
-
-/* Add a transition to the existing .product-info rule */
-.product-info {
-  padding: 15px;
-  background-color: #E0F2F1; /* Light blue background for text */
-  text-align: center;
-  flex-grow: 1; /* Make info section take remaining space */
-  /* ADD THIS LINE for a smooth animation */
-  transition: background-color 0.2s ease;
-}
-
-/* ADD THIS NEW RULE to change the color on hover */
-.product-card:hover .product-info {
-  background-color: #B2DFDB; /* The same slightly darker teal from the button hover */
-}
-
-
-/* Add to Website.css */
-
-/* --- Add transition for smooth hover on Homepage and Product Detail cards --- */
-.popular-product-card-caption,
-.similar-product-caption {
-    transition: background-color 0.2s ease;
-}
-
-/* --- Add the darkening hover effect --- */
-
-/* For "Popular Products" on the HomePage */
-.popular-product-card:hover .popular-product-card-caption,
-
-/* For "Similar Products" on the ProductDetailPage */
-.similar-product-card:hover .similar-product-caption {
-    background-color: #B2DFDB; /* The same slightly darker teal color */
 }

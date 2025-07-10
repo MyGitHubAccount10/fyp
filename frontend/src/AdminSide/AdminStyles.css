@@ -239,6 +239,9 @@
 .manage-products-page .actionButton button:hover {
     color: #f1673a; /* Theme color on hover */
 }
+.manage-products-page .bannedButton {
+    color: #f1673a; /* Theme color on hover */
+}
 
 /* ---------V---------- */
 

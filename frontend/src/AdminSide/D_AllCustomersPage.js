@@ -335,7 +335,7 @@ const handleFilter = () => {
             </div>                
             {/* Users Table */}
             <div className='card' style={{ overflowX: 'auto', marginBottom: '20px' }}>
-                <table className="my-table" style={{ tableLayout: 'fixed', width: '100%' }}>                    
+                <table className="my-table" style={{ width: '100%' }}>                    
                     <thead>                        
                         <tr>
                             <th >Role</th>
@@ -351,23 +351,24 @@ const handleFilter = () => {
                     <tbody>
                         {currentUsers.length > 0 ? (                             
                             currentUsers.map(user => (
-                                <tr key={user._id} style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>
-                                    <td style={{ maxWidth: '100px', wordBreak: 'break-word' }}>{user.role_name}</td>
-                                    <td style={{ maxWidth: '120px', wordBreak: 'break-word' }}>{user.full_name}</td>
-                                    <td style={{ maxWidth: '180px', wordBreak: 'break-word' }}>{user.email}</td>
-                                    <td style={{ maxWidth: '120px', wordBreak: 'break-word' }}>{user.phone_number}</td>
-                                    <td style={{ maxWidth: '200px', wordBreak: 'break-word', whiteSpace: 'normal' }}>{user.shipping_address}</td>
-                                    <td style={{ maxWidth: '80px' }}>
+                                <tr key={user._id}>
+                                    <td style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>{user.role_name}</td>
+                                    <td style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>{user.full_name}</td>
+                                    <td style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>{user.email}</td>
+                                    <td style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>{user.phone_number}</td>
+                                    <td style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>{user.shipping_address}</td>
+                                    <td>
                                         <span className={`badge ${user.status === 'banned' ? 'badge-red' : 'badge-green'}`}>
                                             {user.status || 'active'}
                                         </span>
                                     </td>
-                                    <td style={{ maxWidth: '100px', whiteSpace: 'nowrap' }}>{new Date(user.createdAt).toLocaleDateString()}</td>                                    <td className="action-column" style={{ maxWidth: '150px' }}>
-                                        <div className="actionButton" >
+                                    <td style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>{new Date(user.createdAt).toLocaleDateString()}</td>
+                                    <td className="action-column">
+                                        <div className="actionButton">
                                             {/* Show edit button based on permissions */}
                                             {isSuperAdmin ? (
                                                 // Super Admin can edit anyone
-                                                <button onClick={() => handleEditUser(user)} title="Edit User">
+                                                <button onClick={() => handleEditUser(user)} title="Edit User" >
                                                     <FaEdit />
                                                 </button>
                                             ) : currentUserRole === 'Admin' ? (
@@ -377,7 +378,7 @@ const handleFilter = () => {
                                                         <FaEdit  />
                                                     </button>
                                                 ) : (
-                                                    <button onClick={() => handleEditUser(user)} title="View User (Edit restricted for Admin users)">
+                                                    <button onClick={() => handleEditUser(user)} title="View User">
                                                         <FaEdit />
                                                     </button>
                                                 )
@@ -393,6 +394,7 @@ const handleFilter = () => {
                                                         <button 
                                                             onClick={() => handleBanUser(user._id, user.status, user.role_name)} 
                                                             title={user.status === 'banned' ? 'Unban User' : 'Ban User'} 
+                                                            style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}
                                                         >
                                                             <FaBan className='smallerban'/>
                                                         </button>
@@ -402,8 +404,8 @@ const handleFilter = () => {
                                                         return (
                                                             <button 
                                                                 onClick={() => handleBanUser(user._id, user.status, user.role_name)} 
-                                                                title={user.status === 'banned' ? 'Unban User' : 'Ban User'} 
-                                                                style={{ whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px' }}
+                                                                title={user.status === 'banned' ? 'Unban User' : 'Ban User'}
+                                                                style={{ color: user.status === 'banned' ? '#f1673a' : ''}}
                                                             >
                                                                 <FaBan />
                                                             </button>
@@ -413,7 +415,7 @@ const handleFilter = () => {
                                                             <button 
                                                                 disabled
                                                                 title="Only Super Admins can ban/unban Admin users"
-                                                                style={{ opacity: 0.4, cursor: 'not-allowed', whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px' }}
+                                                                style={{ opacity: 0.4, cursor: 'not-allowed'}}
                                                             >
                                                                 <FaBan />
                                                             </button>

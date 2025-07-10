@@ -376,12 +376,15 @@ function UserDetailPage() {
                     <select
                       value={editForm.role_id}
                       onChange={(e) => handleInputChange('role_id', e.target.value)}
+                      disabled={currentUserRole === 'Admin'} // Disable if current user is Admin
                       style={{
                         marginLeft: '10px',
                         padding: '5px',
                         border: '1px solid #ccc',
                         borderRadius: '4px',
-                        width: '200px'
+                        width: '200px',
+                        opacity: currentUserRole === 'Admin' ? 0.6 : 1,
+                        cursor: currentUserRole === 'Admin' ? 'not-allowed' : 'pointer'
                       }}
                     >
                       <option value="">Select Role</option>
@@ -393,6 +396,11 @@ function UserDetailPage() {
                     </select>
                   ) : (
                     <span style={{ marginLeft: '10px' }}>{user.role_name}</span>
+                  )}
+                  {isEditing && currentUserRole === 'Admin' && (
+                    <div style={{ fontSize: '12px', color: '#666', fontStyle: 'italic', marginTop: '4px' }}>
+                      Only Super Admins can change user roles
+                    </div>
                   )}
                 </div>
                 <p><strong>Status:</strong> <span className={`badge ${user.status === 'banned' ? 'badge-red' : 'badge-green'}`}>{user.status || 'active'}</span></p>

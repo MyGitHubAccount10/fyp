@@ -352,17 +352,17 @@ const handleFilter = () => {
                         {currentUsers.length > 0 ? (                             
                             currentUsers.map(user => (
                                 <tr key={user._id}>
-                                    <td style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>{user.role_name}</td>
-                                    <td style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>{user.full_name}</td>
-                                    <td style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>{user.email}</td>
-                                    <td style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>{user.phone_number}</td>
-                                    <td style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>{user.shipping_address}</td>
+                                    <td style={{ opacity: user.status === 'banned' ? 0.4 : 1 }}>{user.role_name}</td>
+                                    <td style={{ opacity: user.status === 'banned' ? 0.4 : 1 }}>{user.full_name}</td>
+                                    <td style={{ opacity: user.status === 'banned' ? 0.4 : 1 }}>{user.email}</td>
+                                    <td style={{ opacity: user.status === 'banned' ? 0.4 : 1 }}>{user.phone_number}</td>
+                                    <td style={{ opacity: user.status === 'banned' ? 0.4 : 1 }}>{user.shipping_address}</td>
                                     <td>
                                         <span className={`badge ${user.status === 'banned' ? 'badge-red' : 'badge-green'}`}>
                                             {user.status || 'active'}
                                         </span>
                                     </td>
-                                    <td style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}>{new Date(user.createdAt).toLocaleDateString()}</td>
+                                    <td style={{ opacity: user.status === 'banned' ? 0.4 : 1 }}>{new Date(user.createdAt).toLocaleDateString()}</td>
                                     <td className="action-column">
                                         <div className="actionButton">
                                             {/* Show edit button based on permissions */}

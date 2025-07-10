@@ -3141,3 +3141,49 @@ h2 {
 
 /* ... (rest of the CSS file is unchanged) ... */
 /* --- END OF UPDATED FILE: Website.css --- */
+
+
+/* In Website.css */
+
+/* --- Responsive Header Styles --- */
+
+/* 1. DEFAULT (MOBILE) VIEW */
+/* By default, hide the full navigation links and the desktop search bar. */
+/* The burger button will be visible by default as it's not hidden. */
+.header-nav-links,
+.header-right-content .search-bar {
+    display: none;
+}
+
+/* Make sure the burger button is displayed. 'inline-flex' helps center the icon. */
+.burger-btn {
+    display: inline-flex; 
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+
+/* 2. DESKTOP VIEW */
+/* Apply these styles ONLY on screens 992px or wider */
+@media (min-width: 992px) {
+
+    /* Hide the burger button on desktop */
+    .burger-btn {
+        display: none;
+    }
+
+    /* Show the full navigation links and desktop search bar */
+    .header-nav-links {
+        display: flex; /* Use flex to lay out the nav links */
+        align-items: center;
+        gap: 20px; /* Adjust gap between links as needed */
+    }
+
+    .header-right-content .search-bar {
+        display: flex; /* Show the search bar inside the right-content div */
+    }
+}

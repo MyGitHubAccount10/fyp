@@ -220,7 +220,7 @@ const handleFilter = () => {
 
                             </div>
                             <button onClick={handleAddAdmin} className="add-new-btn">
-                                <FaEdit size={18} color="white" />
+                                <FaEdit size={18} />
                                 Add New User
                             </button>
                             </div>
@@ -338,14 +338,14 @@ const handleFilter = () => {
                 <table className="my-table" style={{ tableLayout: 'fixed', width: '100%' }}>                    
                     <thead>                        
                         <tr>
-                            <th style={{ width: '100px', maxWidth: '100px' }}>Role</th>
-                            <th style={{ width: '120px', maxWidth: '120px' }}>User</th>
-                            <th style={{ width: '180px', maxWidth: '180px' }}>Email</th>
-                            <th style={{ width: '120px', maxWidth: '120px' }}>Phone Number</th>
-                            <th style={{ width: '200px', maxWidth: '200px' }}>Shipping Address</th>
-                            <th style={{ width: '80px', maxWidth: '80px' }}>Status</th>
-                            <th style={{ width: '100px', maxWidth: '100px' }}>Created At</th>
-                            <th className="action-column" style={{ width: '150px', maxWidth: '150px' }}>Action</th>
+                            <th >Role</th>
+                            <th >User</th>
+                            <th >Email</th>
+                            <th >Phone Number</th>
+                            <th >Shipping Address</th>
+                            <th >Status</th>
+                            <th >Created At</th>
+                            <th className="action-column">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -403,11 +403,9 @@ const handleFilter = () => {
                                                             <button 
                                                                 onClick={() => handleBanUser(user._id, user.status, user.role_name)} 
                                                                 title={user.status === 'banned' ? 'Unban User' : 'Ban User'} 
-                                                                className={user.status === 'banned' ? 'unban-btn' : 'delete-btn'}
                                                                 style={{ whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px' }}
                                                             >
                                                                 <FaBan />
-                                                                {user.status === 'banned' ? 'Unban' : 'Ban'}
                                                             </button>
                                                         );
                                                     } else {
@@ -415,8 +413,7 @@ const handleFilter = () => {
                                                             <button 
                                                                 disabled
                                                                 title="Only Super Admins can ban/unban Admin users"
-                                                                className="disabled-btn"
-                                                                style={{ opacity: 0.5, cursor: 'not-allowed', whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px' }}
+                                                                style={{ opacity: 0.4, cursor: 'not-allowed', whiteSpace: 'nowrap', fontSize: '12px', padding: '4px 8px' }}
                                                             >
                                                                 <FaBan />
                                                             </button>

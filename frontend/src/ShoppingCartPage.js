@@ -201,8 +201,8 @@ function ShoppingCartPage() {
                                         <p style={{ fontSize: '16px', color: '#333', fontWeight: 'bold' }}>${item.price}</p>
                                     </div>
                                     <div className="item-actions" style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                                        <button className="action-btn move-to-cart-later" onClick={() => handleMoveToCart(item.id, item.size)} style={{ backgroundColor: '#ffcc00', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', flex: '1', marginRight: '5px' }}>Move to Cart</button>
-                                        <button className="action-btn delete-later" onClick={() => handleDeleteSavedItem(item.id, item.size)} style={{ backgroundColor: '#ff6666', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', flex: '1' }}>Delete</button>
+                                        <button className="action-btn move-to-cart-later" onClick={() => handleMoveToCart(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)} style={{ backgroundColor: '#ffcc00', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', flex: '1', marginRight: '5px' }}>Move to Cart</button>
+                                        <button className="action-btn delete-later" onClick={() => handleDeleteSavedItem(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)} style={{ backgroundColor: '#ff6666', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', flex: '1' }}>Delete</button>
                                     </div>
                                 </div>
                             );

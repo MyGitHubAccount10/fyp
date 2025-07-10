@@ -1,3 +1,4 @@
+// --- START OF UPDATED FILE: ShoppingCartPage.js ---
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCartContext } from './hooks/useCartContext';
@@ -15,7 +16,25 @@ function ShoppingCartPage() {
 
     const [subtotal, setSubtotal] = useState(0);
     const [gst, setGst] = useState(0);
-    const [savedItems, setSavedItems] = useState([]);
+    
+    const [savedItems, setSavedItems] = useState(() => {
+        try {
+            const localData = localStorage.getItem('savedForLater');
+            return localData ? JSON.parse(localData) : [];
+        } catch (error) {
+            console.error("Could not parse saved items from localStorage", error);
+            return [];
+        }
+    });
+
+    useEffect(() => {
+        try {
+            localStorage.setItem('savedForLater', JSON.stringify(savedItems));
+        } catch (error) {
+            console.error("Could not save items to localStorage", error);
+        }
+    }, [savedItems]);
+
 
     useEffect(() => {
         const calculatedSubtotal = cartItems.reduce((acc, item) => {
@@ -63,7 +82,21 @@ function ShoppingCartPage() {
             item.topImageFile === topImageFile &&
             item.bottomImageFile === bottomImageFile);
         if (item) {
-            setSavedItems(prev => [...prev, item]);
+            const isAlreadySaved = savedItems.some(savedItem => 
+                savedItem.id === item.id && 
+                savedItem.type === item.type && 
+                savedItem.shape === item.shape && 
+                savedItem.size === item.size && 
+                savedItem.material === item.material && 
+                savedItem.thickness === item.thickness && 
+                savedItem.topImageFile === item.topImageFile &&
+                savedItem.bottomImageFile === item.bottomImageFile
+            );
+
+            if (!isAlreadySaved) {
+                 setSavedItems(prev => [...prev, item]);
+            }
+           
             dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, type, shape, size, material, thickness, topImageFile, bottomImageFile } });
         }
     };
@@ -72,21 +105,36 @@ function ShoppingCartPage() {
         const item = savedItems.find(item => item.id === itemId && item.type === type && item.shape === shape && item.size === size && item.material === material && item.thickness === thickness && item.topImageFile === topImageFile && item.bottomImageFile === bottomImageFile);
         if (item) {
             dispatch({ type: 'ADD_TO_CART', payload: item });
-            setSavedItems(prev => prev.filter(savedItem => savedItem.id !== itemId || savedItem.type !== type || savedItem.shape !== shape || savedItem.size !== size || savedItem.material !== material || savedItem.thickness !== thickness));
+            setSavedItems(prev => prev.filter(savedItem => 
+                !(savedItem.id === itemId && 
+                  savedItem.type === type && 
+                  savedItem.shape === shape && 
+                  savedItem.size === size && 
+                  savedItem.material === material && 
+                  savedItem.thickness === thickness && 
+                  savedItem.topImageFile === topImageFile &&
+                  savedItem.bottomImageFile === bottomImageFile)
+            ));
         }
     };
 
     const handleDeleteSavedItem = (itemId, type, shape, size, material, thickness, topImageFile, bottomImageFile) => {
-        setSavedItems(prev => prev.filter(item => item.id !== itemId || item.type !== type || item.shape !== shape || item.size !== size || item.material !== material || item.thickness !== thickness || item.topImageFile !== topImageFile || item.bottomImageFile !== bottomImageFile));
+        setSavedItems(prev => prev.filter(item => 
+            !(item.id === itemId && 
+              item.type === type && 
+              item.shape === shape && 
+              item.size === size && 
+              item.material === material && 
+              item.thickness === thickness && 
+              item.topImageFile === topImageFile && 
+              item.bottomImageFile === bottomImageFile)
+        ));
     };
 
-    // --- CORRECTED LOGIC FOR SCENARIO 1 ---
     const handleCheckout = () => {
         if (user) {
             navigate('/place-order');
         } else {
-            // User isn't logged in. Redirect to login, and tell the login page
-            // to send the user to the PLACE ORDER page when they are done.
             navigate('/login', { state: { from: '/place-order' } });
         }
     };
@@ -104,8 +152,10 @@ function ShoppingCartPage() {
                             const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
                             const isCustomItem = item.topImagePreview && item.bottomImagePreview;
                             const imageUrl = item.image ? `/images/${item.image}` : null;
+                            const itemKey = `${item.id}-${item.type}-${item.shape}-${item.size}-${item.material}-${item.thickness}-${item.topImageFile || ''}-${item.bottomImageFile || ''}`;
+
                             return (
-                                <div className="cart-item" key={`${item.id}-${item.size}`}>
+                                <div className="cart-item" key={itemKey}>
                                     {isCustomItem && (
                                         <>
                                             <span>Top Image</span>
@@ -153,11 +203,11 @@ function ShoppingCartPage() {
                                             <span>+</span>
                                             </button>
                                         </div>
-                                        <button className="action-btn delete" onClick={() => 
-                                            handleDeleteItem(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)}>Delete
-                                        </button>
                                         <button className="action-btn save" onClick={() => 
                                             handleSaveForLater(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)}>Save for later
+                                        </button>
+                                        <button className="action-btn delete" onClick={() => 
+                                            handleDeleteItem(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)}>Delete
                                         </button>
                                     </div>
                                     <div className="price-tag">
@@ -190,19 +240,42 @@ function ShoppingCartPage() {
                         <p>You have no items saved for later.</p>
                     ) : (
                         savedItems.map(item => {
-                            const imageUrl = `/images/${item.image}`;
+                            const itemKey = `${item.id}-${item.type}-${item.shape}-${item.size}-${item.material}-${item.thickness}-${item.topImageFile || ''}-${item.bottomImageFile || ''}`;
+                            const isCustomItem = item.topImagePreview && item.bottomImagePreview;
+                            const imageUrl = item.image ? `/images/${item.image}` : null;
+                            const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
+
                             return (
-                                <div className="saved-item-card" key={`${item.id}-${item.size}`} style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '10px', marginBottom: '10px', backgroundColor: '#f9f9f9', width: '200px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                    <img src={imageUrl} alt={item.name} style={{ width: '150px', height: '150px', objectFit: 'cover', borderRadius: '4px' }} />
-                                    <div className="item-info" style={{ textAlign: 'center', marginTop: '10px' }}>
-                                        <strong style={{ fontSize: '16px', color: '#333' }}>{item.name}</strong>
-                                        <p style={{ fontSize: '14px', color: '#666' }}>In stock</p>
-                                        <p style={{ fontSize: '14px', color: '#666' }}>Size: {item.size}</p>
-                                        <p style={{ fontSize: '16px', color: '#333', fontWeight: 'bold' }}>${item.price}</p>
+                                <div className="cart-item" key={itemKey}>
+                                    {isCustomItem && (
+                                        <>
+                                            <span>Top Image</span>
+                                            <img src={item.topImagePreview} alt={item.name} />
+                                            <span>Bottom Image</span>
+                                            <img src={item.bottomImagePreview} alt={item.name} />
+                                        </>
+                                    )}
+                                    {imageUrl && (
+                                        <img src={imageUrl} alt={item.name} />
+                                    )}
+                                    <div className="item-info">
+                                        <strong>{item.name}</strong>
+                                        <span>Type: {item.type}</span>
+                                        <span>Shape: {item.shape}</span>
+                                        <span>Size: {item.size}</span>
+                                        <span>Material: {item.material}</span>
+                                        <span>Thickness: {item.thickness}</span>
                                     </div>
-                                    <div className="item-actions" style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                                        <button className="action-btn move-to-cart-later" onClick={() => handleMoveToCart(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)} style={{ backgroundColor: '#ffcc00', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', flex: '1', marginRight: '5px' }}>Move to Cart</button>
-                                        <button className="action-btn delete-later" onClick={() => handleDeleteSavedItem(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)} style={{ backgroundColor: '#ff6666', border: 'none', borderRadius: '4px', padding: '5px 10px', cursor: 'pointer', flex: '1' }}>Delete</button>
+                                    <div className="item-actions">
+                                        <button className="action-btn move-to-cart" onClick={() => 
+                                            handleMoveToCart(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)}>Move to Cart
+                                        </button>
+                                        <button className="action-btn delete" onClick={() => 
+                                            handleDeleteSavedItem(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)}>Delete
+                                        </button>
+                                    </div>
+                                    <div className="price-tag">
+                                        <span className="item-price-display">${itemPrice.toFixed(2)}</span>
                                     </div>
                                 </div>
                             );
@@ -216,3 +289,4 @@ function ShoppingCartPage() {
 }
 
 export default ShoppingCartPage;
+// --- END OF UPDATED FILE: ShoppingCartPage.js ---//

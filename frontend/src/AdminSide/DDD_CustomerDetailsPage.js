@@ -422,6 +422,12 @@ function UserDetailPage() {
                 </div>
               </div>
 
+
+
+            </div>
+
+            {/* Right Column - Other Info */}
+            <div className="add-product-sidebar-panel">              
               {/* Card: Recent Orders */}
               <div className="form-section-card">
                 <h3 className="section-card-title">Recent Orders</h3>                {recentOrders.length > 0 ? (
@@ -448,34 +454,6 @@ function UserDetailPage() {
                 ) : (
                   <p>No recent orders found.</p>
                 )}
-              </div>
-
-            </div>
-
-            {/* Right Column - Other Info */}
-            <div className="add-product-sidebar-panel">              {/* Card: Notes */}
-              <div className="form-section-card">
-                <h3 className="section-card-title">Internal Note</h3>
-                <textarea
-                  rows="4"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Write a private note for internal use..."
-                  style={{
-                    width: '100%',
-                    padding: '10px',
-                    borderRadius: '6px',
-                    border: '1px solid #ccc',
-                    resize: 'vertical',
-                    boxSizing: 'border-box'
-                  }}                />
-                <button
-                  className="btn-add-new"
-                  style={{ marginTop: '8px' }}
-                  onClick={handleSaveNote}
-                >
-                  Save Note
-                </button>
               </div>
 
             </div>

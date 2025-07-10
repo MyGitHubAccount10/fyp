@@ -6,7 +6,7 @@ import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
 import { FaAngleLeft } from "react-icons/fa";
-import { FaBan } from "react-icons/fa";
+import { IoIosAddCircle } from "react-icons/io";
 
 import { FaEye } from "react-icons/fa";
 import { FaEyeSlash } from "react-icons/fa";
@@ -209,7 +209,7 @@ function AddAdminPage() {
                   <div className="form-section-card">
                     <h3 className="section-card-title">Create Account</h3>
                     <div className="form-actions-vertical">
-                      <button type="submit" className="btn-save-product"><FaBan size={18} /> {isSuperAdmin ? 'Create User' : 'Create Customer'}</button>
+                      <button type="submit" className="btn-save-product"><IoIosAddCircle size={18} /> {isSuperAdmin ? 'Create User' : 'Create Customer'}</button>
                       <button type="button" onClick={handleCancel} className="btn-cancel-product">Cancel</button>
                     </div>
                   </div>

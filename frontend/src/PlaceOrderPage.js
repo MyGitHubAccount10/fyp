@@ -1,3 +1,5 @@
+// PlaceOrderPage.js:
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from './hooks/useAuthContext';
@@ -22,6 +24,7 @@ function PlaceOrderPage() {
     const { user } = useAuthContext();
     const { cartItems, dispatch } = useCartContext();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isPayPalPopupVisible, setIsPayPalPopupVisible] = useState(false); // State for the custom PayPal popup
 
     const [customItem, setCustomItem] = useState([]);
 
@@ -47,6 +50,7 @@ function PlaceOrderPage() {
     }, [cartItems]);
 
     useEffect(() => {
+        // This effect can stay as is
         if (isSubmitting) {
             return;
         }
@@ -73,6 +77,7 @@ function PlaceOrderPage() {
     }, [user, cartItems, navigate, dispatch, isSubmitting]);
 
     useEffect(() => {
+        // This effect can stay as is
         const updateItem = [...cartItems]
         let subtotal = 0;
         if (cartItems.length > 0) {
@@ -124,37 +129,15 @@ function PlaceOrderPage() {
         setSelectedPaymentMethod(method);
     };
     
-    const handleSubmitOrder = async (e) => {
-        e.preventDefault();
+    // This new function holds the core logic for creating the order.
+    // It will be called directly for non-PayPal payments, or by the popup for PayPal.
+    const executeOrderCreation = async () => {
         setIsSubmitting(true);
-
-        if (!user || !user.token) {
-            alert('You must be logged in to place an order');
-            setIsSubmitting(false);
-            navigate('/login');
-            return;
-        }
-
-        if (!getUserIdFromToken(user.token)) {
-            alert('Authentication error. Please try logging in again.');
-            setIsSubmitting(false);
-            return;
-        }
-
-        if (!selectedPaymentMethod) {
-            alert('Please select a payment method.');
-            setIsSubmitting(false);
-            return;
-        }
-
-        if (!shippingDetails.shippingAddress) {
-            alert('Please fill in your shipping address.');
-            setIsSubmitting(false);
-            return;
+        if (isPayPalPopupVisible) {
+            setIsPayPalPopupVisible(false);
         }
 
         try {
-            // ... (API call logic is correct and remains the same) ...
             const userId = getUserIdFromToken(user.token);
             const orderData = {
                 user_id: userId,
@@ -175,12 +158,12 @@ function PlaceOrderPage() {
             for (const item of cartItems) {
                 const isCustom = !item.product_id && (item.topImagePreview && item.bottomImagePreview);
                 if (isCustom) {
-                    continue; // Skip custom items here, they will be handled separately
+                    continue;
                 }
                 const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
                 const productId = item.id || item.product_id || item._id;
                 if (!productId) {
-                    continue; // Skip if no product ID is found
+                    continue;
                 }
                 const orderProductData = {
                     order_id: orderId,
@@ -193,7 +176,6 @@ function PlaceOrderPage() {
                     order_material: item.material ? item.material : 'N/A',
                     order_thickness: item.thickness ? item.thickness : 'N/A'
                 };
-                console.log('Sending order product:', orderProductData);
                 const orderProductResponse = await fetch('/api/order-products', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`},
@@ -206,13 +188,10 @@ function PlaceOrderPage() {
             }
             
             if (customItem.length > 0) {
-                // Helper function to convert Data URL to File object using fetch
                 const dataURLtoFile = async (dataurl, filename) => {
                     const response = await fetch(dataurl);
-                    const blob = await response.blob(); // Get the Blob from the response
-                    const mimeType = blob.type; // Extract MIME type from the Blob
-
-                    // Create a File object from the Blob
+                    const blob = await response.blob();
+                    const mimeType = blob.type;
                     return new File([blob], filename, { type: mimeType });
                 };
                 
@@ -251,7 +230,47 @@ function PlaceOrderPage() {
         } catch (error) {
             console.error('Error placing order:', error);
             alert(`Failed to place order: ${error.message}`);
-            setIsSubmitting(false);
+            setIsSubmitting(false); // Only set submitting to false on error
+        }
+    };
+
+    const handleSubmitOrder = async (e) => {
+        e.preventDefault();
+
+        // Perform all initial validations before deciding the payment path.
+        if (isSubmitting) return;
+
+        if (!user || !user.token) {
+            alert('You must be logged in to place an order');
+            navigate('/login');
+            return;
+        }
+
+        if (!getUserIdFromToken(user.token)) {
+            alert('Authentication error. Please try logging in again.');
+            return;
+        }
+
+        if (!selectedPaymentMethod) {
+            alert('Please select a payment method.');
+            return;
+        }
+
+        if (!shippingDetails.shippingAddress) {
+            alert('Please fill in your shipping address.');
+            return;
+        }
+
+        // The logic for handling PayPal specifically
+        if (selectedPaymentMethod === 'paypal') {
+            // 1. Open the Jotform link in a new tab
+            window.open('https://www.jotform.com/form/251899086041464', '_blank', 'noopener,noreferrer');
+            // 2. Show the custom popup on the current page
+            setIsPayPalPopupVisible(true);
+            // 3. Stop execution here. The order will be placed when the user clicks the "Done" button on the popup.
+        } else {
+            // For all other payment methods, proceed to create the order immediately.
+            await executeOrderCreation();
         }
     };
 
@@ -276,7 +295,6 @@ function PlaceOrderPage() {
                 <h2>Checkout</h2>
                 <form onSubmit={handleSubmitOrder} className="checkout-form">
                     <div className="checkout-layout">
-                        {/* --- FIX: Restored the JSX for the main content area --- */}
                         <div className="checkout-main-content">
                             <section className="form-section">
                                 <h3>Shipping Details (Singapore Only)</h3>
@@ -317,7 +335,6 @@ function PlaceOrderPage() {
                             </section>
                         </div>
 
-                        {/* --- FIX: Restored the JSX for the order summary --- */}
                         <div className="checkout-order-summary">
                             <h3>Order Summary</h3>
                             <div className="summary-items-list">
@@ -369,7 +386,6 @@ function PlaceOrderPage() {
                                             </div>
                                         );
                                     }
-                                    // Added a return null for the map function to avoid potential issues.
                                     return null;
                                 })}
                             </div>
@@ -402,6 +418,35 @@ function PlaceOrderPage() {
                 </form>
             </div>
             <Footer />
+
+            {/* --- NEW: PayPal Confirmation Popup --- */}
+            {isPayPalPopupVisible && (
+                <div className="paypal-popup-overlay">
+                    <div className="paypal-popup-content">
+                        <h3>Complete Your Payment</h3>
+                        <p>
+                            A new tab has been opened for you to complete your payment.
+                            Once you have finished, please come back and click the button below to confirm your order.
+                        </p>
+                        <div className="paypal-popup-actions">
+                            <button
+                                onClick={executeOrderCreation}
+                                className="btn-confirm-payment"
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? 'Confirming...' : 'Payment Complete, Confirm Order'}
+                            </button>
+                            <button
+                                onClick={() => setIsPayPalPopupVisible(false)}
+                                className="btn-cancel-payment"
+                                disabled={isSubmitting}
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

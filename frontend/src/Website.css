@@ -2682,3 +2682,102 @@ input[type="password"]::-ms-clear {
     background-color: #c82333; /* A darker red on hover */
     border-color: #bd2130;
 }
+
+
+
+
+
+
+/* Website.css */
+
+/* ... (all your existing CSS code) ... */
+
+
+/* --- NEW: PayPal Confirmation Popup Styles --- */
+.paypal-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000; /* High z-index to be on top of everything */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.paypal-popup-content {
+    background-color: #FFF0E1; /* Main background color for theme consistency */
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    border: 1px solid #FFAB89;
+    font-family: 'Inter', sans-serif;
+}
+
+.paypal-popup-content h3 {
+    margin-top: 0;
+    font-size: 1.8em;
+    color: #FA704C; /* Theme color */
+    margin-bottom: 15px;
+}
+
+.paypal-popup-content p {
+    font-size: 1em;
+    color: #444;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.paypal-popup-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.paypal-popup-actions button {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.paypal-popup-actions .btn-confirm-payment {
+    background-color: #FA704C; /* Theme primary action color */
+    color: white;
+}
+
+.paypal-popup-actions .btn-confirm-payment:hover {
+    background-color: #f85b34;
+}
+
+.paypal-popup-actions .btn-cancel-payment {
+    background-color: #E0F2F1; /* A secondary theme color */
+    color: #00695C;
+    border: 1px solid #B2DFDB;
+}
+
+.paypal-popup-actions .btn-cancel-payment:hover {
+    background-color: #B2DFDB;
+}
+
+.paypal-popup-actions button:disabled {
+    background-color: #ccc;
+    color: #888;
+    cursor: not-allowed;
+    transform: none;
+    border-color: #ccc;
+}
+
+.paypal-popup-actions button:not(:disabled):active {
+    transform: scale(0.98);
+}

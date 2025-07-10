@@ -2235,3 +2235,43 @@ input[type="password"]::-ms-clear {
     border-color: #ccc;
 }
 .paypal-popup-actions button:not(:disabled):active { transform: scale(0.98); }
+
+
+/* =================================
+   Social Media Section Styles
+   ================================= */
+
+.social-media-section {
+  text-align: center;
+  padding: 50px 20px;
+  background-color: #f9f9f9; /* A light background to separate it from other sections */
+}
+
+.social-media-title {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+  color: #333;
+  font-weight: 700;
+}
+
+.social-embeds-container {
+  display: flex;
+  justify-content: center; /* Center the items */
+  align-items: flex-start; /* Align items to the top */
+  gap: 40px; /* Space between the embeds */
+  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.social-embed-item {
+  flex: 1; /* Allow items to grow */
+  min-width: 325px; /* Minimum width before wrapping */
+  max-width: 540px; /* Maximum width matching Instagram's embed */
+}
+
+/* Ensure the blockquotes take up the space and are centered */
+.social-embed-item .instagram-media,
+.social-embed-item .tiktok-embed {
+  margin: 0 auto !important; /* Center the embed within its container */
+}

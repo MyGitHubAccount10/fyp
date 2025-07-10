@@ -1,3 +1,5 @@
+// backend/controllers/UserController.js
+
 const mongoose = require('mongoose');
 const User = require('../models/UserModel');
 const Order = require('../models/OrderModel');
@@ -8,6 +10,8 @@ const bcrypt = require('bcrypt');
 const createToken = (_id) => {
     return jwt.sign({_id}, process.env.SECRET, { expiresIn: '3d' })
 }
+
+// --- ALL REQUIRED FUNCTIONS ARE PRESENT BELOW ---
 
 const getUsers = async (req, res) => {
     const users = await User.find({}).sort({createdAt: -1});
@@ -22,7 +26,6 @@ const getUser = async (req, res) => {
     res.status(200).json(user);
 }
 
-// ✅ REFACTORED: Now uses full_name
 const createUser = async (req, res) => {
     const { 
         full_name,
@@ -50,7 +53,6 @@ const createUser = async (req, res) => {
     }
 }
 
-// Admin-only delete
 const deleteUser = async (req, res) => {
     const {id} = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).json({error: 'Invalid user ID'});
@@ -59,39 +61,29 @@ const deleteUser = async (req, res) => {
     res.status(200).json(user);
 }
 
-// User self-deletes account with cascade
 const deleteLoggedInUser = async (req, res) => {
     const userId = req.user._id;
-
     if (!mongoose.Types.ObjectId.isValid(userId)) {
         return res.status(400).json({ error: 'Invalid user token.' });
     }
-
     const session = await mongoose.startSession();
     session.startTransaction();
-
     try {
         const userOrders = await Order.find({ user_id: userId }).session(session);
         const orderIdsToDelete = userOrders.map(order => order._id);
-
         if (orderIdsToDelete.length > 0) {
             await OrderProduct.deleteMany({ order_id: { $in: orderIdsToDelete } }).session(session);
         }
-
         await Order.deleteMany({ user_id: userId }).session(session);
         const deletedUser = await User.findByIdAndDelete(userId).session(session);
-
         if (!deletedUser) {
             await session.abortTransaction();
             session.endSession();
             return res.status(404).json({ error: 'User not found.' });
         }
-
         await session.commitTransaction();
         session.endSession();
-
         res.status(200).json({ message: 'Account and all associated orders have been successfully deleted.' });
-
     } catch (error) {
         await session.abortTransaction();
         session.endSession();
@@ -124,7 +116,6 @@ const updateUser = async (req, res) => {
     res.status(200).json(user);
 }
 
-// ✅ REFACTORED: Returns full_name
 const loginUser = async (req, res) => {
   const {email, password} = req.body;
   try {
@@ -147,7 +138,6 @@ const loginUser = async (req, res) => {
   }
 }
 
-// ✅ REFACTORED: Uses and returns full_name
 const signupUser = async (req, res) => {
   const {email, password, username, phone_number, role_id, full_name, shipping_address} = req.body;
   try {
@@ -166,7 +156,6 @@ const signupUser = async (req, res) => {
   }
 }
 
-// ✅ REFACTORED: Updates full_name
 const updateLoggedInUser = async (req, res) => {
     const userId = req.user._id;
     if (!mongoose.Types.ObjectId.isValid(userId)) { return res.status(404).json({error: 'Invalid user ID'}); }
@@ -212,6 +201,41 @@ const updateUserPassword = async (req, res) => {
     }
 };
 
+const resetPassword = async (req, res) => {
+    const { email, newPassword } = req.body;
+
+    if (!email || !newPassword) {
+        return res.status(400).json({ error: 'Email and new password are required.' });
+    }
+    
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/.test(newPassword)) {
+        return res.status(400).json({ error: 'Password is not strong enough. It must have at least 8 characters, one uppercase, one lowercase, one number, and one special character.' });
+    }
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ error: 'User with this email does not exist.' });
+        }
+
+        const isSamePassword = await bcrypt.compare(newPassword, user.password);
+        if (isSamePassword) {
+            return res.status(400).json({ error: 'New password cannot be the same as your current password. Please choose a different one.' });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(newPassword, salt);
+        
+        await User.findByIdAndUpdate(user._id, { password: hash });
+        
+        res.status(200).json({ message: 'Password has been reset successfully.' });
+
+    } catch (error) {
+        console.error('Error during password reset:', error);
+        res.status(500).json({ error: 'Server error while resetting password.' });
+    }
+};
+
 module.exports = {
     getUsers,
     getUser,
@@ -225,4 +249,5 @@ module.exports = {
     updateLoggedInUser,
     updateUserPassword,
     deleteLoggedInUser,
+    resetPassword,
 };

@@ -1,7 +1,6 @@
 // LoginPage.js
 
 import React, { useState } from 'react';
-// --- MODIFIED: Added useNavigate to handle the new button's action ---
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthContext } from './hooks/useAuthContext';
 import './Website.css';
@@ -26,7 +25,7 @@ const LoginPage = () => {
   const location = useLocation();
   const { dispatch } = useAuthContext();
 
-  // ... (validation functions remain the same) ...
+  // ... (validation and handleSubmit functions are unchanged) ...
   const validateEmail = (email) => {
     if (!email) return 'Email is required.';
     if (!/^\S+@\S+\.\S+$/.test(email)) return 'Please enter a valid email format.';
@@ -37,7 +36,6 @@ const LoginPage = () => {
     if (!pass) return 'Password is required.';
     return '';
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,12 +79,14 @@ const LoginPage = () => {
     }
   };
 
-  // --- ADDED: Handler to navigate to the sign-up page ---
   const handleGoToSignUp = () => {
-    // We pass the location state along so the signup page knows where to redirect back to
     navigate('/signup', { state: location.state });
   };
-
+  
+  // --- ADDED: Handler to navigate to the forgot password page ---
+  const handleForgotPassword = () => {
+    navigate('/forgot-password');
+  };
 
   const inputStyle = { display: 'block', width: '100%', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
   const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
@@ -101,7 +101,6 @@ const LoginPage = () => {
           <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>Login to your account!</p>
 
           <form onSubmit={handleSubmit} noValidate>
-            {/* ... (email and password inputs remain the same) ... */}
             <input
               type="email"
               placeholder="Enter your email"
@@ -132,9 +131,11 @@ const LoginPage = () => {
             {passwordError && <p style={errorMessageStyle}>{passwordError}</p>}
             
             <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+              {/* --- MODIFIED: Added onClick handler to this button --- */}
               <button
                 type="button"
                 className="update-cart-btn"
+                onClick={handleForgotPassword}
                 style={{ flexGrow: 1, backgroundColor: '#f0f0f0', color: '#333', border: '1px solid #ccc' }}>
                 Forgot Password?
               </button>
@@ -148,7 +149,6 @@ const LoginPage = () => {
             </div>
             {apiError && <div className="error" style={{ color: 'red', marginTop: '10px' }}>{apiError}</div>}
             
-            {/* --- MODIFIED: Added a button to redirect to the sign-up page --- */}
             <div style={{ marginTop: '20px' }}>
               <button
                 type="button"
@@ -164,7 +164,6 @@ const LoginPage = () => {
                 Don't have an account? Sign Up
               </button>
             </div>
-
           </form>
         </div>
       </div>

@@ -12,14 +12,15 @@ import ContactPage from './ContactPage';
 import FaqPage from './FaqPage';
 import SignUpPage from './SignUpPage';
 import LoginPage from './LoginPage';
+import ForgotPasswordPage from './ForgotPasswordPage';
 import UserProfilePage from './UserProfilePage';
 import ProductDetailPage from './ProductDetailPage';
-import ShoppingCartPage from './ShoppingCartPage';
+import ShoppingCartPage from './ShoppingCartPage'; // ✅ FIX: Added the missing import
 import PlaceOrderPage from './PlaceOrderPage';
 import OrderHistoryPage from './OrderHistoryPage';
 import CategoryPage from './CategoryPage';
-import SearchPage from './SearchPage'; // ✅ 1. Import the new SearchPage component
-import Customerise from './CustomisePage'; // Customise page
+import SearchPage from './SearchPage';
+import Customerise from './CustomisePage';
 import PageNotFound from './PageNotFound';
 
 // Admin-facing pages
@@ -38,8 +39,7 @@ import AdminProfilePage from './AdminSide/G_AdminProfilePage';
 import AdminSalesReportsPage from './AdminSide/SalesReportPage';
 import CustomiseImagePage from './CustomiseImagePage';
 
-// ✅ 1. Import the new protected route component
-import AdminProtectedRoute from './AdminProtectedRoute'; // Make sure this path is correct
+import AdminProtectedRoute from './AdminProtectedRoute';
 
 import './index.css';
 
@@ -48,7 +48,6 @@ function App() {
     <CartContextProvider>
       <Routes>
         {/* --- User Routes --- */}
-        {/* These routes are accessible to everyone */}
         <Route path="/" element={<HomePage />} />
         <Route path="about" element={<AboutPage />} />
         <Route path="contact" element={<ContactPage />} />
@@ -62,22 +61,19 @@ function App() {
           <Route path="accessories" element={<CategoryPage categoryName="Accessories" />} />
         </Route>
 
-        <Route path="product/:productId" element={<ProductDetailPage />} />
+        <Route path="product/:productId" element={<ProductDetailPage />} /> {/* ✅ FIX: Re-added this route */}
         <Route path="signup" element={<SignUpPage />} />
         <Route path="login" element={<LoginPage />} />
+        <Route path="forgot-password" element={<ForgotPasswordPage />} />
         <Route path="profile" element={<UserProfilePage />} />
         <Route path="cart" element={<ShoppingCartPage />} />
-        <Route path="search" element={<SearchPage />} /> {/* ✅ 2. Add the route for the search page */}
+        <Route path="search" element={<SearchPage />} />
         <Route path="customise" element={<Customerise />} />
         <Route path="place-order" element={<PlaceOrderPage />} />
         <Route path="order-history" element={<OrderHistoryPage />} />
 
         {/* --- Admin Routes --- */}
-        {/* The admin login page is public, so it is NOT wrapped */}
         <Route path="admin-login" element={<AdminLoginPage />} />
-
-        {/* ✅ 2. Wrap all other admin routes inside the AdminProtectedRoute component. */}
-        {/* This acts as a gatekeeper, checking for the correct admin role. */}        
         <Route path="admin-dashboard" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
         <Route path="all-products" element={<AdminProtectedRoute><AllProductsPage /></AdminProtectedRoute>} />
         <Route path="add-product" element={<AdminProtectedRoute><AddProductPage /></AdminProtectedRoute>} />
@@ -93,7 +89,6 @@ function App() {
         <Route path="customise-image" element={<CustomiseImagePage />} />
 
         {/* --- Catch-all 404 Route --- */}
-        {/* This should always be the last route */}
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </CartContextProvider>

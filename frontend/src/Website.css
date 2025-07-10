@@ -225,7 +225,11 @@ h2 {
 }
 
 .popular-products-grid {
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  /* Change from grid to flex to prevent stretching */
+  justify-content: center; /* Center the items */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .similar-products-grid {
@@ -266,7 +270,13 @@ h2 {
 }
 
 .popular-product-card, .similar-product-card {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   text-align: center;
+  /* ADD THIS LINE: A fixed width for consistency */
+  width: 220px; 
 }
 
 /* ✅ FIX: Base styles and transitions for all card captions. */

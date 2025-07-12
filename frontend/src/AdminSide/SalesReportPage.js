@@ -232,7 +232,7 @@ function SalesReportPage() {
         
         // Return all dates in range (including $0 days), limited to 18 dates
         const sortedDates = Object.keys(dailyData).sort();
-        const limitedDates = sortedDates.slice(-18); // Show last 18 dates
+        const limitedDates = sortedDates.slice(0, 18); // Show first 18 dates
         
         return limitedDates.map(date => ({
             date,
@@ -277,8 +277,8 @@ function SalesReportPage() {
             }
         });
         
-        // Limit to 18 months (show last 18 months)
-        const limitedMonths = months.slice(-18);
+        // Limit to 18 months (show first 18 months)
+        const limitedMonths = months.slice(0, 18);
         
         return limitedMonths.map(month => ({
             month,

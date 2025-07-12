@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const Order = require('../models/OrderModel');
 const User = require('../models/UserModel');
+const OrderProduct = require('../models/OrderProductModel');
+const Product = require('../models/ProductModel');
 
 // Get all orders for admin (new function)
 const getAllOrders = async (req, res) => {
@@ -130,8 +132,8 @@ const updateOrder = async (req, res) => {
         const userWithRole = await mongoose.model('User').findById(req.user._id).populate('role_id', 'role_name');
         const userRole = userWithRole.role_id.role_name;
 
-        // Find the order first to check ownership if needed
-        const existingOrder = await Order.findById(id);
+        // Find the order first to check ownership and get current status
+        const existingOrder = await Order.findById(id).populate('status_id', 'status_name');
         if (!existingOrder) {
             return res.status(404).json({error: 'Order not found'});
         }
@@ -139,12 +141,71 @@ const updateOrder = async (req, res) => {
         // Allow admins and super admins to update any order, regular users can only update their own
         if (userRole !== 'Admin' && userRole !== 'Super Admin' && existingOrder.user_id.toString() !== req.user._id.toString()) {
             return res.status(403).json({ error: 'User not authorized to update this order' });
-        }        const order = await Order.findOneAndUpdate({_id: id}, { ...req.body }, { new: true })
+        }
+
+        // Handle stock adjustments if status is being changed
+        if (req.body.status_id && req.body.status_id !== existingOrder.status_id._id.toString()) {
+            // Get the new status name
+            const StatusModel = mongoose.model('Status');
+            const newStatus = await StatusModel.findById(req.body.status_id);
+            if (!newStatus) {
+                return res.status(400).json({error: 'Invalid status ID'});
+            }
+
+            const currentStatusName = existingOrder.status_id?.status_name;
+            const newStatusName = newStatus.status_name;
+
+            // Define statuses that should restore stock (cancelled/failed orders)
+            const stockRestoringStatuses = ['Attempted Delivery', 'Returned to Sender', 'Declined'];
+            
+            const isCurrentlyRestoring = stockRestoringStatuses.includes(currentStatusName);
+            const isNewlyRestoring = stockRestoringStatuses.includes(newStatusName);
+
+            // Get order products for this order (excluding custom items)
+            const orderProducts = await OrderProduct.find({ order_id: id }).populate('product_id');
+
+            // Only process regular products (not custom items)
+            const regularProducts = orderProducts.filter(op => op.product_id);
+
+            if (isNewlyRestoring && !isCurrentlyRestoring) {
+                // Changing TO a stock-restoring status - add stock back
+                for (const orderProduct of regularProducts) {
+                    const product = await Product.findById(orderProduct.product_id._id);
+                    if (product) {
+                        product.warehouse_quantity += orderProduct.order_qty;
+                        await product.save();
+                        console.log(`Restored ${orderProduct.order_qty} units to ${product.product_name} (new quantity: ${product.warehouse_quantity})`);
+                    }
+                }
+            } else if (!isNewlyRestoring && isCurrentlyRestoring) {
+                // Changing FROM a stock-restoring status - remove stock
+                for (const orderProduct of regularProducts) {
+                    const product = await Product.findById(orderProduct.product_id._id);
+                    if (product) {
+                        // Check if we have enough stock to deduct
+                        if (product.warehouse_quantity >= orderProduct.order_qty) {
+                            product.warehouse_quantity -= orderProduct.order_qty;
+                            await product.save();
+                            console.log(`Deducted ${orderProduct.order_qty} units from ${product.product_name} (new quantity: ${product.warehouse_quantity})`);
+                        } else {
+                            return res.status(400).json({
+                                error: `Insufficient stock to process status change. Product: ${product.product_name}, Available: ${product.warehouse_quantity}, Required: ${orderProduct.order_qty}`
+                            });
+                        }
+                    }
+                }
+            }
+            // If both statuses are stock-restoring or both are non-stock-restoring, no stock change needed
+        }
+
+        // Update the order
+        const order = await Order.findOneAndUpdate({_id: id}, { ...req.body }, { new: true })
             .populate('user_id', 'full_name email username phone_number')
             .populate('status_id', 'status_name');
             
         res.status(200).json(order);
     } catch (error) {
+        console.error('Error updating order:', error);
         res.status(400).json({error: error.message});
     }
 }

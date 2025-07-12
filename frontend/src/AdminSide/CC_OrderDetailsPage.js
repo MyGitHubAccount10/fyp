@@ -130,7 +130,8 @@ function OrderDetailPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update order status');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update order status');
       }      // Update local state
       setOrder(prev => ({
         ...prev,
@@ -143,7 +144,10 @@ function OrderDetailPage() {
       setTimeout(() => setStatusMessage(''), 3000);
     } catch (error) {
       console.error('Error updating status:', error);
-      setStatusMessage('Failed to update order status. Please try again.');
+      const errorMessage = error.message.includes('Insufficient stock') 
+        ? error.message 
+        : 'Failed to update order status. Please try again.';
+      setStatusMessage(errorMessage);
       setTimeout(() => setStatusMessage(''), 5000);
       // Reset to previous value
       setSelectedStatus(order?.status_id?.status_name || '');

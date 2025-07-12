@@ -146,11 +146,15 @@ function AdminDashboard() {
         console.log('Start of today:', today);
         console.log('now:', now);
 
+        // Define excluded statuses for revenue calculation
+        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Declined'];
+
         orders.forEach(order => {
         const orderDate = new Date(order.createdAt);
+        const orderStatus = order.status_id?.status_name;
 
-        // Count toward this month's sales
-        if (orderDate >= month && order.total_amount) {
+        // Count toward this month's sales - exclude certain statuses
+        if (orderDate >= month && order.total_amount && !excludedStatuses.includes(orderStatus)) {
             totalMonthlySales += order.total_amount;
         }
 
@@ -172,7 +176,7 @@ function AdminDashboard() {
 
         setUseSalesData(prev => ({
             ...prev,
-            totalMonthlySales: Math.round(totalMonthlySales), 
+            totalMonthlySales, 
             newOrdersToday,
             pendingFulfillment
         }));
@@ -207,6 +211,9 @@ function AdminDashboard() {
         const dailyData = {};
         const sevenDays = [];
         
+        // Define excluded statuses for revenue calculation
+        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Declined'];
+        
         // Create array of last 7 days
         for (let i = 6; i >= 0; i--) {
             const date = new Date();
@@ -222,7 +229,10 @@ function AdminDashboard() {
         
         ordersData.forEach(order => {
             const orderDate = new Date(order.createdAt).toLocaleDateString();
-            if (dailyData.hasOwnProperty(orderDate)) {
+            const orderStatus = order.status_id?.status_name;
+            
+            // Only include orders that are not in excluded statuses
+            if (dailyData.hasOwnProperty(orderDate) && !excludedStatuses.includes(orderStatus)) {
                 dailyData[orderDate] += order.total_amount || 0;
             }
         });

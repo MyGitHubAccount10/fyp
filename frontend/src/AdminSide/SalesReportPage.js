@@ -102,22 +102,31 @@ function SalesReportPage() {
     const generateReportData = (ordersData) => {
         const filteredOrders = filterOrdersByDate(ordersData);
         
+        // Define excluded statuses for revenue calculation
+        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Declined'];
+        
+        // Filter out excluded statuses for revenue calculation
+        const revenueOrders = filteredOrders.filter(order => 
+            !excludedStatuses.includes(order.status_id?.status_name)
+        );
+        
         // Calculate basic metrics
-        const totalRevenue = filteredOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+        const totalRevenue = revenueOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
         const totalOrders = filteredOrders.length;
-        const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
-        const completedOrders = filteredOrders.filter(order => 
-            order.status_id?.status_name === 'Completed' || order.status_id?.status_name === 'Delivered'
-        ).length;
+        const averageOrderValue = revenueOrders.length > 0 ? totalRevenue / revenueOrders.length : 0;
+        const completedOrders = filteredOrders.filter(order => {
+            const status = order.status_id?.status_name;
+            return status === 'Completed' || status === 'Delivered' || status === 'delievered';
+        }).length;
         const pendingOrders = filteredOrders.filter(order => 
             order.status_id?.status_name === 'Order Placed' || order.status_id?.status_name === 'Processing' || order.status_id?.status_name === 'In Transit'
         ).length;
 
-        // Generate daily sales data for the last 7 days
+        // Generate daily sales data using filtered orders
         const dailySales = generateDailySales(filteredOrders);
         
-        // Generate monthly sales data for the last 6 months
-        const monthlySales = generateMonthlySales(ordersData);
+        // Generate monthly sales data using filtered orders
+        const monthlySales = generateMonthlySales(filteredOrders);
 
         setReportData({
             totalRevenue,
@@ -168,54 +177,110 @@ function SalesReportPage() {
 
     const generateDailySales = (filteredOrders) => {
         const dailyData = {};
-        const last7Days = [];
         
-        // Create array of last 7 days
-        for (let i = 6; i >= 0; i--) {
-            const date = new Date();
-            date.setDate(date.getDate() - i);
-            const dateStr = date.toISOString().split('T')[0];
-            last7Days.push(dateStr);
+        // Define excluded statuses for revenue calculation
+        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Declined'];
+        
+        // Get date range from filtered orders
+        if (filteredOrders.length === 0) {
+            return [];
+        }
+        
+        // Find the earliest and latest dates in filtered orders using local time
+        const dates = filteredOrders.map(order => {
+            const orderDate = new Date(order.createdAt);
+            // Format date as YYYY-MM-DD in local timezone
+            const year = orderDate.getFullYear();
+            const month = String(orderDate.getMonth() + 1).padStart(2, '0');
+            const day = String(orderDate.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        });
+        
+        const minDateStr = dates.reduce((min, date) => date < min ? date : min);
+        const maxDateStr = dates.reduce((max, date) => date > max ? date : max);
+        
+        // Create array of all dates in the range using local time
+        const minDate = new Date(minDateStr + 'T00:00:00');
+        const maxDate = new Date(maxDateStr + 'T00:00:00');
+        
+        for (let d = new Date(minDate); d <= maxDate; d.setDate(d.getDate() + 1)) {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
             dailyData[dateStr] = 0;
         }
         
-        // Aggregate sales by date
+        // Aggregate sales by date, excluding certain statuses, using local dates
         filteredOrders.forEach(order => {
-            const orderDate = new Date(order.createdAt).toISOString().split('T')[0];
-            if (dailyData.hasOwnProperty(orderDate)) {
-                dailyData[orderDate] += order.total_amount || 0;
+            const orderStatus = order.status_id?.status_name;
+            const orderAmount = order.total_amount || 0;
+            
+            if (!excludedStatuses.includes(orderStatus)) {
+                const orderDate = new Date(order.createdAt);
+                // Format date as YYYY-MM-DD in local timezone
+                const year = orderDate.getFullYear();
+                const month = String(orderDate.getMonth() + 1).padStart(2, '0');
+                const day = String(orderDate.getDate()).padStart(2, '0');
+                const orderDateStr = `${year}-${month}-${day}`;
+                
+                if (dailyData.hasOwnProperty(orderDateStr)) {
+                    dailyData[orderDateStr] += orderAmount;
+                }
             }
         });
         
-        return last7Days.map(date => ({
+        // Return all dates in range (including $0 days), limited to 18 dates
+        const sortedDates = Object.keys(dailyData).sort();
+        const limitedDates = sortedDates.slice(-18); // Show last 18 dates
+        
+        return limitedDates.map(date => ({
             date,
             amount: dailyData[date]
         }));
     };
 
-    const generateMonthlySales = (ordersData) => {
+    const generateMonthlySales = (filteredOrders) => {
         const monthlyData = {};
-        const last6Months = [];
         
-        // Create array of last 6 months
-        for (let i = 5; i >= 0; i--) {
-            const date = new Date();
-            date.setMonth(date.getMonth() - i);
-            const monthStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-            last6Months.push(monthStr);
-            monthlyData[monthStr] = 0;
+        // Define excluded statuses for revenue calculation
+        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Declined'];
+        
+        if (filteredOrders.length === 0) {
+            return [];
         }
         
-        // Aggregate sales by month
-        ordersData.forEach(order => {
+        // Get unique months from filtered orders using local time
+        const monthsSet = new Set();
+        filteredOrders.forEach(order => {
             const orderDate = new Date(order.createdAt);
             const monthStr = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
-            if (monthlyData.hasOwnProperty(monthStr)) {
-                monthlyData[monthStr] += order.total_amount || 0;
+            monthsSet.add(monthStr);
+        });
+        
+        const months = Array.from(monthsSet).sort();
+        
+        // Initialize monthly data
+        months.forEach(month => {
+            monthlyData[month] = 0;
+        });
+        
+        // Aggregate sales by month, excluding certain statuses, using local dates
+        filteredOrders.forEach(order => {
+            const orderStatus = order.status_id?.status_name;
+            if (!excludedStatuses.includes(orderStatus)) {
+                const orderDate = new Date(order.createdAt);
+                const monthStr = `${orderDate.getFullYear()}-${String(orderDate.getMonth() + 1).padStart(2, '0')}`;
+                if (monthlyData.hasOwnProperty(monthStr)) {
+                    monthlyData[monthStr] += order.total_amount || 0;
+                }
             }
         });
         
-        return last6Months.map(month => ({
+        // Limit to 18 months (show last 18 months)
+        const limitedMonths = months.slice(-18);
+        
+        return limitedMonths.map(month => ({
             month,
             amount: monthlyData[month]
         }));
@@ -292,6 +357,9 @@ function SalesReportPage() {
                         <DownloadIcon size={18} color="white" />
                         Export CSV
                     </button>
+                </div>
+                <div>
+                    <h3 className="card-title">Filtered Data</h3>
                 </div>
 
                 {/* Date Range Filters */}
@@ -433,6 +501,10 @@ function SalesReportPage() {
                     </div>
                 </div>
 
+                <div>
+                    <h3 className="card-title">Sales Chart & Recent Orders</h3>
+                </div>
+
                 {/* Charts Section */}
                 <div style={{
                     display: 'grid',
@@ -442,7 +514,7 @@ function SalesReportPage() {
                 }}>
                     {/* Daily Sales Chart */}
                     <div className="card">
-                        <h3 className="card-title">Daily Sales (Last 7 Days)</h3>
+                        <h3 className="card-title">Daily Sales (Selected Period, Up To 18 Dates)</h3>
                         <div style={{ height: '200px', display: 'flex', alignItems: 'end', gap: '10px', padding: '20px 0' }}>
                             {reportData.dailySales.map((day, index) => {
                                 const maxAmount = Math.max(...reportData.dailySales.map(d => d.amount));
@@ -476,7 +548,7 @@ function SalesReportPage() {
 
                     {/* Monthly Sales Chart */}
                     <div className="card">
-                        <h3 className="card-title">Monthly Sales (Last 6 Months)</h3>
+                        <h3 className="card-title">Monthly Sales (Selected Period, Up To 18 Months)</h3>
                         <div style={{ height: '200px', display: 'flex', alignItems: 'end', gap: '10px', padding: '20px 0' }}>
                             {reportData.monthlySales.map((month, index) => {
                                 const maxAmount = Math.max(...reportData.monthlySales.map(m => m.amount));

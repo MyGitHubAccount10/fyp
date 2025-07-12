@@ -315,6 +315,19 @@ function SalesReportPage() {
         }).format(amount || 0);
     };
 
+    const getStatusClass = (status) => {
+        switch (status) {
+            case 'Order Placed': return 'status-processing';
+            case 'Processing': return 'status-processing';
+            case 'In Transit': return 'status-in-transit';
+            case 'Delivered': return 'status-delivered';
+            case 'Declined': return 'status-declined';
+            case 'Returned to Sender': return 'status-declined';
+            case 'Attempted Delivery': return 'status-declined';
+            default: return 'status-processing';
+        }
+    };
+
     if (loading) {
         return (
             <div className="add-product-page">
@@ -603,13 +616,7 @@ function SalesReportPage() {
                                         <td>{order.user_id?.full_name || order.user_id?.username || 'N/A'}</td>
                                         <td>{formatCurrency(order.total_amount)}</td>
                                         <td>
-                                            <span className={`badge ${
-                                                order.status_id?.status_name === 'Completed' || order.status_id?.status_name === 'Delivered' 
-                                                    ? 'badge-green' 
-                                                    : order.status_id?.status_name === 'Pending' 
-                                                        ? 'badge-gray' 
-                                                        : 'badge-blue'
-                                            }`}>
+                                            <span className={getStatusClass(order.status_id?.status_name)}>
                                                 {order.status_id?.status_name || 'Pending'}
                                             </span>
                                         </td>

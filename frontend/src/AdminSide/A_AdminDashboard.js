@@ -260,13 +260,14 @@ function AdminDashboard() {
     // Basically Clouring the Satus column
     const getStatusClass = (status) => {
         switch (status) {
-            case 'Order Placed':
-            case 'Delivered':
-            case 'Processing':
-            case 'Confirmed': return 'status-processing';
-            case 'Pending': return 'status-complete';
+            case 'Order Placed': return 'status-processing';
+            case 'Processing': return 'status-processing';
             case 'In Transit': return 'status-in-transit';
-            default: return '';
+            case 'Delivered': return 'status-delivered';
+            case 'Declined': return 'status-declined';
+            case 'Returned to Sender': return 'status-declined';
+            case 'Attempted Delivery': return 'status-declined';
+            default: return 'status-processing';
         }
     };
 

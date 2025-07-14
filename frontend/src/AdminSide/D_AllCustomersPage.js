@@ -8,9 +8,11 @@ import './AdminStyles.css';
 
 
 // Placeholder Icons
-import { MdEdit } from "react-icons/md";
-import { FaEdit } from "react-icons/fa";
+import { FaUserEdit } from "react-icons/fa";
+import { FaEye } from "react-icons/fa6";
 
+
+import { GrFormView } from "react-icons/gr";
 
 import { FaBan } from "react-icons/fa";
 
@@ -220,7 +222,7 @@ const handleFilter = () => {
 
                             </div>
                             <button onClick={handleAddAdmin} className="add-new-btn">
-                                <FaEdit size={18} />
+                                <FaUserEdit size={18} />
                                 Add New User
                             </button>
                             </div>
@@ -368,23 +370,24 @@ const handleFilter = () => {
                                             {/* Show edit button based on permissions */}
                                             {isSuperAdmin ? (
                                                 // Super Admin can edit anyone
-                                                <button onClick={() => handleEditUser(user)} title="Edit User" >
-                                                    <FaEdit />
+                                                <button className='editbutton' onClick={() => handleEditUser(user)} title="Edit User" >
+                                                    <FaUserEdit />
                                                 </button>
                                             ) : currentUserRole === 'Admin' ? (
                                                 // Admin can only edit customers
                                                 user.role_name === 'Customer' ? (
-                                                    <button onClick={() => handleEditUser(user)} title="Edit User">
-                                                        <FaEdit  />
+                                                    <button  className='editbutton' onClick={() => handleEditUser(user)} title="Edit User">
+                                                        <FaUserEdit  />
                                                     </button>
                                                 ) : (
-                                                    <button onClick={() => handleEditUser(user)} title="View User">
-                                                        <FaEdit />
+                                                    // if user edits admin, and super admin
+                                                    <button className='editbutton' onClick={() => handleEditUser(user)} title="View User">
+                                                        <FaEye />
                                                     </button>
                                                 )
                                             ) : (
-                                                <button onClick={() => handleEditUser(user)} title="View User">
-                                                    <FaEdit />
+                                                <button className='editbutton' onClick={() => handleEditUser(user)} title="View User">
+                                                    <FaUserEdit />
                                                 </button>
                                             )}
                                             {/* Show ban/unban button based on permissions */}
@@ -392,22 +395,24 @@ const handleFilter = () => {
                                                 if (isSuperAdmin) {
                                                     return (
                                                         <button 
+                                                            className={`deletebutton ${user.status === 'banned' ? 'banned-user-button' : ''}`}
                                                             onClick={() => handleBanUser(user._id, user.status, user.role_name)} 
                                                             title={user.status === 'banned' ? 'Unban User' : 'Ban User'} 
                                                             style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}
                                                         >
-                                                            <FaBan className='smallerban'/>
+                                                            <FaBan/>
                                                         </button>
                                                     );
                                                 } else if (currentUserRole === 'Admin') {
                                                     if (user.role_name === 'Customer') {
                                                         return (
                                                             <button 
+                                                                className={`deletebutton ${user.status === 'banned' ? 'banned-user-button' : ''}`}
                                                                 onClick={() => handleBanUser(user._id, user.status, user.role_name)} 
                                                                 title={user.status === 'banned' ? 'Unban User' : 'Ban User'}
-                                                                style={{ color: user.status === 'banned' ? '#f1673a' : ''}}
+                                                                style={{ color: user.status === 'banned' ? '#43f13aff' : ''}}
                                                             >
-                                                                <FaBan />
+                                                                <FaBan/>
                                                             </button>
                                                         );
                                                     } else {

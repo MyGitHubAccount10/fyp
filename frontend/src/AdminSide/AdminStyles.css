@@ -236,11 +236,25 @@
     width: 11px;
     height: 15px;
 }
-.manage-products-page .actionButton button:hover {
-    color: #f1673a; /* Theme color on hover */
+.manage-products-page .actionButton .editbutton:hover {
+    color: #3a92f1; /* Theme color on hover */
 }
+.manage-products-page .actionButton .deletebutton:hover {
+    color: #d5110a; /* Theme color on hover */
+}
+/* color: #f1673a; */
 .manage-products-page .bannedButton {
-    color: #f1673a; /* Theme color on hover */
+    color: #1bba82; /* Theme color on hover */
+}
+
+/* Banned user button styles */
+.manage-products-page .actionButton .banned-user-button {
+    opacity: 0.6;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+.manage-products-page .actionButton .banned-user-button:hover {
+    color: #28a745 !important; /* Green color on hover for banned users */
+    opacity: 1;
 }
 
 /* ---------V---------- */

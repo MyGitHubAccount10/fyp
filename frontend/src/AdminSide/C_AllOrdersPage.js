@@ -333,7 +333,7 @@ function AllOrdersPage() {
                                     </td>
                                     <td>
                                         <div className="actionButton">
-                                            <button onClick={() => handleViewDetails(order._id)} className="link-button"><MdEdit size={24} /></button>
+                                            <button className="editbutton" onClick={() => handleViewDetails(order._id)}><MdEdit size={24} /></button>
                                         </div>
                                     </td>
                                 </tr>

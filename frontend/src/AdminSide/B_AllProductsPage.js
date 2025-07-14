@@ -445,9 +445,9 @@ function AllProductsPage() {
                                 </span>
                             </td>
                             <td>
-                                <div className="actionButton" style={{ height: '100px', display: 'flex', gap: '10px', justifyContent: 'center', alignItems: 'center' }}>
-                                    <button onClick={() => navigateToEditProduct(product._id)} title="Edit Product"><MdEdit size={39}/></button>
-                                    <button onClick={() => handleDeleteProduct(product._id)} title="Delete Product" ><IoMdTrash size={24} /></button>
+                                <div className="actionButton">
+                                    <button className='editbutton' onClick={() => navigateToEditProduct(product._id)} title="Edit Product"><MdEdit size={39}/></button>
+                                    <button className='deletebutton' onClick={() => handleDeleteProduct(product._id)} title="Delete Product" ><IoMdTrash size={24} /></button>
                                 </div>
                             </td>
                         </tr>

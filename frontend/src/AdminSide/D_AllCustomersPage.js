@@ -303,6 +303,19 @@ const handleFilter = () => {
     </div>
 </div>
 
+            {/* Users Summary */}
+            <div className="users-summary" style={{ margin: '20px 0', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+                <h3 style={{ margin: '0 0 10px 0', fontSize: '1.2em', color: '#333' }}>Users Overview</h3>
+                <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
+                    <div>
+                        <strong>Total Users:</strong> <span style={{ color: '#007bff' }}>{allUsers.length}</span>
+                    </div>
+                    <div>
+                        <strong>Filtered Results:</strong> <span style={{ color: '#28a745' }}>{users.length}</span>
+                    </div>
+                </div>
+            </div>
+
                 {/* Pagination Controls */}
             <div
             className="pagination-controls"

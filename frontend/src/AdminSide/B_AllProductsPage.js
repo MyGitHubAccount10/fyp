@@ -288,9 +288,6 @@ function AllProductsPage() {
                     <div>
                         <strong>Filtered Results:</strong> <span style={{ color: '#28a745' }}>{filteredProducts.length}</span>
                     </div>
-                    <div>
-                        <strong>Current Page:</strong> <span style={{ color: '#6c757d' }}>{currentProducts.length}</span>
-                    </div>
                 </div>
             </div>
 

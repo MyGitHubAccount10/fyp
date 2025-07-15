@@ -10,7 +10,7 @@ const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    message: '',
+    feedback: '',
   });
 
   const handleChange = (e) => {
@@ -24,7 +24,7 @@ const ContactPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Basic validation
-    if (!formData.name || !formData.email || !formData.message) {
+    if (!formData.name || !formData.email || !formData.feedback) {
       alert('Please fill in all fields.');
       return;
     }
@@ -38,7 +38,7 @@ const ContactPage = () => {
     // Send email using EmailJS to the company
     emailjs
     .send("service_1igyvic","template_1igpjgb", 
-    { name: formData.name , email: formData.email, message: formData.message },
+    { name: formData.name , email: formData.email, feedback: formData.feedback },
     "-v7XRaWPXUv9k2m0a")
     .then((res) => {
       console.log('Email sent successfully:', res.status, res.text);
@@ -50,7 +50,7 @@ const ContactPage = () => {
     // Send email using EmailJS to the user
     emailjs
     .send("service_1igyvic","template_k1lm8qi", 
-    { name: formData.name , email: formData.email, message: formData.message },
+    { name: formData.name , email: formData.email, feedback: formData.feedback },
     "-v7XRaWPXUv9k2m0a")
     .then((res) => {
       console.log('Email sent successfully:', res.status, res.text);
@@ -59,9 +59,9 @@ const ContactPage = () => {
       console.error('Failed to send email:', JSON.stringify(err));
     });
 
-    alert(`Thank you, ${formData.name}! Your message has been submitted:\nEmail: ${formData.email}\nMessage: ${formData.message}`);
+    alert(`Thank you, ${formData.name}! Your feedback has been submitted:\nEmail: ${formData.email}\nFeedback: ${formData.feedback}`);
     // In a real app, you would send this data to a backend server
-    setFormData({ name: '', email: '', message: '' }); // Clear form
+    setFormData({ name: '', email: '', feedback: '' }); // Clear form
   };
 
   return (
@@ -102,13 +102,13 @@ const ContactPage = () => {
               />
             </div>
             <div className="contact-form-group">
-              <label htmlFor="message" className="contact-form-label">Message</label>
+              <label htmlFor="feedback" className="contact-form-label">Feedback</label>
               <textarea
-                id="message"
-                name="message"
+                id="feedback"
+                name="feedback"
                 className="contact-form-textarea"
                 rows="6"
-                value={formData.message}
+                value={formData.feedback}
                 onChange={handleChange}
                 required
               ></textarea>

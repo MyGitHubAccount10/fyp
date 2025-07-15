@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
+import emailjs from 'emailjs-com';
 
 const contactBannerImage = '/images/AboutBanner.png'; // Reusing AboutBanner.png, replace if you have a specific contact banner
 
@@ -34,6 +35,30 @@ const ContactPage = () => {
         return;
     }
     
+    // Send email using EmailJS to the company
+    emailjs
+    .send("service_1igyvic","template_1igpjgb", 
+    { name: formData.name , email: formData.email, message: formData.message },
+    "-v7XRaWPXUv9k2m0a")
+    .then((res) => {
+      console.log('Email sent successfully:', res.status, res.text);
+    })
+    .catch((err) => {
+      console.error('Failed to send email:', JSON.stringify(err));
+    });
+
+    // Send email using EmailJS to the user
+    emailjs
+    .send("service_1igyvic","template_k1lm8qi", 
+    { name: formData.name , email: formData.email, message: formData.message },
+    "-v7XRaWPXUv9k2m0a")
+    .then((res) => {
+      console.log('Email sent successfully:', res.status, res.text);
+    })
+    .catch((err) => {
+      console.error('Failed to send email:', JSON.stringify(err));
+    });
+
     alert(`Thank you, ${formData.name}! Your message has been submitted:\nEmail: ${formData.email}\nMessage: ${formData.message}`);
     // In a real app, you would send this data to a backend server
     setFormData({ name: '', email: '', message: '' }); // Clear form

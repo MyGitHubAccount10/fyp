@@ -85,7 +85,7 @@ function UserProfilePage() {
                 email: personalInfo.email,
                 phone_number: personalInfo.phoneNumber
             };
-            const response = await fetch('/api/user/update', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/update`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userData.token}` },
                 body: JSON.stringify(updatedData),
@@ -112,7 +112,7 @@ function UserProfilePage() {
         const userData = JSON.parse(localStorage.getItem('user'));
         if (!userData?.token) return alert('Authentication error. Please log in again.');
         try {
-            const response = await fetch('/api/user/update', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/update`, {
                 method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userData.token}` },
                 body: JSON.stringify({ shipping_address: shippingAddress }),
             });
@@ -150,7 +150,7 @@ function UserProfilePage() {
         const userData = JSON.parse(localStorage.getItem('user'));
         if (!userData?.token) return alert('Authentication error. Please log in again.');
         try {
-            const response = await fetch('/api/user/update-password', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/update-password`, {
                 method: 'PATCH', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${userData.token}` },
                 body: JSON.stringify({ newPassword: passwordChange.newPassword }),
             });
@@ -168,7 +168,7 @@ function UserProfilePage() {
         const userData = JSON.parse(localStorage.getItem('user'));
         if (!userData?.token) return alert('Authentication error. Please log in again.');
         try {
-            const response = await fetch('/api/user/delete-account', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/delete-account`, {
                 method: 'DELETE', headers: { 'Authorization': `Bearer ${userData.token}` },
             });
             const result = await response.json();

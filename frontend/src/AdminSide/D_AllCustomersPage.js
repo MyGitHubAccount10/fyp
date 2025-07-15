@@ -58,7 +58,7 @@ function AllCustomersPage() {
         const fetchUsers = async () => {
             try {
                 setLoading(true);
-                const response = await fetch('http://localhost:4000/api/user');
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch users');
                 }
@@ -68,7 +68,7 @@ function AllCustomersPage() {
                 const usersWithRoles = await Promise.all(
                     userData.map(async (user) => {
                         try {
-                            const roleResponse = await fetch(`http://localhost:4000/api/role/${user.role_id}`);
+                            const roleResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/role/${user.role_id}`);
                             if (roleResponse.ok) {
                                 const roleData = await roleResponse.json();
                                 return {
@@ -148,7 +148,7 @@ function AllCustomersPage() {
         
         if (window.confirm(`Are you sure you want to ${actionText} this user?`)) {
             // Make API call to ban/unban user
-            fetch(`http://localhost:4000/api/user/${userId}/${action}`, {
+            fetch(`${process.env.REACT_APP_API_URL}/api/user/${userId}/${action}`, {
                 method: 'PATCH'
             })
             .then(response => response.json())

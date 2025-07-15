@@ -58,7 +58,7 @@ const HomePage = () => {
   useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('/api/product');
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/product`);
                 const data = await response.json();
                 if (response.ok) {
                     dispatch({ type: 'SET_PRODUCTS', payload: data });
@@ -144,7 +144,7 @@ const HomePage = () => {
             .slice(0, 3).map(product => (
               <Link to={`/product/${product._id}`} key={product._id} style={{ textDecoration: 'none' }}>
                 <div className="popular-product-card" key={product._id}>
-                  <img src={`/images/${product.product_image}`} alt={product.product_name} className="popular-product-card-image" />
+                  <img src={`${process.env.REACT_APP_API_URL}/images/${product.product_image}`} alt={product.product_name} className="popular-product-card-image" />
                   <div className="popular-product-card-caption">{product.product_name}</div>
                 </div>
               </Link>

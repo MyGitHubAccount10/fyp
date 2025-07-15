@@ -20,7 +20,7 @@ function OrderHistoryPage() {
             }
 
             try {
-                const ordersResponse = await fetch('/api/orders', {
+                const ordersResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/orders`, {
                     headers: { 'Authorization': `Bearer ${user.token}` }
                 });
                 if (!ordersResponse.ok) throw new Error('Failed to fetch orders');
@@ -29,16 +29,16 @@ function OrderHistoryPage() {
                 const detailedOrders = await Promise.all(
                     ordersData.map(async (order) => {
                         try {
-                            const statusResponse = await fetch(`/api/status/${order.status_id}`, {
+                            const statusResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/status/${order.status_id}`, {
                                 headers: { 'Authorization': `Bearer ${user.token}` }
                             });
                             const statusData = statusResponse.ok ? await statusResponse.json() : { status_name: 'Unknown' };
 
                             const [itemsResponse, customiseResponse] = await Promise.all([
-                                fetch(`/api/order-products/by-order/${order._id}`, {
-                                headers: { 'Authorization': `Bearer ${user.token}` }
-                            }),
-                                fetch(`/api/customise/by-order/${order._id}`, {
+                                fetch(`${process.env.REACT_APP_API_URL}/api/order-products/by-order/${order._id}`, {
+                                    headers: { 'Authorization': `Bearer ${user.token}` }
+                                }),
+                                fetch(`${process.env.REACT_APP_API_URL}/api/customise/by-order/${order._id}`, {
                                     headers: { 'Authorization': `Bearer ${user.token}` }
                                 })
                             ]);
@@ -158,7 +158,7 @@ function OrderHistoryPage() {
                                                     <li key={item._id} className="order-item-detail">
                                                         { item.type === 'product' && (
                                                             <>
-                                                                <img src={`/images/${item.product_image}`} alt={item.product_name} className="order-item-image" />
+                                                                <img src={`${process.env.REACT_APP_API_URL}/images/${item.product_image}`} alt={item.product_name} className="order-item-image" />
                                                                 <div className="order-item-info">
                                                                     <strong>{item.product_name}</strong>
                                                                     <span>Qty: {item.order_qty}</span>
@@ -174,9 +174,9 @@ function OrderHistoryPage() {
                                                         { item.type === 'customise' && (
                                                             <>
                                                                 <span>Top Image:</span> 
-                                                                <img src={`/images/customise/${item.top_image}`} alt="Top Customisation" className="order-item-image" />
+                                                                <img src={`${process.env.REACT_APP_API_URL}/images/customise/${item.top_image}`} alt="Top Customisation" className="order-item-image" />
                                                                 <span>Bottom Image:</span> 
-                                                                <img src={`/images/customise/${item.bottom_image}`} alt="Bottom Customisation" className="order-item-image" />
+                                                                <img src={`${process.env.REACT_APP_API_URL}/images/customise/${item.bottom_image}`} alt="Bottom Customisation" className="order-item-image" />
                                                                 <div className="order-item-info">
                                                                     <span>Board Type: {item.board_type}</span>
                                                                     <span>Shape: {item.board_shape}</span>

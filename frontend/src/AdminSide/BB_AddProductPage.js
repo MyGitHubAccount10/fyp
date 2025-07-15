@@ -31,7 +31,7 @@ function AddProductPage() {
         const fetchCategories = async () => {
             try {
                 console.log('Fetching categories...');
-                const response = await fetch('/api/category');
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/category`);
                 console.log('Categories response:', response.status, response.statusText);
                 if (response.ok) {
                     const categoriesData = await response.json();
@@ -107,7 +107,7 @@ function AddProductPage() {
         for (let [key, value] of form.entries()) {
             console.log(key, value);
         }        try {
-            const response = await fetch('/api/product', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/product`, {
                 method: 'POST',
                 body: form,
             });            if (!response.ok) {

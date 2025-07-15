@@ -58,7 +58,7 @@ function AllProductsPage() {
 
 
     useEffect(() => {
-        fetch('/api/product')
+        fetch(`${process.env.REACT_APP_API_URL}/api/product`)
             .then(res => res.json())
             .then(data => {
                 setAllProducts(data);
@@ -69,7 +69,7 @@ function AllProductsPage() {
     }, []);
 
     useEffect(() => {
-        fetch('/api/category')
+        fetch(`${process.env.REACT_APP_API_URL}/api/category`)
             .then(res => res.json())
             .then(data => {
                 setCategories(data);
@@ -141,7 +141,7 @@ function AllProductsPage() {
     const handleDeleteProduct = async (productId) => {
         if (window.confirm(`Are you sure you want to delete this product? This action cannot be undone.`)) {
             try {
-                const response = await fetch(`/api/product/${productId}`, { method: 'DELETE' });
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/product/${productId}`, { method: 'DELETE' });
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({}));
                     throw new Error(`Failed to delete product: ${errorData.error || response.statusText}`);
@@ -195,7 +195,7 @@ function AllProductsPage() {
         setCurrentImageIndex(imageIndex);
         const images = getProductImages(product);
         if (images.length > 0) {
-            setModalImage(`/images/${images[imageIndex]}`);
+            setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[imageIndex]}`);
         }
     };
 
@@ -204,7 +204,7 @@ function AllProductsPage() {
         const images = getProductImages(currentProduct);
         const newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
         setCurrentImageIndex(newIndex);
-        setModalImage(`/images/${images[newIndex]}`);
+        setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[newIndex]}`);
     };
 
     const goToNextImage = () => {
@@ -212,7 +212,7 @@ function AllProductsPage() {
         const images = getProductImages(currentProduct);
         const newIndex = currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
         setCurrentImageIndex(newIndex);
-        setModalImage(`/images/${images[newIndex]}`);
+        setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[newIndex]}`);
     };
 
     const closeModal = () => {
@@ -397,7 +397,7 @@ function AllProductsPage() {
                         {getProductImages(currentProduct).length > 1 && (
                             <div onClick={(e) => e.stopPropagation()} style={{ display: 'flex', gap: '8px', marginTop: '15px', alignItems: 'center' }}>
                                 {getProductImages(currentProduct).map((_, index) => (
-                                    <button key={index} onClick={() => { setCurrentImageIndex(index); setModalImage(`/images/${getProductImages(currentProduct)[index]}`); }} style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc', cursor: 'pointer', transition: 'background-color 0.2s' }} />
+                                    <button key={index} onClick={() => { setCurrentImageIndex(index); setModalImage(`${process.env.REACT_APP_API_URL}/images/${getProductImages(currentProduct)[index]}`); }} style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc', cursor: 'pointer', transition: 'background-color 0.2s' }} />
                                 ))}
                                 <span style={{ marginLeft: '10px', fontSize: '12px', color: '#666' }}>{currentImageIndex + 1} of {getProductImages(currentProduct).length}</span>
                             </div>
@@ -425,7 +425,7 @@ function AllProductsPage() {
                         <tr key={product._id}>
                             <td>
                                 <img
-                                    src={`/images/${product.product_image}`}
+                                    src={`${process.env.REACT_APP_API_URL}/images/${product.product_image}`}
                                     alt={product.product_name}
                                     className="admin-product-image"
                                     onClick={() => openImagePreview(product, 0)}

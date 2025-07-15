@@ -33,20 +33,20 @@ function OrderDetailPage() {
           throw new Error('No admin user found');
         }        // Fetch order details, statuses, regular products, AND custom items
         const [orderResponse, statusesResponse, orderProductsResponse, customItemsResponse] = await Promise.all([
-          fetch(`http://localhost:4000/api/orders/${orderId}`, {
+          fetch(`${process.env.REACT_APP_API_URL}/api/orders/${orderId}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${adminUser.token}`,
               'Content-Type': 'application/json'
             }
           }),
-          fetch('http://localhost:4000/api/status', {
+          fetch(`${process.env.REACT_APP_API_URL}/api/status`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json'
             }
           }),          
-          fetch(`http://localhost:4000/api/order-products/by-order/${orderId}`, {
+          fetch(`${process.env.REACT_APP_API_URL}/api/order-products/by-order/${orderId}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${adminUser.token}`,
@@ -54,7 +54,7 @@ function OrderDetailPage() {
             }
           }),
           // Fetch custom items for this order
-          fetch(`http://localhost:4000/api/customise/by-order/${orderId}`, {
+          fetch(`${process.env.REACT_APP_API_URL}/api/customise/by-order/${orderId}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${adminUser.token}`,
@@ -118,7 +118,7 @@ function OrderDetailPage() {
       const adminUser = JSON.parse(localStorage.getItem('admin_user'));
       if (!adminUser || !adminUser.token) {
         throw new Error('No admin user found');
-      }      const response = await fetch(`http://localhost:4000/api/orders/${orderId}`, {
+      }      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/orders/${orderId}`, {
         method: 'PATCH',
         headers: {
           'Authorization': `Bearer ${adminUser.token}`,
@@ -342,11 +342,11 @@ function OrderDetailPage() {
                     }}>                      {/* Product image */}
                       {item.product_id?.product_image ? (
                         <img
-                          src={`/images/${item.product_id.product_image}`}
+                          src={`${process.env.REACT_APP_API_URL}/images/${item.product_id.product_image}`}
                           alt={item.product_id?.product_name || 'Product'}
-                          onClick={() => setModalImage(`/images/${item.product_id.product_image}`)}
+                          onClick={() => setModalImage(`${process.env.REACT_APP_API_URL}/images/${item.product_id.product_image}`)}
                           onError={(e) => {
-                            console.log('Image failed to load:', `/images/${item.product_id.product_image}`);
+                            console.log('Image failed to load:', `${process.env.REACT_APP_API_URL}/images/${item.product_id.product_image}`);
                             console.log('Product data:', item.product_id);
                           }}
                           style={{
@@ -410,9 +410,9 @@ function OrderDetailPage() {
                       <div style={{ display: 'flex', gap: '5px' }}>
                         {item.top_image && (
                           <img
-                            src={`/images/customise/${item.top_image}`}
+                            src={`${process.env.REACT_APP_API_URL}/images/customise/${item.top_image}`}
                             alt="Custom Top Design"
-                            onClick={() => setModalImage(`/images/customise/${item.top_image}`)}
+                            onClick={() => setModalImage(`${process.env.REACT_APP_API_URL}/images/customise/${item.top_image}`)}
                             style={{
                               width: '40px',
                               height: '40px',
@@ -425,9 +425,9 @@ function OrderDetailPage() {
                         )}
                         {item.bottom_image && (
                           <img
-                            src={`/images/customise/${item.bottom_image}`}
+                            src={`${process.env.REACT_APP_API_URL}/images/customise/${item.bottom_image}`}
                             alt="Custom Bottom Design"
-                            onClick={() => setModalImage(`/images/customise/${item.bottom_image}`)}
+                            onClick={() => setModalImage(`${process.env.REACT_APP_API_URL}/images/customise/${item.bottom_image}`)}
                             style={{
                               width: '40px',
                               height: '40px',

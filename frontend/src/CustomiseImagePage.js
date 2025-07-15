@@ -29,8 +29,7 @@ const DEFAULT_DESIGN = {
   backgroundPattern: 'solid'
 };
 
-// Backend URL configuration
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:4000';
+
 //-
 // A function to adjust color brightness (It is used to create gradients)
 // clamp () is to make sure Red, Green and Blue values are between 0 and 255(as that is how computers interpret colors)
@@ -407,7 +406,7 @@ export default function CustomiseImagePage() {
       });
 
       // Upload files to backend using multer
-      const response = await fetch(`${BACKEND_URL}/api/customise-img/upload-multiple`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/customise-img/upload-multiple`, {
         method: 'POST',
         body: formData,
       });
@@ -426,7 +425,7 @@ export default function CustomiseImagePage() {
       // Create image objects for each uploaded file
       const newImages = result.files.map((file, index) => ({
         id: Date.now() + index,
-        src: `${BACKEND_URL}${file.url}`, // Use server URL
+        src: `${process.env.REACT_APP_API_URL}${file.url}`, // Use server URL
         x: 60 + (index * 20),  // Offset each image slightly
         y: 100 + (index * 20),
         width: 80,

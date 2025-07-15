@@ -34,7 +34,7 @@ function AddAdminPage() {
     useEffect(() => {
         const fetchRoles = async () => {
             try {
-                const response = await fetch('/api/role');
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/role`);
                 if (response.ok) {
                     const rolesData = await response.json();
                     let availableRoles = isSuperAdmin ? rolesData : rolesData.filter(role => role.role_name === 'Customer');
@@ -95,7 +95,7 @@ function AddAdminPage() {
             return;
         }
         try {
-            const response = await fetch('/api/user', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user`, {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ full_name: formData.fullName, username: formData.username, email: formData.email, shipping_address: formData.shippingAddress, password: formData.password, phone_number: formData.phoneNumber, role_id: formData.role }),
             });

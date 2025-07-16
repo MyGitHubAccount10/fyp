@@ -16,12 +16,12 @@ const faqData = {
       {
         id: "q1-1",
         question: "How do I reset my password?",
-        answer: "Click on the \"Forgot Password?\" link on the login page. Enter your email address and we'll send you a link to reset your password. If you don't see the email, check your spam or junk folder."
+        answer: "Click on the \"Forgot Password?\" link on the login page. Enter your email address and change to your new password from there."
       },
       {
         id: "q1-2",
         question: "How can I update my email address?",
-        answer: "To update your email address, please go to your Profile settings. Under Personal Information, you will find an option to edit your email. For security reasons, you might be asked to verify your new email address."
+        answer: "To update your email address, please go to your Profile settings. Under Personal Information, you will find an option to edit your email."
       },
       {
         id: "q1-3",
@@ -31,7 +31,7 @@ const faqData = {
       {
         id: "q1-4",
         question: "How do I create a new account?",
-        answer: "To create a new account, click on the 'Sign Up' button usually found on the login page or in the header. You'll be asked to provide some basic information like your email, a username, and a password."
+        answer: "To create a new account, click on the 'Sign Up' button that can be found in the dropdown menu after clicking on the profile icon button from the navbar. You'll be asked to provide some basic information that is your full name, email, phone number, shipping address, username, and password."
       }
     ]
   },
@@ -46,17 +46,17 @@ const faqData = {
       {
         id: "q2-1",
         question: "How long does shipping take?",
-        answer: "Standard shipping usually takes 3-5 business days. For express shipping, it takes 1-2 business days. You'll receive a tracking number by email once your order ships."
+        answer: "Standard shipping usually takes 3-5 business days.  You'll receive a tracking status once your order ships in your order history"
       },
       {
         id: "q2-2",
         question: "How can I track my order?",
-        answer: "Once your order has shipped, you will receive an email with a tracking number and a link to the carrier's website. You can use this information to track the progress of your shipment. You can also find tracking information in your Order History if you have an account."
+        answer: "Once your order has shipped, you will be able to see your status of your order the order history page found in the profile page"
       },
       {
         id: "q2-3",
         question: "Do you ship internationally?",
-        answer: "Currently, we primarily ship within Singapore. For international shipping inquiries, please contact our customer support team to see if arrangements can be made for your specific location."
+        answer: "No, we only ship within Singapore. For international shipping inquiries, please contact our customer support team to see if arrangements can be made for your specific location."
       },
       {
         id: "q2-4",

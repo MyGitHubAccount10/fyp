@@ -41,7 +41,7 @@ const faqData = {
       {
         id: "q1-6",
         question: "How do I restore my deleted/disabled account?",
-        answer: "To restore an account, please please reach out to our customer support so we can recover your account"
+        answer: "To restore an account, please reach out to our customer support so we can recover your account"
       }  
     ]
   },

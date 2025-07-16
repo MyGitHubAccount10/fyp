@@ -216,7 +216,10 @@ const ProductDetailPage = () => {
       <Header />
       <main className="product-detail-page container">
         <section className="product-main-info-grid">
-          <div className="product-image-gallery">
+          <div className="product-image-gallery">   
+            <div className="product-main-image-container">
+              <img src={`${process.env.REACT_APP_API_URL}/images/${selectedImage}`} alt={product.product_name} className="product-main-image" />
+            </div>
             <div className="product-thumbnails">
               {productImages.map((img, index) => (
                 <img
@@ -227,9 +230,6 @@ const ProductDetailPage = () => {
                   onClick={() => setSelectedImage(img)}
                 />
               ))}
-            </div>        
-            <div className="product-main-image-container">
-              <img src={`${process.env.REACT_APP_API_URL}/images/${selectedImage}`} alt={product.product_name} className="product-main-image" />
             </div>
           </div>
 

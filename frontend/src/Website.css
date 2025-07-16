@@ -1874,6 +1874,14 @@ select {
   max-width: 100%;
   overflow: hidden;
 }
+.customise-image-gallery {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
 .product-main-image-container {
   width: 100%;
   display: flex;
@@ -1884,6 +1892,7 @@ select {
   overflow: hidden;
   max-height: 500px;
   box-sizing: border-box;
+  padding: 15px;
 }
 .product-main-image {
     max-width: 100%;
@@ -2050,6 +2059,7 @@ select {
     .product-price-detail { font-size: 1.6em; }
 }
 @media (max-width: 768px) {
+    .customise-image-gallery { flex-direction: column; gap: 15px; }
     .product-image-gallery { gap: 10px; }
     .product-main-image-container { max-height: 350px; }
     .product-thumbnails { height: 70px; padding: 10px 12px; gap: 5px; box-sizing: border-box; }

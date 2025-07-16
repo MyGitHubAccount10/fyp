@@ -32,7 +32,17 @@ const faqData = {
         id: "q1-4",
         question: "How do I create a new account?",
         answer: "To create a new account, click on the 'Sign Up' button that can be found in the dropdown menu after clicking on the profile icon button from the navbar. You'll be asked to provide some basic information that is your full name, email, phone number, shipping address, username, and password."
-      }
+      },
+      {
+        id: "q1-5",
+        question: "How do I delete/disable my account?",
+        answer: "To delete an account, click on the profile icon, then from its dropdown menu, click on the 'Profile' option. You will be redirected to the profile page, and from there, scroll all the way to the bottom to see the Account Actions section, where you click on Disable My Account button to delete/disable the account"
+      },
+      {
+        id: "q1-6",
+        question: "How do I restore my deleted/disabled account?",
+        answer: "To restore an account, please please reach out to our customer support so we can recover your account"
+      }  
     ]
   },
   "orders-shipping": {

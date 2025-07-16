@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 import { useProductsContext } from './hooks/useProductsContext';
 
-// Slideshow images for hero section
+// Slideshow images for hero section with navigation paths
 const slideshowImages = [
-    '/images/PromoEdited.png',
-    '/images/Promo1.png',
-    '/images/an1.jpeg',
-    '/images/an2.jpeg',
-    '/images/aizat1.jpeg',
-    '/images/aizat2.jpeg',
-    '/images/WannaAdmin.png',
-    // Add more image paths here if needed for the slideshow
+    { src: '/images/PromoEdited.png', link: '/' },
+    { src: '/images/Promo1.png', link: '/' },
+    { src: '/images/an1.jpeg', link: '/' },
+    { src: '/images/an2.jpeg', link: '/' },
+    { src: '/images/aizat1.jpeg', link: '/' },
+    { src: '/images/aizat2.jpeg', link: '/' },
+    { src: '/images/WannaAdmin.png', link: '/contact' },
+    // Add more image objects here if needed for the slideshow
 ];
 
 // SVG for hero arrows
@@ -34,6 +34,7 @@ const RightArrowIcon = () => (
 const HomePage = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const { products, dispatch } = useProductsContext();
+  const navigate = useNavigate();
 
   const nextSlide = () => {
     setCurrentSlideIndex((prevIndex) =>
@@ -45,6 +46,12 @@ const HomePage = () => {
     setCurrentSlideIndex((prevIndex) =>
       prevIndex === 0 ? slideshowImages.length - 1 : prevIndex - 1
     );
+  };
+
+  const handleImageClick = () => {
+    if (slideshowImages[currentSlideIndex]?.link) {
+      navigate(slideshowImages[currentSlideIndex].link);
+    }
   };
 
   useEffect(() => {
@@ -116,9 +123,11 @@ const HomePage = () => {
           <div className="hero-image-container">
             {slideshowImages.length > 0 && (
                 <img 
-                    src={slideshowImages[currentSlideIndex]} 
+                    src={slideshowImages[currentSlideIndex].src} 
                     alt={`Skimboarder slide ${currentSlideIndex + 1}`} 
                     className="hero-image" 
+                    onClick={handleImageClick}
+                    style={{ cursor: 'pointer' }}
                 />
             )}
             {slideshowImages.length > 1 && ( // Only show arrows if more than one image

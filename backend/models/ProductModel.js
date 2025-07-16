@@ -36,6 +36,26 @@ const productSchema = new Schema({
     type: String,
     required: false
   },
+  product_image4: {
+    type: String,
+    required: false
+  },
+  product_image5: {
+    type: String,
+    required: false
+  },
+  product_image6: {
+    type: String,
+    required: false
+  },
+  product_image7: {
+    type: String,
+    required: false
+  },
+  product_image8: {
+    type: String,
+    required: false
+  },
   threshold: {
     type: Number,
     default: 5,

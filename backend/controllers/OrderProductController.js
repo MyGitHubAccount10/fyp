@@ -14,7 +14,7 @@ const getOrderProductsByOrderId = async (req, res) => {
         // ✅ FIX: Modified .populate() to fetch the fields that actually exist in your ProductModel.
         // This now correctly gets the main product image filename.
         const orderProducts = await OrderProduct.find({ order_id: orderId })
-            .populate('product_id', 'product_name product_image product_image2 product_image3 description');
+            .populate('product_id', 'product_name product_image product_image2 product_image3 product_image4 product_image5 product_image6 product_image7 product_image8 description');
 
         if (!orderProducts) {
             // Send an empty array if no products found, which is not an error

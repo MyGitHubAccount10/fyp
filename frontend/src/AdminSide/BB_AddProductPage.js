@@ -56,8 +56,8 @@ function AddProductPage() {
                  ...prev,
                  productType: value,
              }));        } else if (type === 'file') {
-            // Handle file inputs - limit to 3 files
-            const fileArray = Array.from(files).slice(0, 3);
+            // Handle file inputs - limit to 8 files
+            const fileArray = Array.from(files).slice(0, 8);
             const limitedFiles = new DataTransfer();
             fileArray.forEach(file => limitedFiles.items.add(file));
             
@@ -96,10 +96,10 @@ function AddProductPage() {
         form.append('lowStockThreshold', Number(formData.lowStockThreshold) || 5); // Changed to match controller
         form.append('category', formData.category);        if (formData.images && formData.images.length > 0) {
             // Send multiple images
-            for (let i = 0; i < formData.images.length && i < 3; i++) {
+            for (let i = 0; i < formData.images.length && i < 8; i++) {
                 form.append('product_images', formData.images[i]);
             }
-            console.log('Image files:', Array.from(formData.images).slice(0, 3));
+            console.log('Image files:', Array.from(formData.images).slice(0, 8));
         }
 
         // Log all form data entries
@@ -290,21 +290,21 @@ function AddProductPage() {
                                  {formData.images && formData.images.length > 0 && (
                                      <div className="selected-file-names" style={{ marginTop: '10px', fontSize: '12px', color: '#666' }}>
                                          <strong>Selected files:</strong>
-                                         {Array.from(formData.images).slice(0, 3).map((file, index) => (
+                                         {Array.from(formData.images).slice(0, 8).map((file, index) => (
                                             <div key={file.name} style={{ marginLeft: '10px' }}>
                                                 {index + 1}. {file.name} 
                                                 {index === 0 && <span style={{ color: '#007bff' }}> (Main image)</span>}
                                             </div>
                                          ))}
-                                         {formData.images.length > 10 && (
+                                         {formData.images.length > 8 && (
                                              <div style={{ marginLeft: '10px', color: '#ff6b6b' }}>
-                                                 Note: Only first 10 images will be uploaded
+                                                 Note: Only first 8 images will be uploaded
                                              </div>
                                          )}
                                      </div>
                                  )}
                             </div>
-                            <small className="form-text text-muted">You can select up to 3 images. The first image will be the main display image.</small>{/* Reusing text-muted class */}
+                            <small className="form-text text-muted">You can select up to 8 images. The first image will be the main display image.</small>{/* Reusing text-muted class */}
                         </div>
                      </div>
 

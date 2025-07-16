@@ -38,7 +38,12 @@ const ProductDetailPage = () => {
           const images = [
             productData.product_image,
             productData.product_image2,
-            productData.product_image3
+            productData.product_image3,
+            productData.product_image4,
+            productData.product_image5,
+            productData.product_image6,
+            productData.product_image7,
+            productData.product_image8
           ].filter(Boolean);
 
           setSelectedImage(productData.product_image);

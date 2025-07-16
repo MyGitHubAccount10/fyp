@@ -60,7 +60,12 @@ function EditProductPage() {
                 setExistingImageURLs([
                     `${process.env.REACT_APP_API_URL}/images/${data.product_image}`,
                     ...(data.product_image2 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image2}`] : []),
-                    ...(data.product_image3 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image3}`] : [])
+                    ...(data.product_image3 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image3}`] : []),
+                    ...(data.product_image4 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image4}`] : []),
+                    ...(data.product_image5 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image5}`] : []),
+                    ...(data.product_image6 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image6}`] : []),
+                    ...(data.product_image7 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image7}`] : []),
+                    ...(data.product_image8 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image8}`] : [])
                 ]);
             } catch (error) {
                 console.error('Failed to fetch product:', error);
@@ -121,7 +126,7 @@ function EditProductPage() {
         form.append('threshold', Number(formData.threshold) || 5);
         form.append('category', formData.category);        if (formData.images && formData.images.length > 0) {
             // Send multiple images - this will replace ALL existing images
-            for (let i = 0; i < formData.images.length && i < 3; i++) {
+            for (let i = 0; i < formData.images.length && i < 8; i++) {
                 form.append('product_images', formData.images[i]);
             }
         }
@@ -264,7 +269,7 @@ function EditProductPage() {
                                         <label htmlFor="imageUpload" className="file-input-label">
                                             <span className="file-input-button">Choose Files</span>
                                             <span className="file-input-text">
-                                                {formData.images.length > 0 ? `${formData.images.length} file(s) selected` : 'No file chosen'}
+                                                {formData.images.length > 0 ? `${formData.images.length} file(s) selected (Max 8)` : 'No file chosen (Max 8 images)'}
                                             </span>
                                         </label>
                                         {formData.images.length > 0 && (
@@ -340,8 +345,8 @@ function EditProductPage() {
                                         </div>
                                     )}                                    <small className="form-text text-muted">
                                         {imagesToReplace 
-                                            ? "⚠️ Selecting new images will permanently delete the current images from the server and replace them with the new ones. This action cannot be undone." 
-                                            : "First image will be used as the main display image. Select new images to replace current ones."
+                                            ? "⚠️ Selecting new images will permanently delete the current images from the server and replace them with the new ones. This action cannot be undone. Maximum 8 images allowed." 
+                                            : "First image will be used as the main display image. Select new images to replace current ones. Maximum 8 images allowed."
                                         }
                                     </small>
                                 </div>

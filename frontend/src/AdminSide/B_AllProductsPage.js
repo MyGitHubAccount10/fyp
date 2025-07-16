@@ -187,6 +187,11 @@ function AllProductsPage() {
         if (product.product_image) images.push(product.product_image);
         if (product.product_image2) images.push(product.product_image2);
         if (product.product_image3) images.push(product.product_image3);
+        if (product.product_image4) images.push(product.product_image4);
+        if (product.product_image5) images.push(product.product_image5);
+        if (product.product_image6) images.push(product.product_image6);
+        if (product.product_image7) images.push(product.product_image7);
+        if (product.product_image8) images.push(product.product_image8);
         return images;
     };
 

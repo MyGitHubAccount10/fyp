@@ -163,21 +163,21 @@ function UserProfilePage() {
         }
     };
     
-    const handleDeleteAccount = async () => {
-        if (!window.confirm("Are you sure you want to delete your account? This action is permanent and cannot be undone.")) return;
+    const handleBanAccount = async () => {
+        if (!window.confirm("Are you sure you want to disable your account? You can contact an admin to restore it.")) return;
         const userData = JSON.parse(localStorage.getItem('user'));
         if (!userData?.token) return alert('Authentication error. Please log in again.');
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/delete-account`, {
-                method: 'DELETE', headers: { 'Authorization': `Bearer ${userData.token}` },
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/${userData._id}/ban`, {
+                method: 'PATCH', headers: { 'Authorization': `Bearer ${userData.token}` },
             });
             const result = await response.json();
-            if (!response.ok) throw new Error(result.error || 'Failed to delete account.');
-            alert('Your account has been successfully deleted.');
+            if (!response.ok) throw new Error(result.error || 'Failed to disable account.');
+            alert('Your account has been successfully disabled. You will be logged out.');
             dispatch({ type: 'LOGOUT' });
             navigate('/');
         } catch (error) {
-            alert(`Error deleting account: ${error.message}`);
+            alert(`Error disabling account: ${error.message}`);
         }
     };
 
@@ -273,10 +273,10 @@ function UserProfilePage() {
                 </div>
 
                 <div className="profile-section danger-zone">
-                    <div className="profile-section-header"><h3>Danger Zone</h3></div>
+                    <div className="profile-section-header"><h3>Account Actions</h3></div>
                     <div className="profile-display">
-                        <p>Deleting your account will permanently remove all your personal information, order history, and saved details. This action cannot be undone.</p>
-                        <button onClick={handleDeleteAccount} className="btn-delete-account">Delete My Account</button>
+                        <p>This will disable your account until an admin restores it. Contact us to restore access.</p>
+                        <button onClick={handleBanAccount} className="btn-delete-account">Disable My Account</button>
                     </div>
                 </div>
             </div>

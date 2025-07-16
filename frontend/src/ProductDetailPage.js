@@ -220,17 +220,19 @@ const ProductDetailPage = () => {
             <div className="product-main-image-container">
               <img src={`${process.env.REACT_APP_API_URL}/images/${selectedImage}`} alt={product.product_name} className="product-main-image" />
             </div>
-            <div className="product-thumbnails">
-              {productImages.map((img, index) => (
-                <img
-                  key={index}
-                  src={`${process.env.REACT_APP_API_URL}/images/${img}`}
-                  alt={`${product.product_name} thumbnail ${index + 1}`}
-                  className={`thumbnail-image ${selectedImage === img ? 'selected-thumbnail' : ''}`}
-                  onClick={() => setSelectedImage(img)}
-                />
-              ))}
-            </div>
+            {productImages.length > 1 && (
+              <div className="product-thumbnails">
+                {productImages.map((img, index) => (
+                  <img
+                    key={index}
+                    src={`${process.env.REACT_APP_API_URL}/images/${img}`}
+                    alt={`${product.product_name} thumbnail ${index + 1}`}
+                    className={`thumbnail-image ${selectedImage === img ? 'selected-thumbnail' : ''}`}
+                    onClick={() => setSelectedImage(img)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="product-details-content">

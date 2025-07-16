@@ -1377,7 +1377,7 @@ select {
 .hero-image-container {
     position: relative;
     width: 100%;
-    max-height: 500px;
+    height: 500px; /* MODIFIED: Changed 'max-height' to 'height' */
     overflow: hidden;
     display: flex;
     justify-content: center;
@@ -1386,8 +1386,8 @@ select {
 }
 .hero-image {
     width: 100%;
-    height: auto;
-    object-fit: cover;
+    height: 100%; /* MODIFIED: Changed from 'auto' to '100%' */
+    object-fit: cover; /* Ensures the image fills the space without distortion */
     display: block;
 }
 .hero-arrow {
@@ -1456,39 +1456,13 @@ select {
     color: #000000;
 }
 @media (max-width: 768px) {
-    .hero-cta-button {
-        padding: 10px 20px;
-        font-size: 0.95em;
-    }
-    .hero-arrow {
-        width: 35px;
-        height: 35px;
-    }
-    .hero-arrow svg {
-        width: 18px;
-        height: 18px;
-    }
-    .popular-products-title {
-        font-size: 1.8em;
-    }
-    .popular-products-grid {
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-        gap: 20px;
+    .hero-image-container {
+        height: 400px; /* Reduces height from the default 500px */
     }
 }
 @media (max-width: 480px) {
     .hero-image-container {
-        max-height: 350px;
-    }
-    .hero-cta-button {
-        padding: 8px 16px;
-        font-size: 0.9em;
-    }
-     .popular-products-grid {
-        grid-template-columns: 1fr;
-    }
-    .popular-product-card-image {
-        height: 180px;
+        height: 350px; /* Reduces height further for the smallest screens */
     }
 }
 

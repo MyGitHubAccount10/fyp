@@ -11,7 +11,7 @@ const ProductCard = ({ product }) => {
 
   const cardInnerContent = (
     <div className="product-card" style={{ position: 'relative', opacity: isAvailable ? 1 : 0.6 }}>
-      <img src={`/images/${product.product_image}`} alt={product.product_name} className="product-image" />
+      <img src={`${process.env.REACT_APP_API_URL}/images/${product.product_image}`} alt={product.product_name} className="product-image" />
       <div className="product-info">
         <h3 className="product-name">{product.product_name}</h3>
       </div>
@@ -76,7 +76,7 @@ const SearchPage = () => {
 
     const fetchAndFilterProducts = async () => {
       try {
-        const response = await fetch('/api/product');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/product`);
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }

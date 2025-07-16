@@ -91,8 +91,8 @@ function AdminDashboard() {
                 return;
             }
 
-            // Fetch products dtat
-            const productsRes = await fetch('/api/product', {
+            // Fetch products data
+            const productsRes = await fetch(`${process.env.REACT_APP_API_URL}/api/product`, {
                 headers: {
                     'Authorization': `Bearer ${checkAdmin.token}`,
                     'Content-Type': 'application/json'
@@ -102,7 +102,7 @@ function AdminDashboard() {
             const products = await productsRes.json();
 
             // Fetch orders data
-            const ordersRes = await fetch('/api/orders/admin/all', {
+            const ordersRes = await fetch(`${process.env.REACT_APP_API_URL}/api/orders/admin/all`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${checkAdmin.token}`,

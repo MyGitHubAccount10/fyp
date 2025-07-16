@@ -58,7 +58,7 @@ function AllCustomersPage() {
         const fetchUsers = async () => {
             try {
                 setLoading(true);
-                const response = await fetch('http://localhost:4000/api/user');
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch users');
                 }
@@ -68,7 +68,7 @@ function AllCustomersPage() {
                 const usersWithRoles = await Promise.all(
                     userData.map(async (user) => {
                         try {
-                            const roleResponse = await fetch(`http://localhost:4000/api/role/${user.role_id}`);
+                            const roleResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/role/${user.role_id}`);
                             if (roleResponse.ok) {
                                 const roleData = await roleResponse.json();
                                 return {
@@ -148,7 +148,7 @@ function AllCustomersPage() {
         
         if (window.confirm(`Are you sure you want to ${actionText} this user?`)) {
             // Make API call to ban/unban user
-            fetch(`http://localhost:4000/api/user/${userId}/${action}`, {
+            fetch(`${process.env.REACT_APP_API_URL}/api/user/${userId}/${action}`, {
                 method: 'PATCH'
             })
             .then(response => response.json())
@@ -302,6 +302,19 @@ const handleFilter = () => {
         </select>
     </div>
 </div>
+
+            {/* Users Summary */}
+            <div className="users-summary" style={{ margin: '20px 0', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+                <h3 style={{ margin: '0 0 10px 0', fontSize: '1.2em', color: '#333' }}>Users Overview</h3>
+                <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
+                    <div>
+                        <strong>Total Users:</strong> <span style={{ color: '#007bff' }}>{allUsers.length}</span>
+                    </div>
+                    <div>
+                        <strong>Filtered Results:</strong> <span style={{ color: '#28a745' }}>{users.length}</span>
+                    </div>
+                </div>
+            </div>
 
                 {/* Pagination Controls */}
             <div

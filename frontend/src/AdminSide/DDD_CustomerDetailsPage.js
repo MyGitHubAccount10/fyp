@@ -44,7 +44,7 @@ function UserDetailPage() {
 
       // For now, we'll fetch all orders and filter by user ID
       // In a production app, you might want a specific endpoint for admin to get user orders
-      const response = await fetch('http://localhost:4000/api/orders/admin/all', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/orders/admin/all`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -69,7 +69,7 @@ function UserDetailPage() {
   // Fetch available roles
   const fetchRoles = async () => {
     try {
-      const response = await fetch('http://localhost:4000/api/role');
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/role`);
       if (response.ok) {
         const rolesData = await response.json();
         setAvailableRoles(rolesData);
@@ -85,19 +85,20 @@ function UserDetailPage() {
       setLoading(true);
       
       // Fetch user details
-      const userResponse = await fetch(`http://localhost:4000/api/user/${userId}`);
+      const userResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/user/${userId}`);
       if (!userResponse.ok) {
         throw new Error('Failed to fetch user data');
       }
       const userData = await userResponse.json();
       
       // Fetch role information
-      const roleResponse = await fetch(`http://localhost:4000/api/role/${userData.role_id}`);
+      const roleResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/role/${userData.role_id}`);
       let roleName = 'Unknown';
       if (roleResponse.ok) {
         const roleData = await roleResponse.json();
-        roleName = roleData.role_name;      }
-        // Fetch user's orders
+        roleName = roleData.role_name;
+      }
+      // Fetch user's orders
         await fetchUserOrders(userId);
         
         setUser({
@@ -151,7 +152,7 @@ function UserDetailPage() {
     });
   };const handleSave = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/api/user/${userId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/${userId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

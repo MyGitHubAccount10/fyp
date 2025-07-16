@@ -48,6 +48,11 @@ const createProduct = async (req, res) => {
     const product_image = images.length > 0 ? images[0].filename : null;
     const product_image2 = images.length > 1 ? images[1].filename : null;
     const product_image3 = images.length > 2 ? images[2].filename : null;
+    const product_image4 = images.length > 3 ? images[3].filename : null;
+    const product_image5 = images.length > 4 ? images[4].filename : null;
+    const product_image6 = images.length > 5 ? images[5].filename : null;
+    const product_image7 = images.length > 6 ? images[6].filename : null;
+    const product_image8 = images.length > 7 ? images[7].filename : null;
 
     // Validation
     if (!name || !description || !price || !stockQuantity || !category) {
@@ -77,6 +82,11 @@ const createProduct = async (req, res) => {
         // Add additional images if they exist
         if (product_image2) productData.product_image2 = product_image2;
         if (product_image3) productData.product_image3 = product_image3;
+        if (product_image4) productData.product_image4 = product_image4;
+        if (product_image5) productData.product_image5 = product_image5;
+        if (product_image6) productData.product_image6 = product_image6;
+        if (product_image7) productData.product_image7 = product_image7;
+        if (product_image8) productData.product_image8 = product_image8;
 
         const product = await Product.create(productData);
         res.status(200).json(product);
@@ -108,6 +118,11 @@ const deleteProduct = async (req, res) => {
         if (product.product_image) imagesToDelete.push(product.product_image);
         if (product.product_image2) imagesToDelete.push(product.product_image2);
         if (product.product_image3) imagesToDelete.push(product.product_image3);
+        if (product.product_image4) imagesToDelete.push(product.product_image4);
+        if (product.product_image5) imagesToDelete.push(product.product_image5);
+        if (product.product_image6) imagesToDelete.push(product.product_image6);
+        if (product.product_image7) imagesToDelete.push(product.product_image7);
+        if (product.product_image8) imagesToDelete.push(product.product_image8);
 
         // Delete the product from database
         await Product.findByIdAndDelete({_id: id});
@@ -174,11 +189,21 @@ const updateProduct = async (req, res) => {
             if (currentProduct.product_image) oldImages.push(currentProduct.product_image);
             if (currentProduct.product_image2) oldImages.push(currentProduct.product_image2);
             if (currentProduct.product_image3) oldImages.push(currentProduct.product_image3);
+            if (currentProduct.product_image4) oldImages.push(currentProduct.product_image4);
+            if (currentProduct.product_image5) oldImages.push(currentProduct.product_image5);
+            if (currentProduct.product_image6) oldImages.push(currentProduct.product_image6);
+            if (currentProduct.product_image7) oldImages.push(currentProduct.product_image7);
+            if (currentProduct.product_image8) oldImages.push(currentProduct.product_image8);
             
             // Set new image filenames
             updateData.product_image = images[0].filename;
             updateData.product_image2 = images.length > 1 ? images[1].filename : null;
             updateData.product_image3 = images.length > 2 ? images[2].filename : null;
+            updateData.product_image4 = images.length > 3 ? images[3].filename : null;
+            updateData.product_image5 = images.length > 4 ? images[4].filename : null;
+            updateData.product_image6 = images.length > 5 ? images[5].filename : null;
+            updateData.product_image7 = images.length > 6 ? images[6].filename : null;
+            updateData.product_image8 = images.length > 7 ? images[7].filename : null;
             
             // Delete old image files from the filesystem
             oldImages.forEach(filename => {

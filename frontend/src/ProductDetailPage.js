@@ -30,7 +30,7 @@ const ProductDetailPage = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`/api/product/${productId}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/product/${productId}`);
         const productData = await response.json();
 
         if (response.ok) {
@@ -38,7 +38,12 @@ const ProductDetailPage = () => {
           const images = [
             productData.product_image,
             productData.product_image2,
-            productData.product_image3
+            productData.product_image3,
+            productData.product_image4,
+            productData.product_image5,
+            productData.product_image6,
+            productData.product_image7,
+            productData.product_image8
           ].filter(Boolean);
 
           setSelectedImage(productData.product_image);
@@ -68,7 +73,7 @@ const ProductDetailPage = () => {
     if (product) {
       const fetchSimilarProducts = async () => {
         try {
-          const productResponse = await fetch('/api/product');
+          const productResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/product`);
           const json = await productResponse.json();
           
           if (productResponse.ok) {
@@ -211,21 +216,23 @@ const ProductDetailPage = () => {
       <Header />
       <main className="product-detail-page container">
         <section className="product-main-info-grid">
-          <div className="product-image-gallery">
-            <div className="product-thumbnails">
-              {productImages.map((img, index) => (
-                <img
-                  key={index}
-                  src={`/images/${img}`}
-                  alt={`${product.product_name} thumbnail ${index + 1}`}
-                  className={`thumbnail-image ${selectedImage === img ? 'selected-thumbnail' : ''}`}
-                  onClick={() => setSelectedImage(img)}
-                />
-              ))}
-            </div>        
+          <div className="product-image-gallery">   
             <div className="product-main-image-container">
-              <img src={`/images/${selectedImage}`} alt={product.product_name} className="product-main-image" />
+              <img src={`${process.env.REACT_APP_API_URL}/images/${selectedImage}`} alt={product.product_name} className="product-main-image" />
             </div>
+            {productImages.length > 1 && (
+              <div className="product-thumbnails">
+                {productImages.map((img, index) => (
+                  <img
+                    key={index}
+                    src={`${process.env.REACT_APP_API_URL}/images/${img}`}
+                    alt={`${product.product_name} thumbnail ${index + 1}`}
+                    className={`thumbnail-image ${selectedImage === img ? 'selected-thumbnail' : ''}`}
+                    onClick={() => setSelectedImage(img)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="product-details-content">
@@ -354,7 +361,7 @@ const ProductDetailPage = () => {
               const isAvailable = p.warehouse_quantity > 0;
               const cardContent = (
                 <div className="similar-product-card" style={{ position: 'relative', opacity: isAvailable ? 1 : 0.8 }}>
-                  <img src={`/images/${p.product_image}`} alt={p.product_name} className="similar-product-image" />
+                  <img src={`${process.env.REACT_APP_API_URL}/images/${p.product_image}`} alt={p.product_name} className="similar-product-image" />
                   <div className="similar-product-caption">{p.product_name}</div>
                   {!isAvailable && (
                     <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: 'rgba(0, 0, 0, 0.6)', color: 'white', padding: '8px 16px', borderRadius: '5px', fontWeight: 'bold', textAlign: 'center', pointerEvents: 'none' }}>

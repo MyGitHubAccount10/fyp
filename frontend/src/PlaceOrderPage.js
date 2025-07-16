@@ -147,7 +147,7 @@ function PlaceOrderPage() {
                 order_date: new Date().toISOString(),
                 total_amount: parseFloat(orderSummary.total)
             };
-            const orderResponse = await fetch('/api/orders', {
+            const orderResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/orders`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`},
                 body: JSON.stringify(orderData)
@@ -176,7 +176,7 @@ function PlaceOrderPage() {
                     order_material: item.material ? item.material : 'N/A',
                     order_thickness: item.thickness ? item.thickness : 'N/A'
                 };
-                const orderProductResponse = await fetch('/api/order-products', {
+                const orderProductResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/order-products`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`},
                     body: JSON.stringify(orderProductData)
@@ -212,7 +212,7 @@ function PlaceOrderPage() {
                     customiseFormData.append('customise_price', customisePrice.toFixed(2));
                     customiseFormData.append('top_image', topImageFile);
                     customiseFormData.append('bottom_image', bottomImageFile);
-                    const customiseResponse = await fetch('/api/customise', {
+                    const customiseResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/customise`, {
                         method: 'POST',
                         headers: { 'Authorization': `Bearer ${user.token}`},
                         body: customiseFormData

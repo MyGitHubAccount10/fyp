@@ -7,6 +7,11 @@ import { useProductsContext } from './hooks/useProductsContext';
 
 // Slideshow images for hero section with navigation paths
 const slideshowImages = [
+    { src: `${process.env.REACT_APP_API_URL}/images/testingsizeimage.png`, link: '/' },
+    { src: `${process.env.REACT_APP_API_URL}/images/testingsizeimage.png`, link: '/' },
+    { src: `${process.env.REACT_APP_API_URL}/images/testingsizeimage.png`, link: '/' },
+    { src: `${process.env.REACT_APP_API_URL}/images/testingsizeimage.png`, link: '/' },
+    { src: `${process.env.REACT_APP_API_URL}/images/testingsizeimage.png`, link: '/' },
     { src: '/images/PromoEdited.png', link: '/' },
     { src: '/images/Promo1.png', link: '/' },
     { src: '/images/an1.jpeg', link: '/' },

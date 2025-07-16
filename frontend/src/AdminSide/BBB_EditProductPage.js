@@ -30,7 +30,7 @@ function EditProductPage() {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await fetch('/api/category');
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/category`);
                 if (response.ok) {
                     const categoriesData = await response.json();
                     setCategories(categoriesData);
@@ -45,7 +45,7 @@ function EditProductPage() {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const res = await fetch(`/api/product/${id}`);
+                const res = await fetch(`${process.env.REACT_APP_API_URL}/api/product/${id}`);
                 const data = await res.json();
                 setFormData({
                     name: data.product_name || '',
@@ -133,7 +133,7 @@ function EditProductPage() {
         }
 
         try {
-            const res = await fetch(`/api/product/${id}`, {
+            const res = await fetch(`${process.env.REACT_APP_API_URL}/api/product/${id}`, {
                 method: 'PATCH', // Use PATCH instead of PUT
                 body: form,
             });

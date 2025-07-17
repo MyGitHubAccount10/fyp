@@ -1374,22 +1374,41 @@ select {
     width: 100%;
     margin-bottom: 40px;
 }
+/* --- START OF REPLACEMENT CSS for Proportional Hero Carousel --- */
+
+/* 1. Define a consistent aspect ratio for the container. */
 .hero-image-container {
     position: relative;
     width: 100%;
-    height: 500px; /* MODIFIED: Changed 'max-height' to 'height' */
+    /* NEW: Use aspect-ratio for a responsive, consistent shape. */
+    /* 16 / 9 is a standard widescreen ratio. You can adjust this (e.g., 3 / 2 or 4 / 3). */
+    aspect-ratio: 16 / 9;
+    
+    /* Optional: A max-height to prevent it being excessively tall on very narrow screens. */
+    max-height: 80vh; 
+    
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #D9D9D9;
+    /* This background color will show as bars if an image's ratio doesn't match 16/9. */
+    background-color: #D9D9D9; 
 }
+
+/* 2. Change the image to 'contain' itself within the container. */
 .hero-image {
     width: 100%;
-    height: 100%; /* MODIFIED: Changed from 'auto' to '100%' */
-    object-fit: cover; /* Ensures the image fills the space without distortion */
+    height: 100%;
+    /* MODIFIED: This is the key change to show the full image. */
+    object-fit: cover;
     display: block;
 }
+
+/* NOTE: The old media queries setting the height of .hero-image-container 
+   at 768px and 480px are no longer needed and should be removed, 
+   as `aspect-ratio` handles all resizing automatically. */
+
+/* --- END OF REPLACEMENT CSS --- */
 .hero-arrow {
     position: absolute;
     top: 50%;
@@ -1455,16 +1474,17 @@ select {
     margin-bottom: 30px;
     color: #000000;
 }
-@media (max-width: 768px) {
+
+/* @media (max-width: 768px) {
     .hero-image-container {
         height: 400px; /* Reduces height from the default 500px */
-    }
+    /* }
 }
 @media (max-width: 480px) {
     .hero-image-container {
         height: 350px; /* Reduces height further for the smallest screens */
-    }
-}
+    /* }
+} */
 
 /* --- About & Contact Page Banners --- */
 .about-banner-section, .contact-banner-section {

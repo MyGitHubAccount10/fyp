@@ -1,3 +1,5 @@
+// ProductDetailPage.js:
+
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useCartContext } from './hooks/useCartContext';
@@ -150,6 +152,7 @@ const ProductDetailPage = () => {
     navigate('/cart');
   };
 
+  // --- MODIFIED: Buy Now action bypasses the cart context ---
   const handleBuyNow = () => {
     const isAccessory = product.category.category_name === 'Accessories';
     const type = isAccessory ? 'N/A' : selectedType;
@@ -157,9 +160,9 @@ const ProductDetailPage = () => {
     const size = isAccessory ? 'N/A' : selectedSize;
     const material = isAccessory ? 'N/A' : selectedMaterial;
     const thickness = isAccessory ? 'N/A' : selectedThickness;
-    dispatch({
-      type: 'ADD_TO_CART',
-      payload: { 
+  
+    // Create the item payload that PlaceOrderPage will receive directly
+    const buyNowItem = { 
         id: product._id, 
         name: product.product_name, 
         price: product.product_price,
@@ -171,15 +174,18 @@ const ProductDetailPage = () => {
         quantity: quantity,
         warehouse_quantity: product.warehouse_quantity,
         image: product.product_image
-      }
-    });
+    };
 
     if (user) {
-      navigate('/place-order');
+        // Navigate to the place-order page, passing the single item in the navigation state.
+        // We wrap it in an array to maintain a consistent structure with cartItems.
+        navigate('/place-order', { state: { buyNowItem: [buyNowItem] } });
     } else {
-      navigate('/login', { state: { from: '/place-order' } });
+        // If not logged in, redirect to login but preserve the item and the final destination.
+        navigate('/login', { state: { from: '/place-order', buyNowItem: [buyNowItem] } });
     }
   };
+
 
   if (!product) {
     return (

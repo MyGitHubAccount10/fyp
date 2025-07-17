@@ -7,11 +7,7 @@ import { useProductsContext } from './hooks/useProductsContext';
 
 // Slideshow images for hero section with navigation paths
 const slideshowImages = [
-    { src: `${process.env.REACT_APP_API_URL}/images/testingsizeimage.png`, link: '/' },
-    { src: `${process.env.REACT_APP_API_URL}/images/testingsizeimage.png`, link: '/' },
-    { src: `${process.env.REACT_APP_API_URL}/images/testingsizeimage.png`, link: '/' },
-    { src: `${process.env.REACT_APP_API_URL}/images/testingsizeimage.png`, link: '/' },
-    { src: `${process.env.REACT_APP_API_URL}/images/testingsizeimage.png`, link: '/' },
+    { src: `/images/testingsizeimage.png`, link: '/' },
     { src: '/images/PromoEdited.png', link: '/' },
     { src: '/images/Promo1.png', link: '/' },
     { src: '/images/an1.jpeg', link: '/' },
@@ -59,13 +55,21 @@ const HomePage = () => {
     }
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
+    useEffect(() => {
+    // If there's only one image, don't start the timer.
+    if (slideshowImages.length <= 1) {
+      return;
+    }
+
+    // Set up the timer to advance to the next slide.
+    const intervalId = setInterval(() => {
       nextSlide();
     }, 5000); // Change slide every 5 seconds
 
-    return () => clearInterval(interval); // Cleanup on unmount
-  }, []);
+    // The cleanup function. This will run before the effect re-runs or when the component unmounts.
+    return () => clearInterval(intervalId);
+
+  }, [currentSlideIndex]); // <-- KEY CHANGE: Add currentSlideIndex as a dependency
 
   useEffect(() => {
         const fetchProducts = async () => {

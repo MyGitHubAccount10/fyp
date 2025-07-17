@@ -1374,22 +1374,41 @@ select {
     width: 100%;
     margin-bottom: 40px;
 }
+/* --- START OF REPLACEMENT CSS for Proportional Hero Carousel --- */
+
+/* 1. Define a consistent aspect ratio for the container. */
 .hero-image-container {
     position: relative;
     width: 100%;
-    height: 500px; /* MODIFIED: Changed 'max-height' to 'height' */
+    /* NEW: Use aspect-ratio for a responsive, consistent shape. */
+    /* 16 / 9 is a standard widescreen ratio. You can adjust this (e.g., 3 / 2 or 4 / 3). */
+    aspect-ratio: 16 / 9;
+    
+    /* Optional: A max-height to prevent it being excessively tall on very narrow screens. */
+    max-height: 80vh; 
+    
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #D9D9D9;
+    /* This background color will show as bars if an image's ratio doesn't match 16/9. */
+    background-color: #D9D9D9; 
 }
+
+/* 2. Change the image to 'contain' itself within the container. */
 .hero-image {
     width: 100%;
-    height: 100%; /* MODIFIED: Changed from 'auto' to '100%' */
-    object-fit: cover; /* Ensures the image fills the space without distortion */
+    height: 100%;
+    /* MODIFIED: This is the key change to show the full image. */
+    object-fit: cover;
     display: block;
 }
+
+/* NOTE: The old media queries setting the height of .hero-image-container 
+   at 768px and 480px are no longer needed and should be removed, 
+   as `aspect-ratio` handles all resizing automatically. */
+
+/* --- END OF REPLACEMENT CSS --- */
 .hero-arrow {
     position: absolute;
     top: 50%;
@@ -1455,16 +1474,17 @@ select {
     margin-bottom: 30px;
     color: #000000;
 }
-@media (max-width: 768px) {
+
+/* @media (max-width: 768px) {
     .hero-image-container {
         height: 400px; /* Reduces height from the default 500px */
-    }
+    /* }
 }
 @media (max-width: 480px) {
     .hero-image-container {
         height: 350px; /* Reduces height further for the smallest screens */
-    }
-}
+    /* }
+} */
 
 /* --- About & Contact Page Banners --- */
 .about-banner-section, .contact-banner-section {
@@ -1874,6 +1894,14 @@ select {
   max-width: 100%;
   overflow: hidden;
 }
+.customise-image-gallery {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
 .product-main-image-container {
   width: 100%;
   display: flex;
@@ -1884,6 +1912,7 @@ select {
   overflow: hidden;
   max-height: 500px;
   box-sizing: border-box;
+  padding: 15px;
 }
 .product-main-image {
     max-width: 100%;
@@ -2050,6 +2079,7 @@ select {
     .product-price-detail { font-size: 1.6em; }
 }
 @media (max-width: 768px) {
+    .customise-image-gallery { flex-direction: column; gap: 15px; }
     .product-image-gallery { gap: 10px; }
     .product-main-image-container { max-height: 350px; }
     .product-thumbnails { height: 70px; padding: 10px 12px; gap: 5px; box-sizing: border-box; }
@@ -2331,7 +2361,11 @@ input[type="password"]::-ms-clear {
 .social-media-section {
   text-align: center;
   padding: 50px 20px;
-  background-color: #f9f9f9; /* A light background to separate it from other sections */
+  
+  /* MODIFIED: Styles to match the product cards */
+  background-color: #fff; /* Match product card background */
+  border-radius: 12px;    /* Match product card corner radius */
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* Add a matching card shadow */
 }
 
 .social-media-title {

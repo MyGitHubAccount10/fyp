@@ -221,9 +221,9 @@ const CustomisePage = () => {
             <Header />
                 <main className="product-detail-page container">
                     <section className="product-main-info-grid">
-                    <div className="product-image-gallery">     
-                        <span>Top Image</span>         
-                        <div className="product-main-image-container">  
+                    <div className="customise-image-gallery">
+                        <span>Top Image</span>
+                        <div className="product-main-image-container">
                         <img src={topImagePreview} alt={topImageName} className="product-main-image" />
                         </div>
                         <span>Bottom Image</span>

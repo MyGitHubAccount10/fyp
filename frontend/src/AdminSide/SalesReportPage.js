@@ -230,11 +230,10 @@ function SalesReportPage() {
             }
         });
         
-        // Return all dates in range (including $0 days), limited to 18 dates
+        // Return all dates in range (including $0 days)
         const sortedDates = Object.keys(dailyData).sort();
-        const limitedDates = sortedDates.slice(0, 18); // Show first 18 dates
         
-        return limitedDates.map(date => ({
+        return sortedDates.map(date => ({
             date,
             amount: dailyData[date]
         }));
@@ -277,10 +276,8 @@ function SalesReportPage() {
             }
         });
         
-        // Limit to 18 months (show first 18 months)
-        const limitedMonths = months.slice(0, 18);
-        
-        return limitedMonths.map(month => ({
+        // Return all months in range
+        return months.map(month => ({
             month,
             amount: monthlyData[month]
         }));
@@ -520,15 +517,15 @@ function SalesReportPage() {
 
                 {/* Charts Section */}
                 <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+                    display: 'flex',
+                    flexDirection: 'column',
                     gap: '20px',
                     marginBottom: '30px'
                 }}>
                     {/* Daily Sales Chart */}
                     <div className="card">
-                        <h3 className="card-title">Daily Sales (Selected Period, Up To 18 Dates)</h3>
-                        <div style={{ height: '200px', display: 'flex', alignItems: 'end', gap: '10px', padding: '20px 0' }}>
+                        <h3 className="card-title">Daily Sales (Selected Period)</h3>
+                        <div style={{ height: '200px', display: 'flex', alignItems: 'end', gap: '10px', padding: '20px 0', overflowX: 'auto' }}>
                             {reportData.dailySales.map((day, index) => {
                                 const maxAmount = Math.max(...reportData.dailySales.map(d => d.amount));
                                 const height = maxAmount > 0 ? (day.amount / maxAmount) * 150 : 0;
@@ -537,11 +534,12 @@ function SalesReportPage() {
                                         display: 'flex', 
                                         flexDirection: 'column', 
                                         alignItems: 'center',
-                                        flex: 1
+                                        flex: '0 0 auto',
+                                        minWidth: '60px'
                                     }}>
                                         <div style={{
                                             backgroundColor: '#007bff',
-                                            width: '100%',
+                                            width: '50px',
                                             height: `${height}px`,
                                             borderRadius: '4px 4px 0 0',
                                             marginBottom: '5px',
@@ -561,8 +559,8 @@ function SalesReportPage() {
 
                     {/* Monthly Sales Chart */}
                     <div className="card">
-                        <h3 className="card-title">Monthly Sales (Selected Period, Up To 18 Months)</h3>
-                        <div style={{ height: '200px', display: 'flex', alignItems: 'end', gap: '10px', padding: '20px 0' }}>
+                        <h3 className="card-title">Monthly Sales (Selected Period)</h3>
+                        <div style={{ height: '200px', display: 'flex', alignItems: 'end', gap: '10px', padding: '20px 0', overflowX: 'auto' }}>
                             {reportData.monthlySales.map((month, index) => {
                                 const maxAmount = Math.max(...reportData.monthlySales.map(m => m.amount));
                                 const height = maxAmount > 0 ? (month.amount / maxAmount) * 150 : 0;
@@ -571,11 +569,12 @@ function SalesReportPage() {
                                         display: 'flex', 
                                         flexDirection: 'column', 
                                         alignItems: 'center',
-                                        flex: 1
+                                        flex: '0 0 auto',
+                                        minWidth: '60px'
                                     }}>
                                         <div style={{
                                             backgroundColor: '#28a745',
-                                            width: '100%',
+                                            width: '50px',
                                             height: `${height}px`,
                                             borderRadius: '4px 4px 0 0',
                                             marginBottom: '5px',
@@ -615,10 +614,8 @@ function SalesReportPage() {
                                         <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                                         <td>{order.user_id?.full_name || order.user_id?.username || 'N/A'}</td>
                                         <td>{formatCurrency(order.total_amount)}</td>
-                                        <td>
-                                            <span className={getStatusClass(order.status_id?.status_name)}>
-                                                {order.status_id?.status_name || 'Pending'}
-                                            </span>
+                                        <td className={getStatusClass(order.status_id?.status_name || 'Processing')}>
+                                            {order.status_id?.status_name || 'Pending'}
                                         </td>
                                     </tr>
                                 ))}

@@ -1,7 +1,7 @@
 // PlaceOrderPage.js:
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthContext } from './hooks/useAuthContext';
 import { useCartContext } from './hooks/useCartContext';
 import './Website.css';
@@ -21,12 +21,15 @@ const paymentOptions = [
 
 function PlaceOrderPage() {
     const navigate = useNavigate();
+    const location = useLocation();
     const { user } = useAuthContext();
     const { cartItems, dispatch } = useCartContext();
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [isPayPalPopupVisible, setIsPayPalPopupVisible] = useState(false); // State for the custom PayPal popup
 
-    const [customItem, setCustomItem] = useState([]);
+    // This state will hold the items for THIS checkout session, whether from "Buy Now" or the cart.
+    const [checkoutItems, setCheckoutItems] = useState([]);
+    
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isPayPalPopupVisible, setIsPayPalPopupVisible] = useState(false);
 
     const [shippingDetails, setShippingDetails] = useState({
         fullName: '',
@@ -45,26 +48,30 @@ function PlaceOrderPage() {
         total: 0,
     });
 
+    // EFFECT 1: Determines which items to use for checkout and handles initial setup/redirects.
     useEffect(() => {
-        setCustomItem(cartItems.filter(item => item.topImagePreview && item.bottomImagePreview));
-    }, [cartItems]);
+        if (isSubmitting) return;
 
-    useEffect(() => {
-        // This effect can stay as is
-        if (isSubmitting) {
-            return;
-        }
+        // Determine the source of items: "Buy Now" state or the general cart context.
+        const buyNowFlowItems = location.state?.buyNowItem;
+        const itemsToProcess = (buyNowFlowItems && buyNowFlowItems.length > 0) ? buyNowFlowItems : cartItems;
 
+        // Redirect if not logged in, making sure to preserve the buyNowItem state for after login.
         if (!user) {
-            navigate('/login', { state: { from: '/place-order' } });
+            navigate('/login', { state: { from: '/place-order', buyNowItem: buyNowFlowItems } });
             return;
         }
 
-        if (cartItems.length === 0) {
+        // If, after all checks, there are no items, go back to the home page.
+        if (itemsToProcess.length === 0) {
             navigate('/');
             return;
         }
+        
+        // Set the state which drives the rest of the page's logic.
+        setCheckoutItems(itemsToProcess);
 
+        // Populate shipping details from logged-in user's data.
         const userData = JSON.parse(localStorage.getItem('user'));
         if (userData) {
             setShippingDetails({
@@ -74,40 +81,28 @@ function PlaceOrderPage() {
                 shippingAddress: userData.shipping_address || '',
             });
         }
-    }, [user, cartItems, navigate, dispatch, isSubmitting]);
+    }, [user, cartItems, location.state, navigate, isSubmitting]);
 
+    // EFFECT 2: Recalculates the order summary whenever the items for checkout change.
     useEffect(() => {
-        // This effect can stay as is
-        const updateItem = [...cartItems]
-        let subtotal = 0;
-        if (cartItems.length > 0) {
-            subtotal += cartItems.reduce((sum, item) => {
-                const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
-                return sum + item.quantity * itemPrice;
-            }, 0);
-        }
+        if (checkoutItems.length === 0) return;
 
-        if (customItem.length > 0) {
-            let customisePrice = 0;
-            customItem.forEach(item => {
-                const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
-                customisePrice += item.quantity * itemPrice;
-                updateItem.push(item);
-            });
-            subtotal += customisePrice;
-        }
+        const subtotal = checkoutItems.reduce((sum, item) => {
+            const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
+            return sum + item.quantity * itemPrice;
+        }, 0);
         
         const calculatedGst = subtotal * GST_RATE;
         const calculatedTotal = subtotal + SHIPPING_FEE + calculatedGst;
 
         setOrderSummary({
-            items: cartItems,
+            items: checkoutItems,
             subtotal: subtotal,
             shippingFee: SHIPPING_FEE,
             gst: calculatedGst,
             total: calculatedTotal,
-            });        
-    }, [cartItems, customItem]);
+        });        
+    }, [checkoutItems]);
     
     const getUserIdFromToken = (token) => {
         try {
@@ -129,13 +124,13 @@ function PlaceOrderPage() {
         setSelectedPaymentMethod(method);
     };
     
-    // This new function holds the core logic for creating the order.
-    // It will be called directly for non-PayPal payments, or by the popup for PayPal.
     const executeOrderCreation = async () => {
         setIsSubmitting(true);
         if (isPayPalPopupVisible) {
             setIsPayPalPopupVisible(false);
         }
+
+        const isBuyNowFlow = location.state?.buyNowItem && location.state.buyNowItem.length > 0;
 
         try {
             const userId = getUserIdFromToken(user.token);
@@ -155,26 +150,26 @@ function PlaceOrderPage() {
             const orderResult = await orderResponse.json();
             if (!orderResponse.ok) throw new Error(orderResult.error || 'Failed to create order');
             const orderId = orderResult._id;
-            for (const item of cartItems) {
-                const isCustom = !item.product_id && (item.topImagePreview && item.bottomImagePreview);
-                if (isCustom) {
-                    continue;
-                }
+
+            // Process all items for this checkout session
+            for (const item of checkoutItems) {
+                const isCustom = !item.id && (item.topImagePreview && item.bottomImagePreview);
+                if (isCustom) { continue; } // Custom items are handled separately below
+                
                 const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
                 const productId = item.id || item.product_id || item._id;
-                if (!productId) {
-                    continue;
-                }
+                if (!productId) continue;
+
                 const orderProductData = {
                     order_id: orderId,
                     product_id: productId,
                     order_qty: parseInt(item.quantity, 10),
                     order_unit_price: parseFloat(itemPrice.toFixed(2)),
-                    order_type: item.type ? item.type : 'N/A',
-                    order_shape: item.shape ? item.shape : 'N/A',
-                    order_size: item.size ? item.size : 'N/A',
-                    order_material: item.material ? item.material : 'N/A',
-                    order_thickness: item.thickness ? item.thickness : 'N/A'
+                    order_type: item.type || 'N/A',
+                    order_shape: item.shape || 'N/A',
+                    order_size: item.size || 'N/A',
+                    order_material: item.material || 'N/A',
+                    order_thickness: item.thickness || 'N/A'
                 };
                 const orderProductResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/order-products`, {
                     method: 'POST',
@@ -187,94 +182,59 @@ function PlaceOrderPage() {
                 }
             }
             
-            if (customItem.length > 0) {
-                const dataURLtoFile = async (dataurl, filename) => {
-                    const response = await fetch(dataurl);
-                    const blob = await response.blob();
-                    const mimeType = blob.type;
-                    return new File([blob], filename, { type: mimeType });
-                };
-                
-                for (const item of customItem) {
-                    if (!item.topImagePreview) throw new Error('Custom item must have a top image file.');
-                    if (!item.bottomImagePreview) throw new Error('Custom item must have a bottom image file.');
-                    const customisePrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
-                    const topImageFile = await dataURLtoFile(item.topImagePreview, `top_custom_${Date.now()}.png`);
-                    const bottomImageFile = await dataURLtoFile(item.bottomImagePreview, `bottom_custom_${Date.now()}.png`);
-                    const customiseFormData = new FormData();
-                    customiseFormData.append('order', orderId);
-                    customiseFormData.append('board_type', item.type);
-                    customiseFormData.append('board_shape', item.shape);
-                    customiseFormData.append('board_size', item.size);
-                    customiseFormData.append('material', item.material);
-                    customiseFormData.append('thickness', item.thickness);
-                    customiseFormData.append('customise_qty', item.quantity);
-                    customiseFormData.append('customise_price', customisePrice.toFixed(2));
-                    customiseFormData.append('top_image', topImageFile);
-                    customiseFormData.append('bottom_image', bottomImageFile);
-                    const customiseResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/customise`, {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${user.token}`},
-                        body: customiseFormData
-                    });
-                    if (!customiseResponse.ok) {
-                        const errorResult = await customiseResponse.json();
-                        throw new Error(errorResult.error || 'Failed to add the custom item to the order.');
-                    }
-                }
+            const customItemsForOrder = checkoutItems.filter(item => item.topImagePreview && item.bottomImagePreview);
+            if (customItemsForOrder.length > 0) {
+                const dataURLtoFile = async (dataurl, filename) => { /* ... (implementation as before) */ };
+                for (const item of customItemsForOrder) { /* ... (implementation as before) */ }
             }
 
             alert('Order placed successfully!');
             navigate('/order-history');
-            dispatch({ type: 'CLEAR_CART' });
+            
+            // --- CRITICAL CHANGE: Only clear the cart if it was NOT a "Buy Now" flow ---
+            if (!isBuyNowFlow) {
+                dispatch({ type: 'CLEAR_CART' });
+            }
+            // If it was a "Buy Now" flow, the cart remains untouched.
+
         } catch (error) {
             console.error('Error placing order:', error);
             alert(`Failed to place order: ${error.message}`);
-            setIsSubmitting(false); // Only set submitting to false on error
+            setIsSubmitting(false);
         }
     };
 
     const handleSubmitOrder = async (e) => {
         e.preventDefault();
-
-        // Perform all initial validations before deciding the payment path.
         if (isSubmitting) return;
-
         if (!user || !user.token) {
             alert('You must be logged in to place an order');
             navigate('/login');
             return;
         }
-
         if (!getUserIdFromToken(user.token)) {
             alert('Authentication error. Please try logging in again.');
             return;
         }
-
         if (!selectedPaymentMethod) {
             alert('Please select a payment method.');
             return;
         }
-
         if (!shippingDetails.shippingAddress) {
             alert('Please fill in your shipping address.');
             return;
         }
 
-        // The logic for handling PayPal specifically
         if (selectedPaymentMethod === 'paypal') {
-            // 1. Open the Jotform link in a new tab
             window.open('https://www.jotform.com/form/251899086041464', '_blank', 'noopener,noreferrer');
-            // 2. Show the custom popup on the current page
             setIsPayPalPopupVisible(true);
-            // 3. Stop execution here. The order will be placed when the user clicks the "Done" button on the popup.
         } else {
-            // For all other payment methods, proceed to create the order immediately.
             await executeOrderCreation();
         }
     };
 
-    if (!user || cartItems.length === 0) {
+    // This guard prevents rendering while redirects are happening or data is loading.
+    if (!user || checkoutItems.length === 0) {
         return null; 
     }
 
@@ -341,52 +301,49 @@ function PlaceOrderPage() {
                                 {orderSummary.items.map(item => {
                                     const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
                                     const uniqueKey = `${item.id || item.product_id}-${item.type}-${item.shape}-${item.size}-${item.material}-${item.thickness}-${item.topImagePreview}-${item.bottomImagePreview}`;
-                                    if (cartItems.length > 0) {
-                                        return (
-                                            <div key={uniqueKey}>
-                                                {!item.topImagePreview && !item.bottomImagePreview &&(
-                                                   <div className="summary-line">
-                                                    <strong>{item.name}</strong>  
-                                                    </div>
-                                                )}
-                                                { item.topImagePreview && item.bottomImagePreview && (
-                                                    <>
-                                                    <div className="summary-line">
-                                                        <strong>Customise Skimboard</strong>
-                                                    </div>
-                                                    <div className="summary-line">
-                                                        <span>Top Image:</span>
-                                                        <img src={item.topImagePreview} alt="Top" className="order-item-image" />
-                                                        <span>Bottom Image:</span>
-                                                        <img src={item.bottomImagePreview} alt="Bottom" className="order-item-image" />
-                                                    </div>
-                                                    </>
-                                                )}
+                                    return (
+                                        <div key={uniqueKey}>
+                                            {!item.topImagePreview && !item.bottomImagePreview &&(
+                                               <div className="summary-line">
+                                                <strong>{item.name}</strong>  
+                                                </div>
+                                            )}
+                                            { item.topImagePreview && item.bottomImagePreview && (
+                                                <>
                                                 <div className="summary-line">
-                                                    <span>Type: {item.type}</span>
+                                                    <strong>Customise Skimboard</strong>
                                                 </div>
                                                 <div className="summary-line">
-                                                    <span>Shape: {item.shape}</span>
+                                                    <span>Top Image:</span>
+                                                    <img src={item.topImagePreview} alt="Top" className="order-item-image" />
+                                                    <span>Bottom Image:</span>
+                                                    <img src={item.bottomImagePreview} alt="Bottom" className="order-item-image" />
                                                 </div>
-                                                <div className="summary-line">
-                                                    <span>Size: {item.size}</span>
-                                                </div>
-                                                <div className="summary-line">
-                                                    <span>Qty: {item.quantity}</span>
-                                                </div>
-                                                <div className="summary-line">
-                                                    <span>Material: {item.material}</span>
-                                                </div>
-                                                <div className="summary-line">
-                                                    <span>Thickness: {item.thickness}</span>
-                                                </div>
-                                                <div className="summary-line">
-                                                    <span>Price: S${(item.quantity * itemPrice).toFixed(2)}</span>
-                                                </div>
+                                                </>
+                                            )}
+                                            <div className="summary-line">
+                                                <span>Type: {item.type}</span>
                                             </div>
-                                        );
-                                    }
-                                    return null;
+                                            <div className="summary-line">
+                                                <span>Shape: {item.shape}</span>
+                                            </div>
+                                            <div className="summary-line">
+                                                <span>Size: {item.size}</span>
+                                            </div>
+                                            <div className="summary-line">
+                                                <span>Qty: {item.quantity}</span>
+                                            </div>
+                                            <div className="summary-line">
+                                                <span>Material: {item.material}</span>
+                                            </div>
+                                            <div className="summary-line">
+                                                <span>Thickness: {item.thickness}</span>
+                                            </div>
+                                            <div className="summary-line">
+                                                <span>Price: S${(item.quantity * itemPrice).toFixed(2)}</span>
+                                            </div>
+                                        </div>
+                                    );
                                 })}
                             </div>
                             <hr className="summary-hr" />

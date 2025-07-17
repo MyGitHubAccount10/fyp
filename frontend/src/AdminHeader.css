@@ -165,3 +165,197 @@ button.Admin-product-dropdown-toggle {
 .Admin-secondary-navbar-item:hover {
   text-decoration: none !important;
 }
+
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+
+  
+  .Admin-header-left-content,
+  .Admin-header-right-content {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Header for mobile phones */
+  header.Admin-header {
+    padding: 8px 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .Admin-header-left-content,
+  .Admin-header-right-content {
+    gap: 8px;
+  }
+  
+  /* Logo size adjustment */
+  .Admin-header-logo-link .Admin-header-logo-img {
+    height: 25px;
+  }
+  
+  /* Navigation links - make them more compact */
+  .Admin-header-nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .Admin-header-nav-links a {
+    font-size: 0.75em;
+    margin: 0 3px;
+    padding: 2px 4px;
+  }
+  
+  /* Product dropdown toggle */
+  button.Admin-product-dropdown-toggle {
+    font-size: 0.75em;
+  }
+  
+  .Admin-product-arrow {
+    width: 12px;
+    height: 12px;
+  }
+  
+  /* Header icons */
+  .Admin-header-icon-link svg {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .Admin-header-separator {
+    height: 16px;
+  }
+  
+  .Admin-header-social-icons a img {
+    height: 18px;
+    width: 18px;
+  }
+  
+  /* Profile dropdown adjustments */
+  .Admin-profile-dropdown-menu {
+    min-width: 140px;
+    right: -10px;
+  }
+  
+  .Admin-profile-dropdown-item {
+    padding: 8px 12px;
+    font-size: 0.8em;
+  }
+  
+  /* Secondary navbar - horizontal scroll */
+  .Admin-secondary-navbar {
+    padding: 8px 10px;
+    gap: 15px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .Admin-secondary-navbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .Admin-secondary-navbar-item {
+    font-size: 0.75em;
+    white-space: nowrap;
+    min-width: max-content;
+    gap: 6px;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Extra small phones */
+  header.Admin-header {
+    padding: 6px 8px;
+  }
+  
+  .Admin-header-left-content,
+  .Admin-header-right-content {
+    gap: 6px;
+  }
+  
+  .Admin-header-logo-link .Admin-header-logo-img {
+    height: 22px;
+  }
+  
+  .Admin-header-nav-links a {
+    font-size: 0.7em;
+    margin: 0 2px;
+  }
+  
+  button.Admin-product-dropdown-toggle {
+    font-size: 0.7em;
+  }
+  
+  .Admin-product-arrow {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .Admin-header-icon-link svg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  .Admin-header-social-icons a img {
+    height: 16px;
+    width: 16px;
+  }
+  
+  .Admin-secondary-navbar {
+    padding: 6px 8px;
+    gap: 12px;
+  }
+  
+  .Admin-secondary-navbar-item {
+    font-size: 0.7em;
+    gap: 4px;
+  }
+  
+  .Admin-profile-dropdown-menu {
+    min-width: 120px;
+  }
+  
+  .Admin-profile-dropdown-item {
+    padding: 6px 10px;
+    font-size: 0.75em;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media (max-width: 812px) and (orientation: landscape) {
+  header.Admin-header {
+    padding: 6px 15px;
+  }
+  
+  .Admin-header-logo-link .Admin-header-logo-img {
+    height: 24px;
+  }
+  
+  .Admin-secondary-navbar {
+    padding: 8px 15px;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (max-width: 480px) {
+  /* Increase touch targets */
+  .Admin-header-nav-links a,
+  .Admin-product-dropdown-toggle,
+  .Admin-header-icon-link,
+  .Admin-secondary-navbar-item {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .Admin-profile-dropdown-item {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+}

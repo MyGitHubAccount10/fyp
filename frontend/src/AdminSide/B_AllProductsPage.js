@@ -416,7 +416,6 @@ function AllProductsPage() {
                     <thead>
                         <tr>
                             <th>Image</th>
-                            <th>Name</th>
                             <th>Category</th>
                             <th>Price</th>
                             <th>Stock</th>
@@ -437,7 +436,6 @@ function AllProductsPage() {
                                     onError={(e) => (e.target.src = '/images/placeholder-product.jpg')}
                                 />
                             </td>
-                            <td>{product.product_name}</td>
                             <td>{getCategory(product.category)}</td>
                             <td>${product.product_price.toFixed(2)}</td>
                             <td>{product.warehouse_quantity}</td>

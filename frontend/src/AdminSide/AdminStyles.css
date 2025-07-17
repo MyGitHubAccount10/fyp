@@ -955,9 +955,45 @@ input[type="password"]::-ms-clear {
         padding: 10px 15px;
     }
 
+    /* Table responsive improvements */
+    .my-table {
+        min-width: 100%;
+        border-collapse: collapse;
+    }
+    
     .my-table td, .my-table th{
-    font-size: 13px!important; 
-    padding: 8px 8px!important; /* Adjust padding for smaller screens */
+        font-size: 13px!important; 
+        padding: 8px 6px!important; /* Adjust padding for smaller screens */
+        text-align: left;
+        vertical-align: middle;
+        word-break: break-word;
+    }
+    
+    /* Make table container scrollable */
+    .card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Product image adjustments */
+    .admin-product-image {
+        width: 45px;
+        height: 45px;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+    
+    /* Action buttons adjustments */
+    .actionButton {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .actionButton button svg {
+        width: 28px;
+        height: 28px;
     }
 
 
@@ -1016,16 +1052,81 @@ input[type="password"]::-ms-clear {
         padding: 10px 15px;
     }
 
-    /* Tables */
+    /* Enhanced table responsive styles */
+    .my-table {
+        min-width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+    }
+    
     .my-table th,
     .my-table td {
-        padding: 12px 6px;
-        font-size: 12px!important; 
-        /* font-size: 0.8em; */
+        padding: 8px 4px;
+        font-size: 11px!important; 
+        text-align: left;
+        vertical-align: middle;
+        word-break: break-word;
+        max-width: 120px;
     }
-    .my-table svg{
-        width: 16px; /* Smaller icon size */
-        height: 16px;
+    
+    /* Specific column adjustments */
+    .my-table th:first-child,
+    .my-table td:first-child {
+        min-width: 60px; /* Image column */
+        max-width: 60px;
+    }
+    
+    .my-table th:last-child,
+    .my-table td:last-child {
+        min-width: 80px; /* Action column */
+        max-width: 80px;
+    }
+    
+    /* Make table container scrollable */
+    .card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 8px;
+    }
+    
+    /* Product image adjustments */
+    .admin-product-image {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+    
+    /* Action buttons adjustments */
+    .actionButton {
+        display: flex;
+        gap: 4px;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .actionButton button svg {
+        width: 24px;
+        height: 24px;
+    }
+    
+    /* Status badges mobile optimization */
+    .status-delivered,
+    .status-processing,
+    .status-in-transit,
+    .status-declined {
+        padding: 2px 6px;
+        font-size: 10px;
+        border-radius: 8px;
+        white-space: nowrap;
+    }
+    
+    /* Badge adjustments */
+    .badge {
+        padding: 2px 6px;
+        font-size: 10px;
+        border-radius: 8px;
     }
 
     .orders-table-container {
@@ -1072,13 +1173,98 @@ input[type="password"]::-ms-clear {
         margin-bottom: 15px;
     }
 
-    /* Tables */
+    /* Mobile table optimizations */
+    .my-table {
+        min-width: 100%;
+        border-collapse: collapse;
+        font-size: 10px;
+    }
+    
     .my-table th,
     .my-table td {
-        font-size: 0.85em;
+        padding: 6px 3px;
+        font-size: 10px!important;
+        text-align: left;
+        vertical-align: middle;
+        word-break: break-word;
+        max-width: 100px;
     }
-    .view-all-link {
-        font-size: 0.9em;
+    
+    /* Specific column adjustments for mobile */
+    .my-table th:first-child,
+    .my-table td:first-child {
+        min-width: 50px; /* Image column */
+        max-width: 50px;
+    }
+    
+    .my-table th:last-child,
+    .my-table td:last-child {
+        min-width: 70px; /* Action column */
+        max-width: 70px;
+    }
+    
+    /* Make table container scrollable */
+    .card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 6px;
+    }
+    
+    /* Product image adjustments */
+    .admin-product-image {
+        width: 35px;
+        height: 35px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+    
+    /* Action buttons adjustments */
+    .actionButton {
+        display: flex;
+        gap: 4px;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+    
+    .actionButton button svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* Status badges mobile optimization */
+    .status-delivered,
+    .status-processing,
+    .status-in-transit,
+    .status-declined {
+        padding: 1px 4px;
+        font-size: 9px;
+        border-radius: 6px;
+        white-space: nowrap;
+    }
+    
+    /* Badge adjustments */
+    .badge {
+        padding: 1px 4px;
+        font-size: 9px;
+        border-radius: 6px;
+    }
+    
+    /* Pagination controls mobile */
+    .pagination-controls {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+    }
+    
+    .pagination-controls span {
+        font-size: 14px;
+    }
+    
+    /* Button adjustments */
+    .pagination-button {
+        padding: 8px 12px;
+        font-size: 12px;
     }
 
     .orders-table {
@@ -1087,5 +1273,96 @@ input[type="password"]::-ms-clear {
     .orders-table th, .orders-table td {
         padding: 6px 4px;
         font-size: 0.8em;
+    }
+}
+
+/* Extra mobile optimizations for tables */
+@media (max-width: 360px) {
+    /* Ultra-small screens - further optimizations */
+    .my-table {
+        font-size: 9px;
+    }
+    
+    .my-table th,
+    .my-table td {
+        padding: 4px 2px;
+        font-size: 9px!important;
+        max-width: 80px;
+    }
+    
+    .admin-product-image {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .actionButton {
+        gap: 2px;
+    }
+    
+    .actionButton button svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .status-delivered,
+    .status-processing,
+    .status-in-transit,
+    .status-declined {
+        padding: 1px 3px;
+        font-size: 8px;
+    }
+    
+    .badge {
+        padding: 1px 3px;
+        font-size: 8px;
+    }
+}
+
+/* Horizontal scroll hint for tables */
+@media (max-width: 768px) {
+    .card:has(.my-table) {
+        position: relative;
+    }
+    
+    .card:has(.my-table)::after {
+        content: "← Scroll to see more →";
+        position: absolute;
+        bottom: 5px;
+        right: 10px;
+        font-size: 10px;
+        color: #666;
+        pointer-events: none;
+        opacity: 0.7;
+    }
+    
+    /* Hide scroll hint when table is fully visible */
+    .card:has(.my-table):not(:hover)::after {
+        animation: fadeInOut 3s ease-in-out infinite;
+    }
+    
+    @keyframes fadeInOut {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 0.7; }
+    }
+}
+
+/* Touch-friendly table interactions */
+@media (hover: none) and (pointer: coarse) {
+    .admin-product-image {
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: border-color 0.2s ease;
+    }
+    
+    .admin-product-image:active {
+        border-color: #f1673a;
+    }
+    
+    .actionButton button {
+        min-height: 44px;
+        min-width: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 }

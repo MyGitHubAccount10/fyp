@@ -182,10 +182,42 @@ function PlaceOrderPage() {
                 }
             }
             
-            const customItemsForOrder = checkoutItems.filter(item => item.topImagePreview && item.bottomImagePreview);
-            if (customItemsForOrder.length > 0) {
-                const dataURLtoFile = async (dataurl, filename) => { /* ... (implementation as before) */ };
-                for (const item of customItemsForOrder) { /* ... (implementation as before) */ }
+            const customItem = checkoutItems.filter(item => item.topImagePreview && item.bottomImagePreview);
+            if (customItem.length > 0) {
+                const dataURLtoFile = async (dataurl, filename) => {
+                    const response = await fetch(dataurl);
+                    const blob = await response.blob();
+                    const mimeType = blob.type;
+                    return new File([blob], filename, { type: mimeType });
+                };
+                
+                for (const item of customItem) {
+                    if (!item.topImagePreview) throw new Error('Custom item must have a top image file.');
+                    if (!item.bottomImagePreview) throw new Error('Custom item must have a bottom image file.');
+                    const customisePrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
+                    const topImageFile = await dataURLtoFile(item.topImagePreview, `top_custom_${Date.now()}.png`);
+                    const bottomImageFile = await dataURLtoFile(item.bottomImagePreview, `bottom_custom_${Date.now()}.png`);
+                    const customiseFormData = new FormData();
+                    customiseFormData.append('order', orderId);
+                    customiseFormData.append('board_type', item.type);
+                    customiseFormData.append('board_shape', item.shape);
+                    customiseFormData.append('board_size', item.size);
+                    customiseFormData.append('material', item.material);
+                    customiseFormData.append('thickness', item.thickness);
+                    customiseFormData.append('customise_qty', item.quantity);
+                    customiseFormData.append('customise_price', customisePrice.toFixed(2));
+                    customiseFormData.append('top_image', topImageFile);
+                    customiseFormData.append('bottom_image', bottomImageFile);
+                    const customiseResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/customise`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${user.token}`},
+                        body: customiseFormData
+                    });
+                    if (!customiseResponse.ok) {
+                        const errorResult = await customiseResponse.json();
+                        throw new Error(errorResult.error || 'Failed to add the custom item to the order.');
+                    }
+                }
             }
 
             alert('Order placed successfully!');

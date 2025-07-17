@@ -378,23 +378,7 @@ function AllProductsPage() {
                                 style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '4px' }}
                             />
                             {/* Product Name Overlay */}
-                            <div style={{ 
-                                position: 'absolute',
-                                bottom: '20px',
-                                left: '50%',
-                                transform: 'translateX(-50%)',
-                                background: 'rgba(0, 0, 0, 0.8)',
-                                color: 'white',
-                                padding: '12px 20px',
-                                borderRadius: '8px',
-                                fontSize: '16px',
-                                fontWeight: '500',
-                                textAlign: 'center',
-                                maxWidth: '80%',
-                                backdropFilter: 'blur(4px)',
-                                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)'
-                            }}>
+                            <div className="modal-product-name-overlay">
                                 {currentProduct.product_name}
                             </div>
                         </div>

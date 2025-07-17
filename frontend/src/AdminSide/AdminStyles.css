@@ -996,7 +996,13 @@ input[type="password"]::-ms-clear {
         height: 28px;
     }
 
-
+    /* Modal product name overlay responsive */
+    .modal-product-name-overlay {
+        font-size: 11px;
+        padding: 6px 12px;
+        bottom: 12px;
+        max-width: 65%;
+    }
 }
 
 
@@ -1111,46 +1117,19 @@ input[type="password"]::-ms-clear {
         height: 24px;
     }
     
-    /* Status badges mobile optimization */
-    .status-delivered,
-    .status-processing,
-    .status-in-transit,
-    .status-declined {
-        padding: 2px 6px;
+    /* Modal product name overlay responsive */
+    .modal-product-name-overlay {
         font-size: 10px;
-        border-radius: 8px;
-        white-space: nowrap;
+        padding: 5px 10px;
+        bottom: 10px;
+        max-width: 60%;
     }
-    
-    /* Badge adjustments */
-    .badge {
-        padding: 2px 6px;
-        font-size: 10px;
-        border-radius: 8px;
-    }
-
-    .orders-table-container {
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch;
-    }
-    .orders-table th, .orders-table td {
-        padding: 12px 6px;
-        font-size: 14px;
-        word-wrap: break-word; /* Break long words */
-        text-overflow: ellipsis; 
-
-    }
-    .orders-table svg{
-        width: 16px; /* Smaller icon size */
-        height: 16px;
-    }
-
-
 
 }
 
 
-/* Small screens - 480px and down */
+
+
 @media (max-width: 480px) {
     /* Dashboard Stats */
     .dashboard-stats {
@@ -1207,7 +1186,7 @@ input[type="password"]::-ms-clear {
     .card {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
-        padding: 6px;
+        padding: 8px;
     }
     
     /* Product image adjustments */
@@ -1232,51 +1211,19 @@ input[type="password"]::-ms-clear {
         height: 20px;
     }
     
-    /* Status badges mobile optimization */
-    .status-delivered,
-    .status-processing,
-    .status-in-transit,
-    .status-declined {
-        padding: 1px 4px;
+    /* Modal product name overlay responsive */
+    .modal-product-name-overlay {
         font-size: 9px;
-        border-radius: 6px;
-        white-space: nowrap;
-    }
-    
-    /* Badge adjustments */
-    .badge {
-        padding: 1px 4px;
-        font-size: 9px;
-        border-radius: 6px;
-    }
-    
-    /* Pagination controls mobile */
-    .pagination-controls {
-        flex-direction: column;
-        gap: 8px;
-        text-align: center;
-    }
-    
-    .pagination-controls span {
-        font-size: 14px;
-    }
-    
-    /* Button adjustments */
-    .pagination-button {
-        padding: 8px 12px;
-        font-size: 12px;
+        padding: 4px 8px;
+        bottom: 8px;
+        max-width: 55%;
     }
 
-    .orders-table {
-        min-width: 600px;
-    }
-    .orders-table th, .orders-table td {
-        padding: 6px 4px;
-        font-size: 0.8em;
-    }
 }
 
-/* Extra mobile optimizations for tables */
+
+
+
 @media (max-width: 360px) {
     /* Ultra-small screens - further optimizations */
     .my-table {
@@ -1315,6 +1262,14 @@ input[type="password"]::-ms-clear {
     .badge {
         padding: 1px 3px;
         font-size: 8px;
+    }
+
+    /* Modal product name overlay responsive */
+    .modal-product-name-overlay {
+        font-size: 8px;
+        padding: 3px 6px;
+        bottom: 6px;
+        max-width: 50%;
     }
 }
 
@@ -1366,3 +1321,33 @@ input[type="password"]::-ms-clear {
         justify-content: center;
     }
 }
+
+/* ========================================================================= */
+/* IMAGE MODAL RESPONSIVE STYLES                                           */
+/* ========================================================================= */
+
+/* Product name overlay in image modal - mobile responsive */
+.modal-product-name-overlay {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    max-width: 70%;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    white-space: normal;
+    overflow: visible;
+    line-height: 1.3;
+}
+
+/* ========================================================================= */
+/* RESPONSIVE MEDIA QUERIES - ORGANIZED BY BREAKPOINT                      */
+/* ========================================================================= */

@@ -7,14 +7,15 @@ import { useProductsContext } from './hooks/useProductsContext';
 
 // Slideshow images for hero section with navigation paths
 const slideshowImages = [
-    { src: `/images/testingsizeimage.png`, link: '/' },
-    { src: '/images/PromoEdited.png', link: '/' },
-    { src: '/images/Promo1.png', link: '/' },
-    { src: '/images/an1.jpeg', link: '/' },
-    { src: '/images/an2.jpeg', link: '/' },
-    { src: '/images/aizat1.jpeg', link: '/' },
-    { src: '/images/aizat2.jpeg', link: '/' },
-    { src: '/images/WannaAdmin.png', link: '/contact' },
+
+    //   { src: `/images/testingsizeimage.png`, link: '/' },
+    // { src: '/images/PromoEdited.png', link: '/' },
+    // { src: '/images/an1.jpeg', link: '/' },
+    // { src: '/images/an2.jpeg', link: '/' },
+    // { src: '/images/aizat1.jpeg', link: '/' },
+    // { src: '/images/aizat2.jpeg', link: '/' },
+    // { src: '/images/WannaAdmin.png', link: '/contact' },
+    { src: '/images/skimbanana.png', link: '/' },
     // Add more image objects here if needed for the slideshow
 ];
 

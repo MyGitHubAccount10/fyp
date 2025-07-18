@@ -1385,7 +1385,7 @@ select {
     aspect-ratio: 16 / 9;
     
     /* Optional: A max-height to prevent it being excessively tall on very narrow screens. */
-    max-height: 110vh; 
+    max-height: 120vh; 
     
     overflow: hidden;
     display: flex;

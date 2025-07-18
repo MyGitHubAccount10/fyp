@@ -2622,7 +2622,11 @@ h2 {
 }
 
 .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  display: grid;
+  gap: 20px;
+  max-width: 1200px;
+  width: 100%;
+  justify-items: center;
 }
 
 .popular-products-grid {

@@ -192,9 +192,7 @@ const CustomisePage = () => {
     };
 
     const handleBuyNow = () => {
-      dispatch({
-        type: 'ADD_TO_CART',
-        payload: { 
+      const buyNowItem = {
           type: selectedType,
           shape: selectedShape,
           size: selectedSize,
@@ -206,13 +204,15 @@ const CustomisePage = () => {
           bottomImagePreview: bottomImagePreview,
           quantity: quantity,
           price: price
-        }
-      });
+      };
 
       if (user) {
-        navigate('/place-order');
+          // Navigate to the place-order page, passing the single item in the navigation state.
+          // We wrap it in an array to maintain a consistent structure with cartItems.
+          navigate('/place-order', { state: { buyNowItem: [buyNowItem] } });
       } else {
-        navigate('/login', { state: { from: '/place-order' } });
+          // If not logged in, redirect to login but preserve the item and the final destination.
+          navigate('/login', { state: { from: '/place-order', buyNowItem: [buyNowItem] } });
       }
   };
 

@@ -6,6 +6,8 @@ import Footer from './Footer';
 import { useProductsContext } from './hooks/useProductsContext';
 
 // Slideshow images for hero section with navigation paths
+// Now loaded dynamically from API - see useEffect in HomePage component
+/*
 const slideshowImages = [
 
     //   { src: `/images/testingsizeimage.png`, link: '/' },
@@ -21,6 +23,7 @@ const slideshowImages = [
     { src: '/images/WannaAdmin.png', link: '/contact' },
     // Add more image objects here if needed for the slideshow
 ];
+*/
 
 // SVG for hero arrows
 const LeftArrowIcon = () => (
@@ -38,6 +41,7 @@ const RightArrowIcon = () => (
 
 const HomePage = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [slideshowImages, setSlideshowImages] = useState([]);
   const { products, dispatch } = useProductsContext();
   const navigate = useNavigate();
 
@@ -58,6 +62,34 @@ const HomePage = () => {
       navigate(slideshowImages[currentSlideIndex].link);
     }
   };
+
+    useEffect(() => {
+        const fetchActivePromos = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/promo/active`);
+                const data = await response.json();
+                if (response.ok) {
+                    // Transform promo data to match slideshow format
+                    const transformedImages = data.map(promo => ({
+                        src: `${process.env.REACT_APP_API_URL}/images/${promo.promo_image}`,
+                        link: promo.promo_link
+                    }));
+                    setSlideshowImages(transformedImages);
+                }
+            } catch (error) {
+                console.error('Error fetching promo images:', error);
+                // Fallback to default images if API fails
+                setSlideshowImages([
+                    { src: '/images/PromoPictures/bananaPromo.png', link: '/product/6879ed59e50a186e08b7c246' },
+                    { src: '/images/PromoPictures/WhiteT.png', link: '/product/68771a551d5a7723398dda2f' },
+                    { src: '/images/PromoPictures/WhiteT2.png', link: '/product/68771a551d5a7723398dda2f' },
+                    { src: '/images/WannaAdmin.png', link: '/contact' }
+                ]);
+            }
+        };
+
+        fetchActivePromos();
+    }, []);
 
     useEffect(() => {
     // If there's only one image, don't start the timer.

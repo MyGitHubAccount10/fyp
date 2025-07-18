@@ -39,6 +39,11 @@ import AdminProfilePage from './AdminSide/G_AdminProfilePage';
 import AdminSalesReportsPage from './AdminSide/SalesReportPage';
 import CustomiseImagePage from './CustomiseImagePage';
 
+// Promo management pages
+import AllPromosPage from './AdminSide/E_AllPromosPage';
+import AddPromoPage from './AdminSide/EE_AddPromoPage';
+import EditPromoPage from './AdminSide/EEE_EditPromoPage';
+
 import AdminProtectedRoute from './AdminProtectedRoute';
 
 import './index.css';
@@ -86,6 +91,9 @@ function App() {
         <Route path="admin-settings" element={<AdminProtectedRoute><AdminSettingsPage /></AdminProtectedRoute>} />
         <Route path="admin-profile" element={<AdminProtectedRoute><AdminProfilePage /></AdminProtectedRoute>} />
         <Route path="sales-report" element={<AdminProtectedRoute><AdminSalesReportsPage /></AdminProtectedRoute>} />
+        <Route path="manage-promos" element={<AdminProtectedRoute><AllPromosPage /></AdminProtectedRoute>} />
+        <Route path="add-promo" element={<AdminProtectedRoute><AddPromoPage /></AdminProtectedRoute>} />
+        <Route path="edit-promo/:id" element={<AdminProtectedRoute><EditPromoPage /></AdminProtectedRoute>} />
         <Route path="customise-image" element={<CustomiseImagePage />} />
 
         {/* --- Catch-all 404 Route --- */}

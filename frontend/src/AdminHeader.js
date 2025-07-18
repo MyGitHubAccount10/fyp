@@ -35,6 +35,14 @@ const SalesReportsIcon = () => (
     <line x1="6" y1="20" x2="6" y2="16" />
   </svg>
 );
+const PromosIcon = () => (
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="4" width="18" height="14" rx="2" ry="2" />
+    <line x1="7" y1="8" x2="17" y2="8" />
+    <line x1="7" y1="12" x2="17" y2="12" />
+    <line x1="7" y1="16" x2="13" y2="16" />
+  </svg>
+);
 
 
 const AdminHeader = ({ showNav = true }) => {
@@ -132,6 +140,9 @@ const AdminHeader = ({ showNav = true }) => {
                     </NavLink>
                     <NavLink to="/all-customers" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}>
                         <CustomersIcon /> Customers
+                    </NavLink>
+                    <NavLink to="/manage-promos" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}>
+                        <PromosIcon /> Homepage Promos
                     </NavLink>
                     <NavLink to="/sales-report" className="Admin-secondary-navbar-item" onClick={() => setIsProductDropdownOpen(false)}>
                         <SalesReportsIcon /> Sales Reports

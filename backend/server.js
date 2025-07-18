@@ -12,6 +12,7 @@ const productRoutes = require('./routes/ProductRoute');
 const roleRoutes = require('./routes/RoleRoute');
 const statusRoutes = require('./routes/StatusRoute');
 const userRoutes = require('./routes/UserRoute');
+const promoRoutes = require('./routes/PromoRoute');
 
 const app = express();
 
@@ -61,3 +62,4 @@ app.use('/api/product', productRoutes);
 app.use('/api/role', roleRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/status', statusRoutes);
+app.use('/api/promo', promoRoutes);

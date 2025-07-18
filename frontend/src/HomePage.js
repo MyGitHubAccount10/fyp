@@ -5,25 +5,6 @@ import Header from './Header';
 import Footer from './Footer';
 import { useProductsContext } from './hooks/useProductsContext';
 
-// Slideshow images for hero section with navigation paths
-// Now loaded dynamically from API - see useEffect in HomePage component
-/*
-const slideshowImages = [
-
-    //   { src: `/images/testingsizeimage.png`, link: '/' },
-    // { src: '/images/PromoEdited.png', link: '/' },
-    // { src: '/images/an1.jpeg', link: '/' },
-    // { src: '/images/an2.jpeg', link: '/' },
-    // { src: '/images/aizat1.jpeg', link: '/' },
-    // { src: '/images/aizat2.jpeg', link: '/' },
-
-    { src: '/images/PromoPictures/bananaPromo.png', link: '/product/6879ed59e50a186e08b7c246' },
-    { src: '/images/PromoPictures/WhiteT.png', link: '/product/68771a551d5a7723398dda2f' },
-    { src: '/images/PromoPictures/WhiteT2.png', link: '/product/68771a551d5a7723398dda2f' },
-    { src: '/images/WannaAdmin.png', link: '/contact' },
-    // Add more image objects here if needed for the slideshow
-];
-*/
 
 // SVG for hero arrows
 const LeftArrowIcon = () => (

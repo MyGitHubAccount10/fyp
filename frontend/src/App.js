@@ -6,7 +6,7 @@ import { CartContextProvider } from './context/CartContext';
 
 // --- Page Imports ---
 // User-facing pages
-import HomePage from './HomePage';
+import HomePage from './AAHomePage';
 import AboutPage from './AboutPage';
 import ContactPage from './ContactPage';
 import FaqPage from './FaqPage';

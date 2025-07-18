@@ -14,8 +14,11 @@ const slideshowImages = [
     // { src: '/images/an2.jpeg', link: '/' },
     // { src: '/images/aizat1.jpeg', link: '/' },
     // { src: '/images/aizat2.jpeg', link: '/' },
-    // { src: '/images/WannaAdmin.png', link: '/contact' },
-    { src: '/images/bananaPromo.png', link: '/product/6879ed59e50a186e08b7c246' },
+
+    { src: '/images/PromoPictures/bananaPromo.png', link: '/product/6879ed59e50a186e08b7c246' },
+    { src: '/images/PromoPictures/WhiteT.png', link: '/product/68771a551d5a7723398dda2f' },
+    { src: '/images/PromoPictures/WhiteT2.png', link: '/product/68771a551d5a7723398dda2f' },
+    { src: '/images/WannaAdmin.png', link: '/contact' },
     // Add more image objects here if needed for the slideshow
 ];
 

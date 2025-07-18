@@ -149,10 +149,30 @@ button.Admin-product-dropdown-toggle {
   background-color: #2C3E50;
   padding: 12px 20px;
   display: flex;
+  flex-direction: row;
   justify-content: center;
-  gap: 30px;
+  align-items: center;
   border-bottom: 1px solid #B2DFDB;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+
+.Admin-secondary-navbar::-webkit-scrollbar {
+  display: none;
+}
+
+.Admin-secondary-navbar nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 30px;
+  min-width: max-content;
+}
+
 .Admin-secondary-navbar-item {
   display: flex;
   align-items: center;
@@ -161,9 +181,17 @@ button.Admin-product-dropdown-toggle {
   text-decoration: none !important;
   font-size: 0.9em;
   font-weight: 500;
+  white-space: nowrap;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  flex-shrink: 0;
+  min-width: max-content;
 }
+
 .Admin-secondary-navbar-item:hover {
   text-decoration: none !important;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 
@@ -174,6 +202,72 @@ button.Admin-product-dropdown-toggle {
   .Admin-header-left-content,
   .Admin-header-right-content {
     gap: 10px;
+  }
+  
+  /* Secondary navbar - horizontal scroll for 768px */
+  .Admin-secondary-navbar {
+    padding: 8px 10px 8px 30px;
+    gap: 15px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    justify-content: flex-start;
+  }
+  
+  .Admin-secondary-navbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .Admin-secondary-navbar nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    min-width: max-content;
+  }
+  
+  .Admin-secondary-navbar-item {
+    font-size: 0.85em;
+    white-space: nowrap;
+    min-width: max-content;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 500px) {
+  /* Secondary navbar - horizontal scroll for 500px */
+  .Admin-secondary-navbar {
+    padding: 8px 10px 8px 30px;
+    gap: 15px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    justify-content: flex-start;
+  }
+  
+  .Admin-secondary-navbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .Admin-secondary-navbar nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    min-width: max-content;
+  }
+  
+  .Admin-secondary-navbar-item {
+    font-size: 0.8em;
+    white-space: nowrap;
+    min-width: max-content;
+    gap: 6px;
+    flex-shrink: 0;
   }
 }
 
@@ -246,16 +340,26 @@ button.Admin-product-dropdown-toggle {
   
   /* Secondary navbar - horizontal scroll */
   .Admin-secondary-navbar {
-    padding: 8px 10px;
+    padding: 8px 10px 8px 30px;
     gap: 15px;
     overflow-x: auto;
+    overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    justify-content: flex-start;
   }
   
   .Admin-secondary-navbar::-webkit-scrollbar {
     display: none;
+  }
+  
+  .Admin-secondary-navbar nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+    min-width: max-content;
   }
   
   .Admin-secondary-navbar-item {
@@ -263,6 +367,7 @@ button.Admin-product-dropdown-toggle {
     white-space: nowrap;
     min-width: max-content;
     gap: 6px;
+    flex-shrink: 0;
   }
 }
 
@@ -306,13 +411,26 @@ button.Admin-product-dropdown-toggle {
   }
   
   .Admin-secondary-navbar {
-    padding: 6px 8px;
+    padding: 6px 8px 6px 30px;
     gap: 12px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    justify-content: flex-start;
+  }
+  
+  .Admin-secondary-navbar nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    min-width: max-content;
   }
   
   .Admin-secondary-navbar-item {
     font-size: 0.7em;
     gap: 4px;
+    flex-shrink: 0;
+    min-width: max-content;
   }
   
   .Admin-profile-dropdown-menu {

@@ -15,7 +15,7 @@ const slideshowImages = [
     // { src: '/images/aizat1.jpeg', link: '/' },
     // { src: '/images/aizat2.jpeg', link: '/' },
     // { src: '/images/WannaAdmin.png', link: '/contact' },
-    { src: '/images/skimbanana.png', link: '/product/6879ed59e50a186e08b7c246' },
+    { src: '/images/bananaPromo.png', link: '/product/6879ed59e50a186e08b7c246' },
     // Add more image objects here if needed for the slideshow
 ];
 

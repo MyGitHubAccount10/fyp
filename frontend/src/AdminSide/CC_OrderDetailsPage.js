@@ -189,7 +189,8 @@ function OrderDetailPage() {
         return 'badge badge-yellow';
       case 'In Transit':
         return 'badge badge-blue';
-      case 'Declined':
+      case 'Cancelled':
+      case 'Rejected':
       case 'Returned to Sender':
       case 'Attempted Delivery':
         return 'badge badge-red';

@@ -170,7 +170,8 @@ function AllOrdersPage() {
             case 'Processing': return 'status-processing';
             case 'In Transit': return 'status-in-transit';
             case 'Delivered': return 'status-delivered';
-            case 'Declined': return 'status-declined';
+            case 'Cancelled': return 'status-cancelled';
+            case 'Rejected': return 'status-declined';
             case 'Returned to Sender': return 'status-declined';
             case 'Attempted Delivery': return 'status-declined';
             default: return 'status-processing';

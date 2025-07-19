@@ -117,6 +117,7 @@ function OrderHistoryPage() {
             case 'pending': return 'status-placed';
             case 'order placed': return 'status-placed';
             case 'cancelled': return 'status-cancelled';
+            case 'rejected': return 'status-declined';
             default: return '';
         }
     };

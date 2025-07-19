@@ -147,7 +147,7 @@ function AdminDashboard() {
         console.log('now:', now);
 
         // Define excluded statuses for revenue calculation
-        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Declined'];
+        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Rejected', 'Cancelled'];
 
         orders.forEach(order => {
         const orderDate = new Date(order.createdAt);
@@ -212,7 +212,7 @@ function AdminDashboard() {
         const sevenDays = [];
         
         // Define excluded statuses for revenue calculation
-        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Declined'];
+        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Rejected', 'Cancelled'];
         
         // Create array of last 7 days
         for (let i = 6; i >= 0; i--) {
@@ -264,7 +264,8 @@ function AdminDashboard() {
             case 'Processing': return 'status-processing';
             case 'In Transit': return 'status-in-transit';
             case 'Delivered': return 'status-delivered';
-            case 'Declined': return 'status-declined';
+            case 'Cancelled': return 'status-cancelled';
+            case 'Rejected': return 'status-declined';
             case 'Returned to Sender': return 'status-declined';
             case 'Attempted Delivery': return 'status-declined';
             default: return 'status-processing';

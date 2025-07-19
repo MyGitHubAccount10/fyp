@@ -1649,15 +1649,15 @@ select {
   padding: 12px 25px;
   font-size: 1em;
   font-weight: bold;
-  background-image: linear-gradient(to right, #FA704C, #00695C);
-  color: #fff;
+  background-image: linear-gradient(to right, #FFAB89, #B2DFDB);
+  color: #00695C;
   border: none;
   border-radius: 20px;
   cursor: pointer;
   align-content: center;
 }
 .hero-cta-button:hover {
-    background-image: linear-gradient(to left, #FA704C, #00695C);;
+    background-image: linear-gradient(to left, #FFAB89, #B2DFDB);
 }
 
 /* Popular Products Section */

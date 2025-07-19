@@ -1,8 +1,14 @@
+// src/OrderHistoryPage.js
+
 import React, { useState, useEffect } from 'react';
 import { useAuthContext } from './hooks/useAuthContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
+
+// --- MODIFIED: Added a constant for the 'Cancelled' status ID ---
+// NOTE: Replace this with the actual ID of your "Cancelled" status from your database.
+const CANCELLED_STATUS_ID = '687f3a5b6c7d8e9f0a1b2c3d';
 
 function OrderHistoryPage() {
     const [orders, setOrders] = useState([]);
@@ -10,6 +16,12 @@ function OrderHistoryPage() {
     const [error, setError] = useState(null);
     const { user } = useAuthContext();
     const [expandedOrderId, setExpandedOrderId] = useState(null);
+    
+    // --- MODIFIED: State for the cancellation modal ---
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [orderToCancelId, setOrderToCancelId] = useState(null);
+    const [isCancelling, setIsCancelling] = useState(false);
+
 
     useEffect(() => {
         const fetchFullOrderDetails = async () => {
@@ -45,25 +57,18 @@ function OrderHistoryPage() {
 
                             let items = [];
                             if (itemsResponse.ok) {
-                            const itemsData = await itemsResponse.json();
-
-                            // ✅ FIX: The data mapping now correctly reads from the 'product_image' field
-                            // that your backend is providing, instead of a non-existent 'images' array.
-                            const formattedItems = itemsData.map(item => ({
-                                ...item,
-                                type: 'product',
-                                // Safely access populated product data, with fallbacks
-                                product_name: item.product_id ? item.product_id.product_name : 'Product Not Found',
-                                // Use the 'product_image' field directly, with a fallback
-                                product_image: item.product_id ? item.product_id.product_image : 'default.jpg'
-                            }));
-                            items = [...items, ...formattedItems];
+                                const itemsData = await itemsResponse.json();
+                                const formattedItems = itemsData.map(item => ({
+                                    ...item,
+                                    type: 'product',
+                                    product_name: item.product_id ? item.product_id.product_name : 'Product Not Found',
+                                    product_image: item.product_id ? item.product_id.product_image : 'default.jpg'
+                                }));
+                                items = [...items, ...formattedItems];
                             }
 
                             if (customiseResponse.ok) {
                                 const customiseData = await customiseResponse.json();
-
-                                // Normalize to array: if it's not already an array, wrap it in one
                                 if (customiseData.length > 0) {
                                     const formattedCustomiseItems = customiseData.map(item => ({
                                         ...item,
@@ -108,6 +113,49 @@ function OrderHistoryPage() {
         setExpandedOrderId(prevId => (prevId === orderId ? null : orderId));
     };
 
+    // --- MODIFIED: Functions to handle the modal and cancellation ---
+    const handleOpenCancelModal = (orderId) => {
+        setOrderToCancelId(orderId);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setOrderToCancelId(null);
+    };
+
+    const handleConfirmCancel = async () => {
+        if (!orderToCancelId) return;
+
+        setIsCancelling(true);
+        try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/orders/${orderToCancelId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({ status_id: CANCELLED_STATUS_ID })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to cancel the order.');
+            }
+
+            // Update the UI: Remove the order from the list
+            setOrders(prevOrders => prevOrders.filter(order => order._id !== orderToCancelId));
+            
+            handleCloseModal();
+
+        } catch (error) {
+            alert(`Error: ${error.message}`);
+            console.error('Cancellation failed:', error);
+        } finally {
+            setIsCancelling(false);
+        }
+    };
+
     const getStatusClass = (status) => {
         if (!status) return '';
         switch (status.toLowerCase()) {
@@ -121,6 +169,9 @@ function OrderHistoryPage() {
             default: return '';
         }
     };
+    
+    // Define which statuses are cancellable by the user
+    const cancellableStatuses = ['Order Placed', 'Processing', 'Pending'];
 
     if (loading) return <div>Loading order history...</div>;
     if (error) return <div>Error: {error}</div>;
@@ -157,7 +208,7 @@ function OrderHistoryPage() {
                                             {order.items && order.items.length > 0 ? (
                                                 order.items.map(item => (
                                                     <li key={item._id} className="order-item-detail">
-                                                        { item.type === 'product' && (
+                                                        {item.type === 'product' && (
                                                             <>
                                                                 <img src={`${process.env.REACT_APP_API_URL}/images/${item.product_image}`} alt={item.product_name} className="order-item-image" />
                                                                 <div className="order-item-info">
@@ -172,13 +223,13 @@ function OrderHistoryPage() {
                                                                 </div>
                                                             </>
                                                         )}
-                                                        { item.type === 'customise' && (
+                                                        {item.type === 'customise' && (
                                                             <>
+                                                                <div className="order-item-info">
                                                                 <span>Top Image:</span> 
                                                                 <img src={`${process.env.REACT_APP_API_URL}/images/customise/${item.top_image}`} alt="Top Customisation" className="order-item-image" />
                                                                 <span>Bottom Image:</span> 
                                                                 <img src={`${process.env.REACT_APP_API_URL}/images/customise/${item.bottom_image}`} alt="Bottom Customisation" className="order-item-image" />
-                                                                <div className="order-item-info">
                                                                     <span>Type: {item.board_type}</span>
                                                                     <span>Shape: {item.board_shape}</span>
                                                                     <span>Size: {item.board_size}</span>
@@ -195,6 +246,18 @@ function OrderHistoryPage() {
                                                 <li>Items could not be loaded for this order.</li>
                                             )}
                                         </ul>
+                                        {/* --- MODIFIED: Added Cancel Order Button --- */}
+                                        {cancellableStatuses.includes(order.status) && (
+                                            <div className="order-actions-footer">
+                                                <button 
+                                                    className="btn-cancel"
+                                                    onClick={() => handleOpenCancelModal(order._id)}
+                                                    disabled={isCancelling}
+                                                >
+                                                    Cancel Order
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -203,6 +266,24 @@ function OrderHistoryPage() {
                 )}
             </div>
             <Footer />
+
+            {/* --- MODIFIED: Added Cancellation Confirmation Modal --- */}
+            {isModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h3>Confirm Cancellation</h3>
+                        <p>Are you sure you want to cancel this order? The items will be returned to stock and this action cannot be undone.</p>
+                        <div className="modal-actions">
+                            <button className="btn-secondary" onClick={handleCloseModal} disabled={isCancelling}>
+                                Go Back
+                            </button>
+                            <button className="btn-cancel" onClick={handleConfirmCancel} disabled={isCancelling}>
+                                {isCancelling ? 'Cancelling...' : 'Yes, Cancel Order'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }

@@ -4,7 +4,8 @@ const User = require('../models/UserModel');
 const OrderProduct = require('../models/OrderProductModel');
 const Product = require('../models/ProductModel');
 
-// Get all orders for admin (new function)
+// ... (getAllOrders, getOrders, getOrder, createOrder, deleteOrder functions are unchanged) ...
+
 const getAllOrders = async (req, res) => {
     try {
         const orders = await Order.find({})
@@ -17,14 +18,12 @@ const getAllOrders = async (req, res) => {
     }
 }
 
-// Get all orders for the logged-in user
 const getOrders = async (req, res) => {
     const user_id = req.user._id;
     const orders = await Order.find({ user_id }).sort({createdAt: -1});
     res.status(200).json(orders);
 }
 
-// Get a single order
 const getOrder = async (req, res) => {
     const {id} = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -38,11 +37,9 @@ const getOrder = async (req, res) => {
             return res.status(404).json({error: 'Order not found'});
         }
 
-        // Get user role to check permissions
         const userWithRole = await mongoose.model('User').findById(req.user._id).populate('role_id', 'role_name');
         const userRole = userWithRole.role_id.role_name;
 
-        // Allow admins and super admins to view any order, regular users can only view their own
         if (userRole !== 'Admin' && userRole !== 'Super Admin' && order.user_id._id.toString() !== req.user._id.toString()) {
             return res.status(403).json({ error: 'User not authorized to view this order' });
         }
@@ -53,7 +50,6 @@ const getOrder = async (req, res) => {
     }
 }
 
-// MODIFIED: Create a new order (postal_code logic removed)
 const createOrder = async (req, res) => {
     try {
         const {
@@ -61,12 +57,10 @@ const createOrder = async (req, res) => {
             status_id,
             payment_method,
             shipping_address,
-            // postal_code removed
             order_date,
             total_amount
         } = req.body;
 
-        // Validate required fields
         if (!user_id || !status_id || !payment_method || !shipping_address) {
             const missingFields = [];
             if (!user_id) missingFields.push('user_id');
@@ -87,13 +81,11 @@ const createOrder = async (req, res) => {
             return res.status(400).json({ error: 'Invalid status_id format' });
         }
 
-        // Create the order with validated data
         const order = await Order.create({
             user_id: new mongoose.Types.ObjectId(user_id),
             status_id: new mongoose.Types.ObjectId(status_id),
             payment_method,
             shipping_address,
-            // postal_code removed
             order_date: new Date(order_date),
             total_amount: parseFloat(total_amount)
         });
@@ -107,7 +99,6 @@ const createOrder = async (req, res) => {
     }
 }
 
-// Delete an order
 const deleteOrder = async (req, res) => {
     const {id} = req.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -120,6 +111,7 @@ const deleteOrder = async (req, res) => {
     res.status(200).json(order);
 }
 
+
 // Update an order
 const updateOrder = async (req, res) => {
     const {id} = req.params;
@@ -128,24 +120,19 @@ const updateOrder = async (req, res) => {
     }
     
     try {
-        // Get user role to check permissions
         const userWithRole = await mongoose.model('User').findById(req.user._id).populate('role_id', 'role_name');
         const userRole = userWithRole.role_id.role_name;
 
-        // Find the order first to check ownership and get current status
         const existingOrder = await Order.findById(id).populate('status_id', 'status_name');
         if (!existingOrder) {
             return res.status(404).json({error: 'Order not found'});
         }
 
-        // Allow admins and super admins to update any order, regular users can only update their own
         if (userRole !== 'Admin' && userRole !== 'Super Admin' && existingOrder.user_id.toString() !== req.user._id.toString()) {
             return res.status(403).json({ error: 'User not authorized to update this order' });
         }
 
-        // Handle stock adjustments if status is being changed
         if (req.body.status_id && req.body.status_id !== existingOrder.status_id._id.toString()) {
-            // Get the new status name
             const StatusModel = mongoose.model('Status');
             const newStatus = await StatusModel.findById(req.body.status_id);
             if (!newStatus) {
@@ -155,20 +142,21 @@ const updateOrder = async (req, res) => {
             const currentStatusName = existingOrder.status_id?.status_name;
             const newStatusName = newStatus.status_name;
 
+<<<<<<< HEAD
             // Define statuses that should restore stock (cancelled/failed orders)
             const stockRestoringStatuses = ['Attempted Delivery', 'Returned to Sender', 'Rejected', 'Cancelled'];
+=======
+            // ✅ FIX: Added 'Cancelled' to the list of statuses that restore stock.
+            const stockRestoringStatuses = ['Attempted Delivery', 'Returned to Sender', 'Declined', 'Cancelled'];
+>>>>>>> 96141018f3d2b58d58e1cbb6a373ef18e730656a
             
             const isCurrentlyRestoring = stockRestoringStatuses.includes(currentStatusName);
             const isNewlyRestoring = stockRestoringStatuses.includes(newStatusName);
 
-            // Get order products for this order (excluding custom items)
             const orderProducts = await OrderProduct.find({ order_id: id }).populate('product_id');
-
-            // Only process regular products (not custom items)
             const regularProducts = orderProducts.filter(op => op.product_id);
 
             if (isNewlyRestoring && !isCurrentlyRestoring) {
-                // Changing TO a stock-restoring status - add stock back
                 for (const orderProduct of regularProducts) {
                     const product = await Product.findById(orderProduct.product_id._id);
                     if (product) {
@@ -178,11 +166,9 @@ const updateOrder = async (req, res) => {
                     }
                 }
             } else if (!isNewlyRestoring && isCurrentlyRestoring) {
-                // Changing FROM a stock-restoring status - remove stock
                 for (const orderProduct of regularProducts) {
                     const product = await Product.findById(orderProduct.product_id._id);
                     if (product) {
-                        // Check if we have enough stock to deduct
                         if (product.warehouse_quantity >= orderProduct.order_qty) {
                             product.warehouse_quantity -= orderProduct.order_qty;
                             await product.save();
@@ -195,10 +181,8 @@ const updateOrder = async (req, res) => {
                     }
                 }
             }
-            // If both statuses are stock-restoring or both are non-stock-restoring, no stock change needed
         }
 
-        // Update the order
         const order = await Order.findOneAndUpdate({_id: id}, { ...req.body }, { new: true })
             .populate('user_id', 'full_name email username phone_number')
             .populate('status_id', 'status_name');

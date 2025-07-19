@@ -188,6 +188,7 @@
   justify-content: center;
   padding: 2rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
 }
 
 .side-indicator {
@@ -330,13 +331,15 @@
 }
 
 
-/* Image wrapper and controls */
+/* Image wrapper and controls - enhanced for touch */
 .image-wrapper {
   position: absolute;
   cursor: grab;
   transform-origin: center center;
   transition: all 0.2s ease;
   border: 2px solid transparent;
+  /* Improve touch performance */
+  touch-action: none;
 }
 
 .image-wrapper:hover,
@@ -367,6 +370,8 @@
   transition: all 0.2s ease;
   font-weight: bold;
   z-index: 10;
+  /* Improve touch interaction */
+  touch-action: manipulation;
 }
 
 .delete-btn:hover {
@@ -386,6 +391,8 @@
   cursor: nwse-resize;
   z-index: 10;
   transition: all 0.2s ease;
+  /* Improve touch interaction */
+  touch-action: none;
 }
 
 .resize-handle:hover {
@@ -406,6 +413,8 @@
   cursor: grab;
   z-index: 10;
   transition: all 0.2s ease;
+  /* Improve touch interaction */
+  touch-action: none;
 }
 
 .rotate-handle:hover {
@@ -423,21 +432,68 @@
   left: 10px;
   background: rgba(0,123,255,0.9);
   color: white;
-  padding: 0.3rem 0.7rem;
-  border-radius: 15px;
-  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
   font-weight: 600;
-  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+  z-index: 1000;
 }
 
-/* Draggable elements */
+/* Draggable elements - enhanced for touch */
 .draggable {
   position: absolute;
   user-select: none;
+  /* Improve touch performance */
+  touch-action: none;
+  -webkit-touch-callout: none;
 }
 
 .draggable:hover {
   z-index: 1000;
+}
+
+/* Prevent text selection during drag operations */
+.skimboard-preview.dragging * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+/* Mobile-specific touch improvements */
+@media (hover: none) and (pointer: coarse) {
+  /* This targets touch devices specifically */
+  
+  .image-wrapper:hover {
+    /* Remove hover effects on touch devices */
+    border-color: transparent;
+    box-shadow: none;
+  }
+  
+  .image-wrapper.selected {
+    /* Keep selected state styling */
+    border-color: #007bff;
+    box-shadow: 0 0 10px rgba(0,123,255,0.3);
+  }
+  
+  /* Make handles more visible on touch devices */
+  .delete-btn, .resize-handle, .rotate-handle {
+    opacity: 0.9;
+  }
+  
+  /* Improve button sizes for touch */
+  .side-button {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+  }
+  
+  /* Make color swatches larger for touch */
+  .color-swatch {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 /* Responsive design */
@@ -457,9 +513,61 @@
   .skimboard-preview {
     width: 240px;
     height: 380px;
+    /* Improve touch scrolling */
+    -webkit-overflow-scrolling: touch;
+    /* Prevent touch callouts */
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
   }
   
   .action-buttons {
     grid-template-columns: 1fr;
+  }
+
+  /* Make touch targets larger on mobile */
+  .delete-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    top: -16px;
+    right: -16px;
+  }
+
+  .resize-handle {
+    width: 24px;
+    height: 24px;
+    right: -12px;
+    bottom: -12px;
+  }
+
+  .rotate-handle {
+    width: 24px;
+    height: 24px;
+    top: -30px;
+  }
+
+  /* Improve text selection on mobile */
+  .skimboard-text {
+    min-width: 40px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Make image wrappers easier to touch */
+  .image-wrapper {
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  /* Prevent zoom on double tap for control elements */
+  .delete-btn, .resize-handle, .rotate-handle {
+    touch-action: manipulation;
   }
 }

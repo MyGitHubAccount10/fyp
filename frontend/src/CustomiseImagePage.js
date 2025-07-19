@@ -256,6 +256,12 @@ export default function CustomiseImagePage() {
   const updateImages = (newImages) => updateCurrentDesign({ images: newImages });  // Drag operations for moving/resizing elements
   const startDrag = (e, type, id = null) => {
     e.stopPropagation();
+    e.preventDefault(); // Prevent default touch behavior
+    
+    // Handle both mouse and touch events
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    
     const bounds = previewRef.current.getBoundingClientRect();
     
     // Save current state before starting drag
@@ -269,8 +275,8 @@ export default function CustomiseImagePage() {
       if (img) {
         const centerX = img.x + img.width / 2;
         const centerY = img.y + img.height / 2;
-        const mouseX = e.clientX - bounds.left;
-        const mouseY = e.clientY - bounds.top;
+        const mouseX = clientX - bounds.left;
+        const mouseY = clientY - bounds.top;
         const initialAngle = Math.atan2(mouseY - centerY, mouseX - centerX);
         
         dragState.current = {
@@ -285,9 +291,9 @@ export default function CustomiseImagePage() {
       dragState.current = {
         type,
         id,
-        offsetX: e.clientX - bounds.left - (type === 'text' ? currentDesign.textPosition.x : 
+        offsetX: clientX - bounds.left - (type === 'text' ? currentDesign.textPosition.x : 
           currentImages.find(img => img.id === id)?.x || 0),
-        offsetY: e.clientY - bounds.top - (type === 'text' ? currentDesign.textPosition.y : 
+        offsetY: clientY - bounds.top - (type === 'text' ? currentDesign.textPosition.y : 
           currentImages.find(img => img.id === id)?.y || 0)
       };
     }
@@ -302,10 +308,16 @@ export default function CustomiseImagePage() {
 
   const updateDrag = (e) => {
     if (!dragState.current.type) return;
+    
+    e.preventDefault(); // Prevent default touch behavior
+    
+    // Handle both mouse and touch events
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
     const bounds = previewRef.current.getBoundingClientRect();
-    const mouseX = e.clientX - bounds.left;
-    const mouseY = e.clientY - bounds.top;
+    const mouseX = clientX - bounds.left;
+    const mouseY = clientY - bounds.top;
 
     if (dragState.current.type === 'text') {
       // Move text
@@ -639,6 +651,8 @@ export default function CustomiseImagePage() {
         onMouseMove={updateDrag}
         onMouseUp={endDrag}
         onMouseLeave={endDrag}
+        onTouchMove={updateDrag}
+        onTouchEnd={endDrag}
       >
         <h1>Customize Your Skimboard</h1>
         
@@ -884,6 +898,14 @@ export default function CustomiseImagePage() {
             <div className="side-indicator">
               Currently editing: <span className="side-label">{currentSide.toUpperCase()} SIDE</span>
             </div>
+            
+            {/* Selection indicator outside of skimboard preview */}
+            {selectedElement && (
+              <div className="selection-info">
+                {selectedElement.type === 'text' ? 'Text Selected' : 'Image Selected'}
+              </div>
+            )}
+            
             <div
               ref={previewRef} 
               className="skimboard-preview" 
@@ -893,6 +915,11 @@ export default function CustomiseImagePage() {
                   : currentDesign.color 
               }}
               onClick={() => setSelectedElement(null)}
+              onTouchStart={(e) => {
+                if (e.target === e.currentTarget) {
+                  setSelectedElement(null);
+                }
+              }}
               >
               {/* Text Element */}
               <div
@@ -909,6 +936,7 @@ export default function CustomiseImagePage() {
                     : (currentDesign.textColor === '#FFFFFF' ? '2px 2px 4px rgba(0,0,0,0.8)' : '2px 2px 4px rgba(255,255,255,0.8)')
                 }}
                 onMouseDown={(e) => startDrag(e, 'text')}
+                onTouchStart={(e) => startDrag(e, 'text')}
                 onClick={(e) => {
                   e.stopPropagation();
                   setSelectedElement({ type: 'text' });
@@ -934,6 +962,7 @@ export default function CustomiseImagePage() {
                     zIndex: img.zIndex,
                   }}
                   onMouseDown={(e) => startDrag(e, 'image', img.id)}
+                  onTouchStart={(e) => startDrag(e, 'image', img.id)}
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedElement({ type: 'image', id: img.id });
@@ -955,6 +984,12 @@ export default function CustomiseImagePage() {
                         className="delete-btn" 
                         onClick={(e) => {
                           e.stopPropagation();
+                          e.preventDefault();
+                          deleteImage(img.id);
+                        }}
+                        onTouchEnd={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
                           deleteImage(img.id);
                         }}
                         title="Delete image"
@@ -965,25 +1000,20 @@ export default function CustomiseImagePage() {
                       <div
                         className="resize-handle"
                         onMouseDown={(e) => startDrag(e, 'resize', img.id)}
+                        onTouchStart={(e) => startDrag(e, 'resize', img.id)}
                         title="Resize"
                       />
                       
                       <div
                         className="rotate-handle"
                         onMouseDown={(e) => startDrag(e, 'rotate', img.id)}
+                        onTouchStart={(e) => startDrag(e, 'rotate', img.id)}
                         title="Rotate"
                       />
                     </>
                   )}
                 </div>
               ))}
-
-              {/* Selection indicator */}
-              {selectedElement && (
-                <div className="selection-info">
-                  {selectedElement.type === 'text' ? 'Text Selected' : 'Image Selected'}
-                </div>
-              )}
             </div>
           </div>
         </div>

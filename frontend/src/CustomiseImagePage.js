@@ -26,7 +26,8 @@ const DEFAULT_DESIGN = {
   textColor: '#FFFFFF',
   textStrokeColor: '#000000',
   enableTextStroke: false,
-  backgroundPattern: 'solid'
+  backgroundPattern: 'solid',
+  gradientContrast: 20
 };
 
 
@@ -78,15 +79,12 @@ const generateSkimboardImage = async (designData, previewElement, scale = 2) => 
   if (designData.backgroundPattern === 'gradient') {
     const gradient = canvaContext.createLinearGradient(0, 0, width, height);
     gradient.addColorStop(0, designData.color);
-    gradient.addColorStop(1, createGradient(designData.color, -20));
+    gradient.addColorStop(1, createGradient(designData.color, -(designData.gradientContrast || 20)));
     canvaContext.fillStyle = gradient;
   } else {
     canvaContext.fillStyle = designData.color;
   }
 
-       canvaContext.fillStyle = designData.color;
-
-  
   canvaContext.fillRect(0, 0, width, height);
 
   // Calculate scaling factors
@@ -698,6 +696,19 @@ export default function CustomiseImagePage() {
                 />
               </label>
 
+              {currentDesign.backgroundPattern === 'gradient' && (
+                <label>
+                  Gradient Contrast: {currentDesign.gradientContrast}%
+                  <input
+                    type="range"
+                    min="5"
+                    max="50"
+                    value={currentDesign.gradientContrast}
+                    onChange={(e) => updateCurrentDesignWithHistory({ gradientContrast: parseInt(e.target.value) })}
+                  />
+                </label>
+              )}
+
               <div className="preset-colors">
                 <span>Quick Colors:</span>
                 <div className="color-swatches">
@@ -911,7 +922,7 @@ export default function CustomiseImagePage() {
               className="skimboard-preview" 
               style={{ 
                 background: currentDesign.backgroundPattern === 'gradient' 
-                  ? `linear-gradient(135deg, ${currentDesign.color}, ${createGradient(currentDesign.color, -20)})` 
+                  ? `linear-gradient(135deg, ${currentDesign.color}, ${createGradient(currentDesign.color, -(currentDesign.gradientContrast || 20))})` 
                   : currentDesign.color 
               }}
               onClick={() => setSelectedElement(null)}

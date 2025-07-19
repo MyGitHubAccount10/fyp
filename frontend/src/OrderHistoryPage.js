@@ -8,7 +8,7 @@ import Footer from './Footer';
 
 // --- MODIFIED: Added a constant for the 'Cancelled' status ID ---
 // NOTE: Replace this with the actual ID of your "Cancelled" status from your database.
-const CANCELLED_STATUS_ID = '684d00b7df30da21ceb3e554';
+const CANCELLED_STATUS_ID = '687f3a5b6c7d8e9f0a1b2c3d';
 
 function OrderHistoryPage() {
     const [orders, setOrders] = useState([]);
@@ -224,11 +224,11 @@ function OrderHistoryPage() {
                                                         )}
                                                         {item.type === 'customise' && (
                                                             <>
+                                                                <div className="order-item-info">
                                                                 <span>Top Image:</span> 
                                                                 <img src={`${process.env.REACT_APP_API_URL}/images/customise/${item.top_image}`} alt="Top Customisation" className="order-item-image" />
                                                                 <span>Bottom Image:</span> 
                                                                 <img src={`${process.env.REACT_APP_API_URL}/images/customise/${item.bottom_image}`} alt="Bottom Customisation" className="order-item-image" />
-                                                                <div className="order-item-info">
                                                                     <span>Type: {item.board_type}</span>
                                                                     <span>Shape: {item.board_shape}</span>
                                                                     <span>Size: {item.board_size}</span>

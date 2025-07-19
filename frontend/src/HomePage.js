@@ -188,7 +188,7 @@ const HomePage = () => {
         </section>
 
         {/* Social Media Section */}
-        <section className="social-media-section container">
+        <section className="social-media-section">
             <h2 className="social-media-title">Catch The Vibe</h2>
             <div className="social-embeds-container">
                 {/* The entire <div> for the Instagram post has been removed. */}

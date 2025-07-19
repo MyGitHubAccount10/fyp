@@ -2557,43 +2557,40 @@ input[type="password"]::-ms-clear {
    Social Media Section Styles
    ================================= */
 
+/* =======================================================
+   Social Media Section Styles (Card for Single Post)
+   ======================================================= */
+
 .social-media-section {
+  /* --- 1. Re-create the Card --- */
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+
+  /* --- 2. Control the Sizing and Spacing --- */
+  /* Set a max-width to create the frame. 400px is a good size for a single TikTok embed. */
+  max-width: 400px; 
+  /* Add padding inside the card so the content doesn't touch the edges. */
+  padding: 40px 25px; 
+  /* Center the entire card on the page and give it vertical breathing room. */
+  margin: 60px auto; 
+
+  /* --- 3. Align the Content --- */
   text-align: center;
-  padding: 50px 20px;
-  
-  /* MODIFIED: Styles to match the product cards */
-  background-color: #fff; /* Match product card background */
-  border-radius: 12px;    /* Match product card corner radius */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08); /* Add a matching card shadow */
+  box-sizing: border-box;
 }
 
 .social-media-title {
-  font-size: 2.5rem;
-  margin-bottom: 40px;
+  font-size: 2.2rem;
+  margin-bottom: 25px;
   color: #333;
   font-weight: 700;
 }
 
 .social-embeds-container {
+  /* This ensures the TikTok embed itself is centered within the card */
   display: flex;
-  justify-content: center; /* Center the items */
-  align-items: flex-start; /* Align items to the top */
-  gap: 40px; /* Space between the embeds */
-  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.social-embed-item {
-  flex: 1; /* Allow items to grow */
-  min-width: 325px; /* Minimum width before wrapping */
-  max-width: 540px; /* Maximum width matching Instagram's embed */
-}
-
-/* Ensure the blockquotes take up the space and are centered */
-.social-embed-item .instagram-media,
-.social-embed-item .tiktok-embed {
-  margin: 0 auto !important; /* Center the embed within its container */
+  justify-content: center;
 }
 
 

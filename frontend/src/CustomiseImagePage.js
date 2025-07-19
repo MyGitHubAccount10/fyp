@@ -984,10 +984,12 @@ export default function CustomiseImagePage() {
                         className="delete-btn" 
                         onClick={(e) => {
                           e.stopPropagation();
+                          e.preventDefault();
                           deleteImage(img.id);
                         }}
-                        onTouchStart={(e) => {
+                        onTouchEnd={(e) => {
                           e.stopPropagation();
+                          e.preventDefault();
                           deleteImage(img.id);
                         }}
                         title="Delete image"

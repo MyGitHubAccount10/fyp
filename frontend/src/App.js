@@ -20,6 +20,8 @@ import PlaceOrderPage from './PlaceOrderPage';
 import OrderHistoryPage from './OrderHistoryPage';
 import CategoryPage from './CategoryPage';
 import SearchPage from './SearchPage';
+import CategoriesPage from './CategoriesPage';
+import PopularProductsPage from './PopularProductsPage';
 import Customerise from './CustomisePage';
 import PageNotFound from './PageNotFound';
 
@@ -57,6 +59,13 @@ function App() {
         <Route path="about" element={<AboutPage />} />
         <Route path="contact" element={<ContactPage />} />
         <Route path="faq" element={<FaqPage />} />
+
+        {/* New routes for category selection */}
+        <Route path="categories" element={<CategoriesPage />} />
+        <Route path="popular-products" element={<PopularProductsPage />} />
+        
+        {/* Category routes */}
+        <Route path="category/:categoryName" element={<CategoryPage />} />
 
         <Route path="products">
           <Route path='skimboards' element={<CategoryPage categoryName="Skimboards" />} />

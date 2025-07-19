@@ -1112,14 +1112,14 @@ select {
 }
 .order-card-details p {
     margin: 0 0 10px 0;
-    font-size: 0.9em;
-    color: #444;
+    font-size: 0.9rem;
+    color: #555;
     word-break: break-word;
     overflow-wrap: break-word;
 }
 .order-card-details strong {
     color: #000000;
-    margin-bottom: 1rem;
+    margin-bottom: 0.9rem;
     display: inline-block;
 }
 .order-items-list {
@@ -1154,24 +1154,24 @@ select {
     gap: 0.75rem 1rem;
     flex-grow: 1;
     align-items: start;
-    font-size: 0.9em;
+    font-size: 0.9rem;
 }
 .order-item-info strong {
     grid-column: 1 / -1;
     font-weight: 600;
     color: #333;
     margin-bottom: 0.25rem;
-    font-size: 1.05em;
+    font-size: 0.9rem;
 }
 .order-item-info span {
     color: #555;
-    font-size: 0.9em;
+    font-size: 0.9rem;
     line-height: 1.4;
 }
 .order-item-info span:last-child {
     color: #e53935;
     font-weight: bold;
-    font-size: 1em;
+    font-size: 0.9rem;
 }
 .order-actions-footer {
     margin-top: 15px;
@@ -1221,7 +1221,7 @@ select {
     .order-item-info {
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
         gap: 0.5rem 0.75rem;
-        font-size: 0.85em;
+        font-size: 0.9rem;
     }
     
     .order-item-image {
@@ -1243,7 +1243,7 @@ select {
     }
     
     .order-date, .order-status {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
     
     .order-total {
@@ -1253,7 +1253,7 @@ select {
     .order-item-info {
         grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
         gap: 0.4rem 0.6rem;
-        font-size: 0.85em;
+        font-size: 0.9rem;
     }
     
     .order-item-detail {
@@ -1300,7 +1300,7 @@ select {
     }
     
     .order-date, .order-status {
-        font-size: 0.75rem;
+        font-size: 0.9rem;
     }
     
     .order-status {
@@ -1338,7 +1338,7 @@ select {
     
     .order-item-info strong {
         margin-bottom: 0.5rem;
-        font-size: 1em;
+        font-size: 0.9rem;
     }
     
     .order-item-info span {
@@ -1382,7 +1382,7 @@ select {
     }
     
     .order-date, .order-status {
-        font-size: 0.65rem;
+        font-size: 0.9rem;
     }
     
     .order-status {
@@ -1403,11 +1403,11 @@ select {
     }
     
     .order-item-info {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
     }
     
     .order-item-info strong {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
 }
 

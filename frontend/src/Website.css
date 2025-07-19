@@ -3048,3 +3048,27 @@ h2 {
     background-color: #f5f5f5;
     cursor: not-allowed;
 }
+
+/* Add a transition to the base order card for a smooth effect */
+.order-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: background-color 0.4s ease, opacity 0.4s ease; /* This is the new line */
+}
+
+/* This new class will be added to cancelled orders */
+.cancelled-order {
+    background-color: #f5f5f5; /* A light grey background */
+    opacity: 0.7; /* Make it slightly transparent */
+    pointer-events: none; /* Prevent clicking on a cancelled order */
+}
+
+/* Make sure the header of a cancelled order isn't clickable */
+.cancelled-order .order-card-header {
+    cursor: default;
+}
+
+/* ... keep all your other styles ... */

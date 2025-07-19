@@ -6,9 +6,8 @@ import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 
-// --- MODIFIED: Added a constant for the 'Cancelled' status ID ---
-// NOTE: Replace this with the actual ID of your "Cancelled" status from your database.
-const CANCELLED_STATUS_ID = '687f3a5b6c7d8e9f0a1b2c3d';
+// Use the correct ID for the "Cancelled" status
+const CANCELLED_STATUS_ID = '687f3a5b6c7d8e9f0a1b2c3d'; 
 
 function OrderHistoryPage() {
     const [orders, setOrders] = useState([]);
@@ -17,13 +16,13 @@ function OrderHistoryPage() {
     const { user } = useAuthContext();
     const [expandedOrderId, setExpandedOrderId] = useState(null);
     
-    // --- MODIFIED: State for the cancellation modal ---
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [orderToCancelId, setOrderToCancelId] = useState(null);
     const [isCancelling, setIsCancelling] = useState(false);
 
 
     useEffect(() => {
+        // ... (this useEffect hook remains unchanged) ...
         const fetchFullOrderDetails = async () => {
             if (!user) {
                 setError('User is not authenticated');
@@ -113,7 +112,6 @@ function OrderHistoryPage() {
         setExpandedOrderId(prevId => (prevId === orderId ? null : orderId));
     };
 
-    // --- MODIFIED: Functions to handle the modal and cancellation ---
     const handleOpenCancelModal = (orderId) => {
         setOrderToCancelId(orderId);
         setIsModalOpen(true);
@@ -143,10 +141,16 @@ function OrderHistoryPage() {
                 throw new Error(errorData.error || 'Failed to cancel the order.');
             }
 
-            // Update the UI: Remove the order from the list
-            setOrders(prevOrders => prevOrders.filter(order => order._id !== orderToCancelId));
+            // ✅ FIX 1: Update the order's status in the state instead of removing it.
+            // This uses .map() to create a new array with the modified order.
+            setOrders(prevOrders => prevOrders.map(order => 
+                order._id === orderToCancelId 
+                    ? { ...order, status: 'Cancelled' } // If this is the order, update its status
+                    : order // Otherwise, keep the order as is
+            ));
             
             handleCloseModal();
+            alert('Order cancelled'); // The alert now happens *after* the UI state has been updated.
 
         } catch (error) {
             alert(`Error: ${error.message}`);
@@ -165,12 +169,10 @@ function OrderHistoryPage() {
             case 'pending': return 'status-placed';
             case 'order placed': return 'status-placed';
             case 'cancelled': return 'status-cancelled';
-            case 'rejected': return 'status-declined';
             default: return '';
         }
     };
     
-    // Define which statuses are cancellable by the user
     const cancellableStatuses = ['Order Placed', 'Processing', 'Pending'];
 
     if (loading) return <div>Loading order history...</div>;
@@ -186,7 +188,11 @@ function OrderHistoryPage() {
                 ) : (
                     <div className="order-list">
                         {orders.map(order => (
-                            <div className="order-card" key={order._id}>
+                            // ✅ FIX 2: Add a conditional class for cancelled orders
+                            <div 
+                                className={`order-card ${order.status === 'Cancelled' ? 'cancelled-order' : ''}`} 
+                                key={order._id}
+                            >
                                 <div className="order-card-header" onClick={() => toggleOrderDetails(order._id)} role="button" tabIndex="0" aria-expanded={expandedOrderId === order._id}>
                                     <div className="order-info-left">
                                         <span className={`order-status ${getStatusClass(order.status)}`}>{order.status}</span>
@@ -205,6 +211,7 @@ function OrderHistoryPage() {
                                         <p><strong>Shipping Address:</strong> {order.shipping_address}</p>
                                         <strong>Items:</strong>
                                         <ul className="order-items-list">
+                                            {/* ... (items list mapping remains the same) ... */}
                                             {order.items && order.items.length > 0 ? (
                                                 order.items.map(item => (
                                                     <li key={item._id} className="order-item-detail">
@@ -225,11 +232,11 @@ function OrderHistoryPage() {
                                                         )}
                                                         {item.type === 'customise' && (
                                                             <>
-                                                                <div className="order-item-info">
                                                                 <span>Top Image:</span> 
                                                                 <img src={`${process.env.REACT_APP_API_URL}/images/customise/${item.top_image}`} alt="Top Customisation" className="order-item-image" />
                                                                 <span>Bottom Image:</span> 
                                                                 <img src={`${process.env.REACT_APP_API_URL}/images/customise/${item.bottom_image}`} alt="Bottom Customisation" className="order-item-image" />
+                                                                <div className="order-item-info">
                                                                     <span>Type: {item.board_type}</span>
                                                                     <span>Shape: {item.board_shape}</span>
                                                                     <span>Size: {item.board_size}</span>
@@ -246,7 +253,7 @@ function OrderHistoryPage() {
                                                 <li>Items could not be loaded for this order.</li>
                                             )}
                                         </ul>
-                                        {/* --- MODIFIED: Added Cancel Order Button --- */}
+                                        {/* The cancel button will now automatically disappear when status changes */}
                                         {cancellableStatuses.includes(order.status) && (
                                             <div className="order-actions-footer">
                                                 <button 
@@ -267,7 +274,6 @@ function OrderHistoryPage() {
             </div>
             <Footer />
 
-            {/* --- MODIFIED: Added Cancellation Confirmation Modal --- */}
             {isModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal-content">

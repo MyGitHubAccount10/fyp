@@ -1,7 +1,7 @@
 // src/Header.js
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom'; // MODIFIED: Import useNavigate
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import './Website.css';
 
 // --- ICONS (No Changes) ---
@@ -52,6 +52,7 @@ const Header = () => {
     const profileDropdownRef = useRef(null);
     const user = JSON.parse(localStorage.getItem('user'));
     const navigate = useNavigate(); // ✅ 2. Get the navigate function
+    const location = useLocation();
 
     const toggleProductDropdown = (e) => {
         e.preventDefault();
@@ -75,6 +76,14 @@ const Header = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
+
+
+    useEffect(() => {
+        // Close the product dropdown if the user navigates to a different page
+        if (location.pathname.startsWith('/product') || location.pathname === '/cart') {
+            setIsProductDropdownOpen(true);
+        }
+    }, [location.pathname]);
 
     const handleLogout = () => {
         localStorage.removeItem('user');

@@ -68,8 +68,12 @@ const LoginPage = () => {
       localStorage.setItem('user', JSON.stringify(data));
       dispatch({ type: 'LOGIN', payload: data });
 
+      // ✅ FIX: The navigation logic is updated here.
+      // It retrieves the intended destination (e.g., '/place-order') from the location state.
       const from = location.state?.from || '/';
-      navigate(from, { replace: true });
+      // It then navigates to that destination, passing the *entire* state object along.
+      // This ensures that the 'buyNowItem' is preserved and passed to PlaceOrderPage.
+      navigate(from, { replace: true, state: location.state });
 
     } catch (error) {
       console.error('Login error:', error);

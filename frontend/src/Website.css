@@ -29,13 +29,12 @@ header {
 }
 
 .burger-btn {
+  display: none;
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  z-index: 1002;
 }
 .burger-btn svg {
   width: 28px;
@@ -208,45 +207,33 @@ h2 {
     box-sizing: border-box;
 }
 
-/* ✅ FIX: Consolidated and corrected grid rules. */
-/* This prevents items inside the grid from stretching. */
+/* ✅ FIX: Base styles for all grid containers. */
 .product-grid,
 .popular-products-grid,
 .similar-products-grid {
-    display: grid;
-    gap: 2rem;
+    gap: 20px;
     width: 100%;
     max-width: 1200px;
-    justify-content: start; /* This is the key to preventing stretching. */
 }
 
 .product-grid {
+    display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    justify-content: start;
 }
 
 .popular-products-grid {
-  /* Change from grid to flex to prevent stretching */
-  justify-content: center; /* Center the items */
+  /* Use flex to prevent stretching and center items */
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  justify-content: center;
 }
 
 .similar-products-grid {
-  /* Change from grid to flex to prevent stretching */
+  /* Use flex to prevent stretching */
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-}
-
-.similar-product-card {
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  text-align: center;
-  /* ADD THIS LINE: A fixed width for consistency */
-  width: 220px; 
 }
 
 /* --- Product Cards (All Variants) --- */
@@ -256,27 +243,24 @@ h2 {
 .popular-product-card,
 .similar-product-card {
     background-color: #fff;
-    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     display: flex;
     flex-direction: column;
     transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    text-align: center;
 }
 
 .product-card {
   width: 280px;
   margin: 0; /* Let grid gap handle spacing */
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .popular-product-card, .similar-product-card {
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  text-align: center;
-  /* ADD THIS LINE: A fixed width for consistency */
   width: 220px; 
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
 /* ✅ FIX: Base styles and transitions for all card captions. */
@@ -2332,14 +2316,6 @@ select {
 }
 
 /* --- Responsive Header & Sidebar --- */
-.burger-btn {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  z-index: 1002;
-}
 .sidebar {
   position: fixed;
   top: 0;
@@ -2591,512 +2567,3 @@ input[type="password"]::-ms-clear {
   display: flex;
   justify-content: center;
 }
-
-
-/* --- START OF UPDATED FILE: Website.css --- */
-/* Website.css */
-
-/* --- Global & Body --- */
-body { /* Apply to body if this CSS is global, or to a wrapper if component-scoped */
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #FFF0E1;
-  color: #000000;
-}
-
-/* --- Header Styles (Based on your updated navbar design) --- */
-header {
-  background-color: #FA704C;
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #000000;
-  position: relative;
-  z-index: 100;
-}
-
-.header-left-content,
-.header-right-content {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.burger-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.burger-btn svg {
-  width: 28px;
-  height: 28px;
-}
-
-.header-logo-link .header-logo-img {
-  height: 30px;
-  vertical-align: middle;
-}
-
-.header-nav-links a {
-  color: #000000;
-  text-decoration: none;
-  margin: 0 8px;
-  font-weight: bold;
-  font-size: 0.9em;
-}
-.header-nav-links a:hover {
-  text-decoration: underline;
-}
-
-.header-nav-links .product-dropdown-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  cursor: pointer;
-}
-.header-nav-links .product-dropdown-toggle:hover {
-    text-decoration: underline;
-}
-
-
-.product-arrow {
-  width: 14px;
-  height: 14px;
-  stroke: #000000;
-  stroke-width: 2.5px;
-  fill: none;
-  transition: transform 0.2s ease-in-out;
-  vertical-align: middle;
-}
-
-.product-arrow.up {
-  transform: rotate(180deg);
-}
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  background-color: #fff;
-  border-radius: 20px;
-  padding: 6px 12px;
-  border: 1px solid #D9D9D9;
-}
-.search-bar input[type="search"] {
-  border: none;
-  outline: none;
-  background: transparent;
-  margin-right: 8px;
-  font-size: 0.9em;
-  color: #000000;
-  width: 150px;
-}
-.search-bar input[type="search"]::placeholder {
-  color: #D9D9D9;
-}
-.search-bar button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-}
-.search-bar button svg {
-  width: 18px;
-  height: 18px;
-}
-
-.header-icon-link svg {
-  width: 24px;
-  height: 24px;
-  vertical-align: middle;
-}
-.header-icon-link:hover svg {
-  opacity: 0.7;
-}
-
-.header-separator {
-  width: 1px;
-  height: 20px;
-  background-color: #000000;
-  margin: 0 5px;
-}
-
-.header-social-icons a img {
-  height: 22px;
-  width: 22px;
-  vertical-align: middle;
-}
-.header-social-icons a:not(:last-child) {
-    margin-right: 8px;
-}
-
-/* --- Secondary Navigation Bar Styles --- */
-.secondary-navbar {
-  background-color: #E0F2F1;
-  padding: 12px 20px;
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  border-bottom: 1px solid #B2DFDB;
-}
-
-.secondary-navbar-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #000000 !important;
-  text-decoration: none !important;
-  font-size: 0.9em;
-  font-weight: 500;
-}
-
-.secondary-navbar-item:hover {
-  text-decoration: none !important;
-}
-
-/* --- Container & General Page Elements --- */
-.container {
-  padding: 20px;
-  max-width: 960px;
-  margin: 20px auto;
-}
-h2 {
-    font-weight: 700;
-    font-size: 1.8em;
-    margin-bottom: 25px;
-}
-
-/* --- Product Page Styles --- */
-.title-section {
-  width: 100%;
-  background-color: #FFAB89;
-  margin: 30px 0;
-  padding: 30px 0;
-  text-align: center;
-}
-
-.text-section .hero-cta-button {
-    margin-top: 1rem;
-}
-
-.title {
-  font-size: 2.5em;
-  color: #000000;
-  margin: 0;
-}
-
-/* --- Grids for Product Cards --- */
-
-/* ✅ FIX: This container centers the grid block itself. */
-.product-grid-container {
-    display: flex;
-    justify-content: center;
-    padding: 2rem;
-    min-height: 50vh;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-/* ✅ FIX: Consolidated and corrected grid rules. */
-/* This prevents items inside the grid from stretching. */
-.product-grid,
-.popular-products-grid,
-.similar-products-grid {
-    display: grid;
-    gap: 2rem;
-    width: 100%;
-    max-width: 1200px;
-    justify-content: start; /* This is the key to preventing stretching. */
-}
-
-.product-grid {
-  display: grid;
-  gap: 20px;
-  max-width: 1200px;
-  width: 100%;
-  justify-items: center;
-}
-
-.popular-products-grid {
-  /* Change from grid to flex to prevent stretching */
-  justify-content: center; /* Center the items */
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.similar-products-grid {
-  /* Change from grid to flex to prevent stretching */
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.similar-product-card {
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  text-align: center;
-  /* ADD THIS LINE: A fixed width for consistency */
-  width: 220px; 
-}
-
-/* --- Product Cards (All Variants) --- */
-
-/* ✅ FIX: Base styles and transitions for all cards. */
-.product-card,
-.popular-product-card,
-.similar-product-card {
-    background-color: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-}
-
-.product-card {
-  width: 280px;
-  margin: 0; /* Let grid gap handle spacing */
-}
-
-.popular-product-card, .similar-product-card {
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  text-align: center;
-  /* ADD THIS LINE: A fixed width for consistency */
-  width: 220px; 
-}
-
-/* ✅ FIX: Base styles and transitions for all card captions. */
-.product-info,
-.popular-product-card-caption,
-.similar-product-caption {
-    background-color: #E0F2F1;
-    padding: 15px;
-    color: #00695C;
-    font-weight: 500;
-    text-align: center;
-    transition: background-color 0.2s ease-out; /* Smooth color change */
-}
-
-.product-info {
-  flex-grow: 1;
-}
-
-.popular-product-card-caption,
-.similar-product-caption {
-    font-size: 0.95em;
-}
-
-/* ✅ FIX: Unified hover effect for ALL cards. */
-.product-card:hover,
-.popular-product-card:hover,
-.similar-product-card:hover {
-    transform: translateY(-5px); /* Lifts the card up */
-    box-shadow: 0 5px 15px rgba(0,0,0,0.12); /* Adds more shadow */
-}
-
-/* ✅ FIX: Add darkening effect to caption on hover for ALL cards. */
-.product-card:hover .product-info,
-.popular-product-card:hover .popular-product-card-caption,
-.similar-product-card:hover .similar-product-caption {
-    background-color: #B2DFDB; /* Darker teal color */
-}
-
-.product-image,
-.popular-product-card-image,
-.similar-product-image {
-  width: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.product-image {
-  height: 250px;
-}
-
-.popular-product-card-image {
-  height: 200px;
-}
-
-.similar-product-image {
-  height: 180px;
-}
-
-.product-name {
-  font-size: 1.1em;
-  font-weight: bold;
-  color: #00695C;
-  margin: 0 0 5px 0;
-}
-
-.no-products-message {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #555;
-    width: 100%;
-}
-
-
-/*---------------------------------------------------------------------*/
-
-/* Add this to your Website.css file */
-
-/* --- Order History Page Enhancements --- */
-
-.order-actions-footer {
-    text-align: right;
-    padding-top: 15px;
-    margin-top: 15px;
-    border-top: 1px solid #eee;
-}
-
-.btn-cancel {
-    background-color: #e74c3c; /* A distinct red color */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-
-.btn-cancel:hover {
-    background-color: #c0392b;
-}
-
-.btn-cancel:disabled {
-    background-color: #f5b7b1;
-    cursor: not-allowed;
-}
-
-
-/* --- General Purpose Modal Styles --- */
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background-color: white;
-    padding: 25px 30px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 450px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    text-align: center;
-}
-
-.modal-content h3 {
-    margin-top: 0;
-    font-size: 1.5em;
-    color: #333;
-}
-
-.modal-content p {
-    margin-bottom: 25px;
-    color: #555;
-    line-height: 1.6;
-}
-
-.modal-actions {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-}
-
-.modal-actions .btn-secondary {
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ccc;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.modal-actions .btn-secondary:hover {
-    background-color: #e0e0e0;
-}
-
-.modal-actions .btn-secondary:disabled {
-    background-color: #f5f5f5;
-    cursor: not-allowed;
-}
-
-/* Add a transition to the base order card for a smooth effect */
-.order-card {
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    transition: background-color 0.4s ease, opacity 0.4s ease; /* This is the new line */
-}
-
-
-
-.cancelled-order {
-    background-color: #f5f5f5; /* A light grey background */
-    opacity: 0.7; /* Make it slightly transparent */
-    /* ✅ FIX: Removed 'pointer-events: none;' to make the card clickable again */
-}
-
-/* Make sure the header of a cancelled order remains clickable */
-.cancelled-order .order-card-header {
-    cursor: pointer;
-}
-
-
-/* --- Styling for the new Status Filter --- */
-.page-header-with-filter {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px; /* Space between header and order list */
-}
-
-.filter-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.filter-container label {
-    font-weight: 500;
-    color: #555;
-}
-
-.status-filter-select {
-    padding: 8px 12px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    font-size: 1em;
-    cursor: pointer;
-}
-
-/* ... keep all your other styles ... */

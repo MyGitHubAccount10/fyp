@@ -1101,9 +1101,10 @@ select {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    transform: rotate(180deg);
 }
 .details-arrow.expanded {
-    transform: rotate(180deg);
+    transform: rotate(0deg);
 }
 .order-card-details {
     padding: 1.5rem;

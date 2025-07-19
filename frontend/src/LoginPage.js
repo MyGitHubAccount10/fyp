@@ -25,7 +25,6 @@ const LoginPage = () => {
   const location = useLocation();
   const { dispatch } = useAuthContext();
 
-  // ... (validation and handleSubmit functions are unchanged) ...
   const validateEmail = (email) => {
     if (!email) return 'Email is required.';
     if (!/^\S+@\S+\.\S+$/.test(email)) return 'Please enter a valid email format.';
@@ -68,11 +67,7 @@ const LoginPage = () => {
       localStorage.setItem('user', JSON.stringify(data));
       dispatch({ type: 'LOGIN', payload: data });
 
-      // ✅ FIX: The navigation logic is updated here.
-      // It retrieves the intended destination (e.g., '/place-order') from the location state.
       const from = location.state?.from || '/';
-      // It then navigates to that destination, passing the *entire* state object along.
-      // This ensures that the 'buyNowItem' is preserved and passed to PlaceOrderPage.
       navigate(from, { replace: true, state: location.state });
 
     } catch (error) {
@@ -87,9 +82,10 @@ const LoginPage = () => {
     navigate('/signup', { state: location.state });
   };
   
-  // --- ADDED: Handler to navigate to the forgot password page ---
   const handleForgotPassword = () => {
-    navigate('/forgot-password');
+    // ✅ FIX: When navigating to forgot-password, pass the current state along.
+    // This keeps the { from, buyNowItem } information alive for the next step.
+    navigate('/forgot-password', { state: location.state });
   };
 
   const inputStyle = { display: 'block', width: '100%', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
@@ -135,7 +131,6 @@ const LoginPage = () => {
             {passwordError && <p style={errorMessageStyle}>{passwordError}</p>}
             
             <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-              {/* --- MODIFIED: Added onClick handler to this button --- */}
               <button
                 type="button"
                 className="update-cart-btn"

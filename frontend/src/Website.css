@@ -2592,7 +2592,6 @@ input[type="password"]::-ms-clear {
   /* This ensures the TikTok embed itself is centered within the card */
   display: flex;
   justify-content: center;
-<<<<<<< HEAD
 }
 
 
@@ -3048,6 +3047,4 @@ h2 {
 .modal-actions .btn-secondary:disabled {
     background-color: #f5f5f5;
     cursor: not-allowed;
-=======
->>>>>>> ac76982ac041165bafc8fe826fd42f76854a860b
 }

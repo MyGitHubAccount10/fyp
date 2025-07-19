@@ -161,12 +161,12 @@ function OrderHistoryPage() {
                                                                 <img src={`${process.env.REACT_APP_API_URL}/images/${item.product_image}`} alt={item.product_name} className="order-item-image" />
                                                                 <div className="order-item-info">
                                                                     <strong>{item.product_name}</strong>
-                                                                    <span>Qty: {item.order_qty}</span>
                                                                     <span>Type: {item.order_type}</span>
                                                                     <span>Shape: {item.order_shape}</span>
                                                                     <span>Size: {item.order_size}</span>
                                                                     <span>Material: {item.order_material}</span>
                                                                     <span>Thickness: {item.order_thickness}</span>
+                                                                    <span>Qty: {item.order_qty}</span>
                                                                     <span>Price: S${(item.order_unit_price * item.order_qty).toFixed(2)}</span>
                                                                 </div>
                                                             </>
@@ -178,7 +178,7 @@ function OrderHistoryPage() {
                                                                 <span>Bottom Image:</span> 
                                                                 <img src={`${process.env.REACT_APP_API_URL}/images/customise/${item.bottom_image}`} alt="Bottom Customisation" className="order-item-image" />
                                                                 <div className="order-item-info">
-                                                                    <span>Board Type: {item.board_type}</span>
+                                                                    <span>Type: {item.board_type}</span>
                                                                     <span>Shape: {item.board_shape}</span>
                                                                     <span>Size: {item.board_size}</span>
                                                                     <span>Material: {item.material}</span>

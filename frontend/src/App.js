@@ -6,7 +6,7 @@ import { CartContextProvider } from './context/CartContext';
 
 // --- Page Imports ---
 // User-facing pages
-import HomePage from './HomePage';
+import HomePage from './AAAHomePage';
 import AboutPage from './AboutPage';
 import ContactPage from './ContactPage';
 import FaqPage from './FaqPage';
@@ -20,8 +20,8 @@ import PlaceOrderPage from './PlaceOrderPage';
 import OrderHistoryPage from './OrderHistoryPage';
 import CategoryPage from './CategoryPage';
 import SearchPage from './SearchPage';
-import CategoriesPage from './CategoriesPage';
-import PopularProductsPage from './PopularProductsPage';
+import CategoriesPage from './AACategoriesPage';
+import PopularProductsPage from './AAPopularProductsPage';
 import Customerise from './CustomisePage';
 import PageNotFound from './PageNotFound';
 

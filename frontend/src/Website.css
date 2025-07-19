@@ -185,7 +185,7 @@ h2 {
   text-align: center;
 }
 
-.text-section .hero-cta-button {
+.text-section {
     margin-top: 1rem;
 }
 
@@ -544,7 +544,7 @@ h2 {
   margin-top: 20px;
 }
 .complete-purchase-btn:hover {
-    background: #fa5d34;
+    background: #FA5D34;
 }
 
 /* --- Recommended ("Later") Section --- */
@@ -1176,8 +1176,8 @@ select {
     transition: background-color 0.2s ease;
 }
 .btn-order-action:hover {
-    background-color: #fa5d34;
-    border-color: #fa5d34;
+    background-color: #FA5D34;
+    border-color: #FA5D34;
 }
 .btn-order-action.btn-secondary {
     background-color: #fff;
@@ -1483,8 +1483,8 @@ select {
     border: 1px solid #FFAB89;
 }
 .btn-save-profile:hover {
-    background-color: #fa5d34;
-    border-color: #fa5d34;
+    background-color: #FA5D34;
+    border-color: #FA5D34;
 }
 .btn-cancel-profile {
     background-color: #6c757d;
@@ -1629,19 +1629,11 @@ select {
   padding: 0 1rem;
 }
 .hero-cta-button {
-  position: absolute;
-  padding: 12px 25px;
-  font-size: 1em;
-  font-weight: bold;
-  background-image: linear-gradient(to right, #FFAB89, #B2DFDB);
-  color: #00695C;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  align-content: center;
+    background-image: linear-gradient(to right, #FA704C, #0A7E8C);
+    color: white;
 }
 .hero-cta-button:hover {
-    background-image: linear-gradient(to left, #FFAB89, #B2DFDB);
+    background-image: linear-gradient(to right, #FA5D34, #00695C);
 }
 
 /* Popular Products Section */
@@ -2216,7 +2208,7 @@ select {
     gap: 15px;
     margin-top: 10px;
 }
-.btn-buy-now, .btn-add-to-cart-detail {
+.btn-buy-now, .btn-add-to-cart-detail, .hero-cta-button {
     padding: 12px 20px;
     border: none;
     border-radius: 8px;
@@ -2231,7 +2223,7 @@ select {
     background-color: #FA704C;
     color: white;
 }
-.btn-buy-now:hover { background-color: #fa5d34; }
+.btn-buy-now:hover { background-color: #FA5D34; }
 .btn-add-to-cart-detail {
     background-color: #0A7E8C;
     color: white;
@@ -2273,7 +2265,7 @@ select {
     .product-thumbnails { height: 60px; padding: 10px 10px; gap: 4px; box-sizing: border-box; }
     .thumbnail-image { width: 40px; height: 40px; border-radius: 3px; }
     .product-actions-detail { flex-direction: column; }
-    .btn-buy-now, .btn-add-to-cart-detail { width: 100%; }
+    .btn-buy-now, .btn-add-to-cart-detail, .hero-cta-button { width: 100%; }
     .section-title-detail { font-size: 1.4em; }
     .similar-products-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
     .similar-product-image { height: 140px; }

@@ -28,6 +28,10 @@ const ProductDetailPage = () => {
   // MODIFIED: This 'stock' will now represent what's available for the user to add.
   const [stock, setStock] = useState(0);
 
+  const handleCustomise = () => {
+    navigate('/customise-image'); // Navigate to the Customise page
+  };
+
   // This effect fetches product data and calculates available stock
   useEffect(() => {
     const fetchProduct = async () => {
@@ -349,6 +353,13 @@ const ProductDetailPage = () => {
                 <div className="product-actions-detail">              
                   <button className="btn-buy-now" onClick={handleBuyNow}>Buy Now</button>
                   <button className="btn-add-to-cart-detail" onClick={handleAddToCart}>Add to Cart</button>
+                </div>
+                <div className="hero-button-wrapper">
+                {product.category.category_name === 'Skimboards' && (
+                  <button onClick={handleCustomise} className="hero-cta-button">
+                    CUSTOMISE
+                  </button>
+                )}
                 </div>
               </>
             )}

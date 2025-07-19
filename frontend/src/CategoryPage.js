@@ -120,7 +120,7 @@ const CategoryPage = ({ categoryName }) => {
       <div className="hero-button-wrapper">
         {categoryName === 'Skimboards' && (
           <button onClick={handleCustomise} className="hero-cta-button">
-            Customise Skimboards
+            CUSTOMISE
           </button>
         )}
       </div>

@@ -187,6 +187,21 @@ function UserDetailPage() {
     alert("Note saved (functionality to be implemented in backend)");
   };
 
+  // Function to get order status class
+  const getOrderStatusClass = (status) => {
+    switch (status) {
+      case 'Order Placed': return 'status-processing';
+      case 'Processing': return 'status-processing';
+      case 'In Transit': return 'status-in-transit';
+      case 'Delivered': return 'status-delivered';
+      case 'Cancelled': return 'status-cancelled';
+      case 'Rejected': return 'status-declined';
+      case 'Returned to Sender': return 'status-declined';
+      case 'Attempted Delivery': return 'status-declined';
+      default: return 'status-processing';
+    }
+  };
+
   if (loading) {
     return (
       <div className="add-product-page">
@@ -453,7 +468,7 @@ function UserDetailPage() {
                           Amount: ${order.total_amount?.toFixed(2) || 'N/A'}
                         </div>
                         <div style={{ fontSize: '14px' }}>
-                          Status: <span className={`badge ${order.status_id?.status_name === 'Completed' ? 'badge-green' : 'badge-gray'}`}>
+                          Status: <span className={getOrderStatusClass(order.status_id?.status_name)}>
                             {order.status_id?.status_name || 'Pending'}
                           </span>
                         </div>

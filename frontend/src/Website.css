@@ -286,7 +286,7 @@ h2 {
     background-color: var(--accent-green-light);
     padding: 15px;
     color: var(--primary-teal-dark);
-    font-weight: 500;
+    font-weight: bold;
     text-align: center;
     transition: background-color 0.2s ease-out; /* Smooth color change */
     font-size: 0.95em;

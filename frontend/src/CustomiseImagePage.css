@@ -188,6 +188,7 @@
   justify-content: center;
   padding: 2rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
 }
 
 .side-indicator {
@@ -431,11 +432,13 @@
   left: 10px;
   background: rgba(0,123,255,0.9);
   color: white;
-  padding: 0.3rem 0.7rem;
-  border-radius: 15px;
-  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
   font-weight: 600;
-  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+  z-index: 1000;
 }
 
 /* Draggable elements - enhanced for touch */

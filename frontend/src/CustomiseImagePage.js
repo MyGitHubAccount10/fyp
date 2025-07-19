@@ -898,6 +898,14 @@ export default function CustomiseImagePage() {
             <div className="side-indicator">
               Currently editing: <span className="side-label">{currentSide.toUpperCase()} SIDE</span>
             </div>
+            
+            {/* Selection indicator outside of skimboard preview */}
+            {selectedElement && (
+              <div className="selection-info">
+                {selectedElement.type === 'text' ? 'Text Selected' : 'Image Selected'}
+              </div>
+            )}
+            
             <div
               ref={previewRef} 
               className="skimboard-preview" 
@@ -1004,13 +1012,6 @@ export default function CustomiseImagePage() {
                   )}
                 </div>
               ))}
-
-              {/* Selection indicator */}
-              {selectedElement && (
-                <div className="selection-info">
-                  {selectedElement.type === 'text' ? 'Text Selected' : 'Image Selected'}
-                </div>
-              )}
             </div>
           </div>
         </div>

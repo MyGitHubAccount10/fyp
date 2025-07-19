@@ -26,10 +26,6 @@ const HomePage = () => {
   const { products, dispatch } = useProductsContext();
   const navigate = useNavigate();
 
-  const handleCustomise = () => {
-    navigate('/customise-image'); // Navigate to the Customise page
-  };
-
   const nextSlide = () => {
     setCurrentSlideIndex((prevIndex) =>
       prevIndex === slideshowImages.length - 1 ? 0 : prevIndex + 1
@@ -171,14 +167,6 @@ const HomePage = () => {
                 </>
             )}
           </div>
-        </section>
-
-        <section className="text-section">
-            <div className="hero-button-wrapper">
-              <button onClick={handleCustomise} className="hero-cta-button">
-                CUSTOMISE
-              </button>
-            </div>
         </section>
 
         {/* Choice Cards Section */}

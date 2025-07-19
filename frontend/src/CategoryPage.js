@@ -90,11 +90,6 @@ const CategoryPage = ({ categoryName: propCategoryName }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const navigate = useNavigate();
-  const handleCustomise = () => {
-    navigate('/customise-image'); // Navigate to the Customise page
-  };
-
   useEffect(() => {
     setLoading(true);
     setError(null);
@@ -161,14 +156,6 @@ const CategoryPage = ({ categoryName: propCategoryName }) => {
       <Header />
       <div className="title-section">
         <h1 className="title">{categoryName}</h1>
-      </div>
-
-      <div className="hero-button-wrapper">
-        {categoryName === 'Skimboards' && (
-          <button onClick={handleCustomise} className="hero-cta-button">
-            CUSTOMISE
-          </button>
-        )}
       </div>
 
       {/* This container will now correctly center its direct child */}

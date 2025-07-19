@@ -142,13 +142,8 @@ const updateOrder = async (req, res) => {
             const currentStatusName = existingOrder.status_id?.status_name;
             const newStatusName = newStatus.status_name;
 
-<<<<<<< HEAD
             // Define statuses that should restore stock (cancelled/failed orders)
             const stockRestoringStatuses = ['Attempted Delivery', 'Returned to Sender', 'Rejected', 'Cancelled'];
-=======
-            // ✅ FIX: Added 'Cancelled' to the list of statuses that restore stock.
-            const stockRestoringStatuses = ['Attempted Delivery', 'Returned to Sender', 'Declined', 'Cancelled'];
->>>>>>> 96141018f3d2b58d58e1cbb6a373ef18e730656a
             
             const isCurrentlyRestoring = stockRestoringStatuses.includes(currentStatusName);
             const isNewlyRestoring = stockRestoringStatuses.includes(newStatusName);

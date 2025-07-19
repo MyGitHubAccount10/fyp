@@ -267,7 +267,7 @@ function ShoppingCartPage() {
                                         <span>Thickness: {item.thickness}</span>
                                     </div>
                                     <div className="item-actions">
-                                        <button className="action-btn move-to-cart" onClick={() => 
+                                        <button className="action-btn save" onClick={() => 
                                             handleMoveToCart(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)}>Move to Cart
                                         </button>
                                         <button className="action-btn delete" onClick={() => 

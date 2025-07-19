@@ -25,27 +25,27 @@ const CategoriesPage = () => {
   const categories = [
     {
       name: 'Skimboards',
-      image: '/images/skimboard-category.png',
+      image: '/images/JasonPictures/design.jpg',
       link: '/category/Skimboards'
     },
     {
       name: 'T-Shirts', 
-      image: '/images/tshirt-category.png',
+      image: '/images/JasonPictures/design.jpg',
       link: '/category/T-Shirts'
     },
     {
       name: 'Jackets',
-      image: '/images/jacket-category.png', 
+      image: '/images/JasonPictures/design.jpg',
       link: '/category/Jackets'
     },
     {
       name: 'Board Shorts',
-      image: '/images/boardshorts-category.png',
+      image: '/images/JasonPictures/design.jpg',
       link: '/category/Board Shorts'
     },
     {
       name: 'Accessories',
-      image: '/images/accessories-category.png',
+      image: '/images/JasonPictures/design.jpg',
       link: '/category/Accessories'
     }
   ];

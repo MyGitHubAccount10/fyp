@@ -1,12 +1,11 @@
 // src/ForgotPasswordPage.js
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import './Website.css';
 
-// Re-using the eye icons from LoginPage for consistency
 const EyeIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
 const EyeOffIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>;
 
@@ -15,7 +14,6 @@ const ForgotPasswordPage = () => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     
-    // --- FIX: More specific error states ---
     const [emailError, setEmailError] = useState('');
     const [newPasswordError, setNewPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
@@ -24,10 +22,12 @@ const ForgotPasswordPage = () => {
     const [success, setSuccess] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    // ✅ FIX: Added state for the confirm password eye icon
+    const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
     const navigate = useNavigate();
+    const location = useLocation();
 
-    // --- FIX: Added specific validation functions ---
     const validateEmail = (email) => {
         if (!email) return 'Email is required.';
         if (!/^\S+@\S+\.\S+$/.test(email)) return 'Please enter a valid email format.';
@@ -54,7 +54,6 @@ const ForgotPasswordPage = () => {
         setApiError(null);
         setSuccess('');
 
-        // --- FIX: Run all validations before submitting ---
         const emailErr = validateEmail(email);
         const newPassErr = validateNewPassword(newPassword);
         const confirmPassErr = validateConfirmPassword(newPassword, confirmPassword);
@@ -85,9 +84,8 @@ const ForgotPasswordPage = () => {
             setNewPassword('');
             setConfirmPassword('');
             
-            // Redirect to login after a short delay
             setTimeout(() => {
-                navigate('/login');
+                navigate('/login', { state: location.state });
             }, 2000);
             
         } catch (err) {
@@ -147,7 +145,8 @@ const ForgotPasswordPage = () => {
 
                      <div className="password-input-wrapper" style={{ marginBottom: confirmPasswordError ? '0' : '20px' }}>
                         <input
-                            type={isPasswordVisible ? 'text' : 'password'}
+                            // ✅ FIX: Use the new state to toggle type
+                            type={isConfirmPasswordVisible ? 'text' : 'password'}
                             placeholder="Confirm your new password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -155,6 +154,14 @@ const ForgotPasswordPage = () => {
                             style={confirmPasswordError ? errorInputStyle : inputStyle}
                             required
                         />
+                        {/* ✅ FIX: Add the eye icon button */}
+                        <button
+                            type="button"
+                            className="password-toggle-btn"
+                            onClick={() => setIsConfirmPasswordVisible(prev => !prev)}
+                        >
+                            {isConfirmPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
+                        </button>
                     </div>
                     {confirmPasswordError && <p style={errorMessageStyle}>{confirmPasswordError}</p>}
 
@@ -166,7 +173,7 @@ const ForgotPasswordPage = () => {
                         type="submit"
                         className="complete-purchase-btn"
                         style={{ width: '100%', backgroundColor: '#333', color: '#fff' }}
-                        disabled={isLoading || success} // Disable button on success too
+                        disabled={isLoading || success}
                     >
                         {isLoading ? 'Resetting...' : 'Reset Password'}
                     </button>
@@ -175,7 +182,7 @@ const ForgotPasswordPage = () => {
                         <button
                             type="button"
                             className="update-cart-btn"
-                            onClick={() => navigate('/login')}
+                            onClick={() => navigate('/login', { state: location.state })}
                             style={{ backgroundColor: 'transparent', color: '#333', border: 'none', textDecoration: 'underline' }}
                         >
                             Back to Login

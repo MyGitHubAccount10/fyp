@@ -314,15 +314,15 @@ function SalesReportPage() {
 
     const getStatusClass = (status) => {
         switch (status) {
-            case 'Order Placed': return 'status-processing';
-            case 'Processing': return 'status-processing';
-            case 'In Transit': return 'status-in-transit';
-            case 'Delivered': return 'status-delivered';
-            case 'Cancelled': return 'status-cancelled';
-            case 'Rejected': return 'status-declined';
-            case 'Returned to Sender': return 'status-declined';
-            case 'Attempted Delivery': return 'status-declined';
-            default: return 'status-processing';
+            case 'Order Placed': return 'adminstatus-processing';
+            case 'Processing': return 'adminstatus-processing';
+            case 'In Transit': return 'adminstatus-in-transit';
+            case 'Delivered': return 'adminstatus-delivered';
+            case 'Cancelled': return 'adminstatus-cancelled';
+            case 'Rejected': return 'adminstatus-declined';
+            case 'Returned to Sender': return 'adminstatus-declined';
+            case 'Attempted Delivery': return 'adminstatus-declined';
+            default: return 'adminstatus-processing';
         }
     };
 

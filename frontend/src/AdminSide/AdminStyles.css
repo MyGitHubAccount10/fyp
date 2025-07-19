@@ -61,7 +61,7 @@
 
 
 /* Specific Order Status colors with badge-like styling */
-.status-delivered { 
+.adminstatus-delivered { 
   background-color: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
@@ -72,7 +72,7 @@
   text-transform: capitalize;
 }
 
-.status-processing { 
+.adminstatus-processing { 
   background-color: #fff3cd;
   color: #856404;
   border: 1px solid #ffeaa7;
@@ -83,7 +83,7 @@
   text-transform: capitalize;
 }
 
-.status-in-transit { 
+.adminstatus-in-transit { 
   background-color: #d1ecf1;
   color: #0c5460;
   border: 1px solid #bee5eb;
@@ -94,7 +94,7 @@
   text-transform: capitalize;
 }
 
-.status-declined { 
+.adminstatus-declined { 
   background-color: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
@@ -104,7 +104,16 @@
   font-weight: 500;
   text-transform: capitalize;
 }
-
+.adminstatus-cancelled { 
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
 
 
 /* Back button style (reused from Add Product Page section) */
@@ -1253,10 +1262,11 @@ input[type="password"]::-ms-clear {
         height: 18px;
     }
     
-    .status-delivered,
-    .status-processing,
-    .status-in-transit,
-    .status-declined {
+    .adminstatus-delivered,
+    .adminstatus-processing,
+    .adminstatus-in-transit,
+    .adminstatus-declined,
+    .adminstatus-cancelled {
         padding: 1px 3px;
         font-size: 8px;
     }

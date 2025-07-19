@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate, useParams} from 'react-router-dom';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -41,7 +41,51 @@ const ProductCard = ({ product }) => {
   );
 };
 
-const CategoryPage = ({ categoryName }) => {
+// Custom Design Card Component
+const CustomDesignCard = () => {
+  return (
+    <Link to="/customise-image" style={{ textDecoration: 'none'}}>
+      <div className="product-card" style={{ 
+        position: 'relative', 
+        border: '2px dashed #FA704C',
+        background: 'linear-gradient(135deg, #FFF0E1 0%, #FFE4CC 100%)'
+      }}>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '200px',
+          textAlign: 'center',
+          padding: '20px'
+        }}>
+          <div style={{
+            fontSize: '48px',
+            color: '#FA704C',
+            marginBottom: '10px'
+          }}>
+            +
+          </div>
+          <h3 className="product-name" style={{ color: '#FA704C', fontWeight: 'bold' }}>
+            Custom Design
+          </h3>
+          <p style={{ 
+            color: '#666', 
+            fontSize: '14px', 
+            margin: '5px 0 0 0',
+            fontStyle: 'italic'
+          }}>
+            Create your own design
+          </p>
+        </div>
+      </div>
+    </Link>
+  );
+};
+
+const CategoryPage = ({ categoryName: propCategoryName }) => {
+  const { categoryName: urlCategoryName } = useParams();
+  const categoryName = propCategoryName || urlCategoryName;
   const { products, dispatch } = useProductsContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -100,6 +144,8 @@ const CategoryPage = ({ categoryName }) => {
     if (products && products.length > 0) {
       return (
         <div className="product-grid">
+          {/* Add Custom Design card for Skimboards category */}
+          {categoryName === 'Skimboards' && <CustomDesignCard />}
           {products.map(product => (
             <ProductCard key={product._id} product={product} />
           ))}

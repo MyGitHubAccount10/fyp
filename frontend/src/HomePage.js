@@ -181,8 +181,38 @@ const HomePage = () => {
             </div>
         </section>
 
-        {/* Popular Products Section */}
+        {/* Choice Cards Section */}
         <section className="popular-products-section container">
+          <h2 className="popular-products-title">What Are You Looking For?</h2>
+          <div className="popular-products-grid">
+            {/* Browse Categories Card */}
+            <Link to={'/categories'} style={{ textDecoration: 'none' }}>
+              <div className="popular-product-card">
+                <img src={'/images/category-placeholder.png'} alt={'Browse Categories'} className="popular-product-card-image" />
+                <div className="popular-product-card-caption">Browse Categories</div>
+              </div>
+            </Link>
+            
+            {/* Popular Products Card */}
+            <Link to={'/popular-products'} style={{ textDecoration: 'none' }}>
+              <div className="popular-product-card">
+                <img src={'/images/popular-placeholder.png'} alt={'Popular Products'} className="popular-product-card-image" />
+                <div className="popular-product-card-caption">Popular Products</div>
+              </div>
+            </Link>
+            
+            {/* Custom Skimboard Card */}
+            <Link to={'/customise-image'} style={{ textDecoration: 'none' }}>
+              <div className="popular-product-card">
+                <img src={'/images/custom-placeholder.png'} alt={'Custom Skimboard'} className="popular-product-card-image" />
+                <div className="popular-product-card-caption">Custom Skimboard</div>
+              </div>
+            </Link>
+          </div>
+        </section>
+
+        {/* Popular Products Section */}
+        {/* <section className="popular-products-section container">
           <h2 className="popular-products-title">Popular Products</h2>
           <div className="popular-products-grid">
             {products && products.filter(product => product.warehouse_quantity > 0 &&
@@ -197,7 +227,7 @@ const HomePage = () => {
               </Link>
             ))}
           </div>
-        </section>
+        </section> */}
 
         {/* Social Media Section */}
         <section className="social-media-section">

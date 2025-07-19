@@ -103,7 +103,7 @@ function SalesReportPage() {
         const filteredOrders = filterOrdersByDate(ordersData);
         
         // Define excluded statuses for revenue calculation
-        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Declined'];
+        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Rejected', 'Cancelled'];
         
         // Filter out excluded statuses for revenue calculation
         const revenueOrders = filteredOrders.filter(order => 
@@ -179,7 +179,7 @@ function SalesReportPage() {
         const dailyData = {};
         
         // Define excluded statuses for revenue calculation
-        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Declined'];
+        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Rejected', 'Cancelled'];
         
         // Get date range from filtered orders
         if (filteredOrders.length === 0) {
@@ -243,7 +243,7 @@ function SalesReportPage() {
         const monthlyData = {};
         
         // Define excluded statuses for revenue calculation
-        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Declined'];
+        const excludedStatuses = ['Attempted Delivery', 'Returned to Sender', 'Rejected', 'Cancelled'];
         
         if (filteredOrders.length === 0) {
             return [];
@@ -318,7 +318,8 @@ function SalesReportPage() {
             case 'Processing': return 'status-processing';
             case 'In Transit': return 'status-in-transit';
             case 'Delivered': return 'status-delivered';
-            case 'Declined': return 'status-declined';
+            case 'Cancelled': return 'status-cancelled';
+            case 'Rejected': return 'status-declined';
             case 'Returned to Sender': return 'status-declined';
             case 'Attempted Delivery': return 'status-declined';
             default: return 'status-processing';

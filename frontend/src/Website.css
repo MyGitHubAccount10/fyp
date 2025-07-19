@@ -3046,3 +3046,57 @@ h2 {
     background-color: #f5f5f5;
     cursor: not-allowed;
 }
+
+/* Add a transition to the base order card for a smooth effect */
+.order-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: background-color 0.4s ease, opacity 0.4s ease; /* This is the new line */
+}
+
+
+
+.cancelled-order {
+    background-color: #f5f5f5; /* A light grey background */
+    opacity: 0.7; /* Make it slightly transparent */
+    /* ✅ FIX: Removed 'pointer-events: none;' to make the card clickable again */
+}
+
+/* Make sure the header of a cancelled order remains clickable */
+.cancelled-order .order-card-header {
+    cursor: pointer;
+}
+
+
+/* --- Styling for the new Status Filter --- */
+.page-header-with-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px; /* Space between header and order list */
+}
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-container label {
+    font-weight: 500;
+    color: #555;
+}
+
+.status-filter-select {
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+/* ... keep all your other styles ... */

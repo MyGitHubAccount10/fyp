@@ -1363,3 +1363,23 @@ input[type="password"]::-ms-clear {
 /* ========================================================================= */
 /* RESPONSIVE MEDIA QUERIES - ORGANIZED BY BREAKPOINT                      */
 /* ========================================================================= */
+
+
+/* Add this to the end of your Website.css file */
+
+@media (max-width: 768px) {
+  /* --- Mobile layout for Order History Header --- */
+  .page-header-with-filter {
+    flex-direction: column;   /* Stack the title and filter vertically */
+    align-items: flex-start;  /* Align both to the left */
+    gap: 15px;                /* Add space between the title and the filter */
+  }
+
+  .filter-container {
+    width: 100%; /* Make the filter container take up the full width */
+  }
+
+  .status-filter-select {
+    width: 100%; /* Make the select dropdown itself take up the full width */
+  }
+}

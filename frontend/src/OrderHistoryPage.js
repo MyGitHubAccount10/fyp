@@ -204,7 +204,7 @@ function OrderHistoryPage() {
             <Header />
             <div className="container order-history-container">
                 <div className="page-header-with-filter">
-                    <h2>Order History</h2>
+                    <h1>Order History</h1>
                     {/* ✅ FIX: Add the filter dropdown UI */}
                     <div className="filter-container">
                         <label htmlFor="status-filter">Filter by status:</label>

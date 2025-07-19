@@ -1,22 +1,38 @@
 /* Website.css */
 
+/* CSS Custom Properties for Color Consistency */
+:root {
+  --primary-orange: #FA704C;
+  --primary-orange-dark: #FA5D34;
+  --primary-orange-light: #FFAB89;
+  --primary-teal: #0A7E8C;
+  --primary-teal-dark: #00695C;
+  --accent-green-light: #E0F2F1;
+  --accent-green: #B2DFDB;
+  --background-cream: #FFF0E1;
+  --text-dark: #000000;
+  --text-gray: #555;
+  --border-gray: #D9D9D9;
+  --border-light: #ccc;
+}
+
 /* --- Global & Body --- */
 body { /* Apply to body if this CSS is global, or to a wrapper if component-scoped */
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #FFF0E1;
-  color: #000000;
+  background-color: var(--background-cream);
+  color: var(--text-dark);
 }
 
 /* --- Header Styles (Based on your updated navbar design) --- */
 header {
-  background-color: #FA704C;
+  background-color: var(--primary-orange);
   padding: 10px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #000000;
+  color: var(--text-dark);
   position: relative;
   z-index: 100;
 }
@@ -47,7 +63,7 @@ header {
 }
 
 .header-nav-links a {
-  color: #000000;
+  color: var(--text-dark);
   text-decoration: none;
   margin: 0 8px;
   font-weight: bold;
@@ -197,7 +213,7 @@ h2 {
 
 /* --- Grids for Product Cards --- */
 
-/* ✅ FIX: This container centers the grid block itself. */
+/* Container centers the grid block */
 .product-grid-container {
     display: flex;
     justify-content: center;
@@ -207,7 +223,7 @@ h2 {
     box-sizing: border-box;
 }
 
-/* ✅ FIX: Base styles for all grid containers. */
+/* Base styles for all grid containers */
 .product-grid,
 .popular-products-grid,
 .similar-products-grid {
@@ -238,7 +254,7 @@ h2 {
 
 /* --- Product Cards (All Variants) --- */
 
-/* ✅ FIX: Base styles and transitions for all cards. */
+/* Base styles and transitions for all cards */
 .product-card,
 .popular-product-card,
 .similar-product-card {
@@ -263,28 +279,25 @@ h2 {
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
-/* ✅ FIX: Base styles and transitions for all card captions. */
+/* Base styles and transitions for all card captions */
 .product-info,
 .popular-product-card-caption,
 .similar-product-caption {
-    background-color: #E0F2F1;
+    background-color: var(--accent-green-light);
     padding: 15px;
-    color: #00695C;
+    color: var(--primary-teal-dark);
     font-weight: 500;
     text-align: center;
     transition: background-color 0.2s ease-out; /* Smooth color change */
+    font-size: 0.95em;
 }
 
 .product-info {
   flex-grow: 1;
+  font-size: inherit; /* Reset font-size for product-info */
 }
 
-.popular-product-card-caption,
-.similar-product-caption {
-    font-size: 0.95em;
-}
-
-/* ✅ FIX: Unified hover effect for ALL cards. */
+/* Unified hover effect for all cards */
 .product-card:hover,
 .popular-product-card:hover,
 .similar-product-card:hover {
@@ -292,13 +305,14 @@ h2 {
     box-shadow: 0 5px 15px rgba(0,0,0,0.12); /* Adds more shadow */
 }
 
-/* ✅ FIX: Add darkening effect to caption on hover for ALL cards. */
+/* Darkening effect on caption hover for all cards */
 .product-card:hover .product-info,
 .popular-product-card:hover .popular-product-card-caption,
 .similar-product-card:hover .similar-product-caption {
     background-color: #B2DFDB; /* Darker teal color */
 }
 
+.product-image,
 .product-image,
 .popular-product-card-image,
 .similar-product-image {
@@ -369,17 +383,21 @@ h2 {
   font-weight: 700;
   font-size: 1.1em;
 }
+/* Stock and Order Status Styling */
+.status-in-stock, 
+.status-limited-stock, 
+.status-no-stock {
+    font-weight: 500;
+}
+
 .status-in-stock { 
     color: #087842;
-    font-weight: 500;
 }
 .status-limited-stock { 
     color: #995C00;
-    font-weight: 500; 
 }
 .status-no-stock { 
     color: #990000;
-    font-weight: 500; 
 }
 .item-info .size-info {
   font-size: 0.9em;
@@ -576,8 +594,7 @@ h2 {
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
-  /* THIS IS THE KEY FIX: A fixed width for consistency */
-  width: 260px; 
+  width: 260px; /* Fixed width for consistency */
 }
 
 .recommended-product-image {
@@ -630,28 +647,42 @@ h2 {
   gap: 10px;
 }
 
-.recommended-product-actions .btn-order-action {
-  flex-grow: 1;
-  font-weight: bold;
-  font-size: 0.9em;
-  padding: 10px 15px;
-  border-radius: 8px;
+/* Button action styles */
+.btn-order-action {
+  padding: 8px 15px;
+  border-radius: 5px;
+  border: 1px solid var(--primary-orange-light);
+  background-color: var(--primary-orange);
   color: white;
-  transition: background-color 0.2s;
+  font-weight: 500;
+  font-size: 0.85em;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  flex-grow: 1;
+}
+.btn-order-action:hover {
+  background-color: var(--primary-orange-dark);
+  border-color: var(--primary-orange-dark);
+}
+.btn-order-action.btn-secondary {
+  background-color: #fff;
+  color: #FA704C;
+  border: 1px solid #FFAB89;
+}
+.btn-order-action.btn-secondary:hover {
+  background-color: #FFF0E1;
 }
 
-/* Red button for "Move to Cart" */
+/* Specific button color variants for recommended products */
 .recommended-product-actions .btn-order-action.btn-secondary {
-  background-color: #e57373; /* A slightly softer red */
+  background-color: #e57373; /* Red for "Move to Cart" */
   border: 1px solid #e57373;
 }
 .recommended-product-actions .btn-order-action.btn-secondary:hover {
   background-color: #ef5350;
 }
-
-/* Yellow/Gold button for "Delete" */
 .recommended-product-actions .btn-order-action:not(.btn-secondary) {
-  background-color: #FBC02D; /* A nice gold/yellow */
+  background-color: #FBC02D; /* Gold for "Delete" */
   border: 1px solid #FBC02D;
 }
 .recommended-product-actions .btn-order-action:not(.btn-secondary):hover {
@@ -982,20 +1013,145 @@ select {
 }
 
 /* --- Order History Page Specific Styles --- */
+.order-history-container {
+    /* Ensure consistent alignment */
+    position: relative;
+}
+
 .order-history-container h2 {
     text-align: center;
     margin-bottom: 30px;
 }
+
+/* Page header with filter styling */
+.page-header-with-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px 0 10px 0;
+    /* Removed border-bottom for cleaner look */
+}
+
+.page-header-with-filter h1 {
+    margin: 0;
+    font-size: 2.2em;
+    font-weight: 700;
+    line-height: 1.1;
+    align-self: center;
+}
+
+/* Make filter dropdown horizontal on large devices */
+@media (min-width: 901px) {
+    /* Ensure proper horizontal alignment for large devices */
+    .page-header-with-filter {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 20px 0 10px 0;
+    }
+    
+    .page-header-with-filter h1 {
+        margin: 0;
+        font-size: 2.2em;
+        font-weight: 700;
+        line-height: 1.1;
+        flex-shrink: 0;
+    }
+    
+    /* Override: Make horizontal layout for large devices */
+    .page-header-with-filter .product-options {
+        margin-bottom: 0;
+        align-self: center;
+        flex-shrink: 0;
+    }
+    
+    .page-header-with-filter .product-options > div {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .page-header-with-filter .product-options .option-label {
+        margin-bottom: 0;
+        font-size: 1em;
+        white-space: nowrap;
+        display: inline-block;
+        line-height: 1.2;
+        font-weight: 500;
+    }
+
+    .page-header-with-filter .product-options select {
+        line-height: 1.2;
+        vertical-align: middle;
+        font-size: 0.95em;
+        min-width: 160px;
+    }
+}
+
+/* Adjust product-options in header context */
+.page-header-with-filter .product-options {
+    margin-bottom: 0;
+    align-self: flex-start;
+}
+
+/* Default vertical layout for smaller devices */
+@media (max-width: 900px) {
+    .page-header-with-filter {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .page-header-with-filter .product-options > div {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .page-header-with-filter .product-options .option-label {
+        margin-bottom: 6px;
+        display: block;
+    }
+}
+
+/* Filter result indicator */
+.filter-result-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9em;
+    color: #00695C;
+    background-color: #E0F2F1;
+    padding: 6px 12px;
+    border-radius: 15px;
+    margin-top: 10px;
+    border: 1px solid #B2DFDB;
+}
+
+.filter-result-indicator.no-results {
+    background-color: #FFEBEE;
+    color: #C62828;
+    border-color: #FFCDD2;
+}
+
 .no-orders-message {
     text-align: center;
     font-size: 1.1em;
     color: #777;
     padding: 40px 0;
 }
+
+/* Order list alignment */
 .order-list {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    /* Align with filter container on desktop */
+    margin: 0;
 }
 .order-card {
     background-color: #fff;
@@ -1066,6 +1222,20 @@ select {
     line-height: 1.2;
     display: inline-block;
 }
+
+/* Order Status Badge Styling */
+.status-placed, 
+.status-processing, 
+.status-shipped, 
+.status-delivered, 
+.status-cancelled {
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
 .status-placed { background-color: #3498db; }
 .status-processing { background-color: #f39c12; }
 .status-shipped { background-color: #9b59b6; }
@@ -1164,29 +1334,6 @@ select {
     gap: 10px;
     flex-wrap: wrap;
 }
-.btn-order-action {
-    padding: 8px 15px;
-    border-radius: 5px;
-    border: 1px solid #FFAB89;
-    background-color: #FA704C;
-    color: white;
-    font-weight: 500;
-    font-size: 0.85em;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-}
-.btn-order-action:hover {
-    background-color: #FA5D34;
-    border-color: #FA5D34;
-}
-.btn-order-action.btn-secondary {
-    background-color: #fff;
-    color: #FA704C;
-    border: 1px solid #FFAB89;
-}
-.btn-order-action.btn-secondary:hover {
-    background-color: #FFF0E1;
-}
 
 @media (max-width: 1024px) {
     .order-card-header {
@@ -1215,7 +1362,63 @@ select {
     }
 }
 
+@media (max-width: 900px) {
+    /* Transition breakpoint for better header alignment */
+    .page-header-with-filter {
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .page-header-with-filter h1 {
+        font-size: 2.0em;
+        min-width: 180px;
+        margin-bottom: 8px;
+    }
+
+    .page-header-with-filter .product-options {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
 @media (max-width: 768px) {
+    /* Filter responsive styles for tablets */
+    .page-header-with-filter {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 15px;
+        text-align: left;
+        padding: 15px 0 5px 0;
+    }
+    
+    .page-header-with-filter h1 {
+        font-size: 1.9em;
+        margin: 0 0 10px 0;
+        width: 100%;
+    }
+    
+    .page-header-with-filter .product-options {
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    .page-header-with-filter .product-options .option-label {
+        font-size: 0.9em;
+    }
+
+    .page-header-with-filter .product-options select {
+        min-width: 200px;
+        font-size: 0.9em;
+        padding: 10px;
+    }
+    
+    /* Ensure order list maintains alignment */
+    .order-list {
+        margin-top: 20px;
+    }
+    
     .order-card-header {
         padding: 0.875rem 1.25rem;
         grid-template-columns: minmax(150px, 1fr) minmax(200px, 1.5fr) auto;
@@ -1252,6 +1455,44 @@ select {
     }
 }
 @media (max-width: 480px) {
+    /* Filter responsive styles for mobile */
+    .page-header-with-filter {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px 0 5px 0;
+        text-align: left;
+    }
+    
+    .page-header-with-filter h1 {
+        font-size: 1.6em;
+        margin: 0;
+        width: 100%;
+    }
+    
+    .page-header-with-filter .product-options {
+        width: 100%;
+        margin-bottom: 0;
+        gap: 8px;
+    }
+
+    .page-header-with-filter .product-options .option-label {
+        font-size: 0.85em;
+        margin-bottom: 4px;
+    }
+
+    .page-header-with-filter .product-options select {
+        min-width: 160px;
+        max-width: 100%;
+        font-size: 0.85em;
+        padding: 8px 10px;
+    }
+    
+    /* Ensure order list maintains proper alignment */
+    .order-list {
+        margin-top: 15px;
+    }
+    
     .order-history-container {
         padding: 0 0.5rem;
     }
@@ -1344,6 +1585,19 @@ select {
 }
 
 @media (max-width: 320px) {
+    /* Ultra-compact filter for very small screens */
+    .page-header-with-filter {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .page-header-with-filter h1 {
+        font-size: 1.4em;
+        margin: 0;
+        width: 100%;
+    }
+    
     .order-history-container {
         padding: 0 0.25rem;
     }
@@ -1558,15 +1812,12 @@ select {
     width: 100%;
     margin-bottom: 40px;
 }
-/* --- START OF REPLACEMENT CSS for Proportional Hero Carousel --- */
 
-/* 1. Define a consistent aspect ratio for the container. */
+/* Hero carousel with consistent aspect ratio */
 .hero-image-container {
     position: relative;
     width: 100%;
-    /* NEW: Use aspect-ratio for a responsive, consistent shape. */
-    /* 16 / 9 is a standard widescreen ratio. You can adjust this (e.g., 3 / 2 or 4 / 3). */
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 16 / 9; /* Standard widescreen ratio */
     
     /* Optional: A max-height to prevent it being excessively tall on very narrow screens. */
     max-height: 120vh; 
@@ -1583,16 +1834,10 @@ select {
 .hero-image {
     width: 100%;
     height: 100%;
-    /* MODIFIED: This is the key change to show the full image. */
     object-fit: cover;
     display: block;
 }
 
-/* NOTE: The old media queries setting the height of .hero-image-container 
-   at 768px and 480px are no longer needed and should be removed, 
-   as `aspect-ratio` handles all resizing automatically. */
-
-/* --- END OF REPLACEMENT CSS --- */
 .hero-arrow {
     position: absolute;
     top: 50%;
@@ -1648,17 +1893,6 @@ select {
     margin-bottom: 30px;
     color: #000000;
 }
-
-/* @media (max-width: 768px) {
-    .hero-image-container {
-        height: 400px; /* Reduces height from the default 500px */
-    /* }
-}
-@media (max-width: 480px) {
-    .hero-image-container {
-        height: 350px; /* Reduces height further for the smallest screens */
-    /* }
-} */
 
 /* --- About & Contact Page Banners --- */
 .about-banner-section, .contact-banner-section {
@@ -2160,7 +2394,21 @@ select {
     margin-right: 10px;
     font-size: 0.95em;
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+}
+
+/* Consistent select dropdown styling */
+.product-options select {
+    font-family: inherit;
+    background-color: #fff;
+    border: 1px solid #D9D9D9;
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 0.95em;
+    color: #333;
+    cursor: pointer;
+    box-sizing: border-box;
+    min-width: 150px;
 }
 .size-button {
     background-color: #fff;
@@ -2220,15 +2468,15 @@ select {
     transition: background-color 0.2s ease;
 }
 .btn-buy-now {
-    background-color: #FA704C;
+    background-color: var(--primary-orange);
     color: white;
 }
-.btn-buy-now:hover { background-color: #FA5D34; }
+.btn-buy-now:hover { background-color: var(--primary-orange-dark); }
 .btn-add-to-cart-detail {
-    background-color: #0A7E8C;
+    background-color: var(--primary-teal);
     color: white;
 }
-.btn-add-to-cart-detail:hover { background-color: #00695C; }
+.btn-add-to-cart-detail:hover { background-color: var(--primary-teal-dark); }
 .section-title-detail {
     font-size: 1.6em;
     color: #004D40;
@@ -2578,4 +2826,29 @@ input[type="password"]::-ms-clear {
 .category-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Mobile Responsive Grid Centering --- */
+/* Center product grids on smaller devices for better alignment */
+@media (max-width: 768px) {
+  .product-grid {
+    justify-content: center;
+    justify-items: center;
+  }
+  
+  .product-grid-container {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid {
+    justify-content: center;
+    justify-items: center;
+    gap: 1.5rem;
+  }
+  
+  .product-grid-container {
+    padding: 1rem;
+  }
 }

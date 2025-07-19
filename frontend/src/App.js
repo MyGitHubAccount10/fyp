@@ -63,9 +63,6 @@ function App() {
         {/* New routes for category selection */}
         <Route path="categories" element={<CategoriesPage />} />
         <Route path="popular-products" element={<PopularProductsPage />} />
-        
-        {/* Category routes */}
-        <Route path="category/:categoryName" element={<CategoryPage />} />
 
         <Route path="products">
           <Route path='skimboards' element={<CategoryPage categoryName="Skimboards" />} />

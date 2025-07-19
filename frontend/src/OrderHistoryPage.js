@@ -191,6 +191,18 @@ function OrderHistoryPage() {
     
     const cancellableStatuses = ['Order Placed', 'Processing', 'Pending'];
 
+    const optionStyle = { 
+        display: 'block', 
+        width: '100%', 
+        margin: '0', 
+        marginTop: '12px',
+        padding: '12px', 
+        border: '1px solid #ccc', 
+        borderRadius: '12px', 
+        boxSizing: 'border-box',
+        fontSize: '0.9rem'
+    };
+
     // ✅ FIX: Create the filtered list of orders before rendering
     const filteredOrders = selectedStatusFilter === 'All'
         ? orders
@@ -205,19 +217,21 @@ function OrderHistoryPage() {
             <div className="container order-history-container">
                 <div className="page-header-with-filter">
                     <h1>Order History</h1>
-                    {/* ✅ FIX: Add the filter dropdown UI */}
-                    <div className="filter-container">
-                        <label htmlFor="status-filter">Filter by status:</label>
-                        <select
-                            id="status-filter"
-                            className="status-filter-select"
-                            value={selectedStatusFilter}
-                            onChange={(e) => setSelectedStatusFilter(e.target.value)}
-                        >
-                            {statusOptions.map(status => (
-                                <option key={status} value={status}>{status}</option>
-                            ))}
-                        </select>
+                    {/* ✅ FIX: Add the filter dropdown UI with same styling as ProductDetailPage */}
+                    <div className="product-options">
+                        <div>
+                            <span className="option-label">Filter by status:</span>
+                            <select
+                                id="status-filter"
+                                value={selectedStatusFilter}
+                                onChange={(e) => setSelectedStatusFilter(e.target.value)}
+                                style={optionStyle}
+                            >
+                                {statusOptions.map(status => (
+                                    <option key={status} value={status}>{status}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 </div>
 

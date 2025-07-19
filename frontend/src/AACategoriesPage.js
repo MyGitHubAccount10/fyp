@@ -26,27 +26,27 @@ const CategoriesPage = () => {
     {
       name: 'Skimboards',
       image: '/images/PromoPictures/pictures of skimboard.jpg',
-      link: '/category/Skimboards'
+      link: '/products/skimboards'
     },
     {
       name: 'T-Shirts', 
       image: '/images/PromoPictures/pictures of T-shirts.jpg',
-      link: '/category/T-Shirts'
+      link: '/products/t-shirts'
     },
     {
       name: 'Jackets',
       image: '/images/PromoPictures/pictures of Jackets.jpg',
-      link: '/category/Jackets'
+      link: '/products/jackets'
     },
     {
       name: 'Board Shorts',
       image: '/images/PromoPictures/pictures of Board Shorts.jpg',
-      link: '/category/Board Shorts'
+      link: '/products/boardshorts'
     },
     {
       name: 'Accessories',
       image: '/images/PromoPictures/pictures of Skimboard Accessories.jpg',
-      link: '/category/Accessories'
+      link: '/products/accessories'
     }
   ];
 

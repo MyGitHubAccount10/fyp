@@ -294,13 +294,13 @@ function AllOrdersPage() {
                 <table className="my-table">
                     <thead>
                         <tr>
-                            <th>Order ID</th>
-                            <th>Date</th>
-                            <th>Customer</th>
-                            <th>Total</th>
-                            <th>Payment Method</th>
-                            <th>Order Status</th>
-                            <th>Actions</th>
+                            <th className="order-id-col">Order ID</th>
+                            <th className="date-col">Date</th>
+                            <th className="customer-col">Customer</th>
+                            <th className="total-col">Total</th>
+                            <th className="payment-col">Payment Method</th>
+                            <th className="status-col">Order Status</th>
+                            <th className="action-col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -315,21 +315,21 @@ function AllOrdersPage() {
                             ) : currentOrders.length > 0 ? (
                                  currentOrders.map(order => (
                                     <tr key={order._id}>
-                                        <td>#{order._id.slice(-8)}</td>
-                                        <td>{new Date(order.order_date || order.createdAt).toLocaleDateString('en-US', {
+                                        <td className="order-id-col">#{order._id.slice(-8)}</td>
+                                        <td className="date-col">{new Date(order.order_date || order.createdAt).toLocaleDateString('en-US', {
                                             year: 'numeric',
                                             month: 'short', 
                                             day: '2-digit',
                                             hour: '2-digit',
                                             minute: '2-digit'
                                         })}</td>
-                                        <td>{order.user_id ? order.user_id.full_name : 'Unknown Customer'}</td>
-                                        <td>${parseFloat(order.total_amount || 0).toFixed(2)}</td>
-                                        <td>{order.payment_method || 'N/A'}</td>
-                                        <td className={getOrderStatusClass(order.status_id?.status_name || 'Processing')}>
+                                        <td className="customer-col">{order.user_id ? order.user_id.full_name : 'Unknown Customer'}</td>
+                                        <td className="total-col">${parseFloat(order.total_amount || 0).toFixed(2)}</td>
+                                        <td className="payment-col">{order.payment_method || 'N/A'}</td>
+                                        <td className={`status-col ${getOrderStatusClass(order.status_id?.status_name || 'Processing')}`}>
                                             {order.status_id?.status_name || 'Processing'}
                                         </td>
-                                        <td>
+                                        <td className="action-col">
                                             <div className="actionButton">
                                                 <button className="editbutton" onClick={() => handleViewDetails(order._id)}><MdEdit size={24} /></button>
                                             </div>

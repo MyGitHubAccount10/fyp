@@ -611,7 +611,11 @@ function SalesReportPage() {
                             <tbody>
                                 {filterOrdersByDate(orders).slice(0, 10).map(order => (
                                     <tr key={order._id}>
-                                        <td>{order._id?.slice(-8) || 'N/A'}</td>
+                                        <td className="coloured-link">
+                                            <a href={`/admin/orders/${order._id}`} style={{ color: '#f1673a' }}>
+                                                {order._id?.slice(-8) || 'N/A'}
+                                            </a>
+                                        </td>
                                         <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                                         <td>{order.user_id?.full_name || order.user_id?.username || 'N/A'}</td>
                                         <td>{formatCurrency(order.total_amount)}</td>

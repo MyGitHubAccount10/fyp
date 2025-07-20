@@ -67,6 +67,26 @@
      -webkit-appearance: none; */
 }
 
+/* Reset Filters Button */
+.btn-apply-filters {
+    background-color: #f1673a;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    min-width: 120px;
+    box-sizing: border-box;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-apply-filters:hover {
+    background-color: #e0562a;
+}
+
 
 
 
@@ -1468,6 +1488,12 @@ input[type="password"]::-ms-clear {
         max-width: 120px;
     }
     
+    /* Orders table responsive - hide payment method and date on mobile */
+    .my-table .payment-col,
+    .my-table .date-col {
+        display: none;
+    }
+    
     .address-text {
         max-width: 100px;
     }
@@ -1789,6 +1815,12 @@ input[type="password"]::-ms-clear {
         min-width: 0; /* Override the 180px min-width on mobile */
     }
     
+    .btn-apply-filters {
+        width: 100%;
+        min-width: 0;
+        margin-top: 5px;
+    }
+    
     .summary-stats {
         flex-direction: column;
         gap: 10px;
@@ -1818,6 +1850,27 @@ input[type="password"]::-ms-clear {
     
     .users-table .action-col {
         min-width: 80px;
+    }
+    
+    /* Orders table - hide customer column on very small screens */
+    .my-table .customer-col {
+        display: none;
+    }
+    
+    .my-table .order-id-col {
+        min-width: 80px;
+    }
+    
+    .my-table .total-col {
+        min-width: 70px;
+    }
+    
+    .my-table .status-col {
+        min-width: 80px;
+    }
+    
+    .my-table .action-col {
+        min-width: 70px;
     }
 
 }

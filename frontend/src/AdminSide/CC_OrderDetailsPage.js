@@ -6,13 +6,18 @@ import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
 
 import { FaAngleLeft } from "react-icons/fa";
+import { FaAngleRight } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 
 
 function OrderDetailPage() {
   const navigate = useNavigate();
   const { orderId } = useParams();
   const location = useLocation();
-  const [modalImage, setModalImage] = useState(null);  const [order, setOrder] = useState(null);
+  const [modalImage, setModalImage] = useState(null);
+  const [currentProduct, setCurrentProduct] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [availableStatuses, setAvailableStatuses] = useState([]);
@@ -155,6 +160,92 @@ function OrderDetailPage() {
       setStatusUpdating(false);
     }
   };
+
+  // Image modal functions
+  const getProductImages = (product) => {
+    const images = [];
+    if (product.product_image) images.push(product.product_image);
+    if (product.product_image2) images.push(product.product_image2);
+    if (product.product_image3) images.push(product.product_image3);
+    if (product.product_image4) images.push(product.product_image4);
+    if (product.product_image5) images.push(product.product_image5);
+    if (product.product_image6) images.push(product.product_image6);
+    if (product.product_image7) images.push(product.product_image7);
+    if (product.product_image8) images.push(product.product_image8);
+    return images;
+  };
+
+  const getCustomItemImages = (customItem) => {
+    const images = [];
+    if (customItem.top_image) images.push({ image: customItem.top_image, label: 'Top' });
+    if (customItem.bottom_image) images.push({ image: customItem.bottom_image, label: 'Bottom' });
+    return images;
+  };
+
+  const openImagePreview = (product, imageIndex = 0) => {
+    setCurrentProduct(product);
+    setCurrentImageIndex(imageIndex);
+    const images = getProductImages(product);
+    if (images.length > 0) {
+      setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[imageIndex]}`);
+    }
+  };
+
+  const goToPreviousImage = () => {
+    if (!currentProduct) return;
+    
+    if (currentProduct.isCustomItem) {
+      const images = currentProduct.customImages;
+      const newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
+      setCurrentImageIndex(newIndex);
+      setModalImage(`${process.env.REACT_APP_API_URL}/images/customise/${images[newIndex].image}`);
+    } else {
+      const images = getProductImages(currentProduct);
+      const newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
+      setCurrentImageIndex(newIndex);
+      setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[newIndex]}`);
+    }
+  };
+
+  const goToNextImage = () => {
+    if (!currentProduct) return;
+    
+    if (currentProduct.isCustomItem) {
+      const images = currentProduct.customImages;
+      const newIndex = currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
+      setCurrentImageIndex(newIndex);
+      setModalImage(`${process.env.REACT_APP_API_URL}/images/customise/${images[newIndex].image}`);
+    } else {
+      const images = getProductImages(currentProduct);
+      const newIndex = currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
+      setCurrentImageIndex(newIndex);
+      setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[newIndex]}`);
+    }
+  };
+
+  const closeModal = () => {
+    setModalImage(null);
+    setCurrentProduct(null);
+    setCurrentImageIndex(0);
+  };
+
+  const openCustomImagePreview = (customItem, imageIndex = 0) => {
+    const images = getCustomItemImages(customItem);
+    if (images.length === 0) return;
+    
+    // Create a fake product object for custom items with custom image structure
+    const fakeProduct = {
+      product_name: "Custom Skimboard",
+      isCustomItem: true,
+      customImages: images,
+      product_image: images[imageIndex].image // Set the current image
+    };
+    
+    setCurrentProduct(fakeProduct);
+    setCurrentImageIndex(imageIndex);
+    setModalImage(`${process.env.REACT_APP_API_URL}/images/customise/${images[imageIndex].image}`);
+  };
+
   const handleBack = () => {
     navigate('/all-orders', {
       state: {
@@ -284,47 +375,115 @@ function OrderDetailPage() {
             </div>
 
             {/* Image Modal Preview */}
-            {modalImage && (
-              <div
-                className="modal-overlay"
-                onClick={() => setModalImage(null)}
-                style={{
-                  position: 'fixed',
-                  top: 0,
-                  left: 0,
-                  width: '100vw',
-                  height: '100vh',
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 1000
-                }}
-              >
-                {/* Modal Content */}
-                <div
-                  onClick={(e) => e.stopPropagation()}
-                  style={{
-                    backgroundColor: 'white',
-                    borderRadius: '8px',
-                    maxWidth: '20vw',
-                    maxHeight: '80vh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <img
-                    src={modalImage}
-                    alt="Preview"
-                    style={{
-                      maxWidth: '100%',
-                      maxHeight: '100%',
-                      objectFit: 'contain'
-                    }}
-                  />
+            {modalImage && currentProduct && (
+                // Black Background
+                <div className="modal-overlay" 
+                        onClick={closeModal} 
+                        style={{ position: 'fixed', 
+                                 top: 0, 
+                                 left: 0, 
+                                 width: '100vw', 
+                                 height: '100vh', 
+                                 backgroundColor: 'rgba(0, 0, 0, 0.8)', 
+                                 display: 'flex', 
+                                 alignItems: 'center', 
+                                 justifyContent: 'center', 
+                                 zIndex: 1000 }}>
+                    {/* The X button */}
+                    <button type="button" onClick={closeModal} 
+                            style={{ position: 'absolute', 
+                                     top: '20px', 
+                                     right: '20px', 
+                                     background: 'rgba(0, 0, 0, 0.5)', 
+                                     border: 'none', 
+                                     borderRadius: '50%', 
+                                     width: '40px', 
+                                     height: '40px', 
+                                     display: 'flex', 
+                                     alignItems: 'center', 
+                                     justifyContent: 'center', 
+                                     cursor: 'pointer', 
+                                     zIndex: 1001 }}>
+                        <IoClose size={28} color='white' />
+                    </button>
+                    {/* Left and Right Arrow And the name, pic, page num for modal content */}
+                    <div style={{ position: 'relative', 
+                         borderRadius: '8px',
+                         width: '70vw', 
+                         height: '70vh', 
+                         display: 'flex', 
+                         flexDirection: 'column', 
+                         alignItems: 'center', 
+                         justifyContent: 'center', 
+                         padding: '20px', 
+                         boxSizing: 'border-box' }}>
+                        {((currentProduct.isCustomItem ? currentProduct.customImages.length : getProductImages(currentProduct).length) > 1) && (
+                            <>
+                                <button type="button" onClick={(e) => { e.stopPropagation(); goToPreviousImage(); }} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0, 0, 0, 0.7)', border: 'none', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1002, transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.9)'} onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.7)'}><FaAngleLeft size={24} color="white" /></button>
+                                <button type="button" onClick={(e) => { e.stopPropagation(); goToNextImage(); }} style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0, 0, 0, 0.7)', border: 'none', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1002, transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.9)'} onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.7)'}><FaAngleRight size={24} color="white" /></button>
+                            </>
+                        )}
+                        {/* Product Image with Overlaid Name */}
+                        <div onClick={(e) => e.stopPropagation()} style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            width: 'fit-content',
+                            height: 'fit-content',
+                            maxWidth: '90%',
+                            maxHeight: '80%',
+                            position: 'relative',
+                            margin: 'auto'
+                        }}>
+                            <img
+                                src={modalImage}
+                                alt={`${currentProduct.product_name} preview ${currentImageIndex + 1}`}
+                                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '4px' }}
+                            />
+                            {/* Product Name Overlay - only for regular products */}
+                            {!currentProduct.isCustomItem && (
+                                <div className="modal-product-name-overlay">
+                                    {currentProduct.product_name}
+                                </div>
+                            )}
+                        </div>
+                        
+                        {/* Custom item label below image */}
+                        {currentProduct.isCustomItem && currentProduct.customImages && (
+                            <div style={{ 
+                                marginTop: '10px', 
+                                fontSize: '16px', 
+                                fontWeight: 'bold', 
+                                color: 'white',
+                                textAlign: 'center'
+                            }}>
+                                {currentProduct.customImages[currentImageIndex]?.label || ''}
+                            </div>
+                        )}
+                        {/* Thumbnail Navigation */}
+                        {((currentProduct.isCustomItem ? currentProduct.customImages.length : getProductImages(currentProduct).length) > 1) && (
+                            <div onClick={(e) => e.stopPropagation()} style={{ display: 'flex', gap: '8px', marginTop: '15px', alignItems: 'center' }}>
+                                {currentProduct.isCustomItem 
+                                    ? currentProduct.customImages.map((_, index) => (
+                                        <button type="button" key={index} onClick={() => { 
+                                            setCurrentImageIndex(index); 
+                                            setModalImage(`${process.env.REACT_APP_API_URL}/images/customise/${currentProduct.customImages[index].image}`); 
+                                        }} style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc', cursor: 'pointer', transition: 'background-color 0.2s' }} />
+                                    ))
+                                    : getProductImages(currentProduct).map((_, index) => (
+                                        <button type="button" key={index} onClick={() => { 
+                                            setCurrentImageIndex(index); 
+                                            setModalImage(`${process.env.REACT_APP_API_URL}/images/${getProductImages(currentProduct)[index]}`); 
+                                        }} style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc', cursor: 'pointer', transition: 'background-color 0.2s' }} />
+                                    ))
+                                }
+                                <span style={{ marginLeft: '10px', fontSize: '12px', color: '#666' }}>
+                                    {currentImageIndex + 1} of {currentProduct.isCustomItem ? currentProduct.customImages.length : getProductImages(currentProduct).length}
+                                </span>
+                            </div>
+                        )}
+                    </div>
                 </div>
-              </div>
             )}            
             {/* Card: Order Items */}
             <div className="form-section-card">
@@ -348,7 +507,7 @@ function OrderDetailPage() {
                         <img
                           src={`${process.env.REACT_APP_API_URL}/images/${item.product_id.product_image}`}
                           alt={item.product_id?.product_name || 'Product'}
-                          onClick={() => setModalImage(`${process.env.REACT_APP_API_URL}/images/${item.product_id.product_image}`)}
+                          onClick={() => openImagePreview(item.product_id, 0)}
                           onError={(e) => {
                             console.log('Image failed to load:', `${process.env.REACT_APP_API_URL}/images/${item.product_id.product_image}`);
                             console.log('Product data:', item.product_id);
@@ -417,7 +576,7 @@ function OrderDetailPage() {
                           <img
                             src={`${process.env.REACT_APP_API_URL}/images/customise/${item.top_image}`}
                             alt="Custom Top Design"
-                            onClick={() => setModalImage(`${process.env.REACT_APP_API_URL}/images/customise/${item.top_image}`)}
+                            onClick={() => openCustomImagePreview(item, 0)}
                             style={{
                               width: '40px',
                               height: '40px',
@@ -432,7 +591,7 @@ function OrderDetailPage() {
                           <img
                             src={`${process.env.REACT_APP_API_URL}/images/customise/${item.bottom_image}`}
                             alt="Custom Bottom Design"
-                            onClick={() => setModalImage(`${process.env.REACT_APP_API_URL}/images/customise/${item.bottom_image}`)}
+                            onClick={() => openCustomImagePreview(item, item.top_image ? 1 : 0)}
                             style={{
                               width: '40px',
                               height: '40px',

@@ -25,12 +25,25 @@
 /* Specific styles for input types if needed */
 .filter-bar .search-input {
     flex-grow: 1; /* Allow search input to take more space */
-     min-width: 180px;
+    min-width: 180px;
+    width: 100%; /* Fill available space on larger screens */
 }
 
 .filter-bar .status-select {
     background-color: white;
     cursor: pointer;
+    outline: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px 15px;
+    font-size: 0.95em;
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 100%;
+    max-width: 100%;
+    min-width: 150px;
 }
 
 /* Style for date input wrapper if you add a custom icon */
@@ -923,11 +936,11 @@
 
 /* Filter bar improvements */
 .search-container {
-    flex: 3 1 200px;
+    flex: 3 1 auto;
 }
 
 .filter-container {
-    flex: 1 1 150px;
+    flex: 1 1 auto;
 }
 
 /* Users summary styling */
@@ -1451,6 +1464,24 @@ input[type="password"]::-ms-clear {
     .address-text {
         max-width: 100px;
     }
+    
+    /* Filter Bar Mobile Responsive */
+    .filter-bar {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .search-container,
+    .filter-container {
+        width: 100%;
+    }
+    
+    .filter-bar .filter-input,
+    .filter-bar .search-input {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
 }
 
 
@@ -1735,6 +1766,12 @@ input[type="password"]::-ms-clear {
     
     .filter-input {
         font-size: 16px; /* Prevent zoom on iOS */
+        min-width: 0; /* Remove minimum width constraints on mobile */
+        width: 100%;
+    }
+    
+    .filter-bar .search-input {
+        min-width: 0; /* Override the 180px min-width on mobile */
     }
     
     .summary-stats {
@@ -1748,9 +1785,12 @@ input[type="password"]::-ms-clear {
     }
     
     /* Hide more table columns on very small screens */
-    .users-table .role-col,
     .users-table .email-col {
         display: none;
+    }
+    
+    .users-table .role-col {
+        min-width: 70px;
     }
     
     .users-table .name-col {

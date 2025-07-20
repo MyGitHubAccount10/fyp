@@ -83,11 +83,11 @@ const LoginPage = () => {
   };
   
   const handleForgotPassword = () => {
-    // ✅ FIX: When navigating to forgot-password, pass the current state along.
-    // This keeps the { from, buyNowItem } information alive for the next step.
     navigate('/forgot-password', { state: location.state });
   };
 
+  // ✅ ADDED: Style for labels
+  const labelStyle = { fontWeight: '600', marginBottom: '6px', display: 'block', fontSize: '0.9em' };
   const inputStyle = { display: 'block', width: '100%', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
   const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
   const errorMessageStyle = { color: '#e74c3c', fontSize: '0.875em', marginTop: '5px', marginBottom: '15px' };
@@ -101,6 +101,8 @@ const LoginPage = () => {
           <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>Login to your account!</p>
 
           <form onSubmit={handleSubmit} noValidate>
+            {/* ✅ ADDED: Email label */}
+            <label style={labelStyle}>Email Address</label>
             <input
               type="email"
               placeholder="Enter your email"
@@ -110,7 +112,9 @@ const LoginPage = () => {
               style={{ ...emailError ? errorInputStyle : inputStyle, marginBottom: emailError ? '0' : '15px' }}
             />
             {emailError && <p style={errorMessageStyle}>{emailError}</p>}
-
+            
+            {/* ✅ ADDED: Password label */}
+            <label style={labelStyle}>Password</label>
             <div className="password-input-wrapper" style={{ marginBottom: passwordError ? '0' : '20px' }}>
                 <input
                   type={isPasswordVisible ? 'text' : 'password'}

@@ -22,7 +22,6 @@ const ForgotPasswordPage = () => {
     const [success, setSuccess] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-    // ✅ FIX: Added state for the confirm password eye icon
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
     const navigate = useNavigate();
@@ -95,6 +94,7 @@ const ForgotPasswordPage = () => {
         }
     };
     
+    const labelStyle = { fontWeight: '600', marginBottom: '6px', display: 'block', fontSize: '0.9em' };
     const inputStyle = { display: 'block', width: '100%', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
     const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
     const errorMessageStyle = { color: '#e74c3c', fontSize: '0.875em', marginTop: '5px', marginBottom: '15px' };
@@ -111,6 +111,7 @@ const ForgotPasswordPage = () => {
                 </p>
 
                 <form onSubmit={handleSubmit} noValidate>
+                    <label style={labelStyle}>Email Address</label>
                     <input
                         type="email"
                         placeholder="Enter your email"
@@ -122,6 +123,7 @@ const ForgotPasswordPage = () => {
                     />
                     {emailError && <p style={errorMessageStyle}>{emailError}</p>}
 
+                    <label style={labelStyle}>New Password</label>
                     <div className="password-input-wrapper" style={{ marginBottom: newPasswordError ? '0' : '15px' }}>
                         <input
                             type={isPasswordVisible ? 'text' : 'password'}
@@ -142,10 +144,9 @@ const ForgotPasswordPage = () => {
                     </div>
                     {newPasswordError && <p style={errorMessageStyle}>{newPasswordError}</p>}
 
-
+                    <label style={labelStyle}>Confirm New Password</label>
                      <div className="password-input-wrapper" style={{ marginBottom: confirmPasswordError ? '0' : '20px' }}>
                         <input
-                            // ✅ FIX: Use the new state to toggle type
                             type={isConfirmPasswordVisible ? 'text' : 'password'}
                             placeholder="Confirm your new password"
                             value={confirmPassword}
@@ -154,7 +155,6 @@ const ForgotPasswordPage = () => {
                             style={confirmPasswordError ? errorInputStyle : inputStyle}
                             required
                         />
-                        {/* ✅ FIX: Add the eye icon button */}
                         <button
                             type="button"
                             className="password-toggle-btn"
@@ -178,12 +178,20 @@ const ForgotPasswordPage = () => {
                         {isLoading ? 'Resetting...' : 'Reset Password'}
                     </button>
                     
-                    <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                    <div style={{ marginTop: '20px' }}>
                         <button
                             type="button"
                             className="update-cart-btn"
                             onClick={() => navigate('/login', { state: location.state })}
-                            style={{ backgroundColor: 'transparent', color: '#333', border: 'none', textDecoration: 'underline' }}
+                            // ✅ MODIFIED: Updated style to match the theme's secondary buttons
+                            style={{
+                                width: '100%',
+                                backgroundColor: '#f0f0f0',
+                                color: '#333',
+                                border: '1px solid #ccc',
+                                textDecoration: 'none', // Remove underline
+                                marginTop: 0 // Reset margin from class if needed inside this div
+                            }}
                         >
                             Back to Login
                         </button>

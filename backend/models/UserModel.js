@@ -29,6 +29,7 @@ const userSchema = new Schema({
   username: {
     type: String,
     required: true,
+    unique: true, // <-- Ensures username is unique in the database
     validate: {
       validator: function(v) {
         return /^[a-zA-Z0-9]+$/.test(v);
@@ -39,6 +40,7 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: true,
+    unique: true, // <-- Ensures email is unique in the database
     validate: [validator.isEmail, 'Invalid email'] // This will now work correctly
   },
   password: {
@@ -80,9 +82,15 @@ userSchema.statics.signup = async function(email, password, username, phone_numb
     throw Error('Password not strong enough');
   }
 
-  const exists = await this.findOne({ email });
-  if (exists) {
+  const emailExists = await this.findOne({ email });
+  if (emailExists) {
     throw Error('Email already in use');
+  }
+
+  // Check if username already exists
+  const usernameExists = await this.findOne({ username });
+  if (usernameExists) {
+    throw Error('Username already in use');
   }
 
   const salt = await bcrypt.genSalt(10);

@@ -236,6 +236,32 @@ const resetPassword = async (req, res) => {
     }
 };
 
+// ✅ ADDED: New function to check for email/username existence for live validation
+const checkExistence = async (req, res) => {
+    const { email, username } = req.body;
+
+    if (!email && !username) {
+        return res.status(400).json({ error: 'Email or username is required for check.' });
+    }
+
+    try {
+        let query = {};
+        if (email) {
+            query = { email: email.toLowerCase() };
+        } else if (username) {
+            query = { username };
+        }
+
+        const user = await User.findOne(query).lean();
+
+        return res.status(200).json({ exists: !!user });
+
+    } catch (error) {
+        console.error('Error checking user existence:', error);
+        res.status(500).json({ error: 'Server error while checking existence.' });
+    }
+};
+
 module.exports = {
     getUsers,
     getUser,
@@ -250,4 +276,5 @@ module.exports = {
     updateUserPassword,
     deleteLoggedInUser,
     resetPassword,
+    checkExistence, // ✅ ADDED: Export the new function
 };

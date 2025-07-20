@@ -15,7 +15,8 @@ const {
     updateLoggedInUser,
     updateUserPassword,
     deleteLoggedInUser,
-    resetPassword // <-- ✅ 1. Import the new controller function
+    resetPassword,
+    checkExistence // <-- ✅ ADDED: Import the new controller function
 } = require('../controllers/UserController');
 const requireAuth = require('../middleware/requireAuth');
 
@@ -24,7 +25,8 @@ const router = express.Router();
 // Public routes
 router.post('/login', loginUser);
 router.post('/signup', signupUser);
-router.post('/reset-password', resetPassword); // <-- ✅ 2. Add the new public POST route
+router.post('/reset-password', resetPassword);
+router.post('/check-existence', checkExistence); // <-- ✅ ADDED: The new public POST route for live validation
 
 // Routes protected by authentication middleware
 router.patch('/update', requireAuth, updateLoggedInUser);

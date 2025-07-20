@@ -106,35 +106,29 @@ const HomePage = () => {
         }
     }, [dispatch, products]);
 
-    // Effect to load social media embed scripts
+    // ✅ MODIFIED: Effect to load social media embed scripts
     useEffect(() => {
-        const loadScript = (src, id) => {
-            if (document.getElementById(id)) {
-                // If script is already on the page, trigger the embed processing
-                if (id === 'instagram-embed-script' && window.instgrm) {
-                    window.instgrm.Embeds.process();
-                }
-                return;
-            }
-            const script = document.createElement('script');
-            script.id = id;
-            script.src = src;
-            script.async = true;
-            document.body.appendChild(script);
+        // This function will run every time the component mounts.
+        // We remove the old script and add a new one to force TikTok to re-scan the page.
+        const existingScript = document.getElementById('tiktok-embed-script');
+        if (existingScript) {
+            existingScript.remove();
+        }
 
-            if (id === 'instagram-embed-script') {
-                script.onload = () => {
-                    if (window.instgrm) {
-                        window.instgrm.Embeds.process();
-                    }
-                };
+        const script = document.createElement('script');
+        script.id = 'tiktok-embed-script';
+        script.src = 'https://www.tiktok.com/embed.js';
+        script.async = true;
+        document.body.appendChild(script);
+
+        // Optional: Cleanup function to remove the script when the component unmounts
+        return () => {
+            const scriptToRemove = document.getElementById('tiktok-embed-script');
+            if (scriptToRemove) {
+                scriptToRemove.remove();
             }
         };
-
-        // loadScript('//www.instagram.com/embed.js', 'instagram-embed-script'); // REMOVED
-        loadScript('https://www.tiktok.com/embed.js', 'tiktok-embed-script');
-        
-    }, []);
+    }, []); // The empty dependency array ensures this runs on every mount/unmount cycle
 
 
   return (
@@ -199,29 +193,10 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* Popular Products Section */}
-        {/* <section className="popular-products-section container">
-          <h2 className="popular-products-title">Popular Products</h2>
-          <div className="popular-products-grid">
-            {products && products.filter(product => product.warehouse_quantity > 0 &&
-            product.warehouse_quantity > product.threshold)
-            .sort((a, b) => a.warehouse_quantity - b.warehouse_quantity)
-            .slice(0, 3).map(product => (
-              <Link to={`/product/${product._id}`} key={product._id} style={{ textDecoration: 'none' }}>
-                <div className="popular-product-card" key={product._id}>
-                  <img src={`${process.env.REACT_APP_API_URL}/images/${product.product_image}`} alt={product.product_name} className="popular-product-card-image" />
-                  <div className="popular-product-card-caption">{product.product_name}</div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section> */}
-
         {/* Social Media Section */}
         <section className="social-media-section">
             <h2 className="social-media-title">Catch The Vibe</h2>
             <div className="social-embeds-container">
-                {/* The entire <div> for the Instagram post has been removed. */}
                 <div className="social-embed-item">
                     <blockquote className="tiktok-embed" cite="https://www.tiktok.com/@this_side_up.sg/video/7447587830504623378" data-video-id="7447587830504623378" style={{ maxWidth: '605px', minWidth: '325px' }} > <section> <a target="_blank" rel="noopener noreferrer" title="@this_side_up.sg" href="https://www.tiktok.com/@this_side_up.sg?refer=embed">@this_side_up.sg</a> <p></p> <a target="_blank" rel="noopener noreferrer" title="♬ Paradise - Bazzi" href="https://www.tiktok.com/music/Paradise-6677379022231440129?refer=embed">♬ Paradise - Bazzi</a> </section> </blockquote>
                 </div>

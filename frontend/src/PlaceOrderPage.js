@@ -123,6 +123,25 @@ function PlaceOrderPage() {
     const handlePaymentMethodSelect = (method) => {
         setSelectedPaymentMethod(method);
     };
+
+    // --- MODIFIED: New handler for the "Back to Cart" button ---
+    const handleBackToCart = () => {
+        // Check if the page was loaded via the "Buy Now" flow by looking at the navigation state.
+        const buyNowItemArray = location.state?.buyNowItem;
+
+        // If there is a "Buy Now" item, dispatch it to be added to the main cart context.
+        if (buyNowItemArray && buyNowItemArray.length > 0) {
+            const itemToAdd = buyNowItemArray[0]; // The item is wrapped in an array
+            dispatch({
+                type: 'ADD_TO_CART',
+                payload: itemToAdd,
+            });
+        }
+
+        // After potentially adding the item, navigate to the cart page.
+        // If it wasn't a "Buy Now" flow, this simply navigates back to the cart.
+        navigate('/cart');
+    };
     
     const executeOrderCreation = async () => {
         setIsSubmitting(true);
@@ -278,7 +297,7 @@ function PlaceOrderPage() {
                     <button
                         type="button"
                         className="update-cart-btn"
-                        onClick={() => navigate('/cart')}
+                        onClick={handleBackToCart} // MODIFIED: Use the new handler function
                         style={{ display: 'inline-block', margin: 0, marginTop: 0 }}
                     >
                         ← Back to Cart

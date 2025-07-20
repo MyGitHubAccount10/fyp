@@ -354,7 +354,7 @@ const handleFilter = () => {
                     <thead>                        
                         <tr>
                             <th >Role</th>
-                            <th >User</th>
+                            <th >Full Name</th>
                             <th >Email</th>
                             <th >Phone Number</th>
                             <th >Shipping Address</th>

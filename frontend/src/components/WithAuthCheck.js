@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const WithAuthCheck = (WrappedComponent) => {
-    return (props) => {
+    const AuthCheckedComponent = (props) => {
         const navigate = useNavigate();
 
         useEffect(() => {
@@ -44,6 +44,8 @@ const WithAuthCheck = (WrappedComponent) => {
 
         return <WrappedComponent {...props} />;
     };
+
+    return AuthCheckedComponent;
 };
 
 export default WithAuthCheck;

@@ -1223,6 +1223,49 @@ select {
     display: inline-block;
 }
 
+/* ADD THIS to Website.css */
+
+/* --- Styling for Cancelled Order Cards --- */
+
+/* This is the main class added to the card on cancellation */
+.order-card.cancelled-order {
+    border-color: #e0e0e0;
+}
+
+/* Darken BOTH the header AND the expanded details section for a consistent look */
+.order-card.cancelled-order .order-card-header,
+.order-card.cancelled-order .order-card-details {
+    background-color: #f5f5f5; /* A consistent light grey background */
+}
+
+/* Fade out the text to show the order is inactive */
+.order-card.cancelled-order .order-id,
+.order-card.cancelled-order .order-date,
+.order-card.cancelled-order .order-card-details p,
+.order-card.cancelled-order .order-card-details strong,
+.order-card.cancelled-order .order-item-info span {
+    color: #9e9e9e; /* A medium grey for a "disabled" look */
+}
+
+/* Ensure the red total price is also faded to show it's no longer relevant */
+.order-card.cancelled-order .order-total {
+    color: #e53935; /* Keep the red color base */
+    opacity: 0.6;   /* But reduce its opacity */
+}
+
+/* Ensure the red item price is also faded */
+.order-card.cancelled-order .order-item-info span:last-child {
+    color: #e53935; /* Keep the red color base */
+    opacity: 0.6;   /* And reduce its opacity */
+}
+
+/* Keep the main "Cancelled" status badge vibrant and unaffected by the text fade */
+.order-card.cancelled-order .status-cancelled {
+    color: white; /* Make sure text stays white */
+    opacity: 1;   /* Ensure it's fully opaque */
+}
+
+
 /* Order Status Badge Styling */
 .status-placed, 
 .status-processing, 
@@ -1333,6 +1376,33 @@ select {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+}
+
+/* ADD THIS to Website.css */
+
+/* --- Themed Styling for the "Cancel Order" Button --- */
+.order-actions-footer .btn-cancel {
+    background-color: #e74c3c; /* A strong but thematic red for cancellation */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px; /* Matches other main action buttons */
+    font-size: 0.9em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+/* Add a hover effect for better user feedback */
+.order-actions-footer .btn-cancel:hover {
+    background-color: #c0392b; /* A darker red on hover */
+}
+
+/* Style for the button when it's disabled during the API call */
+.order-actions-footer .btn-cancel:disabled {
+    background-color: #ccc;
+    color: #888;
+    cursor: not-allowed;
 }
 
 @media (max-width: 1024px) {
@@ -2851,4 +2921,93 @@ input[type="password"]::-ms-clear {
   .product-grid-container {
     padding: 1rem;
   }
+}
+
+
+
+
+/* --- Order Cancellation Modal --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    border-top: 5px solid var(--primary-orange);
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    font-size: 1.6em;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.modal-content p {
+    font-size: 1em;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.modal-actions button {
+    padding: 10px 25px;
+    border-radius: 8px;
+    font-size: 0.95em;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.modal-actions .btn-secondary {
+    background-color: #fff;
+    color: #555;
+    border-color: #ccc;
+}
+
+.modal-actions .btn-secondary:hover {
+    background-color: #f8f8f8;
+    border-color: #bbb;
+}
+
+.modal-actions .btn-cancel {
+    background-color: #e74c3c;
+    color: white;
+    border-color: #e74c3c;
+}
+
+.modal-actions .btn-cancel:hover {
+    background-color: #c0392b;
+    border-color: #c0392b;
+}
+
+.modal-actions button:disabled {
+    background-color: #ccc;
+    color: #888;
+    cursor: not-allowed;
+    border-color: #ccc;
 }

@@ -6,6 +6,7 @@ import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
 
+// REVERTED: Use the correct ID for 'Cancelled' status from the old file to fix the functionality.
 const CANCELLED_STATUS_ID = '687f3a5b6c7d8e9f0a1b2c3d'; 
 
 // ✅ FIX: Define the status options for the filter dropdown

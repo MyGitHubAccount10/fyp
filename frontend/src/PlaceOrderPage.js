@@ -195,8 +195,8 @@ function PlaceOrderPage() {
                     if (!item.topImagePreview) throw new Error('Custom item must have a top image file.');
                     if (!item.bottomImagePreview) throw new Error('Custom item must have a bottom image file.');
                     const customisePrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
-                    const topImageFile = await dataURLtoFile(item.topImagePreview, `top_custom_${Date.now()}.png`);
-                    const bottomImageFile = await dataURLtoFile(item.bottomImagePreview, `bottom_custom_${Date.now()}.png`);
+                    const topImageFile = await dataURLtoFile(item.topImagePreview, `top_custom_${performance.now()}.png`);
+                    const bottomImageFile = await dataURLtoFile(item.bottomImagePreview, `bottom_custom_${performance.now()}.png`);
                     const customiseFormData = new FormData();
                     customiseFormData.append('order', orderId);
                     customiseFormData.append('board_type', item.type);

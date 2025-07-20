@@ -444,11 +444,10 @@
 }
 
 .coloured-link {
-    margin-top: 10px;
     color: #f1673a;
     text-decoration: none;
     font-weight: 500;
-    font-size: 15px;
+    font-size: 17px;
 }
 .coloured-link:hover {
     text-decoration: underline;
@@ -1203,6 +1202,10 @@ input[type="password"]::-ms-clear {
     font-size: 12px!important; 
 }
 
+.coloured-link {
+    font-size: 12px;
+}
+
 /* Customer Details Page - Tablet adjustments */
 .user-detail-input,
 .user-detail-select {
@@ -1282,6 +1285,10 @@ input[type="password"]::-ms-clear {
         text-align: left;
         vertical-align: middle;
         word-break: break-word;
+    }
+
+    .coloured-link {
+        font-size: 13px;
     }
     
     /* Make table container scrollable */
@@ -1553,6 +1560,10 @@ input[type="password"]::-ms-clear {
         word-break: break-word;
         max-width: 120px;
     }
+
+    .coloured-link {
+        font-size: 11px;
+    }
     
     /* Specific column adjustments */
     .my-table th:first-child,
@@ -1674,6 +1685,10 @@ input[type="password"]::-ms-clear {
         vertical-align: middle;
         word-break: break-word;
         max-width: 100px;
+    }
+
+    .coloured-link {
+        font-size: 10px;
     }
     
     /* Specific column adjustments for mobile */
@@ -1821,6 +1836,10 @@ input[type="password"]::-ms-clear {
         padding: 4px 2px;
         font-size: 9px!important;
         max-width: 80px;
+    }
+
+    .coloured-link {
+        font-size: 9px;
     }
     
     .admin-product-image {

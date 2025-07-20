@@ -128,66 +128,66 @@ function AddAdminPage() {
          !isSuperAdmin && !roles.some(r => r.role_name === 'Customer') ? (
           <div className="access-restricted-container">
             <h2>Access Restricted</h2> <p>You don't have permission to create new users.</p>
-            <button onClick={handleBack} className="add-new-btn mobile-full-width"><FaAngleLeft size={18} /> Back to All Users</button>
+            <button onClick={handleBack} className="add-new-btn"><FaAngleLeft size={18} /> Back to All Users</button>
           </div>
         ) : (
           <>
             <div className="page-header">
-              <div className="title-row mobile-stack">
+              <div className="title-row">
                 <h2 className="page-title">{isSuperAdmin ? 'Add New User' : 'Add New Customer'}</h2>
-              <button onClick={handleBack} className="add-new-btn mobile-full-width"><FaAngleLeft size={18} /> Back to All Users</button>
+              <button onClick={handleBack} className="add-new-btn"><FaAngleLeft size={18} /> Back to All Users</button>
               </div>
               <p className="user-info-text">Logged in as: <strong>{currentUserRole}</strong></p>
 
             </div>
             <form onSubmit={handleSubmit} noValidate className="responsive-form">
-              <div className="add-product-form-layout mobile-stack-layout">
-                <div className="add-product-main-column mobile-full-width">
-                  <div className="form-section-card mobile-card">
-                    <h3 className="section-card-title mobile-section-title">Personal Information</h3>
-                    <div className="form-group mobile-form-group" style={{...formGroupStyle, marginBottom: errors.fullName ? '5px' : '15px'}}>
-                      <label className="mobile-label">Full Name</label>
-                      <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} onBlur={handleBlur} placeholder="Enter full name" className={`mobile-input ${errors.fullName ? 'input-error' : ''}`}/>
+              <div className="add-product-form-layout">
+                <div className="add-product-main-column">
+                  <div className="form-section-card">
+                    <h3 className="section-card-title">Personal Information</h3>
+                    <div className="form-group" style={{...formGroupStyle, marginBottom: errors.fullName ? '5px' : '15px'}}>
+                      <label>Full Name</label>
+                      <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} onBlur={handleBlur} placeholder="Enter full name" className={`${errors.fullName ? 'input-error' : ''}`}/>
                       {errors.fullName && <p style={errorMessageStyle}>{errors.fullName}</p>}
                     </div>
-                    <div className="form-group mobile-form-group" style={{...formGroupStyle, marginBottom: errors.phoneNumber ? '5px' : '15px'}}>
-                      <label className="mobile-label">Phone Number</label>
-                      <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} onBlur={handleBlur} placeholder="Enter 8-digit phone number" className={`mobile-input ${errors.phoneNumber ? 'input-error' : ''}`}/>
+                    <div className="form-group" style={{...formGroupStyle, marginBottom: errors.phoneNumber ? '5px' : '15px'}}>
+                      <label>Phone Number</label>
+                      <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} onBlur={handleBlur} placeholder="Enter 8-digit phone number" className={`${errors.phoneNumber ? 'input-error' : ''}`}/>
                       {errors.phoneNumber && <p style={errorMessageStyle}>{errors.phoneNumber}</p>}
                     </div>
                   </div>
-                  <div className="form-section-card mobile-card">
-                    <h3 className="section-card-title mobile-section-title">Account Information</h3>
-                    <div className="form-group mobile-form-group" style={{...formGroupStyle, marginBottom: errors.username ? '5px' : '15px'}}>
-                      <label className="mobile-label">Username</label>
-                      <input type="text" name="username" value={formData.username} onChange={handleChange} onBlur={handleBlur} placeholder="Enter username" className={`mobile-input ${errors.username ? 'input-error' : ''}`} />
+                  <div className="form-section-card">
+                    <h3 className="section-card-title">Account Information</h3>
+                    <div className="form-group" style={{...formGroupStyle, marginBottom: errors.username ? '5px' : '15px'}}>
+                      <label>Username</label>
+                      <input type="text" name="username" value={formData.username} onChange={handleChange} onBlur={handleBlur} placeholder="Enter username" className={`${errors.username ? 'input-error' : ''}`} />
                       {errors.username && <p style={errorMessageStyle}>{errors.username}</p>}
                     </div>
-                    <div className="form-group mobile-form-group" style={{...formGroupStyle, marginBottom: errors.email ? '5px' : '15px'}}>
-                      <label className="mobile-label">Email Address</label>
-                      <input type="email" name="email" value={formData.email} onChange={handleChange} onBlur={handleBlur} placeholder="Enter email address" className={`mobile-input ${errors.email ? 'input-error' : ''}`}/>
+                    <div className="form-group" style={{...formGroupStyle, marginBottom: errors.email ? '5px' : '15px'}}>
+                      <label>Email Address</label>
+                      <input type="email" name="email" value={formData.email} onChange={handleChange} onBlur={handleBlur} placeholder="Enter email address" className={`${errors.email ? 'input-error' : ''}`}/>
                       {errors.email && <p style={errorMessageStyle}>{errors.email}</p>}
                     </div>
-                    <div className="form-group mobile-form-group" style={{...formGroupStyle, marginBottom: errors.shippingAddress ? '5px' : '15px'}}>
-                      <label className="mobile-label">Shipping Address</label>
-                      <input type="text" name="shippingAddress" value={formData.shippingAddress} onChange={handleChange} onBlur={handleBlur} placeholder="Enter shipping address" className={`mobile-input ${errors.shippingAddress ? 'input-error' : ''}`}/>
+                    <div className="form-group" style={{...formGroupStyle, marginBottom: errors.shippingAddress ? '5px' : '15px'}}>
+                      <label>Shipping Address</label>
+                      <input type="text" name="shippingAddress" value={formData.shippingAddress} onChange={handleChange} onBlur={handleBlur} placeholder="Enter shipping address" className={`${errors.shippingAddress ? 'input-error' : ''}`}/>
                       {errors.shippingAddress && <p style={errorMessageStyle}>{errors.shippingAddress}</p>}
                     </div>
-                    <div className="form-group mobile-form-group" style={{...formGroupStyle, marginBottom: errors.password ? '5px' : '15px'}}>
-                      <label className="mobile-label">Password</label>
-                      <div className="password-input-wrapper mobile-password-wrapper">
-                        <input type={isPasswordVisible ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} onBlur={handleBlur} placeholder="Enter password" className={`mobile-input ${errors.password ? 'input-error' : ''}`}/>
-                        <button type="button" className="password-toggle-btn mobile-toggle-btn" onClick={() => setIsPasswordVisible(p => !p)}>
+                    <div className="form-group" style={{...formGroupStyle, marginBottom: errors.password ? '5px' : '15px'}}>
+                      <label>Password</label>
+                      <div className="password-input-wrapper">
+                        <input type={isPasswordVisible ? 'text' : 'password'} name="password" value={formData.password} onChange={handleChange} onBlur={handleBlur} placeholder="Enter password" className={`${errors.password ? 'input-error' : ''}`}/>
+                        <button type="button" className="password-toggle-btn" onClick={() => setIsPasswordVisible(p => !p)}>
                             {isPasswordVisible ? <FaEyeSlash size={20}/> : <FaEye size={20}/>}
                         </button>
                       </div>
                       {errors.password && <p style={errorMessageStyle}>{errors.password}</p>}
                     </div>
-                    <div className="form-group mobile-form-group" style={{...formGroupStyle, marginBottom: errors.confirmPassword ? '5px' : '15px'}}>
-                      <label className="mobile-label">Confirm Password</label>
-                      <div className="password-input-wrapper mobile-password-wrapper">
-                        <input type={isConfirmPasswordVisible ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} onBlur={handleBlur} placeholder="Confirm password" className={`mobile-input ${errors.confirmPassword ? 'input-error' : ''}`}/>
-                        <button type="button" className="password-toggle-btn mobile-toggle-btn" onClick={() => setIsConfirmPasswordVisible(p => !p)}>
+                    <div className="form-group" style={{...formGroupStyle, marginBottom: errors.confirmPassword ? '5px' : '15px'}}>
+                      <label>Confirm Password</label>
+                      <div className="password-input-wrapper">
+                        <input type={isConfirmPasswordVisible ? 'text' : 'password'} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} onBlur={handleBlur} placeholder="Confirm password" className={`${errors.confirmPassword ? 'input-error' : ''}`}/>
+                        <button type="button" className="password-toggle-btn" onClick={() => setIsConfirmPasswordVisible(p => !p)}>
                             {isConfirmPasswordVisible ? <FaEyeSlash size={20}/> : <FaEye size={20}/>}
                         </button>
                       </div>
@@ -195,22 +195,22 @@ function AddAdminPage() {
                     </div>
                   </div>
                 </div>
-                <div className="add-product-sidebar-panel mobile-sidebar">
-                  <div className="form-section-card mobile-card">
-                    <h3 className="section-card-title mobile-section-title">User Role</h3>
-                    <div className="form-group mobile-form-group">
-                      <label htmlFor="role" className="mobile-label">Assign Role</label>
-                      <select id="role" name="role" value={formData.role} onChange={handleChange} disabled={!isSuperAdmin} className="mobile-select">
+                <div className="add-product-sidebar-panel">
+                  <div className="form-section-card">
+                    <h3 className="section-card-title">User Role</h3>
+                    <div className="form-group">
+                      <label htmlFor="role">Assign Role</label>
+                      <select id="role" name="role" value={formData.role} onChange={handleChange} disabled={!isSuperAdmin}>
                         {roles.map((role) => (<option key={role._id} value={role._id}>{role.role_name}</option>))}
                       </select>
                       {!isSuperAdmin && (<p className="role-restriction-text">Only Super Admins can change roles.</p>)}
                     </div>
                   </div>
-                  <div className="form-section-card mobile-card">
-                    <h3 className="section-card-title mobile-section-title">Create Account</h3>
-                    <div className="form-actions-vertical mobile-actions">
-                      <button type="submit" className="btn-save-product mobile-submit-btn"><IoIosAddCircle size={18} /> {isSuperAdmin ? 'Create User' : 'Create Customer'}</button>
-                      <button type="button" onClick={handleCancel} className="btn-cancel-product mobile-cancel-btn">Cancel</button>
+                  <div className="form-section-card">
+                    <h3 className="section-card-title">Create Account</h3>
+                    <div className="form-actions-vertical">
+                      <button type="submit" className="btn-save-product"><IoIosAddCircle size={18} /> {isSuperAdmin ? 'Create User' : 'Create Customer'}</button>
+                      <button type="button" onClick={handleCancel} className="btn-cancel-product">Cancel</button>
                     </div>
                   </div>
                 </div>

@@ -194,7 +194,8 @@ function AllOrdersPage() {
         });
     };
 
-    return (<>
+    return (
+        <div>
             <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
                 <AdminHeader />
             </div>
@@ -206,10 +207,11 @@ function AllOrdersPage() {
                 <input
                     type="text"
                     placeholder="Search by Order ID or Customer Name"
-                    className="filter-input search-input" // Reuse search-input style if applicable
+                    className="filter-input search-input" 
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                />                <select
+                />
+                <select
                     className="filter-input status-select"
                     value={selectedStatus}
                     onChange={(e) => setSelectedStatus(e.target.value)}
@@ -223,21 +225,17 @@ function AllOrdersPage() {
                 {/* Date Inputs */}
                  <div className="filter-input date-input-wrapper">
                     <input
-                        type="date" // Use date type for calendar icon
+                        type="date" 
                         value={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
-                         // placeholder="dd/mm/yy" // Placeholder doesn't show for type="date"
                         className="date-input"
                     />
-                     {/* Calendar icon is typically part of the native date input */}
-                     {/* If you need a custom icon, wrap input and icon in a div and style */}
                  </div>
                  <div className="filter-input date-input-wrapper">
                     <input
                         type="date"
                         value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
-                         // placeholder="dd/mm/yy"
                         className="date-input"
                     />
                  </div>                
@@ -287,7 +285,8 @@ function AllOrdersPage() {
       className="pagination-button"
     >
       {'Next >>'}
-    </button>  </div>
+    </button>
+  </div>
 </div>
 
             {/* Orders Table */}
@@ -302,54 +301,56 @@ function AllOrdersPage() {
                             <th>Payment Method</th>
                             <th>Order Status</th>
                             <th>Actions</th>
-                        </tr>                    </thead>
+                        </tr>
+                    </thead>
                     <tbody>
                         {loading ? (
                             <tr>
                                 <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>Loading orders...</td>
                             </tr>
-                        ) : error ? (
-                            <tr>
-                                <td colSpan="7" style={{ textAlign: 'center', padding: '20px', color: 'red' }}>{error}</td>
-                            </tr>
-                        ) : currentOrders.length > 0 ? (
-                             currentOrders.map(order => (
-                                <tr key={order._id}>
-                                    <td>#{order._id.slice(-8)}</td> {/* Display last 8 characters of ID */}
-                                    <td>{new Date(order.order_date || order.createdAt).toLocaleDateString('en-US', {
-                                        year: 'numeric',
-                                        month: 'short', 
-                                        day: '2-digit',
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                    })}</td>
-                                    <td>{order.user_id ? order.user_id.full_name : 'Unknown Customer'}</td>
-                                    <td>${parseFloat(order.total_amount || 0).toFixed(2)}</td>
-                                    <td>{order.payment_method || 'N/A'}</td>
-                                    <td className={getOrderStatusClass(order.status_id?.status_name || 'Processing')}>
-                                        {order.status_id?.status_name || 'Processing'}
-                                    </td>
-                                    <td>
-                                        <div className="actionButton">
-                                            <button className="editbutton" onClick={() => handleViewDetails(order._id)}><MdEdit size={24} /></button>
-                                        </div>
+                            ) : error ? (
+                                <tr>
+                                    <td colSpan="7" style={{ textAlign: 'center', padding: '20px', color: 'red' }}>{error}</td>
+                                </tr>
+                            ) : currentOrders.length > 0 ? (
+                                 currentOrders.map(order => (
+                                    <tr key={order._id}>
+                                        <td>#{order._id.slice(-8)}</td>
+                                        <td>{new Date(order.order_date || order.createdAt).toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'short', 
+                                            day: '2-digit',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        })}</td>
+                                        <td>{order.user_id ? order.user_id.full_name : 'Unknown Customer'}</td>
+                                        <td>${parseFloat(order.total_amount || 0).toFixed(2)}</td>
+                                        <td>{order.payment_method || 'N/A'}</td>
+                                        <td className={getOrderStatusClass(order.status_id?.status_name || 'Processing')}>
+                                            {order.status_id?.status_name || 'Processing'}
+                                        </td>
+                                        <td>
+                                            <div className="actionButton">
+                                                <button className="editbutton" onClick={() => handleViewDetails(order._id)}><MdEdit size={24} /></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>
+                                        {filteredOrders.length === 0 && allOrders.length > 0 
+                                            ? 'No orders match your current filters.' 
+                                            : 'No orders found in the system.'}
                                     </td>
                                 </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>
-                                    {filteredOrders.length === 0 && allOrders.length > 0 
-                                        ? 'No orders match your current filters.' 
-                                        : 'No orders found in the system.'}
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </>);
+    );
 }
 
 export default AllOrdersPage;

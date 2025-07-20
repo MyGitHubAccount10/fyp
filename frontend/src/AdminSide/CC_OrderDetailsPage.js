@@ -270,7 +270,8 @@ function OrderDetailPage() {
         <div className="add-product-form-layout">
 
           {/* Left Column - Order Info */}
-          <div className="add-product-main-column">            {/* Card: Order Summary */}
+          <div className="add-product-main-column">
+            {/* Card: Order Summary */}
             <div className="form-section-card">
               <h3 className="section-card-title">Order Summary</h3>
               <p><strong>Order ID:</strong> #{order._id.slice(-8)}</p>
@@ -302,7 +303,8 @@ function OrderDetailPage() {
               >
                 {/* Modal Content */}
                 <div
-                  onClick={(e) => e.stopPropagation()}                  style={{
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
                     backgroundColor: 'white',
                     borderRadius: '8px',
                     maxWidth: '20vw',
@@ -340,7 +342,8 @@ function OrderDetailPage() {
                       padding: '8px',
                       backgroundColor: '#f9f9f9',
                       borderRadius: '4px'
-                    }}>                      {/* Product image */}
+                    }}>
+                      {/* Product image */}
                       {item.product_id?.product_image ? (
                         <img
                           src={`${process.env.REACT_APP_API_URL}/images/${item.product_id.product_image}`}
@@ -371,7 +374,8 @@ function OrderDetailPage() {
                         }}>
                           No Image
                         </div>
-                      )}<div style={{ flex: 1, minWidth: 0 }}>
+                      )}
+                      <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ 
                           wordWrap: 'break-word', 
                           overflow: 'hidden',
@@ -490,7 +494,8 @@ function OrderDetailPage() {
                   (!order.custom_items || !Array.isArray(order.custom_items) || order.custom_items.length === 0)) && (
                   <p>No items found for this order.</p>
                 )}
-              </div>              <hr />
+              </div>
+              <hr />
               <div className="order-total-row" style={{ 
                 display: 'flex', 
                 justifyContent: 'space-between', 
@@ -516,10 +521,10 @@ function OrderDetailPage() {
           </div>
 
           {/* Right Column - Customer & Payment */}
-          <div className="add-product-sidebar-panel">              
+          <div className="add-product-sidebar-panel">
             {/* Card: Shipping Status */}
-            <div className="form-section-card">              
-              <h3 className="section-card-title">Shipping Status</h3>              
+            <div className="form-section-card">
+              <h3 className="section-card-title">Shipping Status</h3>
               <div style={{ width: '100%', boxSizing: 'border-box', padding: '0', margin: '0' }}>
                 <select
                   className="category-select"
@@ -556,18 +561,23 @@ function OrderDetailPage() {
                   {statusMessage}
                 </p>
               )}
-            </div>            {/* Card: Customer Info */}            <div className="form-section-card">
+            </div>            {/* Card: Customer Info */}
+            <div className="form-section-card">
               <h3 className="section-card-title">Customer Information</h3>
               <p style={{ wordWrap: 'break-word' }}><strong>Name:</strong> {order.user_id?.full_name || 'Unknown Customer'}</p>
               <p style={{ wordWrap: 'break-word' }}><strong>Username:</strong> {order.user_id?.username || 'N/A'}</p>
               <p style={{ wordWrap: 'break-word' }}><strong>Phone:</strong> {order.user_id?.phone_number || 'N/A'}</p>
               <p style={{ wordWrap: 'break-word' }}><strong>Email:</strong> {order.user_id?.email || 'N/A'}</p>
-            </div>            {/* Card: Shipping Info */}
+            </div>
+
+            {/* Card: Shipping Info */}
             <div className="form-section-card">
               <h3 className="section-card-title">Shipping Information</h3>
               <p style={{ wordWrap: 'break-word', lineHeight: '1.5' }}><strong>Address:</strong> {order.shipping_address || 'N/A'}</p>
               <p><strong>Method:</strong> Standard Shipping</p>
-            </div>{/* Card: Payment Info */}
+            </div>
+
+            {/* Card: Payment Info */}
             <div className="form-section-card">
               <h3 className="section-card-title">Payment</h3>
               <p><strong>Method:</strong> {order.payment_method || 'N/A'}</p>

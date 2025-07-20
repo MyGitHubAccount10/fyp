@@ -268,7 +268,7 @@ function UserDetailPage() {
             </div>  
       <div className="manage-products-page">        
         <div className="title-row">
-          <div>
+          <div className="title-content">
             <h2>User Details</h2>
             {!canEdit && (
               <p style={{ 
@@ -285,38 +285,30 @@ function UserDetailPage() {
               </p>
             )}
           </div>
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div className="title-actions">
             {!isEditing ? (
               canEdit ? (
                 <button onClick={handleEdit} className="add-new-btn">
                   Edit User
                 </button>
               ) : (
-                <div style={{ 
-                  padding: '10px 15px', 
-                  backgroundColor: '#f8f9fa', 
-                  border: '1px solid #dee2e6', 
-                  borderRadius: '4px',
-                  color: '#6c757d',
-                  fontSize: '14px',
-                  fontStyle: 'italic'
-                }}>
+                <div className="view-only-badge">
                   View Only - Edit restricted for {targetUserRole} users
                 </div>
               )
             ) : (
-              <>
-                <button onClick={handleSave} className="add-new-btn">
+              <div className="edit-actions">
+                <button onClick={handleSave} className="add-new-btn save-btn">
                   Save Changes
                 </button>
-                <button onClick={handleCancel} className="add-new-btn" style={{ backgroundColor: '#6c757d' }}>
+                <button onClick={handleCancel} className="add-new-btn cancel-btn">
                   Cancel
                 </button>
-              </>
+              </div>
             )}
-            <button onClick={handleBack} className="add-new-btn">
+            <button onClick={handleBack} className="add-new-btn back-btn">
               <FaAngleLeft size={18} color="white" />
-              Back to All Users
+              <span className="back-text">Back to All Users</span>
             </button>
           </div>
         </div>
@@ -338,16 +330,10 @@ function UserDetailPage() {
                       type="text"
                       value={editForm.full_name}
                       onChange={(e) => handleInputChange('full_name', e.target.value)}
-                      style={{
-                        marginLeft: '10px',
-                        padding: '5px',
-                        border: '1px solid #ccc',
-                        borderRadius: '4px',
-                        width: '200px'
-                      }}
+                      className="user-detail-input"
                     />
                   ) : (
-                    <span style={{ marginLeft: '10px' }}>{user.full_name}</span>
+                    <span className="user-detail-value">{user.full_name}</span>
                   )}
                 </div>
 
@@ -358,16 +344,10 @@ function UserDetailPage() {
                       type="text"
                       value={editForm.username}
                       onChange={(e) => handleInputChange('username', e.target.value)}
-                      style={{
-                        marginLeft: '10px',
-                        padding: '5px',
-                        border: '1px solid #ccc',
-                        borderRadius: '4px',
-                        width: '200px'
-                      }}
+                      className="user-detail-input"
                     />
                   ) : (
-                    <span style={{ marginLeft: '10px' }}>{user.username}</span>
+                    <span className="user-detail-value">{user.username}</span>
                   )}
                 </div>
 
@@ -378,16 +358,10 @@ function UserDetailPage() {
                       type="email"
                       value={editForm.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      style={{
-                        marginLeft: '10px',
-                        padding: '5px',
-                        border: '1px solid #ccc',
-                        borderRadius: '4px',
-                        width: '200px'
-                      }}
+                      className="user-detail-input"
                     />
                   ) : (
-                    <span style={{ marginLeft: '10px' }}>{user.email}</span>
+                    <span className="user-detail-value">{user.email}</span>
                   )}
                 </div>
 
@@ -398,16 +372,10 @@ function UserDetailPage() {
                       type="text"
                       value={editForm.phone_number}
                       onChange={(e) => handleInputChange('phone_number', e.target.value)}
-                      style={{
-                        marginLeft: '10px',
-                        padding: '5px',
-                        border: '1px solid #ccc',
-                        borderRadius: '4px',
-                        width: '200px'
-                      }}
+                      className="user-detail-input"
                     />
                   ) : (
-                    <span style={{ marginLeft: '10px' }}>{user.phone_number}</span>
+                    <span className="user-detail-value">{user.phone_number}</span>
                   )}
                 </div>
 
@@ -418,15 +386,7 @@ function UserDetailPage() {
                       value={editForm.role_id}
                       onChange={(e) => handleInputChange('role_id', e.target.value)}
                       disabled={currentUserRole === 'Admin'} // Disable if current user is Admin
-                      style={{
-                        marginLeft: '10px',
-                        padding: '5px',
-                        border: '1px solid #ccc',
-                        borderRadius: '4px',
-                        width: '200px',
-                        opacity: currentUserRole === 'Admin' ? 0.6 : 1,
-                        cursor: currentUserRole === 'Admin' ? 'not-allowed' : 'pointer'
-                      }}
+                      className={`user-detail-select ${currentUserRole === 'Admin' ? 'disabled' : ''}`}
                     >
                       <option value="">Select Role</option>
                       {availableRoles.map(role => (
@@ -436,10 +396,10 @@ function UserDetailPage() {
                       ))}
                     </select>
                   ) : (
-                    <span style={{ marginLeft: '10px' }}>{user.role_name}</span>
+                    <span className="user-detail-value">{user.role_name}</span>
                   )}
                   {isEditing && currentUserRole === 'Admin' && (
-                    <div style={{ fontSize: '12px', color: '#666', fontStyle: 'italic', marginTop: '4px' }}>
+                    <div className="role-restriction-note">
                       Only Super Admins can change user roles
                     </div>
                   )}
@@ -447,25 +407,16 @@ function UserDetailPage() {
                 <p><strong>Status:</strong> <span className={`badge ${user.status === 'banned' ? 'badge-red' : 'badge-green'}`}>{user.status || 'active'}</span></p>
                 <p><strong>Joined:</strong> {new Date(user.createdAt).toLocaleDateString()}</p>
                   <div style={{ marginBottom: '10px' }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
-                    <strong style={{ marginTop: '5px', minWidth: 'fit-content' }}>Shipping Address:</strong> 
+                  <div className="shipping-address-field">
+                    <strong className="field-label">Shipping Address:</strong> 
                     {isEditing ? (
                       <textarea
                         value={editForm.shipping_address}
                         onChange={(e) => handleInputChange('shipping_address', e.target.value)}
-                        style={{
-                          padding: '5px',
-                          border: '1px solid #ccc',
-                          borderRadius: '4px',
-                          width: '100%',
-                          maxWidth: '300px',
-                          minHeight: '60px',
-                          resize: 'vertical',
-                          flex: 1
-                        }}
+                        className="user-detail-textarea"
                       />
                     ) : (
-                      <span style={{ flex: 1 }}>{user.shipping_address}</span>
+                      <span className="user-detail-value shipping-address-value">{user.shipping_address}</span>
                     )}
                   </div>
                 </div>

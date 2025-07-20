@@ -749,6 +749,262 @@
   vertical-align: middle !important;
 }
 
+/* ========================================================================= */
+/* CUSTOMER DETAILS PAGE STYLES                                             */
+/* ========================================================================= */
+
+/* Title row improvements for mobile */
+.title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+.title-content {
+    flex: 1;
+}
+
+.title-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.edit-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.view-only-badge {
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    color: #6c757d;
+    font-size: 14px;
+    font-style: italic;
+    white-space: nowrap;
+}
+
+.back-btn .back-text {
+    margin-left: 5px;
+}
+
+/* User detail form improvements */
+.user-detail-input {
+    margin-left: 10px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.user-detail-select {
+    margin-left: 10px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+    max-width: 100%;
+    box-sizing: border-box;
+    background-color: white;
+    cursor: pointer;
+}
+
+.user-detail-select.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.user-detail-value {
+    margin-left: 10px;
+    word-break: break-word;
+}
+
+.user-detail-textarea {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 300px;
+    min-height: 60px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.shipping-address-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.field-label {
+    margin-top: 5px;
+    min-width: fit-content;
+}
+
+.shipping-address-value {
+    flex: 1;
+}
+
+.role-restriction-note {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+    margin-top: 4px;
+    margin-left: 10px;
+}
+
+/* Button styling improvements */
+.save-btn {
+    background-color: #28a745 !important;
+}
+
+.cancel-btn {
+    background-color: #6c757d !important;
+}
+
+/* ========================================================================= */
+/* ALL CUSTOMERS PAGE STYLES                                                */
+/* ========================================================================= */
+
+/* User role information styling */
+.user-role-info {
+    margin-top: 10px;
+}
+
+.role-display {
+    color: #666;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.role-restriction {
+    color: #f1673a;
+    font-style: italic;
+    font-size: 12px;
+    margin: 2px 0;
+}
+
+.role-permission {
+    color: #28a745;
+    font-style: italic;
+    font-size: 12px;
+    margin: 2px 0;
+}
+
+.btn-text {
+    margin-left: 5px;
+}
+
+/* Filter bar improvements */
+.search-container {
+    flex: 3 1 200px;
+}
+
+.filter-container {
+    flex: 1 1 150px;
+}
+
+/* Users summary styling */
+.users-summary {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.summary-title {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.summary-stats {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-label {
+    font-weight: bold;
+}
+
+.stat-value.total {
+    color: #007bff;
+}
+
+.stat-value.filtered {
+    color: #28a745;
+}
+
+/* Pagination improvements */
+.pagination-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.pagination-info {
+    font-size: 16px;
+}
+
+.pagination-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.pagination-text-short {
+    display: none;
+}
+
+/* Table improvements */
+.table-container {
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+.table-wrapper {
+    min-width: 100%;
+}
+
+.users-table {
+    width: 100%;
+}
+
+.banned-user-row {
+    opacity: 0.6;
+}
+
+.address-text {
+    display: block;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.no-results {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    color: #666;
+}
+
 
 
 
@@ -1014,6 +1270,123 @@ input[type="password"]::-ms-clear {
         bottom: 12px;
         max-width: 65%;
     }
+    
+    /* Customer Details Page Mobile Styles */
+    .title-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+    
+    .title-actions {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+    
+    .edit-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .back-btn .back-text {
+        display: none;
+    }
+    
+    .view-only-badge {
+        font-size: 12px;
+        padding: 8px 12px;
+        text-align: center;
+    }
+    
+    .user-detail-input,
+    .user-detail-select {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 5px;
+        display: block;
+    }
+    
+    .user-detail-value {
+        margin-left: 0;
+        margin-top: 5px;
+        display: block;
+    }
+    
+    .shipping-address-field {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .user-detail-textarea {
+        max-width: 100%;
+    }
+    
+    .role-restriction-note {
+        margin-left: 0;
+    }
+    
+    /* All Customers Page Mobile Styles */
+    .user-role-info {
+        margin-top: 15px;
+    }
+    
+    .role-display,
+    .role-restriction,
+    .role-permission {
+        font-size: 12px;
+    }
+    
+    .btn-text {
+        display: none;
+    }
+    
+    .summary-stats {
+        gap: 15px;
+    }
+    
+    .stat-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+    }
+    
+    .pagination-controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    
+    .pagination-info {
+        text-align: center;
+        font-size: 14px;
+    }
+    
+    .pagination-buttons {
+        justify-content: center;
+    }
+    
+    .pagination-text-full {
+        display: none;
+    }
+    
+    .pagination-text-short {
+        display: inline;
+    }
+    
+    /* Table column specific styles for mobile */
+    .users-table .address-col,
+    .users-table .phone-col,
+    .users-table .date-col {
+        display: none;
+    }
+    
+    .users-table .email-col {
+        max-width: 120px;
+    }
+    
+    .address-text {
+        max-width: 100px;
+    }
 }
 
 
@@ -1229,6 +1602,73 @@ input[type="password"]::-ms-clear {
         bottom: 8px;
         max-width: 55%;
     }
+    
+    /* Customer Details Page Extra Small Screens */
+    .title-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .edit-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .add-new-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+        font-size: 14px;
+    }
+    
+    .user-detail-input,
+    .user-detail-select,
+    .user-detail-textarea {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    /* All Customers Page Extra Small Screens */
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-container,
+    .filter-container {
+        flex: 1 1 auto;
+    }
+    
+    .filter-input {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    .summary-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .pagination-button {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+    
+    /* Hide more table columns on very small screens */
+    .users-table .role-col,
+    .users-table .email-col {
+        display: none;
+    }
+    
+    .users-table .name-col {
+        min-width: 120px;
+    }
+    
+    .users-table .status-col {
+        min-width: 80px;
+    }
+    
+    .users-table .action-col {
+        min-width: 80px;
+    }
 
 }
 
@@ -1274,6 +1714,41 @@ input[type="password"]::-ms-clear {
     .badge {
         padding: 1px 3px;
         font-size: 8px;
+    }
+    
+    /* All Customers Page Ultra Small Screens */
+    .users-table {
+        font-size: 10px;
+    }
+    
+    .users-table th,
+    .users-table td {
+        padding: 6px 4px;
+        font-size: 10px !important;
+    }
+    
+    .users-table .name-col {
+        min-width: 100px;
+        max-width: 120px;
+    }
+    
+    .users-table .status-col {
+        min-width: 60px;
+    }
+    
+    .users-table .action-col {
+        min-width: 60px;
+    }
+    
+    .actionButton {
+        flex-direction: column;
+        gap: 2px;
+    }
+    
+    .actionButton button {
+        padding: 4px;
+        min-width: 28px;
+        min-height: 28px;
     }
 
     /* Modal product name overlay responsive */
@@ -1381,5 +1856,212 @@ input[type="password"]::-ms-clear {
 
   .status-filter-select {
     width: 100%; /* Make the select dropdown itself take up the full width */
+  }
+}
+
+/* ========================================================================= */
+/* ADD ADMIN PAGE MOBILE RESPONSIVENESS                                    */
+/* ========================================================================= */
+
+/* Add Admin Page Mobile Responsiveness */
+@media (max-width: 768px) {
+  /* Page Structure */
+  .page-header {
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .mobile-stack {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 15px;
+  }
+  
+  .page-title {
+    font-size: 24px !important;
+    margin-bottom: 0;
+  }
+  
+  .user-info-text {
+    color: #666;
+    font-size: 14px;
+    margin: 0;
+  }
+  
+  .mobile-full-width {
+    width: 100% !important;
+    justify-content: center;
+  }
+  
+  /* Form Layout */
+  .mobile-stack-layout {
+    flex-direction: column !important;
+    gap: 20px;
+  }
+  
+  .mobile-full-width {
+    width: 100% !important;
+  }
+  
+  .mobile-card {
+    margin-bottom: 15px;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .mobile-section-title {
+    font-size: 18px !important;
+    margin-bottom: 15px;
+  }
+  
+  /* Form Elements */
+  .mobile-form-group {
+    margin-bottom: 20px !important;
+  }
+  
+  .mobile-label {
+    font-size: 16px !important;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+  }
+  
+  .mobile-input {
+    padding: 12px 15px !important;
+    font-size: 16px !important;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .mobile-select {
+    padding: 12px 15px !important;
+    font-size: 16px !important;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Password Wrapper */
+  .mobile-password-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  
+  .mobile-toggle-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+  }
+  
+  /* Actions */
+  .mobile-actions {
+    gap: 15px;
+  }
+  
+  .mobile-submit-btn, .mobile-cancel-btn {
+    padding: 12px 20px !important;
+    font-size: 16px !important;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Special Elements */
+  .loading-container {
+    text-align: center;
+    padding: 50px 20px;
+  }
+  
+  .access-restricted-container {
+    text-align: center;
+    padding: 50px 20px;
+  }
+  
+  .role-restriction-text {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+    margin-bottom: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Tighter spacing for small screens */
+  .page-header {
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .page-title {
+    font-size: 20px !important;
+  }
+  
+  .mobile-card {
+    padding: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .mobile-section-title {
+    font-size: 16px !important;
+  }
+  
+  .mobile-input, .mobile-select {
+    padding: 10px 12px !important;
+    font-size: 14px !important;
+  }
+  
+  .mobile-label {
+    font-size: 14px !important;
+  }
+  
+  .mobile-submit-btn, .mobile-cancel-btn {
+    padding: 10px 15px !important;
+    font-size: 14px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Ultra-compact layout */
+  .page-header {
+    padding: 8px;
+  }
+  
+  .page-title {
+    font-size: 18px !important;
+  }
+  
+  .mobile-card {
+    padding: 12px;
+    border-radius: 6px;
+  }
+  
+  .mobile-section-title {
+    font-size: 14px !important;
+    margin-bottom: 10px;
+  }
+  
+  .mobile-form-group {
+    margin-bottom: 15px !important;
+  }
+  
+  .mobile-input, .mobile-select {
+    padding: 8px 10px !important;
+    font-size: 14px !important;
+  }
+  
+  .mobile-label {
+    font-size: 13px !important;
+    margin-bottom: 6px;
+  }
+  
+  .mobile-submit-btn, .mobile-cancel-btn {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
   }
 }

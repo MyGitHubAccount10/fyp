@@ -15,7 +15,7 @@ import { FaEye } from "react-icons/fa6";
 
 
 import { GrFormView } from "react-icons/gr";
-
+import { IoIosAddCircle } from "react-icons/io";
 import { FaBan } from "react-icons/fa";
 
 
@@ -230,242 +230,211 @@ const handleFilter = () => {
                 {!loading && !error && (                    
                     <>
                         <div className="title-row">
-                            <div>
+                            <div className="title-content">
                                 <h2>Users</h2>
-
-                            </div>
-                            <button onClick={handleAddAdmin} className="add-new-btn">
-                                <FaUserEdit size={18} />
-                                Add New User
-                            </button>
-                            </div>
-                            <div>
                                 {currentUserRole && (
-                                    <p style={{ color: '#666', fontSize: '14px', margin: '5px 0' }}>
-                                        Logged in as: <strong>{currentUserRole}</strong>
+                                    <div className="user-role-info">
+                                        <p className="role-display">
+                                            Logged in as: <strong>{currentUserRole}</strong>
+                                        </p>
                                         {currentUserRole === 'Admin' && (
-                                            <span style={{ color: '#f1673a', fontStyle: 'italic' }}>
-                                                {' '}(Can ban/unban customers only. Admin banning restricted to Super Admins)
-                                            </span>
+                                            <p className="role-restriction">
+                                                Can ban/unban customers only. Admin banning restricted to Super Admins
+                                            </p>
                                         )}
                                         {isSuperAdmin && (
-                                            <span style={{ color: '#28a745', fontStyle: 'italic' }}>
-                                                {' '}(Full access to ban/unban all users)
-                                            </span>
+                                            <p className="role-permission">
+                                                Full access to ban/unban all users
+                                            </p>
                                         )}
-                                    </p>
+                                    </div>
                                 )}
+                            </div>
+                            <div className="title-actions">
+                                <button onClick={handleAddAdmin} className="add-new-btn">
+                                    <IoIosAddCircle size={18} />
+                                    <span className="btn-text">Add New User</span>
+                                </button>
+                            </div>
                         </div>
 
                 {/* Filter row */}
-<div
-    style={{
-        backgroundColor: 'white',
-        padding: '20px',
-        borderRadius: '8px',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
-        marginBottom: '20px',
-        display: 'flex',
-        gap: '10px',
-        alignItems: 'center',
-        flexWrap: 'wrap',
-    }}
->    {/* Search Input */}
-    <div style={{ flex: '3 1 100px', boxSizing: 'border-box' }}>
-        <input
-            type="text"
-            placeholder="Search by name, username, or email..."
-            className="search-input"
-            style={{
-                width: '100%',
-                padding: '10px',
-                borderRadius: '6px',
-                border: '1px solid #ccc',
-                boxSizing: 'border-box',
-            }}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-        />
-    </div>
+                <div className="filter-bar">
+                    {/* Search Input */}
+                    <div className="search-container">
+                        <input
+                            type="text"
+                            placeholder="Search by name, username, or email..."
+                            className="filter-input search-input"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
 
-    {/* Role Filters */}
-    <div
-        style={{
-            display: 'flex',
-            flex: '1 1 100px', // take more space, but allow wrapping
-            gap: '10px',
-            flexWrap: 'wrap',
-        }}
-    >
-        <select
-            className="category-select"
-            style={{
-                flex: '1 1 150px',
-                padding: '10px',
-                borderRadius: '6px',
-                border: '1px solid #ccc'
-            }}
-            value={selectedRole}
-            onChange={(e) => setSelectedRole(e.target.value)}        >
-            <option value="All Roles">All Roles</option>
-            <option value="Customer">Customer</option>
-            <option value="Admin">Admin</option>
-            <option value="Super Admin">Super Admin</option>
-
-        </select>
-    </div>
-</div>
+                    {/* Role Filters */}
+                    <div className="filter-container">
+                        <select
+                            className="filter-input status-select"
+                            value={selectedRole}
+                            onChange={(e) => setSelectedRole(e.target.value)}
+                        >
+                            <option value="All Roles">All Roles</option>
+                            <option value="Customer">Customer</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Super Admin">Super Admin</option>
+                        </select>
+                    </div>
+                </div>
 
             {/* Users Summary */}
-            <div className="users-summary" style={{ margin: '20px 0', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-                <h3 style={{ margin: '0 0 10px 0', fontSize: '1.2em', color: '#333' }}>Users Overview</h3>
-                <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
-                    <div>
-                        <strong>Total Users:</strong> <span style={{ color: '#007bff' }}>{allUsers.length}</span>
+            <div className="users-summary">
+                <h3 className="summary-title">Users Overview</h3>
+                <div className="summary-stats">
+                    <div className="stat-item">
+                        <span className="stat-label">Total Users:</span> 
+                        <span className="stat-value total">{allUsers.length}</span>
                     </div>
-                    <div>
-                        <strong>Filtered Results:</strong> <span style={{ color: '#28a745' }}>{users.length}</span>
+                    <div className="stat-item">
+                        <span className="stat-label">Filtered Results:</span> 
+                        <span className="stat-value filtered">{users.length}</span>
                     </div>
                 </div>
             </div>
 
                 {/* Pagination Controls */}
-            <div
-            className="pagination-controls"
-            style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "16px 0",
-                flexWrap: "wrap",
-                gap: "12px",
-            }}
-            >
-            <span style={{ fontSize: "16px" }}>
-                Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
-            </span>
-            <div style={{ display: "flex", gap: "10px" }}>
-                <button
-                onClick={handlePrevPage}
-                disabled={currentPage === 1}
-                className="pagination-button"
-                >
-                {'<< Prev'}
-                </button>
-                <button
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-                className="pagination-button"
-                >
-                {'Next >>'}
-                </button>
-            </div>
+            <div className="pagination-controls">
+                <span className="pagination-info">
+                    Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+                </span>
+                <div className="pagination-buttons">
+                    <button
+                        onClick={handlePrevPage}
+                        disabled={currentPage === 1}
+                        className="pagination-button"
+                    >
+                        <span className="pagination-text-full">Previous</span>
+                        <span className="pagination-text-short">Prev</span>
+                    </button>
+                    <button
+                        onClick={handleNextPage}
+                        disabled={currentPage === totalPages}
+                        className="pagination-button"
+                    >
+                        <span className="pagination-text-full">Next</span>
+                        <span className="pagination-text-short">Next</span>
+                    </button>
+                </div>
             </div>                
             {/* Users Table */}
-            <div className='card' style={{ overflowX: 'auto', marginBottom: '20px' }}>
-                <table className="my-table" style={{ width: '100%' }}>                    
-                    <thead>                        
-                        <tr>
-                            <th >Role</th>
-                            <th >Full Name</th>
-                            <th >Email</th>
-                            <th >Phone Number</th>
-                            <th >Shipping Address</th>
-                            <th >Status</th>
-                            <th >Created At</th>
-                            <th className="action-column">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentUsers.length > 0 ? (                             
-                            currentUsers.map(user => (
-                                <tr key={user._id}>
-                                    <td style={{ opacity: user.status === 'banned' ? 0.4 : 1 }}>{user.role_name}</td>
-                                    <td style={{ opacity: user.status === 'banned' ? 0.4 : 1 }}>{user.full_name}</td>
-                                    <td style={{ opacity: user.status === 'banned' ? 0.4 : 1 }}>{user.email}</td>
-                                    <td style={{ opacity: user.status === 'banned' ? 0.4 : 1 }}>{user.phone_number}</td>
-                                    <td style={{ opacity: user.status === 'banned' ? 0.4 : 1 }}>{user.shipping_address}</td>
-                                    <td>
-                                        <span className={`badge ${user.status === 'banned' ? 'badge-red' : 'badge-green'}`}>
-                                            {user.status || 'active'}
-                                        </span>
-                                    </td>
-                                    <td style={{ opacity: user.status === 'banned' ? 0.4 : 1 }}>{new Date(user.createdAt).toLocaleDateString()}</td>
-                                    <td className="action-column">
-                                        <div className="actionButton">
-                                            {/* Show edit button based on permissions */}
-                                            {isSuperAdmin ? (
-                                                // Super Admin can edit anyone
-                                                <button className='editbutton' onClick={() => handleEditUser(user)} title="Edit User" >
-                                                    <FaUserEdit />
-                                                </button>
-                                            ) : currentUserRole === 'Admin' ? (
-                                                // Admin can only edit customers
-                                                user.role_name === 'Customer' ? (
-                                                    <button  className='editbutton' onClick={() => handleEditUser(user)} title="Edit User">
-                                                        <FaUserEdit  />
+            <div className='card table-container'>
+                <div className="table-wrapper">
+                    <table className="my-table users-table">                    
+                        <thead>                        
+                            <tr>
+                                <th className="role-col">Role</th>
+                                <th className="name-col">Full Name</th>
+                                <th className="email-col">Email</th>
+                                <th className="phone-col">Phone</th>
+                                <th className="address-col">Address</th>
+                                <th className="status-col">Status</th>
+                                <th className="date-col">Created</th>
+                                <th className="action-col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentUsers.length > 0 ? (                             
+                                currentUsers.map(user => (
+                                    <tr key={user._id} className={user.status === 'banned' ? 'banned-user-row' : ''}>
+                                        <td className="role-col">{user.role_name}</td>
+                                        <td className="name-col">{user.full_name}</td>
+                                        <td className="email-col">{user.email}</td>
+                                        <td className="phone-col">{user.phone_number}</td>
+                                        <td className="address-col">
+                                            <span className="address-text">{user.shipping_address}</span>
+                                        </td>
+                                        <td className="status-col">
+                                            <span className={`badge ${user.status === 'banned' ? 'badge-red' : 'badge-green'}`}>
+                                                {user.status || 'active'}
+                                            </span>
+                                        </td>
+                                        <td className="date-col">{new Date(user.createdAt).toLocaleDateString()}</td>
+                                        <td className="action-col">
+                                            <div className="actionButton">
+                                                {/* Show edit button based on permissions */}
+                                                {isSuperAdmin ? (
+                                                    // Super Admin can edit anyone
+                                                    <button className='editbutton' onClick={() => handleEditUser(user)} title="Edit User" >
+                                                        <FaUserEdit />
                                                     </button>
-                                                ) : (
-                                                    // if user edits admin, and super admin
-                                                    <button className='editbutton' onClick={() => handleEditUser(user)} title="View User">
-                                                        <FaEye />
-                                                    </button>
-                                                )
-                                            ) : (
-                                                <button className='editbutton' onClick={() => handleEditUser(user)} title="View User">
-                                                    <FaUserEdit />
-                                                </button>
-                                            )}
-                                            {/* Show ban/unban button based on permissions */}
-                                            {(() => {
-                                                if (isSuperAdmin) {
-                                                    return (
-                                                        <button 
-                                                            className={`deletebutton ${user.status === 'banned' ? 'banned-user-button' : ''}`}
-                                                            onClick={() => handleBanUser(user._id, user.status, user.role_name)} 
-                                                            title={user.status === 'banned' ? 'Unban User' : 'Ban User'} 
-                                                            style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}
-                                                        >
-                                                            <FaBan/>
+                                                ) : currentUserRole === 'Admin' ? (
+                                                    // Admin can only edit customers
+                                                    user.role_name === 'Customer' ? (
+                                                        <button  className='editbutton' onClick={() => handleEditUser(user)} title="Edit User">
+                                                            <FaUserEdit  />
                                                         </button>
-                                                    );
-                                                } else if (currentUserRole === 'Admin') {
-                                                    if (user.role_name === 'Customer') {
+                                                    ) : (
+                                                        // if user edits admin, and super admin
+                                                        <button className='editbutton' onClick={() => handleEditUser(user)} title="View User">
+                                                            <FaEye />
+                                                        </button>
+                                                    )
+                                                ) : (
+                                                    <button className='editbutton' onClick={() => handleEditUser(user)} title="View User">
+                                                        <FaUserEdit />
+                                                    </button>
+                                                )}
+                                                {/* Show ban/unban button based on permissions */}
+                                                {(() => {
+                                                    if (isSuperAdmin) {
                                                         return (
                                                             <button 
                                                                 className={`deletebutton ${user.status === 'banned' ? 'banned-user-button' : ''}`}
                                                                 onClick={() => handleBanUser(user._id, user.status, user.role_name)} 
-                                                                title={user.status === 'banned' ? 'Unban User' : 'Ban User'}
-                                                                style={{ color: user.status === 'banned' ? '#43f13aff' : ''}}
+                                                                title={user.status === 'banned' ? 'Unban User' : 'Ban User'} 
+                                                                style={{ opacity: user.status === 'banned' ? 0.6 : 1 }}
                                                             >
                                                                 <FaBan/>
                                                             </button>
                                                         );
+                                                    } else if (currentUserRole === 'Admin') {
+                                                        if (user.role_name === 'Customer') {
+                                                            return (
+                                                                <button 
+                                                                    className={`deletebutton ${user.status === 'banned' ? 'banned-user-button' : ''}`}
+                                                                    onClick={() => handleBanUser(user._id, user.status, user.role_name)} 
+                                                                    title={user.status === 'banned' ? 'Unban User' : 'Ban User'}
+                                                                    style={{ color: user.status === 'banned' ? '#43f13aff' : ''}}
+                                                                >
+                                                                    <FaBan/>
+                                                                </button>
+                                                            );
+                                                        } else {
+                                                            return (
+                                                                <button 
+                                                                    disabled
+                                                                    title="Only Super Admins can ban/unban Admin users"
+                                                                    style={{ opacity: 0.4, cursor: 'not-allowed'}}
+                                                                >
+                                                                    <FaBan />
+                                                                </button>
+                                                            );
+                                                        }
                                                     } else {
-                                                        return (
-                                                            <button 
-                                                                disabled
-                                                                title="Only Super Admins can ban/unban Admin users"
-                                                                style={{ opacity: 0.4, cursor: 'not-allowed'}}
-                                                            >
-                                                                <FaBan />
-                                                            </button>
-                                                        );
+                                                        return null;
                                                     }
-                                                } else {
-                                                    return null;
-                                                }
-                                            })()}
-                                        </div>
-                                    </td>
+                                                })()}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))                        
+                            ) : (
+                                <tr>
+                                    <td colSpan="8" className="no-results">No users found.</td>
                                 </tr>
-                            ))                        ) : (
-                            <tr>
-                                <td colSpan="10" style={{ textAlign: 'center', padding: '20px' }}>No users found.</td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
                 </>
                 )}

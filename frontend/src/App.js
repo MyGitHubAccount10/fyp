@@ -47,6 +47,7 @@ import AddPromoPage from './AdminSide/EE_AddPromoPage';
 import EditPromoPage from './AdminSide/EEE_EditPromoPage';
 
 import AdminProtectedRoute from './AdminProtectedRoute';
+import TestBanPage from './AdminSide/TestBanPage';
 
 import './index.css';
 
@@ -101,6 +102,7 @@ function App() {
         <Route path="add-promo" element={<AdminProtectedRoute><AddPromoPage /></AdminProtectedRoute>} />
         <Route path="edit-promo/:id" element={<AdminProtectedRoute><EditPromoPage /></AdminProtectedRoute>} />
         <Route path="customise-image" element={<CustomiseImagePage />} />
+        <Route path="test-ban" element={<AdminProtectedRoute><TestBanPage /></AdminProtectedRoute>} />
 
         {/* --- Catch-all 404 Route --- */}
         <Route path="*" element={<PageNotFound />} />

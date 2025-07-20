@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import AdminHeader from '../AdminHeader';
 import { useNavigate } from 'react-router-dom';
+import socketService from '../services/socketService';
+import WithAuthCheck from '../components/WithAuthCheck';
 
 import './AdminStyles.css'; 
 
@@ -134,7 +136,7 @@ function AllCustomersPage() {
                 targetUserRole: user.role_name
             } 
         });
-    };const handleBanUser = (userId, currentStatus, userRole) => {
+    };const handleBanUser = async (userId, currentStatus, userRole) => {
         // Check if current user has permission to ban this specific user
         if (!isSuperAdmin && (userRole === 'Admin' || userRole === 'Super Admin' || userRole === 'Super-Admin')) {
             alert('Only Super Admins can ban/unban other Admin users. Regular Admins can only ban/unban customers.');
@@ -147,12 +149,14 @@ function AllCustomersPage() {
         console.log(`${actionText} user with ID:`, userId);
         
         if (window.confirm(`Are you sure you want to ${actionText} this user?`)) {
-            // Make API call to ban/unban user
-            fetch(`${process.env.REACT_APP_API_URL}/api/user/${userId}/${action}`, {
-                method: 'PATCH'
-            })
-            .then(response => response.json())
-            .then(data => {
+            try {
+                // Make API call to ban/unban user
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/${userId}/${action}`, {
+                    method: 'PATCH'
+                });
+                
+                const data = await response.json();
+                
                 if (data.message) {
                     // Update the user status in the state
                     const newStatus = currentStatus === 'banned' ? 'active' : 'banned';
@@ -164,14 +168,23 @@ function AllCustomersPage() {
                         u._id === userId ? { ...u, status: newStatus } : u
                     ));
                     
+                    // Emit socket event to notify the banned user in real-time
+                    if (action === 'ban') {
+                        socketService.emitUserBanned(userId);
+                    } else {
+                        socketService.emitUserUnbanned(userId);
+                    }
+                    
                     console.log(`User ${actionText}ned successfully.`);
+                    alert(`User ${actionText}ned successfully.`);
                 } else {
                     console.error(`Failed to ${actionText} user`);
+                    alert(`Failed to ${actionText} user. Please try again.`);
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error(`Error ${actionText}ning user:`, error);
-            });
+                alert(`Error ${actionText}ning user. Please try again.`);
+            }
         }
     };
 
@@ -461,6 +474,6 @@ const handleFilter = () => {
     );
 }
 
-export default AllCustomersPage;
+export default WithAuthCheck(AllCustomersPage);
 
 

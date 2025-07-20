@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors'); // <--- ✅ Add this line
+const http = require('http');
+const { initializeSocket } = require('./socketHandler');
 
 const categoryRoutes = require('./routes/CategoryRoute');
 const customiseRoutes = require('./routes/CustomiseRoute');
@@ -15,6 +17,7 @@ const userRoutes = require('./routes/UserRoute');
 const promoRoutes = require('./routes/PromoRoute');
 
 const app = express();
+const server = http.createServer(app);
 
 // Enable CORS with specific options
 app.use(cors());
@@ -42,7 +45,12 @@ try {
   mongoose.connect(process.env.MONGO_URI)
     .then(() => {
       console.log('connected to database')
-      app.listen(process.env.PORT, () => {
+      
+      // Initialize Socket.IO
+      const io = initializeSocket(server);
+      console.log('Socket.IO initialized');
+      
+      server.listen(process.env.PORT, () => {
         console.log('listening for requests on port', process.env.PORT)
       });
     })

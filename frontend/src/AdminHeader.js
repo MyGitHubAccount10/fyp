@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { useAdminLogout } from '../src/hooks/useAdminLogout'; // Make sure this path is correct
+import socketService from '../src/services/socketService';
 import './AdminHeader.css';
 
 // ✅ FIX: The full JSX for the icons is provided, not placeholder comments.
@@ -51,6 +52,19 @@ const AdminHeader = ({ showNav = true }) => {
     
     const { logout } = useAdminLogout();
     const dropdownRef = useRef(null);
+
+    // Initialize socket connection for admin users
+    useEffect(() => {
+        const adminUser = JSON.parse(localStorage.getItem('admin_user'));
+        if (adminUser && adminUser._id) {
+            socketService.connect(adminUser._id);
+        }
+
+        // Cleanup on unmount
+        return () => {
+            socketService.disconnect();
+        };
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event) => {

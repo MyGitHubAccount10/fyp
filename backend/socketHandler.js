@@ -44,6 +44,18 @@ const initializeSocket = (server) => {
             }
         });
 
+        // Handle role change to customer event
+        socket.on('role_changed_to_customer', (data) => {
+            console.log('Role changed to customer event received:', data);
+            const targetSocketId = userSockets.get(data.userId);
+            if (targetSocketId) {
+                console.log(`Sending role change notification to user ${data.userId} with socket ${targetSocketId}`);
+                io.to(targetSocketId).emit('role_changed_to_customer', { userId: data.userId });
+            } else {
+                console.log(`No socket found for user ${data.userId}`);
+            }
+        });
+
         socket.on('disconnect', () => {
             // Remove user from mapping when they disconnect
             for (const [userId, socketId] of userSockets.entries()) {

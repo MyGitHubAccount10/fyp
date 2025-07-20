@@ -64,6 +64,37 @@ function TestBanPage() {
         }
     };
 
+    const handleChangeRoleToCustomer = async (userId) => {
+        try {
+            // First, get the Customer role ID
+            const rolesResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/role`);
+            const roles = await rolesResponse.json();
+            const customerRole = roles.find(role => role.role_name === 'Customer');
+            
+            if (!customerRole) {
+                alert('Customer role not found!');
+                return;
+            }
+
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/${userId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ role_id: customerRole._id })
+            });
+            
+            if (response.ok) {
+                // Emit socket event to notify the user of role change
+                socketService.emitRoleChangedToCustomer(userId);
+                alert('User role changed to Customer successfully! They should be redirected immediately.');
+                fetchUsers(); // Refresh the list
+            }
+        } catch (error) {
+            console.error('Error changing user role:', error);
+        }
+    };
+
     return (
         <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
             <h1>Test Real-Time Ban Functionality</h1>
@@ -74,8 +105,9 @@ function TestBanPage() {
                 <ol>
                     <li>Open this page in multiple browser tabs/windows</li>
                     <li>Log in as different admin users in each tab</li>
-                    <li>Ban one of the logged-in users</li>
-                    <li>The banned user should be immediately redirected to the homepage</li>
+                    <li>Ban one of the logged-in users OR change their role to Customer</li>
+                    <li>The affected user should be immediately redirected to the homepage</li>
+                    <li>Role changes from Admin to Customer will also trigger redirection</li>
                 </ol>
             </div>
 
@@ -116,26 +148,46 @@ function TestBanPage() {
                                             color: 'white',
                                             border: 'none',
                                             borderRadius: '4px',
-                                            cursor: 'pointer'
+                                            cursor: 'pointer',
+                                            marginRight: '5px'
                                         }}
                                     >
                                         Unban
                                     </button>
                                 ) : (
-                                    <button 
-                                        onClick={() => handleBanUser(user._id)}
-                                        style={{
-                                            padding: '8px 16px',
-                                            backgroundColor: '#dc3545',
-                                            color: 'white',
-                                            border: 'none',
-                                            borderRadius: '4px',
-                                            cursor: 'pointer'
-                                        }}
-                                        disabled={user._id === currentUser?._id}
-                                    >
-                                        Ban
-                                    </button>
+                                    <>
+                                        <button 
+                                            onClick={() => handleBanUser(user._id)}
+                                            style={{
+                                                padding: '8px 16px',
+                                                backgroundColor: '#dc3545',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '4px',
+                                                cursor: 'pointer',
+                                                marginRight: '5px'
+                                            }}
+                                            disabled={user._id === currentUser?._id}
+                                        >
+                                            Ban
+                                        </button>
+                                        {(user.role_name === 'Admin' || user.role_name === 'Super Admin') && (
+                                            <button 
+                                                onClick={() => handleChangeRoleToCustomer(user._id)}
+                                                style={{
+                                                    padding: '8px 16px',
+                                                    backgroundColor: '#fd7e14',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '4px',
+                                                    cursor: 'pointer'
+                                                }}
+                                                disabled={user._id === currentUser?._id}
+                                            >
+                                                Make Customer
+                                            </button>
+                                        )}
+                                    </>
                                 )}
                             </td>
                         </tr>

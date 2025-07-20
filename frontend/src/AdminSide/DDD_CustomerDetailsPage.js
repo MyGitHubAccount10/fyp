@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import './AdminStyles.css';
 import AdminHeader from '../AdminHeader';
+import socketService from '../services/socketService';
+import WithAuthCheck from '../components/WithAuthCheck';
 
 import { FaAngleLeft } from "react-icons/fa";
 
@@ -152,6 +154,23 @@ function UserDetailPage() {
     });
   };const handleSave = async () => {
     try {
+      // Check if role is being changed from admin to customer
+      const originalRoleId = user.role_id;
+      const newRoleId = editForm.role_id;
+      const isRoleChanging = originalRoleId !== newRoleId;
+      
+      // Get role information to check if user is being demoted from admin to customer
+      let isBeingDemotedToCustomer = false;
+      if (isRoleChanging) {
+        const newRoleResponse = await fetch(`${process.env.REACT_APP_API_URL}/api/role/${newRoleId}`);
+        if (newRoleResponse.ok) {
+          const newRoleData = await newRoleResponse.json();
+          if (newRoleData.role_name === 'Customer') {
+            isBeingDemotedToCustomer = true;
+          }
+        }
+      }
+
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/user/${userId}`, {
         method: 'PATCH',
         headers: {
@@ -162,6 +181,12 @@ function UserDetailPage() {
 
       if (!response.ok) {
         throw new Error('Failed to update user');
+      }
+
+      // If user was demoted to customer role, emit socket event to redirect them
+      if (isBeingDemotedToCustomer) {
+        socketService.emitRoleChangedToCustomer(userId);
+        alert('User role changed to Customer. They will be redirected out of admin area.');
       }
 
       // Refetch the complete user data after successful update
@@ -489,4 +514,4 @@ function UserDetailPage() {
   );
 }
 
-export default UserDetailPage;
+export default WithAuthCheck(UserDetailPage);

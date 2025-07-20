@@ -21,6 +21,16 @@ const WithAuthCheck = (WrappedComponent) => {
                                 alert('Your account has been banned. You will be redirected to the homepage.');
                                 navigate('/');
                             }
+                            
+                            // Check if user's role has been changed to Customer
+                            const storedUser = JSON.parse(localStorage.getItem('admin_user'));
+                            if (storedUser && userData.role_name === 'Customer' && storedUser.role_name !== 'Customer') {
+                                // Role was changed to customer, clear session and redirect
+                                localStorage.removeItem('admin_user');
+                                localStorage.removeItem('admin_token');
+                                alert('Your role has been changed to Customer. You will be redirected to the homepage.');
+                                navigate('/');
+                            }
                         } else if (response.status === 404) {
                             // User not found, clear session
                             localStorage.removeItem('admin_user');

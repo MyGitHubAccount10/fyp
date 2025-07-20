@@ -34,6 +34,11 @@ class SocketService {
                 console.log('User unbanned notification received:', data);
                 this.handleUserUnbanned(data);
             });
+
+            this.socket.on('role_changed_to_customer', (data) => {
+                console.log('Role changed to customer notification received:', data);
+                this.handleRoleChangedToCustomer(data);
+            });
         }
     }
 
@@ -56,6 +61,18 @@ class SocketService {
         // alert('Your account has been unbanned by an administrator.');
     }
 
+    handleRoleChangedToCustomer(data) {
+        // Clear admin session data
+        localStorage.removeItem('admin_user');
+        localStorage.removeItem('admin_token');
+        
+        // Show alert and redirect
+        alert('Your role has been changed to Customer. You will be redirected to the homepage.');
+        
+        // Force redirect to homepage
+        window.location.href = '/';
+    }
+
     disconnect() {
         if (this.socket) {
             this.socket.disconnect();
@@ -74,6 +91,13 @@ class SocketService {
     emitUserUnbanned(userId) {
         if (this.socket && this.isConnected) {
             this.socket.emit('unban_user', { userId });
+        }
+    }
+
+    // Method to emit role change to customer event
+    emitRoleChangedToCustomer(userId) {
+        if (this.socket && this.isConnected) {
+            this.socket.emit('role_changed_to_customer', { userId });
         }
     }
 

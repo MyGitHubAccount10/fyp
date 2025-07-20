@@ -86,9 +86,9 @@ const HomePage = () => {
     // The cleanup function. This will run before the effect re-runs or when the component unmounts.
     return () => clearInterval(intervalId);
 
-  }, [currentSlideIndex]); // <-- KEY CHANGE: Add currentSlideIndex as a dependency
+    });
 
-  useEffect(() => {
+    useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const response = await fetch(`${process.env.REACT_APP_API_URL}/api/product`);

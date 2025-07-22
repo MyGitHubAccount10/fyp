@@ -982,14 +982,22 @@ select {
     color: #FA704C;
     text-decoration: underline;
 }
+
 @media (max-width: 992px) {
     .checkout-layout {
         flex-direction: column;
     }
     .checkout-order-summary {
         margin-top: 20px;
+        /* 
+         * FIX: This allows the summary card to stretch to the full width 
+         * of its container, matching the elements above it on narrower screens.
+         */
+        align-self: stretch;
     }
 }
+
+
 @media (max-width: 480px) {
     .payment-options-grid {
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -2019,13 +2027,6 @@ select {
   margin: 1rem 0 2rem 0;
   padding: 0 1rem;
 }
-.hero-cta-button {
-    background-image: linear-gradient(to right, #FA704C, #0A7E8C);
-    color: white;
-}
-.hero-cta-button:hover {
-    background-image: linear-gradient(to right, #FA5D34, #00695C);
-}
 
 /* Popular Products Section */
 .popular-products-section {
@@ -2597,12 +2598,12 @@ select {
     text-align: center;
     color: #004D40;
 }
-.product-actions-detail {
+.product-actions-detail, .quantity-controls-detail {
     display: flex;
     gap: 15px;
     margin-top: 10px;
 }
-.btn-buy-now, .btn-add-to-cart-detail, .hero-cta-button {
+.btn-buy-now, .btn-add-to-cart-detail {
     padding: 12px 20px;
     border: none;
     border-radius: 8px;
@@ -2658,8 +2659,8 @@ select {
     .product-main-image-container { max-height: 300px; }
     .product-thumbnails { height: 60px; padding: 10px 10px; gap: 4px; box-sizing: border-box; }
     .thumbnail-image { width: 40px; height: 40px; border-radius: 3px; }
-    .product-actions-detail { flex-direction: column; }
-    .btn-buy-now, .btn-add-to-cart-detail, .hero-cta-button { width: 100%; }
+    .product-actions-detail, .quantity-controls-detail { flex-direction: column; }
+    .btn-buy-now, .btn-add-to-cart-detail { width: 100%; }
     .section-title-detail { font-size: 1.4em; }
     .similar-products-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
     .similar-product-image { height: 140px; }
@@ -3086,4 +3087,20 @@ input[type="password"]::-ms-clear {
     color: #888;
     cursor: not-allowed;
     border-color: #ccc;
+}
+
+
+/* --- Responsive Fixes for Checkout Page --- */
+@media (max-width: 576px) {
+    .checkout-page-container {
+        /* Reduce side padding on the main page container for mobile */
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .checkout-form {
+        /* Reduce side padding on the white form card */
+        padding-left: 15px;
+        padding-right: 15px;
+    }
 }

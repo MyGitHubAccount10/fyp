@@ -143,7 +143,8 @@ const signupUser = async (req, res) => {
   try {
     const user = await User.signup(email, password, username, phone_number, role_id, full_name, shipping_address);
     const token = createToken(user._id);
-    res.status(200).json({ 
+    res.status(200).json({
+        _id: user._id, // FIX: Added the user's _id to the response
         email: user.email,
         username: user.username,
         phone_number: user.phone_number, 

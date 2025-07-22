@@ -245,7 +245,8 @@ function EditProductPage() {
                                     <input type="number" name="threshold" value={formData.threshold} onChange={handleChange} min="0" />
                                     <small className="form-text text-muted">Optional. Set a threshold for low stock alerts.</small>
                                 </div>
-                            </div>                            <div className="form-section-card">
+                            </div>                            
+                            <div className="form-section-card">
                                 <h3 className="section-card-title">Product Image</h3>
                                 <div className="form-group">
                                     <label>Replace Images</label>                                    {/* Show warning banner when images will be replaced */}

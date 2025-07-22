@@ -539,8 +539,8 @@
     padding: 8px;
     background-color: #f8f9fa; /* Light background */
     display: flex;
-    align-items: center;
-    cursor: pointer;
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the left */
 }
 .file-input-hidden {
     display: none; /* Hide the default file input */
@@ -1900,6 +1900,83 @@ input[type="password"]::-ms-clear {
     .my-table .promo-action-col {
         min-width: 70px;
     }
+    
+    /* Responsive promo image preview */
+    .responsive-promo-preview {
+        display: block;
+        margin: 0 auto;
+    }
+    
+    /* Clear image button responsive */
+    .clear-image-btn {
+        display: block;
+    }
+    
+    /* File input container for two-line layout */
+    .file-input-container {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .file-input-button-only {
+        display: inline-block;
+        padding: 12px 24px;
+        background-color: #f1673a;
+        color: white;
+        border: 2px solid #f1673a;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        text-align: center;
+        width: fit-content;
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.2s ease;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .file-input-button-only:hover {
+        background-color: #e0562a;
+        border-color: #e0562a;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+    
+    .file-input-text-line {
+        color: #666;
+        font-size: 14px;
+        font-style: italic;
+        margin-top: 5px;
+        word-break: break-all;
+    }
+
+/* Responsive styles for file input button visibility */
+@media screen and (max-width: 768px) {
+    .file-input-button-only {
+        padding: 14px 28px;
+        font-size: 17px;
+        min-height: 48px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .file-input-button-only {
+        padding: 16px 32px;
+        font-size: 18px;
+        min-height: 52px;
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .file-input-text-line {
+        font-size: 15px;
+        margin-top: 8px;
+    }
+}
 
 }
 

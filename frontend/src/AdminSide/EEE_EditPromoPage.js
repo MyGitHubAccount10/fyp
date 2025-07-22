@@ -275,62 +275,31 @@ function EditPromoPage() {
                                             id="imageUpload"
                                             name="images"
                                             onChange={handleChange}
-                                            className="file-input-hidden"
                                             accept="image/*"
                                         />
-                                        {/* Custom styled file input button and text */}
-                                        <label htmlFor="imageUpload" className="file-input-label">
-                                            <span className="file-input-button">Choose File</span>
-                                            <span className="file-input-text">
-                                                {formData.images && formData.images.length > 0
-                                                    ? `${formData.images[0].name}`
-                                                    : 'No File Chosen'}
-                                            </span>
-                                        </label>
                                         
                                         {/* Clear button when image is selected */}
                                         {imageToReplace && (
                                             <button
                                                 type="button"
                                                 onClick={handleClearImage}
+                                                className="clear-image-btn"
                                                 style={{
-                                                    marginLeft: '10px',
-                                                    padding: '5px 10px',
+                                                    marginTop: '10px',
+                                                    marginLeft: '0',
+                                                    padding: '8px 15px',
                                                     backgroundColor: '#dc3545',
                                                     color: 'white',
                                                     border: 'none',
                                                     borderRadius: '4px',
-                                                    cursor: 'pointer'
+                                                    cursor: 'pointer',
+                                                    fontSize: '14px',
+                                                    width: '100%',
+                                                    maxWidth: '120px'
                                                 }}
                                             >
                                                 Clear
                                             </button>
-                                        )}
-                                        
-                                        {/* Display new image preview */}
-                                        {formData.images && formData.images.length > 0 && (
-                                            <div style={{ marginTop: '15px' }}>
-                                                <h4 style={{ 
-                                                    color: '#007bff', 
-                                                    fontSize: '14px', 
-                                                    marginBottom: '10px' 
-                                                }}>
-                                                    New Image Preview:
-                                                </h4>
-                                                <div className="preview-images">
-                                                    <img 
-                                                        src={URL.createObjectURL(formData.images[0])} 
-                                                        alt="New promo preview" 
-                                                        style={{ 
-                                                            maxWidth: "300px", 
-                                                            maxHeight: "150px",
-                                                            objectFit: "cover",
-                                                            border: "2px solid #007bff",
-                                                            borderRadius: "4px"
-                                                        }} 
-                                                    />
-                                                </div>
-                                            </div>
                                         )}
                                         
                                         {/* Show current image */}
@@ -347,12 +316,42 @@ function EditPromoPage() {
                                                     <img 
                                                         src={existingImageURL} 
                                                         alt="Current promo" 
+                                                        className="responsive-promo-preview"
                                                         style={{ 
-                                                            maxWidth: "300px", 
-                                                            maxHeight: "150px",
+                                                            maxWidth: "100%", 
+                                                            width: "100%",
+                                                            maxHeight: "200px",
                                                             objectFit: "cover",
                                                             opacity: imageToReplace ? 0.5 : 1,
                                                             border: imageToReplace ? "2px solid #dc3545" : "1px solid #ccc",
+                                                            borderRadius: "4px"
+                                                        }} 
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
+                                        
+                                        {/* Display new image preview */}
+                                        {formData.images && formData.images.length > 0 && (
+                                            <div style={{ marginTop: '15px' }}>
+                                                <h4 style={{ 
+                                                    color: '#007bff', 
+                                                    fontSize: '14px', 
+                                                    marginBottom: '10px' 
+                                                }}>
+                                                    New Image Preview:
+                                                </h4>
+                                                <div className="preview-images">
+                                                    <img 
+                                                        src={URL.createObjectURL(formData.images[0])} 
+                                                        alt="New promo preview" 
+                                                        className="responsive-promo-preview"
+                                                        style={{ 
+                                                            maxWidth: "100%", 
+                                                            width: "100%",
+                                                            maxHeight: "200px",
+                                                            objectFit: "cover",
+                                                            border: "2px solid #007bff",
                                                             borderRadius: "4px"
                                                         }} 
                                                     />
@@ -363,7 +362,7 @@ function EditPromoPage() {
                                     <small className="form-text text-muted">
                                         {imageToReplace 
                                             ? "⚠️ Selecting a new image will permanently delete the current image from the server and replace it with the new one. This action cannot be undone." 
-                                            : "Leave empty to keep current image. Recommended size: 1200x400px for best results."
+                                            : "Leave empty to keep current image. Recommended size: 1600x900px for best results."
                                         }
                                     </small>
                                 </div>

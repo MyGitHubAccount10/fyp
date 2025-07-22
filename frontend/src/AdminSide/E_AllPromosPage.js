@@ -284,20 +284,20 @@ function AllPromosPage() {
                 <table className="my-table">
                     <thead>
                         <tr>
-                            <th>Image</th>
-                            <th>Title</th>
-                            <th>Link</th>
-                            <th>Display Order</th>
-                            <th>Status</th>
-                            <th>Created</th>
-                            <th>Action</th>
+                            <th className="promo-image-col">Image</th>
+                            <th className="promo-title-col">Title</th>
+                            <th className="promo-link-col">Link</th>
+                            <th className="promo-order-col">Display Order</th>
+                            <th className="promo-status-col">Status</th>
+                            <th className="promo-created-col">Created</th>
+                            <th className="promo-action-col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                     {currentPromos.length > 0 ? (
                         currentPromos.map((promo) => (
                         <tr key={promo._id}>
-                            <td>
+                            <td className="promo-image-col">
                                 <img
                                     src={`${process.env.REACT_APP_API_URL}/images/${promo.promo_image}`}
                                     alt={promo.promo_title}
@@ -306,20 +306,20 @@ function AllPromosPage() {
                                     onError={(e) => (e.target.src = '/images/placeholder-product.jpg')}
                                 />
                             </td>
-                            <td style={{ fontWeight: 'bold' }}>{promo.promo_title}</td>
-                            <td>
+                            <td className="promo-title-col" style={{ fontWeight: 'bold' }}>{promo.promo_title}</td>
+                            <td className="promo-link-col">
                                 <a href={promo.promo_link} target="_blank" rel="noopener noreferrer" style={{ color: '#007bff', textDecoration: 'none' }}>
                                     {promo.promo_link.length > 30 ? promo.promo_link.substring(0, 30) + '...' : promo.promo_link}
                                 </a>
                             </td>
-                            <td style={{ textAlign: 'center' }}>{promo.display_order}</td>
-                            <td>
+                            <td className="promo-order-col" style={{ textAlign: 'center' }}>{promo.display_order}</td>
+                            <td className="promo-status-col">
                                 <span className={getPromoStatusClass(getStatus(promo))}>
                                     {getStatus(promo)}
                                 </span>
                             </td>
-                            <td>{new Date(promo.createdAt).toLocaleDateString()}</td>
-                            <td>
+                            <td className="promo-created-col">{new Date(promo.createdAt).toLocaleDateString()}</td>
+                            <td className="promo-action-col">
                                 <div className="actionButton">
                                     <button className='editbutton' onClick={() => navigateToEditPromo(promo._id)} title="Edit Promo"><MdEdit size={39}/></button>
                                     <button className='deletebutton' onClick={() => handleDeletePromo(promo._id)} title="Delete Promo" ><IoMdTrash size={24} /></button>

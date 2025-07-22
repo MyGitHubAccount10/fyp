@@ -1494,6 +1494,12 @@ input[type="password"]::-ms-clear {
         display: none;
     }
     
+    /* Promos table responsive - hide title and created date on mobile */
+    .my-table .promo-title-col,
+    .my-table .promo-created-col {
+        display: none;
+    }
+    
     .address-text {
         max-width: 100px;
     }
@@ -1857,6 +1863,11 @@ input[type="password"]::-ms-clear {
         display: none;
     }
     
+    /* Promos table - hide display order column on very small screens */
+    .my-table .promo-order-col {
+        display: none;
+    }
+    
     .my-table .order-id-col {
         min-width: 80px;
     }
@@ -1870,6 +1881,23 @@ input[type="password"]::-ms-clear {
     }
     
     .my-table .action-col {
+        min-width: 70px;
+    }
+    
+    /* Promos table column widths */
+    .my-table .promo-image-col {
+        min-width: 80px;
+    }
+    
+    .my-table .promo-title-col {
+        min-width: 100px;
+    }
+    
+    .my-table .promo-status-col {
+        min-width: 80px;
+    }
+    
+    .my-table .promo-action-col {
         min-width: 70px;
     }
 

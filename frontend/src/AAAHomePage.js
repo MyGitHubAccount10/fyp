@@ -160,6 +160,20 @@ const HomePage = () => {
                     </button>
                 </>
             )}
+            
+            {/* Slideshow Indicators */}
+            {slideshowImages.length > 1 && (
+              <div className="slideshow-indicators">
+                {slideshowImages.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`slideshow-dot ${index === currentSlideIndex ? 'active' : ''}`}
+                    onClick={() => setCurrentSlideIndex(index)}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </section>
 

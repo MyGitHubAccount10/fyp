@@ -3080,3 +3080,19 @@ input[type="password"]::-ms-clear {
     cursor: not-allowed;
     border-color: #ccc;
 }
+
+
+/* --- Responsive Fixes for Checkout Page --- */
+@media (max-width: 576px) {
+    .checkout-page-container {
+        /* Reduce side padding on the main page container for mobile */
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .checkout-form {
+        /* Reduce side padding on the white form card */
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}

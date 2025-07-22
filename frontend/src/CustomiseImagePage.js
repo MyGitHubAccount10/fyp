@@ -889,9 +889,9 @@ export default function CustomiseImagePage() {
                 onClick={addDesignToOrder}
                 disabled={isLoading}
                 className="add-to-order-btn"
-                title="Add These Custom Images to Your Skimboard Order"
+                title="Send to Order"
               >
-                {isLoading ? '⏳ Processing...' : '🎨 Add These Custom Images'}
+                {isLoading ? '⏳ Processing...' : '🎨 Send to order'}
               </button>
             </div>
 
@@ -899,7 +899,7 @@ export default function CustomiseImagePage() {
               <small>
                 💡 Tips: Switch between Top/Bottom sides • Drag elements to move • Use handles to resize/rotate • 
                 Press Delete to remove selected image • Ctrl+Z/Y for undo/redo • Download individual sides or both •
-                Use "Add These Custom Images" to add your design to your skimboard order
+                Use "Send to order" to add your design to your skimboard order
               </small>
             </div>
           </div>

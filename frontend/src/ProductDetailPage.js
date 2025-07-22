@@ -28,6 +28,40 @@ const ProductDetailPage = () => {
   // MODIFIED: This 'stock' will now represent what's available for the user to add.
   const [stock, setStock] = useState(0);
 
+  // Coin flip Easter egg
+  const [keySequence, setKeySequence] = useState([]);
+  const coinFlipCode = ['KeyC', 'KeyO', 'KeyI', 'KeyN', 'KeyF', 'KeyL', 'KeyI', 'KeyP'];
+
+  // Coin flip effect
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      setKeySequence(prev => {
+        // Add new key to sequence
+        const newSequence = [...prev, event.code];
+        
+        // Keep only last 8 keys to match coin flip code length
+        if (newSequence.length > 8) {
+          newSequence.shift();
+        }
+        
+        // Check if coin flip code is entered
+        if (JSON.stringify(newSequence) === JSON.stringify(coinFlipCode)) {
+          alert('Easter Egg Triggered! Coin flip activated!');
+          window.open('https://www.google.com/search?q=flip+a+coin', '_blank');
+          setKeySequence([]); // Reset
+        }
+        
+        return newSequence;
+      });
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [coinFlipCode]);
+
   // This effect fetches product data and calculates available stock
   useEffect(() => {
     const fetchProduct = async () => {

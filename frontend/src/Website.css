@@ -982,14 +982,22 @@ select {
     color: #FA704C;
     text-decoration: underline;
 }
+
 @media (max-width: 992px) {
     .checkout-layout {
         flex-direction: column;
     }
     .checkout-order-summary {
         margin-top: 20px;
+        /* 
+         * FIX: This allows the summary card to stretch to the full width 
+         * of its container, matching the elements above it on narrower screens.
+         */
+        align-self: stretch;
     }
 }
+
+
 @media (max-width: 480px) {
     .payment-options-grid {
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));

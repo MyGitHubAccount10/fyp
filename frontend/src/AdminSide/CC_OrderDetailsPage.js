@@ -543,7 +543,12 @@ function OrderDetailPage() {
                         }}>
                           {item.product_id?.product_name || 'Unknown Product'}
                         </div>
-                        <div style={{ fontSize: '12px', color: '#666' }}>Size: {item.order_size}</div>
+                        <div style={{ fontSize: '12px', color: '#666' }}>
+                          {item.order_type} • {item.order_shape} • {item.order_size}
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#666' }}>
+                          {item.order_material} • {item.order_thickness}
+                        </div>
                       </div>
                       <div style={{ 
                         flexShrink: 0,

@@ -23,8 +23,13 @@ const RightArrowIcon = () => (
 const HomePage = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [slideshowImages, setSlideshowImages] = useState([]);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
   const { products, dispatch } = useProductsContext();
   const navigate = useNavigate();
+
+  // Minimum swipe distance (in px)
+  const minSwipeDistance = 50;
 
   const nextSlide = () => {
     setCurrentSlideIndex((prevIndex) =>
@@ -41,6 +46,31 @@ const HomePage = () => {
   const handleImageClick = () => {
     if (slideshowImages[currentSlideIndex]?.link) {
       navigate(slideshowImages[currentSlideIndex].link);
+    }
+  };
+
+  // Touch event handlers for swipe functionality
+  const onTouchStart = (e) => {
+    setTouchEnd(null); // Reset touchEnd
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe && slideshowImages.length > 1) {
+      nextSlide();
+    }
+    if (isRightSwipe && slideshowImages.length > 1) {
+      prevSlide();
     }
   };
 
@@ -140,7 +170,12 @@ const HomePage = () => {
       <main className="homepage-content">
         {/* Hero Section */}
         <section className="hero-section">
-          <div className="hero-image-container">
+          <div 
+            className="hero-image-container"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+          >
             {slideshowImages.length > 0 && (
                 <img 
                     src={slideshowImages[currentSlideIndex].src} 

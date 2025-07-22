@@ -258,6 +258,14 @@ const ProductDetailPage = () => {
               <strong>{handleStatus()}</strong>
             </p>
 
+            {stock === 0 && (
+              <p className="status-no-stock">
+                Expected Restock Date: {new Date(new Date(product.updatedAt)
+                  .getTime() + 21 * 24 * 60 * 60 * 1000)
+                  .toLocaleDateString()}
+              </p>
+            )}
+
             {/* --- MODIFIED: Conditional Rendering for Scenarios 1 & 2 --- */}
             {stock > 0 && (
               <>

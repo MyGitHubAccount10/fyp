@@ -219,8 +219,8 @@ const HomePage = () => {
             {/* Browse Categories Card */}
             <Link to={'/categories'} style={{ textDecoration: 'none' }}>
               <div className="popular-product-card">
-                <img src={'/images/PromoPictures/Categories.jpg'} alt={'Browse Categories'} className="popular-product-card-image" />
-                <div className="popular-product-card-caption">Browse Categories</div>
+                <img src={'/images/PromoPictures/Categories.jpg'} alt={'Products'} className="popular-product-card-image" />
+                <div className="popular-product-card-caption">Products</div>
               </div>
             </Link>
             

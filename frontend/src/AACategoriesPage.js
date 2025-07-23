@@ -54,7 +54,7 @@ const CategoriesPage = () => {
     <>
       <Header />
       <div className="title-section">
-        <h1 className="title">Browse Categories</h1>
+        <h1 className="title">Products</h1>
       </div>
 
       <div className="product-grid-container">

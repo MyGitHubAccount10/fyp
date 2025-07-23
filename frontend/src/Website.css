@@ -2659,7 +2659,7 @@ select {
     .product-main-image-container { max-height: 300px; }
     .product-thumbnails { height: 60px; padding: 10px 10px; gap: 4px; box-sizing: border-box; }
     .thumbnail-image { width: 40px; height: 40px; border-radius: 3px; }
-    .product-actions-detail, .quantity-controls-detail { flex-direction: column; }
+    .product-actions-detail { flex-direction: column; }
     .btn-buy-now, .btn-add-to-cart-detail { width: 100%; }
     .section-title-detail { font-size: 1.4em; }
     .similar-products-grid { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }

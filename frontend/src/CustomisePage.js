@@ -31,34 +31,66 @@ const CustomisePage = () => {
     };
 
     useEffect(() => {
-        const updateImagesFromContext = async () => {
-            if (customItem) {
-                if (customItem.top_image) {
-                    const file = await dataURLtoFile(customItem.top_image, `top_custom_${Date.now()}.png`);
-                    setTopImageName(file.name);
-                    setTopImageFile(file);
-                    setTopImagePreview(customItem.top_image); // Data URL is still the preview
-                } else {
-                    setTopImageName('');
-                    setTopImageFile(null);
-                    setTopImagePreview(null);
-                }
-                if (customItem.bottom_image) {
-                    const file = await dataURLtoFile(customItem.bottom_image, `bottom_custom_${Date.now()}.png`);
-                    setBottomImageName(file.name);
-                    setBottomImageFile(file);
-                    setBottomImagePreview(customItem.bottom_image); // Data URL is still the preview
-                } else {
-                    setBottomImageName('');
-                    setBottomImageFile(null);
-                    setBottomImagePreview(null);
-                }
-                // ... (rest of your customItem updates)
-            }
-        };
+      const restoreImagesFromLocalStorage = async () => {
+          if (!customItem) {
+              const topImageData = localStorage.getItem('topImagePreview');
+              const bottomImageData = localStorage.getItem('bottomImagePreview');
 
-        updateImagesFromContext();
+              if (topImageData) {
+                  const topFile = await dataURLtoFile(topImageData, `top_custom_${Date.now()}.png`);
+                  setTopImageName(topFile.name);
+                  setTopImageFile(topFile);
+                  setTopImagePreview(topImageData);
+              }
+
+              if (bottomImageData) {
+                  const bottomFile = await dataURLtoFile(bottomImageData, `bottom_custom_${Date.now()}.png`);
+                  setBottomImageName(bottomFile.name);
+                  setBottomImageFile(bottomFile);
+                  setBottomImagePreview(bottomImageData);
+              }
+          }
+      };
+
+      restoreImagesFromLocalStorage();
     }, [customItem]);
+
+    useEffect(() => {
+    const updateImagesFromContext = async () => {
+        if (customItem) {
+            if (customItem.top_image) {
+                const file = await dataURLtoFile(customItem.top_image, `top_custom_${Date.now()}.png`);
+                setTopImageName(file.name);
+                setTopImageFile(file);
+                setTopImagePreview(customItem.top_image);
+                localStorage.setItem('topImagePreview', customItem.top_image);
+            } 
+            else {
+                setTopImageName('');
+                setTopImageFile(null);
+                setTopImagePreview(null);
+                localStorage.removeItem('topImagePreview');
+            }
+
+            if (customItem.bottom_image) {
+                const file = await dataURLtoFile(customItem.bottom_image, `bottom_custom_${Date.now()}.png`);
+                setBottomImageName(file.name);
+                setBottomImageFile(file);
+                setBottomImagePreview(customItem.bottom_image);
+                localStorage.setItem('bottomImagePreview', customItem.bottom_image);
+            } 
+            else {
+                setBottomImageName('');
+                setBottomImageFile(null);
+                setBottomImagePreview(null);
+                localStorage.removeItem('bottomImagePreview');
+            }
+        }
+    };
+
+    updateImagesFromContext();
+  }, [customItem]);
+
 
     useEffect(() => {
         handleTypeSelect(selectedType);
@@ -219,6 +251,9 @@ const CustomisePage = () => {
     return (
         <>
             <Header />
+                <div className="title-section">
+                  <h1 className="title">Customise Skimboard</h1>
+                </div>
                 <main className="product-detail-page container">
                     <section className="product-main-info-grid">
                     <div className="customise-image-gallery">

@@ -90,6 +90,7 @@ const CategoryPage = ({ categoryName: propCategoryName }) => {
   const { products, dispatch } = useProductsContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sortOption, setSortOption] = useState('newest'); // MODIFIED: Default sort option updated
 
   useEffect(() => {
     setLoading(true);
@@ -138,17 +139,33 @@ const CategoryPage = ({ categoryName: propCategoryName }) => {
       return <p style={{ color: 'red' }}>Error: {error}</p>;
     }
     if (products && products.length > 0) {
+      // Sorting logic based on sortOption state
+      const sortedProducts = [...products].sort((a, b) => {
+        switch (sortOption) {
+          case 'name-asc':
+            return a.product_name.localeCompare(b.product_name);
+          // MODIFIED: Added case for name descending
+          case 'name-desc':
+            return b.product_name.localeCompare(a.product_name);
+          case 'price-asc':
+            return parseFloat(a.product_price) - parseFloat(b.product_price);
+          case 'price-desc':
+            return parseFloat(b.product_price) - parseFloat(a.product_price);
+          default:
+            return 0; // 'newest' (or 'default') maintains original order from API
+        }
+      });
+
       return (
         <div className="product-grid">
           {/* Add Custom Design card for Skimboards category */}
           {categoryName === 'Skimboards' && <CustomDesignCard />}
-          {products.map(product => (
+          {sortedProducts.map(product => (
             <ProductCard key={product._id} product={product} />
           ))}
         </div>
       );
     }
-    // This is now returned directly if there are no products
     return <p className="no-products-message">No products found in this category.</p>;
   };
 
@@ -159,7 +176,29 @@ const CategoryPage = ({ categoryName: propCategoryName }) => {
         <h1 className="title">{categoryName}</h1>
       </div>
 
-      {/* This container will now correctly center its direct child */}
+      {/* Filter Bar: Only show if there are products to filter */}
+      {!loading && !error && products && products.length > 0 && (
+        <div className="filter-bar-container">
+          <div className="filter-controls">
+            <div className="filter-options">
+              <label htmlFor="sort-select">Sort by</label>
+              <select 
+                id="sort-select" 
+                value={sortOption} 
+                onChange={(e) => setSortOption(e.target.value)}
+              >
+                {/* MODIFIED: Options updated to include more filters */}
+                <option value="newest">Newest Arrivals</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="name-asc">Name: A-Z</option>
+                <option value="name-desc">Name: Z-A</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="product-grid-container">
         {renderContent()}
       </div>

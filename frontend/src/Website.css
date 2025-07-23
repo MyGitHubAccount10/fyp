@@ -234,9 +234,12 @@ h2 {
 
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
-    justify-content: start;
+    /* Use a fixed width for columns, not a flexible one (1fr). 
+       This is essential for justify-content to work as expected. */
+    grid-template-columns: repeat(auto-fill, 280px);
+    gap: 6rem;
+    /* This will now correctly center the block of grid items. */
+    justify-content: center;
 }
 
 .popular-products-grid {
@@ -251,6 +254,71 @@ h2 {
   display: flex;
   flex-wrap: wrap;
 }
+
+/* START: Added filter bar styles */
+.filter-bar-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 2rem;
+    box-sizing: border-box;
+    margin-bottom: 1rem; 
+}
+
+.filter-controls {
+    width: 100%;
+    max-width: 1200px; /* Matches .product-grid for alignment */
+    display: flex;
+    justify-content: flex-end; /* Aligns filter to the right */
+    align-items: center;
+}
+
+.filter-options {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.filter-options label {
+    font-size: 0.95em;
+    font-weight: 500;
+    color: var(--text-gray);
+}
+
+.filter-options select {
+    font-family: inherit;
+    background-color: #fff;
+    border: 1px solid var(--border-gray);
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-size: 0.9em;
+    font-weight: 500;
+    color: var(--text-dark);
+    cursor: pointer;
+    box-sizing: border-box;
+    min-width: 190px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23555'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px top 50%;
+    background-size: 12px;
+    padding-right: 40px;
+}
+
+.filter-options select:hover {
+    border-color: var(--primary-orange);
+}
+
+.filter-options select:focus {
+    outline: none;
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 2px rgba(250, 112, 76, 0.2);
+}
+/* END: Added filter bar styles */
+
 
 /* --- Product Cards (All Variants) --- */
 

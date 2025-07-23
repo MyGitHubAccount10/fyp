@@ -10,13 +10,14 @@ import Footer from './Footer';
 import { SHIPPING_FEE } from './shippingConstants';
 import { GST_RATE } from './taxConstants';
 
+// --- MODIFIED: Added formUrl to each payment option ---
 const paymentOptions = [
-    { id: 'paypal', name: 'PayPal', logo: '/images/paypal.png' },
-    { id: 'applePay', name: 'Apple Pay', logo: '/images/applepay.png' },
-    { id: 'googlePay', name: 'Google Pay', logo: '/images/googlepay.png' },
-    { id: 'aliPay', name: 'Alipay', logo: '/images/alipay.png' },
-    { id: 'grabPay', name: 'GrabPay', logo: '/images/grabpay.png' },
-    { id: 'eNETS', name: 'eNETS', logo: '/images/enets.png' },
+    { id: 'paypal', name: 'PayPal', logo: '/images/paypal.png', formUrl: 'https://www.jotform.com/form/251899086041464' },
+    { id: 'applePay', name: 'Apple Pay', logo: '/images/applepay.png', formUrl: 'https://www.jotform.com/form/252035117264449' },
+    { id: 'googlePay', name: 'Google Pay', logo: '/images/googlepay.png', formUrl: 'https://www.jotform.com/form/252035176639460' },
+    { id: 'aliPay', name: 'Alipay', logo: '/images/alipay.png', formUrl: 'https://www.jotform.com/form/252034978749471' },
+    { id: 'grabPay', name: 'GrabPay', logo: '/images/grabpay.png', formUrl: 'https://www.jotform.com/form/252034925972461' },
+    { id: 'eNETS', name: 'eNETS', logo: '/images/enets.png', formUrl: 'https://www.jotform.com/form/252034730615449' },
 ];
 
 function PlaceOrderPage() {
@@ -124,22 +125,17 @@ function PlaceOrderPage() {
         setSelectedPaymentMethod(method);
     };
 
-    // --- MODIFIED: New handler for the "Back to Cart" button ---
     const handleBackToCart = () => {
-        // Check if the page was loaded via the "Buy Now" flow by looking at the navigation state.
         const buyNowItemArray = location.state?.buyNowItem;
 
-        // If there is a "Buy Now" item, dispatch it to be added to the main cart context.
         if (buyNowItemArray && buyNowItemArray.length > 0) {
-            const itemToAdd = buyNowItemArray[0]; // The item is wrapped in an array
+            const itemToAdd = buyNowItemArray[0];
             dispatch({
                 type: 'ADD_TO_CART',
                 payload: itemToAdd,
             });
         }
-
-        // After potentially adding the item, navigate to the cart page.
-        // If it wasn't a "Buy Now" flow, this simply navigates back to the cart.
+        
         navigate('/cart');
     };
     
@@ -170,10 +166,9 @@ function PlaceOrderPage() {
             if (!orderResponse.ok) throw new Error(orderResult.error || 'Failed to create order');
             const orderId = orderResult._id;
 
-            // Process all items for this checkout session
             for (const item of checkoutItems) {
                 const isCustom = !item.id && (item.topImagePreview && item.bottomImagePreview);
-                if (isCustom) { continue; } // Custom items are handled separately below
+                if (isCustom) { continue; }
                 
                 const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace(/[$,]/g, '')) : parseFloat(item.price);
                 const productId = item.id || item.product_id || item._id;
@@ -242,11 +237,9 @@ function PlaceOrderPage() {
             alert('Order placed successfully!');
             navigate('/order-history');
             
-            // --- CRITICAL CHANGE: Only clear the cart if it was NOT a "Buy Now" flow ---
             if (!isBuyNowFlow) {
                 dispatch({ type: 'CLEAR_CART' });
             }
-            // If it was a "Buy Now" flow, the cart remains untouched.
 
         } catch (error) {
             console.error('Error placing order:', error);
@@ -255,6 +248,7 @@ function PlaceOrderPage() {
         }
     };
 
+    // --- MODIFIED: Generalized to handle all payment methods with a formUrl ---
     const handleSubmitOrder = async (e) => {
         e.preventDefault();
         if (isSubmitting) return;
@@ -276,15 +270,19 @@ function PlaceOrderPage() {
             return;
         }
 
-        if (selectedPaymentMethod === 'paypal') {
-            window.open('https://www.jotform.com/form/251899086041464', '_blank', 'noopener,noreferrer');
+        const selectedOption = paymentOptions.find(option => option.id === selectedPaymentMethod);
+
+        // Check if the selected payment option has an external form URL
+        if (selectedOption && selectedOption.formUrl) {
+            window.open(selectedOption.formUrl, '_blank', 'noopener,noreferrer');
             setIsPayPalPopupVisible(true);
         } else {
+            // If no form URL is associated, proceed to create the order directly
+            // (This block would be used for a future direct integration)
             await executeOrderCreation();
         }
     };
 
-    // This guard prevents rendering while redirects are happening or data is loading.
     if (!user || checkoutItems.length === 0) {
         return null; 
     }
@@ -297,7 +295,7 @@ function PlaceOrderPage() {
                     <button
                         type="button"
                         className="update-cart-btn"
-                        onClick={handleBackToCart} // MODIFIED: Use the new handler function
+                        onClick={handleBackToCart}
                         style={{ display: 'inline-block', margin: 0, marginTop: 0 }}
                     >
                         ← Back to Cart
@@ -427,7 +425,6 @@ function PlaceOrderPage() {
             </div>
             <Footer />
 
-            {/* --- NEW: PayPal Confirmation Popup --- */}
             {isPayPalPopupVisible && (
                 <div className="paypal-popup-overlay">
                     <div className="paypal-popup-content">

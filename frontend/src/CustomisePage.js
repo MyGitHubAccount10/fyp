@@ -37,14 +37,14 @@ const CustomisePage = () => {
               const bottomImageData = localStorage.getItem('bottomImagePreview');
 
               if (topImageData) {
-                  const topFile = await dataURLtoFile(topImageData, `top_custom_${Date.now()}.png`);
+                  const topFile = await dataURLtoFile(topImageData, `top_custom_${performance.now()}.png`);
                   setTopImageName(topFile.name);
                   setTopImageFile(topFile);
                   setTopImagePreview(topImageData);
               }
 
               if (bottomImageData) {
-                  const bottomFile = await dataURLtoFile(bottomImageData, `bottom_custom_${Date.now()}.png`);
+                  const bottomFile = await dataURLtoFile(bottomImageData, `bottom_custom_${performance.now()}.png`);
                   setBottomImageName(bottomFile.name);
                   setBottomImageFile(bottomFile);
                   setBottomImagePreview(bottomImageData);
@@ -59,7 +59,7 @@ const CustomisePage = () => {
     const updateImagesFromContext = async () => {
         if (customItem) {
             if (customItem.top_image) {
-                const file = await dataURLtoFile(customItem.top_image, `top_custom_${Date.now()}.png`);
+                const file = await dataURLtoFile(customItem.top_image, `top_custom_${performance.now()}.png`);
                 setTopImageName(file.name);
                 setTopImageFile(file);
                 setTopImagePreview(customItem.top_image);
@@ -71,7 +71,7 @@ const CustomisePage = () => {
                 localStorage.removeItem('topImagePreview');
             }
             if (customItem.bottom_image) {
-                const file = await dataURLtoFile(customItem.bottom_image, `bottom_custom_${Date.now()}.png`);
+                const file = await dataURLtoFile(customItem.bottom_image, `bottom_custom_${performance.now()}.png`);
                 setBottomImageName(file.name);
                 setBottomImageFile(file);
                 setBottomImagePreview(customItem.bottom_image);

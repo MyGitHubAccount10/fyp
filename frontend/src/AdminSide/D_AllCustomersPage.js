@@ -33,6 +33,7 @@ function AllCustomersPage() {
     const [allUsers, setAllUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedRole, setSelectedRole] = useState('All Roles');
+    const [selectedStatus, setSelectedStatus] = useState('All Status');
     const [currentPage, setCurrentPage] = useState(1);
     const [usersPerPage] = useState(10); // Fixed number of users per page
     const [loading, setLoading] = useState(true);
@@ -194,7 +195,7 @@ function AllCustomersPage() {
         Navigate('/add-admin');
     }    // Filter/Search Logic (basic client-side demo)
 const handleFilter = () => {
-    console.log("Filtering with:", { searchTerm, selectedRole });
+    console.log("Filtering with:", { searchTerm, selectedRole, selectedStatus });
     let filtered = allUsers;
 
     if (searchTerm) {
@@ -209,6 +210,13 @@ const handleFilter = () => {
         filtered = filtered.filter(user => user.role_name === selectedRole);
     }
 
+    if (selectedStatus !== 'All Status') {
+        filtered = filtered.filter(user => {
+            const userStatus = user.status || 'active';
+            return userStatus === selectedStatus;
+        });
+    }
+
     setUsers(filtered);
     setCurrentPage(1);
 };// Trigger filter when search term or category changes (optional auto-filter)
@@ -216,7 +224,7 @@ const handleFilter = () => {
          if (allUsers.length > 0) {
              handleFilter();
          }
-    }, [searchTerm, selectedRole, allUsers]); // Add allUsers to dependency array
+    }, [searchTerm, selectedRole, selectedStatus, allUsers]); // Add selectedStatus to dependency array
 
     return (
         <>
@@ -282,6 +290,19 @@ const handleFilter = () => {
                             <option value="Customer">Customer</option>
                             <option value="Admin">Admin</option>
                             <option value="Super Admin">Super Admin</option>
+                        </select>
+                    </div>
+
+                    {/* Status Filters */}
+                    <div className="filter-container">
+                        <select
+                            className="filter-input status-select"
+                            value={selectedStatus}
+                            onChange={(e) => setSelectedStatus(e.target.value)}
+                        >
+                            <option value="All Status">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="banned">Banned</option>
                         </select>
                     </div>
                 </div>

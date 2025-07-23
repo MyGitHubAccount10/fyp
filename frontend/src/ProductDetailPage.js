@@ -423,7 +423,10 @@ const ProductDetailPage = () => {
               const cardContent = (
                 <div className="similar-product-card" style={{ position: 'relative', opacity: isAvailable ? 1 : 0.8 }}>
                   <img src={`${process.env.REACT_APP_API_URL}/images/${p.product_image}`} alt={p.product_name} className="similar-product-image" />
-                  <div className="similar-product-caption">{p.product_name}</div>
+                  <div className="similar-product-caption">
+                    <h3 className="product-name">{p.product_name}</h3>
+                    <p style={{ margin: 0, fontWeight: 'normal' }}>${parseFloat(p.product_price).toFixed(2)}</p>
+                  </div>
                   {!isAvailable && (
                     <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', backgroundColor: 'rgba(0, 0, 0, 0.6)', color: 'white', padding: '8px 16px', borderRadius: '5px', fontWeight: 'bold', textAlign: 'center', pointerEvents: 'none' }}>
                       Out of Stock

@@ -203,45 +203,68 @@ function AllOrdersPage() {
             <h2>Orders</h2>
 
             {/* Filter Bar */}
-            <div className="filter-bar">
-                <input
-                    type="text"
-                    placeholder="Search by Order ID or Customer Name"
-                    className="filter-input search-input" 
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <select
-                    className="filter-input status-select"
-                    value={selectedStatus}
-                    onChange={(e) => setSelectedStatus(e.target.value)}
-                >
-                    <option value="All Statuses">All Statuses</option>
-                    {availableStatuses.map(status => (
-                        <option key={status} value={status}>{status}</option>
-                    ))}
-                </select>
+            <div className='card'>
+                <div className="card-input">
+                    <input
+                        type="text"
+                        placeholder="Search by Order ID or Customer Name"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                    <select
+                        value={selectedStatus}
+                        onChange={(e) => setSelectedStatus(e.target.value)}
+                        style={{
+                            flex: '1',
+                            padding: '10px',
+                            borderRadius: '6px',
+                            border: '1px solid #ccc'
+                        }}
+                    >
+                        <option value="All Statuses">All Statuses</option>
+                        {availableStatuses.map(status => (
+                            <option key={status} value={status}>{status}</option>
+                        ))}
+                    </select>
 
-                {/* Date Inputs */}
-                 <div className="filter-input date-input-wrapper">
+                    {/* Date Inputs */}
                     <input
                         type="date" 
                         value={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
-                        className="date-input"
+                        style={{
+                            flex: '1',
+                            padding: '10px',
+                            borderRadius: '6px',
+                            border: '1px solid #ccc'
+                        }}
                     />
-                 </div>
-                 <div className="filter-input date-input-wrapper">
                     <input
                         type="date"
                         value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
-                        className="date-input"
+                        style={{
+                            flex: '1',
+                            padding: '10px',
+                            borderRadius: '6px',
+                            border: '1px solid #ccc'
+                        }}
                     />
-                 </div>                
-                 <button onClick={handleResetFilters} className="btn-apply-filters">
-                    Reset Filters
-                </button>
+                    <button 
+                        onClick={handleResetFilters} 
+                        style={{
+                            padding: '10px 20px',
+                            borderRadius: '6px',
+                            border: '1px solid #ccc',
+                            backgroundColor: '#f8f9fa',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        Reset Filters
+                    </button>
+                </div>
             </div>
 
             {/* Orders Summary */}

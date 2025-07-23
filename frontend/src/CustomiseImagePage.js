@@ -644,6 +644,9 @@ export default function CustomiseImagePage() {
   return (
     <>
       <Header />
+      <div className="title-section">
+        <h1 className="title">Design Your Own Skimboard</h1>
+      </div>
       <div
         className="skimboard-container"
         onMouseMove={updateDrag}
@@ -652,8 +655,7 @@ export default function CustomiseImagePage() {
         onTouchMove={updateDrag}
         onTouchEnd={endDrag}
       >
-        <h1>Customize Your Skimboard</h1>
-        
+
         {/* Side Selection Buttons */}
         <div className="side-selector">
           <button 

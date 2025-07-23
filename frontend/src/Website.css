@@ -195,8 +195,8 @@ h2 {
 /* --- Product Page Styles --- */
 .title-section {
   width: 100%;
-  background-color: #FFAB89;
-  margin: 30px 0;
+  background-color: var(--primary-orange-light); /* Using CSS variable for consistency */
+  margin: 0 0 30px; /* This removes the top margin, connecting it to the element above */
   padding: 30px 0;
   text-align: center;
 }

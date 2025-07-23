@@ -46,7 +46,6 @@ const CloseIcon = () => (
 );
 
 const Header = () => {
-    const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false); 
     const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState(''); // ✅ 1. Add state for the search query
@@ -54,11 +53,6 @@ const Header = () => {
     const user = JSON.parse(localStorage.getItem('user'));
     const navigate = useNavigate(); // ✅ 2. Get the navigate function
     const location = useLocation();
-
-    const toggleProductDropdown = (e) => {
-        e.preventDefault();
-        setIsProductDropdownOpen(!isProductDropdownOpen);
-    };
 
     const toggleProfileDropdown = (e) => {
         e.preventDefault();
@@ -77,14 +71,6 @@ const Header = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
-
-
-    useEffect(() => {
-        // Close the product dropdown if the user navigates to a different page
-        if (location.pathname.startsWith('/product') || location.pathname === '/cart') {
-            setIsProductDropdownOpen(true);
-        }
-    }, [location.pathname]);
 
     // Initialize socket connection for regular users
     useEffect(() => {
@@ -134,12 +120,8 @@ const Header = () => {
                         <NavLink to="/about" className={({ isActive }) => isActive ? "active-link" : ""}>About</NavLink>
                         <NavLink to="/contact" className={({ isActive }) => isActive ? "active-link" : ""}>Contact</NavLink>
                         <NavLink to="/faq" className={({ isActive }) => isActive ? "active-link" : ""}>FAQ</NavLink>
-                        <a href="/" onClick={toggleProductDropdown} className="product-dropdown-toggle">
-                            Product
-                            <svg className={`product-arrow ${isProductDropdownOpen ? 'up' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <polyline points="6 9 12 15 18 9" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"></polyline>
-                            </svg>
-                        </a>
+                        {/* MODIFIED: Product link now navigates to /categories */}
+                        <NavLink to="/categories" className={({ isActive }) => isActive ? "active-link" : ""}>Product</NavLink>
                     </nav>
                 </div>
                 <div className="header-right-content">
@@ -182,16 +164,14 @@ const Header = () => {
                 </div>
             </header>
             
-            {/* The desktop secondary navbar (product categories) */}
-            {isProductDropdownOpen && (
-                <nav className="secondary-navbar">
-                    <NavLink to="/products/skimboards" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(true)}><SkimboardIcon /> Skimboards</NavLink>
-                    <NavLink to="/products/t-shirts" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(true)}><TshirtIcon /> T-Shirts</NavLink>
-                    <NavLink to="/products/jackets" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(true)}><JacketIcon /> Jackets</NavLink>
-                    <NavLink to="/products/boardshorts" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(true)}><BoardshortsIcon /> Board Shorts</NavLink>
-                    <NavLink to="/products/accessories" className="secondary-navbar-item" onClick={() => setIsProductDropdownOpen(true)}><AccessoriesIcon /> Accessories</NavLink>
-                </nav>
-            )}
+            {/* MODIFIED: The desktop secondary navbar is now permanent */}
+            <nav className="secondary-navbar">
+                <NavLink to="/products/skimboards" className="secondary-navbar-item"><SkimboardIcon /> Skimboards</NavLink>
+                <NavLink to="/products/t-shirts" className="secondary-navbar-item"><TshirtIcon /> T-Shirts</NavLink>
+                <NavLink to="/products/jackets" className="secondary-navbar-item"><JacketIcon /> Jackets</NavLink>
+                <NavLink to="/products/boardshorts" className="secondary-navbar-item"><BoardshortsIcon /> Board Shorts</NavLink>
+                <NavLink to="/products/accessories" className="secondary-navbar-item"><AccessoriesIcon /> Accessories</NavLink>
+            </nav>
 
             {/* The mobile sidebar */}
             <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
@@ -216,7 +196,8 @@ const Header = () => {
                         <NavLink to="/about" onClick={() => setIsSidebarOpen(false)}>About</NavLink>
                         <NavLink to="/contact" onClick={() => setIsSidebarOpen(false)}>Contact</NavLink>
                         <NavLink to="/faq" onClick={() => setIsSidebarOpen(false)}>FAQ</NavLink>
-                        <a href="/" onClick={(e) => { toggleProductDropdown(e); setIsSidebarOpen(false); }}>Product</a>
+                        {/* MODIFIED: Product link now navigates to /categories */}
+                        <NavLink to="/categories" onClick={() => setIsSidebarOpen(false)}>Product</NavLink>
                     </nav>
                 </div>
             </div>

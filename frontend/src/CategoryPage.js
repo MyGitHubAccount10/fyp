@@ -68,7 +68,7 @@ const CustomDesignCard = () => {
             +
           </div>
           <h3 className="product-name" style={{ color: '#FA704C', fontWeight: 'bold' }}>
-            Custom Design
+            Design Your Own Skimboard
           </h3>
           <p style={{ 
             color: '#666', 
@@ -76,7 +76,7 @@ const CustomDesignCard = () => {
             margin: '5px 0 0 0',
             fontStyle: 'italic'
           }}>
-            Create your own design
+            Upload Your Own Images
           </p>
         </div>
       </div>

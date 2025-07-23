@@ -64,22 +64,19 @@ const CustomisePage = () => {
                 setTopImageFile(file);
                 setTopImagePreview(customItem.top_image);
                 localStorage.setItem('topImagePreview', customItem.top_image);
-            } 
-            else {
+            } else {
                 setTopImageName('');
                 setTopImageFile(null);
                 setTopImagePreview(null);
                 localStorage.removeItem('topImagePreview');
             }
-
             if (customItem.bottom_image) {
                 const file = await dataURLtoFile(customItem.bottom_image, `bottom_custom_${Date.now()}.png`);
                 setBottomImageName(file.name);
                 setBottomImageFile(file);
                 setBottomImagePreview(customItem.bottom_image);
                 localStorage.setItem('bottomImagePreview', customItem.bottom_image);
-            } 
-            else {
+            } else {
                 setBottomImageName('');
                 setBottomImageFile(null);
                 setBottomImagePreview(null);
@@ -252,7 +249,7 @@ const CustomisePage = () => {
         <>
             <Header />
                 <div className="title-section">
-                  <h1 className="title">Customise Skimboard</h1>
+                  <h1 className="title">Design Your Own Skimboard</h1>
                 </div>
                 <main className="product-detail-page container">
                     <section className="product-main-info-grid">

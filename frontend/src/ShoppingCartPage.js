@@ -49,7 +49,7 @@ function ShoppingCartPage() {
 
     }, [cartItems]);
 
-    const handleQuantityChange = (itemId, type, shape, size, material, thickness, topImageFile, bottomImageFile, change) => {
+    const handleQuantityChange = (itemId, type, shape, size, material, thickness, topImagePreview, bottomImagePreview, change) => {
         const item = cartItems.find(item => 
             item.id === itemId &&
             item.type === type &&
@@ -57,21 +57,21 @@ function ShoppingCartPage() {
             item.size === size &&
             item.material === material &&
             item.thickness === thickness &&
-            item.topImageFile === topImageFile &&
-            item.bottomImageFile === bottomImageFile);
+            item.topImagePreview === topImagePreview &&
+            item.bottomImagePreview === bottomImagePreview);
         if (item) {
             dispatch({
                 type: 'UPDATE_QUANTITY',
-                payload: { id: itemId, type, shape, size, material, thickness, topImageFile, bottomImageFile, quantity: Math.max(1, item.quantity + change) }
+                payload: { id: itemId, type, shape, size, material, thickness, topImagePreview, bottomImagePreview, quantity: Math.max(1, item.quantity + change) }
             });
         }
     };
 
-    const handleDeleteItem = (itemId, type, shape, size, material, thickness, topImageFile, bottomImageFile) => {
-        dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, type, shape, size, material, thickness, topImageFile, bottomImageFile } });
+    const handleDeleteItem = (itemId, type, shape, size, material, thickness, topImagePreview, bottomImagePreview) => {
+        dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, type, shape, size, material, thickness, topImagePreview, bottomImagePreview } });
     };
 
-    const handleSaveForLater = (itemId, type, shape, size, material, thickness, topImageFile, bottomImageFile) => {
+    const handleSaveForLater = (itemId, type, shape, size, material, thickness, topImagePreview, bottomImagePreview) => {
         const item = cartItems.find(item => 
             item.id === itemId &&
             item.type === type &&
@@ -79,8 +79,8 @@ function ShoppingCartPage() {
             item.size === size &&
             item.material === material &&
             item.thickness === thickness &&
-            item.topImageFile === topImageFile &&
-            item.bottomImageFile === bottomImageFile);
+            item.topImagePreview === topImagePreview &&
+            item.bottomImagePreview === bottomImagePreview);
         if (item) {
             const isAlreadySaved = savedItems.some(savedItem => 
                 savedItem.id === item.id && 
@@ -89,20 +89,20 @@ function ShoppingCartPage() {
                 savedItem.size === item.size && 
                 savedItem.material === item.material && 
                 savedItem.thickness === item.thickness && 
-                savedItem.topImageFile === item.topImageFile &&
-                savedItem.bottomImageFile === item.bottomImageFile
+                savedItem.topImagePreview === item.topImagePreview &&
+                savedItem.bottomImagePreview === item.bottomImagePreview
             );
 
             if (!isAlreadySaved) {
                  setSavedItems(prev => [...prev, item]);
             }
-           
-            dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, type, shape, size, material, thickness, topImageFile, bottomImageFile } });
+
+            dispatch({ type: 'REMOVE_FROM_CART', payload: { id: itemId, type, shape, size, material, thickness, topImagePreview, bottomImagePreview } });
         }
     };
 
-    const handleMoveToCart = (itemId, type, shape, size, material, thickness, topImageFile, bottomImageFile) => {
-        const item = savedItems.find(item => item.id === itemId && item.type === type && item.shape === shape && item.size === size && item.material === material && item.thickness === thickness && item.topImageFile === topImageFile && item.bottomImageFile === bottomImageFile);
+    const handleMoveToCart = (itemId, type, shape, size, material, thickness, topImagePreview, bottomImagePreview) => {
+        const item = savedItems.find(item => item.id === itemId && item.type === type && item.shape === shape && item.size === size && item.material === material && item.thickness === thickness && item.topImagePreview === topImagePreview && item.bottomImagePreview === bottomImagePreview);
         if (item) {
             dispatch({ type: 'ADD_TO_CART', payload: item });
             setSavedItems(prev => prev.filter(savedItem => 
@@ -112,13 +112,13 @@ function ShoppingCartPage() {
                   savedItem.size === size && 
                   savedItem.material === material && 
                   savedItem.thickness === thickness && 
-                  savedItem.topImageFile === topImageFile &&
-                  savedItem.bottomImageFile === bottomImageFile)
+                  savedItem.topImagePreview === topImagePreview &&
+                  savedItem.bottomImagePreview === bottomImagePreview)
             ));
         }
     };
 
-    const handleDeleteSavedItem = (itemId, type, shape, size, material, thickness, topImageFile, bottomImageFile) => {
+    const handleDeleteSavedItem = (itemId, type, shape, size, material, thickness, topImagePreview, bottomImagePreview) => {
         setSavedItems(prev => prev.filter(item => 
             !(item.id === itemId && 
               item.type === type && 
@@ -126,8 +126,8 @@ function ShoppingCartPage() {
               item.size === size && 
               item.material === material && 
               item.thickness === thickness && 
-              item.topImageFile === topImageFile && 
-              item.bottomImageFile === bottomImageFile)
+              item.topImagePreview === topImagePreview && 
+              item.bottomImagePreview === bottomImagePreview)
         ));
     };
 
@@ -163,7 +163,7 @@ function ShoppingCartPage() {
                             const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
                             const isCustomItem = item.topImagePreview && item.bottomImagePreview;
                             const imageUrl = item.image ? `${process.env.REACT_APP_API_URL}/images/${item.image}` : null;
-                            const itemKey = `${item.id}-${item.type}-${item.shape}-${item.size}-${item.material}-${item.thickness}-${item.topImageFile || ''}-${item.bottomImageFile || ''}`;
+                            const itemKey = `${item.id}-${item.type}-${item.shape}-${item.size}-${item.material}-${item.thickness}-${item.topImagePreview || ''}-${item.bottomImagePreview || ''}`;
 
                             return (
                                 <div className="cart-item" key={itemKey}>
@@ -191,7 +191,7 @@ function ShoppingCartPage() {
                                     <div className="item-actions">
                                         <div className="quantity-controls">
                                             <button 
-                                            onClick={() => handleQuantityChange(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile, -1)} 
+                                            onClick={() => handleQuantityChange(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImagePreview, item.bottomImagePreview, -1)} 
                                             disabled={item.quantity === 1}
                                             style={{
                                                 pointerEvents: item.quantity === 1 ? 'none' : 'auto', 
@@ -200,7 +200,7 @@ function ShoppingCartPage() {
                                             </button>
                                             <span>{item.quantity}</span>
                                             <button 
-                                            onClick={() => handleQuantityChange(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile, 1)} 
+                                            onClick={() => handleQuantityChange(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImagePreview, item.bottomImagePreview, 1)} 
                                             disabled={cartItems
                                                     .filter(cartItem => cartItem.id === item.id)
                                                     .reduce((acc, cartItem) => acc + cartItem.quantity, 0) >= item.warehouse_quantity}
@@ -215,10 +215,10 @@ function ShoppingCartPage() {
                                             </button>
                                         </div>
                                         <button className="action-btn save" onClick={() => 
-                                            handleSaveForLater(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)}>Save for later
+                                            handleSaveForLater(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImagePreview, item.bottomImagePreview)}>Save for later
                                         </button>
                                         <button className="action-btn delete" onClick={() => 
-                                            handleDeleteItem(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)}>Delete
+                                            handleDeleteItem(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImagePreview, item.bottomImagePreview)}>Delete
                                         </button>
                                     </div>
                                     <div className="price-tag">
@@ -251,7 +251,7 @@ function ShoppingCartPage() {
                         <p>You have no items saved for later.</p>
                     ) : (
                         savedItems.map(item => {
-                            const itemKey = `${item.id}-${item.type}-${item.shape}-${item.size}-${item.material}-${item.thickness}-${item.topImageFile || ''}-${item.bottomImageFile || ''}`;
+                            const itemKey = `${item.id}-${item.type}-${item.shape}-${item.size}-${item.material}-${item.thickness}-${item.topImagePreview || ''}-${item.bottomImagePreview || ''}`;
                             const isCustomItem = item.topImagePreview && item.bottomImagePreview;
                             const imageUrl = item.image ? `${process.env.REACT_APP_API_URL}/images/${item.image}` : null;
                             const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
@@ -279,10 +279,10 @@ function ShoppingCartPage() {
                                     </div>
                                     <div className="item-actions">
                                         <button className="action-btn save" onClick={() => 
-                                            handleMoveToCart(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)}>Move to Cart
+                                            handleMoveToCart(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImagePreview, item.bottomImagePreview)}>Move to Cart
                                         </button>
                                         <button className="action-btn delete" onClick={() => 
-                                            handleDeleteSavedItem(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImageFile, item.bottomImageFile)}>Delete
+                                            handleDeleteSavedItem(item.id, item.type, item.shape, item.size, item.material, item.thickness, item.topImagePreview, item.bottomImagePreview)}>Delete
                                         </button>
                                     </div>
                                     <div className="price-tag">

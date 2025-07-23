@@ -267,39 +267,41 @@ const handleFilter = () => {
                         </div>
 
                 {/* Filter row */}
-                <div className="filter-bar">
-                    {/* Search Input */}
-                    <div className="search-container">
-                        <input
-                            type="text"
-                            placeholder="Search by name, username, or email..."
-                            className="filter-input search-input"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
+                <div className='card'>
+                    <div className="card-input">
+                        <input 
+                            type="text" 
+                            placeholder="Search by name, username, or email..."  
+                            value={searchTerm} 
+                            onChange={(e) => setSearchTerm(e.target.value)} 
                         />
                     </div>
-
-                    {/* Role Filters */}
-                    <div className="filter-container">
+                    <div style={{ display: 'flex', flexWrap: 'wrap'}}>
+                        {/* Role Filter */}
                         <select
-                            className="filter-input status-select"
-                            value={selectedRole}
+                            value={selectedRole} 
                             onChange={(e) => setSelectedRole(e.target.value)}
-                        >
+                            style={{
+                                flex: '1',
+                                padding: '10px',
+                                borderRadius: '6px', 
+                                border: '1px solid #ccc'
+                            }}>
                             <option value="All Roles">All Roles</option>
                             <option value="Customer">Customer</option>
                             <option value="Admin">Admin</option>
                             <option value="Super Admin">Super Admin</option>
                         </select>
-                    </div>
-
-                    {/* Status Filters */}
-                    <div className="filter-container">
-                        <select
-                            className="filter-input status-select"
-                            value={selectedStatus}
+                        {/* Status Filter */}
+                        <select 
+                            value={selectedStatus} 
                             onChange={(e) => setSelectedStatus(e.target.value)}
-                        >
+                            style={{ 
+                                flex: '1', 
+                                padding: '10px', 
+                                borderRadius: '6px', 
+                                border: '1px solid #ccc' 
+                            }}>
                             <option value="All Status">All Status</option>
                             <option value="active">Active</option>
                             <option value="banned">Banned</option>

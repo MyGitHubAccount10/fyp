@@ -48,6 +48,7 @@ import EditPromoPage from './AdminSide/EEE_EditPromoPage';
 
 import AdminProtectedRoute from './AdminProtectedRoute';
 import TestBanPage from './AdminSide/TestBanPage';
+import TestUserBanPage from './UserSide/TestUserBanPage';
 
 import './index.css';
 
@@ -83,6 +84,7 @@ function App() {
         <Route path="customise" element={<Customerise />} />
         <Route path="place-order" element={<PlaceOrderPage />} />
         <Route path="order-history" element={<OrderHistoryPage />} />
+        <Route path="test-user-ban" element={<TestUserBanPage />} />
 
         {/* --- Admin Routes --- */}
         <Route path="admin-login" element={<AdminLoginPage />} />

@@ -43,9 +43,10 @@ class SocketService {
     }
 
     handleUserBanned(data) {
-        // Clear admin session data
+        // Clear both admin and regular user session data
         localStorage.removeItem('admin_user');
         localStorage.removeItem('admin_token');
+        localStorage.removeItem('user');
         
         // Show alert and redirect
         alert('Your account has been banned by an administrator. You will be redirected to the homepage.');
@@ -62,9 +63,10 @@ class SocketService {
     }
 
     handleRoleChangedToCustomer(data) {
-        // Clear admin session data
+        // Clear both admin and regular user session data
         localStorage.removeItem('admin_user');
         localStorage.removeItem('admin_token');
+        localStorage.removeItem('user');
         
         // Show alert and redirect
         alert('Your role has been changed to Customer. You will be redirected to the homepage.');

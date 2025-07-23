@@ -6,6 +6,7 @@ import { useAuthContext } from './hooks/useAuthContext';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
+import socketService from './services/socketService';
 
 // ... (EyeIcon and EyeOffIcon components remain the same) ...
 const EyeIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
@@ -66,6 +67,11 @@ const LoginPage = () => {
       
       localStorage.setItem('user', JSON.stringify(data));
       dispatch({ type: 'LOGIN', payload: data });
+
+      // Initialize socket connection for the logged-in user
+      if (data._id) {
+        socketService.connect(data._id);
+      }
 
       const from = location.state?.from || '/';
       navigate(from, { replace: true, state: location.state });

@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import './Website.css';
+import socketService from './services/socketService';
 
 // --- ICONS (No Changes) ---
 const logoImage = '/images/this-side-up-logo.png';
@@ -85,7 +86,22 @@ const Header = () => {
         }
     }, [location.pathname]);
 
+    // Initialize socket connection for regular users
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user && user._id) {
+            socketService.connect(user._id);
+        }
+
+        // Cleanup on unmount
+        return () => {
+            socketService.disconnect();
+        };
+    }, []);
+
     const handleLogout = () => {
+        // Disconnect socket before clearing localStorage
+        socketService.disconnect();
         localStorage.removeItem('user');
         window.location.href = '/'; 
     };

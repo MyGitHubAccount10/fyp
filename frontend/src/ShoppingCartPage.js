@@ -263,7 +263,7 @@ function ShoppingCartPage() {
                                             <span>Top Image</span>
                                             <img src={item.topImagePreview} alt={item.name} />
                                             <span>Bottom Image</span>
-                                            <img src={item.bottomImageFile} alt={item.name} />
+                                            <img src={item.bottomImagePreview} alt={item.name} />
                                         </>
                                     )}
                                     {imageUrl && (

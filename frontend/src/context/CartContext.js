@@ -18,8 +18,8 @@ export const cartReducer = (state, action) => {
         item.size === action.payload.size &&
         item.material === action.payload.material &&
         item.thickness === action.payload.thickness &&
-        item.topImageFile === action.payload.topImageFile &&
-        item.bottomImageFile === action.payload.bottomImageFile
+        item.topImagePreview === action.payload.topImagePreview &&
+        item.bottomImagePreview === action.payload.bottomImagePreview
       );
 
       if (existingItem) {
@@ -32,8 +32,8 @@ export const cartReducer = (state, action) => {
             item.size === action.payload.size &&
             item.material === action.payload.material &&
             item.thickness === action.payload.thickness &&
-            item.topImageFile === action.payload.topImageFile &&
-            item.bottomImageFile === action.payload.bottomImageFile
+            item.topImagePreview === action.payload.topImagePreview &&
+            item.bottomImagePreview === action.payload.bottomImagePreview
               ? { ...item, quantity: item.quantity + action.payload.quantity }
               : item
           )
@@ -56,8 +56,8 @@ export const cartReducer = (state, action) => {
           item.size === action.payload.size &&
           item.material === action.payload.material &&
           item.thickness === action.payload.thickness &&
-          item.topImageFile === action.payload.topImageFile &&
-          item.bottomImageFile === action.payload.bottomImageFile
+          item.topImagePreview === action.payload.topImagePreview &&
+          item.bottomImagePreview === action.payload.bottomImagePreview
             ? { ...item, quantity: action.payload.quantity }
             : item
         )
@@ -74,8 +74,8 @@ export const cartReducer = (state, action) => {
             item.size === action.payload.size &&
             item.material === action.payload.material &&
             item.thickness === action.payload.thickness &&
-            item.topImageFile === action.payload.topImageFile &&
-            item.bottomImageFile === action.payload.bottomImageFile
+            item.topImagePreview === action.payload.topImagePreview &&
+            item.bottomImagePreview === action.payload.bottomImagePreview
           )
         )
       };

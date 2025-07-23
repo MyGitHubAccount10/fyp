@@ -139,11 +139,22 @@ function ShoppingCartPage() {
         }
     };
 
+    const handleClearCart = () => {
+        dispatch({ type: 'CLEAR_CART' });
+    };
+
     return (
         <>
             <Header />
             <div className="container">
-                <h2>Shopping Cart</h2>
+                <div className="cart-header">
+                    <h2>Shopping Cart</h2>
+                    {cartItems.length > 0 && (
+                        <button onClick={handleClearCart} className="clear-cart-btn">
+                            Clear All
+                        </button>
+                    )}
+                </div>
                 <div className="main-cart-items">
                     {cartItems.length === 0 ? (
                         <p>Your shopping cart is empty.</p>
@@ -252,7 +263,7 @@ function ShoppingCartPage() {
                                             <span>Top Image</span>
                                             <img src={item.topImagePreview} alt={item.name} />
                                             <span>Bottom Image</span>
-                                            <img src={item.bottomImagePreview} alt={item.name} />
+                                            <img src={item.bottomImageFile} alt={item.name} />
                                         </>
                                     )}
                                     {imageUrl && (

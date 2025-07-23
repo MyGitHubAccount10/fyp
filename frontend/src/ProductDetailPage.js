@@ -264,6 +264,9 @@ const ProductDetailPage = () => {
   return (
     <>
       <Header />
+      <div className="title-section">
+        <h1 className="title">{product.category.category_name}</h1>
+      </div>
       <main className="product-detail-page container">
         <section className="product-main-info-grid">
           <div className="product-image-gallery">   

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams} from 'react-router-dom';
+import { Link, useParams} from 'react-router-dom';
 import './Website.css';
 import Header from './Header';
 import Footer from './Footer';
@@ -15,6 +15,7 @@ const ProductCard = ({ product }) => {
       <img src={`${process.env.REACT_APP_API_URL}/images/${product.product_image}`} alt={product.product_name} className="product-image" />
       <div className="product-info">
         <h3 className="product-name">{product.product_name}</h3>
+        <p>${parseFloat(product.product_price).toFixed(2)}</p>
       </div>
       {!isAvailable && (
         <div style={{

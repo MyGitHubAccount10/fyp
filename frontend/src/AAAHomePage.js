@@ -217,15 +217,15 @@ const HomePage = () => {
           <h2 className="popular-products-title">What Are You Looking For?</h2>
           <div className="popular-products-grid">
             {/* Browse Categories Card */}
-            <Link to={'/categories'} style={{ textDecoration: 'none' }}>
+            <Link to={'/categories'} style={{ textDecoration: 'none' }} onClick={() => window.scrollTo(0, 0)}>
               <div className="popular-product-card">
-                <img src={'/images/PromoPictures/Categories.jpg'} alt={'Browse Categories'} className="popular-product-card-image" />
-                <div className="popular-product-card-caption">Browse Categories</div>
+                <img src={'/images/PromoPictures/Categories.jpg'} alt={'Products'} className="popular-product-card-image" />
+                <div className="popular-product-card-caption">Products</div>
               </div>
             </Link>
             
             {/* Popular Products Card */}
-            <Link to={'/popular-products'} style={{ textDecoration: 'none' }}>
+            <Link to={'/popular-products'} style={{ textDecoration: 'none' }} onClick={() => window.scrollTo(0, 0)}>
               <div className="popular-product-card">
                 <img src={'/images/PromoPictures/Popproducts.jpg'} alt={'Popular Products'} className="popular-product-card-image" />
                 <div className="popular-product-card-caption">Popular Products</div>
@@ -233,7 +233,7 @@ const HomePage = () => {
             </Link>
             
             {/* Custom Skimboard Card */}
-            <Link to={'/customise-image'} style={{ textDecoration: 'none' }}>
+            <Link to={'/customise-image'} style={{ textDecoration: 'none' }} onClick={() => window.scrollTo(0, 0)}>
               <div className="popular-product-card">
                 <img src={'/images/PromoPictures/CustoSkimPromo.jpg'} alt={'Custom Skimboard'} className="popular-product-card-image" />
                 <div className="popular-product-card-caption">Design Skimboard</div>

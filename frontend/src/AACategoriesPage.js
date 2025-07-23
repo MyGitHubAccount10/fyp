@@ -6,7 +6,7 @@ import Footer from './Footer';
 
 const CategoryCard = ({ categoryName, imageSrc, linkTo }) => {
   return (
-    <Link to={linkTo} style={{ textDecoration: 'none' }}>
+    <Link to={linkTo} style={{ textDecoration: 'none' }} onClick={() => window.scrollTo(0, 0)}>
       <div className="product-card category-card">
         <img 
           src={imageSrc} 
@@ -54,7 +54,7 @@ const CategoriesPage = () => {
     <>
       <Header />
       <div className="title-section">
-        <h1 className="title">Browse Categories</h1>
+        <h1 className="title">Products</h1>
       </div>
 
       <div className="product-grid-container">

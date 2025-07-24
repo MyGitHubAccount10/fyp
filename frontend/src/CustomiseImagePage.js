@@ -1061,7 +1061,7 @@ export default function CustomiseImagePage() {
                   transform: 'translate(-50%, -50%)',
                   zIndex: currentDesign.textZIndex || 100,
                   display: currentDesign.textVisible === false ? 'none' : 'block',
-                  whiteSpace: 'pre-line',
+                  whiteSpace: 'pre',
                   textAlign: 'center',
                   lineHeight: '1.2',
                   textShadow: currentDesign.enableTextStroke 

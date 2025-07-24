@@ -291,6 +291,63 @@
   background: #0056b3;
 }
 
+.text-control-buttons {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 10;
+}
+
+.text-forward-btn,
+.text-backward-btn,
+.text-hide-btn {
+  width: 24px;
+  height: 24px;
+  border: 2px solid white;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+}
+
+.text-forward-btn {
+  background: #28a745;
+  color: white;
+}
+
+.text-forward-btn:hover {
+  background: #218838;
+  transform: scale(1.1);
+}
+
+.text-backward-btn {
+  background: #ffc107;
+  color: #212529;
+}
+
+.text-backward-btn:hover {
+  background: #e0a800;
+  transform: scale(1.1);
+}
+
+.text-hide-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.text-hide-btn:hover {
+  background: #c82333;
+  transform: scale(1.1);
+}
+
 .preview-panel {
   flex: 1;
   display: flex;

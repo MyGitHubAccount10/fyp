@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import './CustomiseImagePage.css';
 import Header from './Header';
 import { useCustomiseContext } from './hooks/useCustomiseContext';
+import { FaEye, FaEyeSlash, FaArrowUp, FaArrowDown } from 'react-icons/fa';
 
 // Default settings for a new skimboard design
 const DEFAULT_DESIGN = {
@@ -28,7 +29,8 @@ const DEFAULT_DESIGN = {
   enableTextStroke: false,
   backgroundPattern: 'solid',
   gradientContrast: 20,
-  textZIndex: 100
+  textZIndex: 100,
+  textVisible: true
 };
 
 
@@ -95,9 +97,15 @@ const generateSkimboardImage = async (designData, previewElement, scale = 2) => 
 
   // Create combined array of all elements with their zIndex for proper layering
   const allElements = [
-    ...designData.images.map(img => ({ type: 'image', data: img, zIndex: img.zIndex })),
-    { type: 'text', data: designData, zIndex: designData.textZIndex || 100 }
-  ].sort((a, b) => a.zIndex - b.zIndex);
+    ...designData.images.map(img => ({ type: 'image', data: img, zIndex: img.zIndex }))
+  ];
+  
+  // Only add text if it's visible
+  if (designData.textVisible !== false) {
+    allElements.push({ type: 'text', data: designData, zIndex: designData.textZIndex || 100 });
+  }
+  
+  allElements.sort((a, b) => a.zIndex - b.zIndex);
 
   // Draw all elements in zIndex order
   for (const element of allElements) {
@@ -597,6 +605,11 @@ export default function CustomiseImagePage() {
     updateCurrentDesign({ textZIndex: minZ - 1 });
   };
 
+  // Hide/Show text
+  const toggleTextVisibility = () => {
+    updateCurrentDesign({ textVisible: !currentDesign.textVisible });
+  };
+
   // Reset everything back to default
   const resetAll = () => {
     saveToHistory({ currentSide, designs });
@@ -1037,6 +1050,7 @@ export default function CustomiseImagePage() {
                   color: currentDesign.textColor,
                   transform: 'translate(-50%, -50%)',
                   zIndex: currentDesign.textZIndex || 100,
+                  display: currentDesign.textVisible === false ? 'none' : 'block',
                   textShadow: currentDesign.enableTextStroke 
                     ? `1px 1px 0 ${currentDesign.textStrokeColor}, -1px -1px 0 ${currentDesign.textStrokeColor}, 1px -1px 0 ${currentDesign.textStrokeColor}, -1px 1px 0 ${currentDesign.textStrokeColor}`
                     : (currentDesign.textColor === '#FFFFFF' ? '2px 2px 4px rgba(0,0,0,0.8)' : '2px 2px 4px rgba(255,255,255,0.8)')
@@ -1049,6 +1063,60 @@ export default function CustomiseImagePage() {
                 }}
               >
                 {currentDesign.customText}
+                
+                {/* Text Control Buttons - only show for selected text */}
+                {selectedElement?.type === 'text' && (
+                  <div className="text-control-buttons">
+                    <button 
+                      className="text-forward-btn" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        moveTextToFront();
+                      }}
+                      onTouchEnd={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        moveTextToFront();
+                      }}
+                      title="Bring Forward"
+                    >
+                      <FaArrowUp />
+                    </button>
+                    <button 
+                      className="text-backward-btn" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        moveTextToBack();
+                      }}
+                      onTouchEnd={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        moveTextToBack();
+                      }}
+                      title="Send Back"
+                    >
+                      <FaArrowDown />
+                    </button>
+                    <button 
+                      className="text-hide-btn" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        toggleTextVisibility();
+                      }}
+                      onTouchEnd={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        toggleTextVisibility();
+                      }}
+                      title={currentDesign.textVisible === false ? "Show Text" : "Hide Text"}
+                    >
+                      {currentDesign.textVisible === false ? <FaEye /> : <FaEyeSlash />}
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Images */}

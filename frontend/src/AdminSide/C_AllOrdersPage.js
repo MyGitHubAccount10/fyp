@@ -245,70 +245,75 @@ function AllOrdersPage() {
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', padding: '10px 15px 10px 0', alignItems: 'center' }}>
                     {/* Status Filter */}
-                    <select
-                        value={selectedStatus}
-                        onChange={(e) => setSelectedStatus(e.target.value)}
-                        style={{
-                            flex: '1',
-                            padding: '10px',
-                            borderRadius: '6px',
-                            border: '1px solid #ccc',
-                            minWidth: '150px'
-                        }}
-                    >
-                        <option value="All Statuses">All Statuses</option>
-                        {availableStatuses.map(status => (
-                            <option key={status} value={status}>{status}</option>
-                        ))}
-                    </select>
+                    <div style={{ padding: '0 0 0 0' }}>
+                        <select
+                            value={selectedStatus}
+                            onChange={(e) => setSelectedStatus(e.target.value)}
+                            style={{
+                                flex: '1',
+                                padding: '10px',
+                                borderRadius: '6px',
+                                border: '1px solid #ccc',
+                                minWidth: '150px'
+                            }}
+                        >
+                            <option value="All Statuses">All Statuses</option>
+                            {availableStatuses.map(status => (
+                                <option key={status} value={status}>{status}</option>
+                            ))}
+                        </select>
+                    </div>
 
                     {/* Date Inputs */}
-                    <input
-                        type="date" 
-                        value={startDate}
-                        onChange={handleStartDateChange}
-                        style={{
-                            flex: '1',
-                            padding: '2px',
-                            borderRadius: '6px',
-                            border: '1px solid #ccc',
-                            minWidth: '150px',
-                            height: '33px'
-                        }}
-                        placeholder="Start Date"
-                    />
-                    <input
-                        type="date"
-                        value={endDate}
-                        onChange={handleEndDateChange}
-                        style={{
-                            flex: '1',
-                            padding: '2px',
-                            borderRadius: '6px',
-                            border: '1px solid #ccc',
-                            minWidth: '150px',
-                            height: '33px'
-                        }}
-                        placeholder="End Date"
-                    />
+                    <div style={{ padding: '0 15px' }}>
+                        <input
+                            type="date" 
+                            value={startDate}
+                            onChange={handleStartDateChange}
+                            style={{
+                                flex: '1',
+                                padding: '10px',
+                                borderRadius: '6px',
+                                border: '1px solid #ccc',
+                                minWidth: '150px'
+                            }}
+                            placeholder="Start Date"
+                        />
+                    </div>
+                    <div style={{ padding: '0 15px' }}>
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={handleEndDateChange}
+                            style={{
+                                flex: '1',
+                                padding: '10px',
+                                borderRadius: '6px',
+                                border: '1px solid #ccc',
+                                minWidth: '150px'
+                            }}
+                            placeholder="End Date"
+                        />
+                    </div>
                     
-                    <button 
-                        onClick={handleResetFilters} 
-                        style={{
-                            flex: '1',
-                            padding: '2px',
-                            borderRadius: '6px',
-                            border: 'none',
-                            backgroundColor: '#f1673a',
-                            color: 'white',
-                            cursor: 'pointer',
-                            fontWeight: '500',
-                            minWidth: '120px',
-                            height: '33px'
-                        }}
-                    >
-                        Reset Filters
-                    </button>
+                    <div style={{ padding: '0 15px' }}>
+                        <button 
+                            onClick={handleResetFilters} 
+                            style={{
+                                flex: '1',
+                                padding: '10px',
+                                borderRadius: '6px',
+                                border: 'none',
+                                backgroundColor: '#f1673a',
+                                color: 'white',
+                                cursor: 'pointer',
+                                fontWeight: '500',
+                                minWidth: '120px'
+                            }}
+                        >
+                            Reset Filters
+                        </button>
+                    </div>
                 </div>
             </div>
 

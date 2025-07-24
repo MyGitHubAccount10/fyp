@@ -100,19 +100,27 @@
 }
 
 .customisation-panel input,
-.customisation-panel select {
+.customisation-panel select,
+.customisation-panel textarea {
   padding: 0.75rem;
   border: 2px solid #e9ecef;
   border-radius: 8px;
   font-size: 1rem;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-family: inherit;
 }
 
 .customisation-panel input:focus,
-.customisation-panel select:focus {
+.customisation-panel select:focus,
+.customisation-panel textarea:focus {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+}
+
+.customisation-panel textarea {
+  resize: vertical;
+  min-height: 80px;
 }
 
 /* Range input styling to fully fill the scroll bar */

@@ -244,13 +244,23 @@ const drawText = (canvaContext, designData, scaleX, scaleY) => {
   const scaledTextX = designData.textPosition.x * scaleX;
   const scaledTextY = designData.textPosition.y * scaleY;
   
-  if (designData.enableTextStroke) {
-    canvaContext.strokeStyle = designData.textStrokeColor;
-    canvaContext.lineWidth = Math.max(1, designData.fontSize * scaleX * 0.05);
-    canvaContext.strokeText(designData.customText, scaledTextX, scaledTextY);
-  }
+  // Split text into lines
+  const lines = designData.customText.split('\n');
+  const lineHeight = designData.fontSize * scaleX * 1.2;
+  const totalHeight = lines.length * lineHeight;
+  const startY = scaledTextY - (totalHeight / 2) + (lineHeight / 2);
   
-  canvaContext.fillText(designData.customText, scaledTextX, scaledTextY);
+  lines.forEach((line, index) => {
+    const currentY = startY + (index * lineHeight);
+    
+    if (designData.enableTextStroke) {
+      canvaContext.strokeStyle = designData.textStrokeColor;
+      canvaContext.lineWidth = Math.max(1, designData.fontSize * scaleX * 0.05);
+      canvaContext.strokeText(line, scaledTextX, currentY);
+    }
+    
+    canvaContext.fillText(line, scaledTextX, currentY);
+  });
 };
 
 export default function CustomiseImagePage() {
@@ -823,12 +833,12 @@ export default function CustomiseImagePage() {
               <h3>Text</h3>
               <label>
                 Text Content:
-                <input 
-                  type="text" 
+                <textarea 
                   value={currentDesign.customText} 
                   onChange={(e) => updateCurrentDesignWithHistory({ customText: e.target.value })} 
-                  maxLength={30} 
+                  maxLength={100} 
                   placeholder="Enter your text"
+                  rows={3}
                 />
               </label>
 
@@ -1051,6 +1061,9 @@ export default function CustomiseImagePage() {
                   transform: 'translate(-50%, -50%)',
                   zIndex: currentDesign.textZIndex || 100,
                   display: currentDesign.textVisible === false ? 'none' : 'block',
+                  whiteSpace: 'pre-line',
+                  textAlign: 'center',
+                  lineHeight: '1.2',
                   textShadow: currentDesign.enableTextStroke 
                     ? `1px 1px 0 ${currentDesign.textStrokeColor}, -1px -1px 0 ${currentDesign.textStrokeColor}, 1px -1px 0 ${currentDesign.textStrokeColor}, -1px 1px 0 ${currentDesign.textStrokeColor}`
                     : (currentDesign.textColor === '#FFFFFF' ? '2px 2px 4px rgba(0,0,0,0.8)' : '2px 2px 4px rgba(255,255,255,0.8)')

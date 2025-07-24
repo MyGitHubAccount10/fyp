@@ -27,7 +27,8 @@ const DEFAULT_DESIGN = {
   textStrokeColor: '#000000',
   enableTextStroke: false,
   backgroundPattern: 'solid',
-  gradientContrast: 20
+  gradientContrast: 20,
+  textZIndex: 100
 };
 
 
@@ -92,12 +93,20 @@ const generateSkimboardImage = async (designData, previewElement, scale = 2) => 
   const scaleX = width / previewRect.width;
   const scaleY = height / previewRect.height;
 
-  // Draw images
-  const sortedImages = [...designData.images].sort((a, b) => a.zIndex - b.zIndex);
-  await drawImages(canvaContext, sortedImages, scaleX, scaleY);
+  // Create combined array of all elements with their zIndex for proper layering
+  const allElements = [
+    ...designData.images.map(img => ({ type: 'image', data: img, zIndex: img.zIndex })),
+    { type: 'text', data: designData, zIndex: designData.textZIndex || 100 }
+  ].sort((a, b) => a.zIndex - b.zIndex);
 
-  // Draw text
-  drawText(canvaContext, designData, scaleX, scaleY);
+  // Draw all elements in zIndex order
+  for (const element of allElements) {
+    if (element.type === 'image') {
+      await drawSingleImage(canvaContext, element.data, scaleX, scaleY);
+    } else if (element.type === 'text') {
+      drawText(canvaContext, element.data, scaleX, scaleY);
+    }
+  }
 
   canvaContext.restore();
   return canvas.toDataURL('image/png', 0.9);
@@ -160,6 +169,61 @@ const drawImages = async (canvaContext, images, scaleX, scaleY) => {
   });
 
   await Promise.all(loadAll);
+};
+
+// Helper function to draw a single image on canvas
+const drawSingleImage = async (canvaContext, img, scaleX, scaleY) => {
+  return new Promise((resolve) => {
+    const image = new Image();
+    image.crossOrigin = 'anonymous';
+    image.src = img.src;
+    image.onload = () => {
+      canvaContext.save();
+      canvaContext.globalAlpha = img.opacity || 1;
+      
+      const scaledX = img.x * scaleX;
+      const scaledY = img.y * scaleY;
+      const scaledWidth = img.width * scaleX;
+      const scaledHeight = img.height * scaleY;
+      
+      canvaContext.translate(scaledX + scaledWidth / 2, scaledY + scaledHeight / 2);
+      canvaContext.rotate((img.rotation * Math.PI) / 180);
+      
+      // Calculate aspect ratios for proper cover behavior
+      const imageAspect = image.width / image.height;
+      const targetAspect = scaledWidth / scaledHeight;
+      
+      let drawWidth, drawHeight;
+      
+      if (imageAspect > targetAspect) {
+        drawHeight = scaledHeight;
+        drawWidth = drawHeight * imageAspect;
+      } else {
+        drawWidth = scaledWidth;
+        drawHeight = drawWidth / imageAspect;
+      }
+      
+      // Create clipping region
+      canvaContext.beginPath();
+      canvaContext.rect(-scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
+      canvaContext.clip();
+      
+      canvaContext.drawImage(
+        image,
+        -drawWidth / 2,
+        -drawHeight / 2,
+        drawWidth,
+        drawHeight
+      );
+      
+      canvaContext.restore();
+      resolve();
+    };
+    image.onerror = () => {
+      console.error('Failed to load image:', img.src);
+      resolve(); // Continue even if one image fails
+    };
+  });
 };
 
 // Helper function to draw text on canvas
@@ -519,6 +583,20 @@ export default function CustomiseImagePage() {
     updateImages(updatedImages);
   };
 
+  // Move text to the front (above other elements)
+  const moveTextToFront = () => {
+    const allZIndices = currentImages.length > 0 ? currentImages.map(img => img.zIndex) : [0];
+    const maxZ = Math.max(...allZIndices, currentDesign.textZIndex || 100);
+    updateCurrentDesign({ textZIndex: maxZ + 1 });
+  };
+
+  // Move text to the back (behind other elements)
+  const moveTextToBack = () => {
+    const allZIndices = currentImages.length > 0 ? currentImages.map(img => img.zIndex) : [0];
+    const minZ = Math.min(...allZIndices, currentDesign.textZIndex || 100);
+    updateCurrentDesign({ textZIndex: minZ - 1 });
+  };
+
   // Reset everything back to default
   const resetAll = () => {
     saveToHistory({ currentSide, designs });
@@ -853,6 +931,20 @@ export default function CustomiseImagePage() {
                   </div>
                 </div>
               )}
+
+              {selectedElement && selectedElement.type === 'text' && (
+                <div className="text-controls">
+                  <h4>Selected Text Controls</h4>
+                  <div className="text-actions">
+                    <button onClick={() => moveTextToFront()}>
+                      Bring Forward
+                    </button>
+                    <button onClick={() => moveTextToBack()}>
+                      Send Back
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Action Buttons */}
@@ -944,6 +1036,7 @@ export default function CustomiseImagePage() {
                   fontFamily: currentDesign.fontFamily,
                   color: currentDesign.textColor,
                   transform: 'translate(-50%, -50%)',
+                  zIndex: currentDesign.textZIndex || 100,
                   textShadow: currentDesign.enableTextStroke 
                     ? `1px 1px 0 ${currentDesign.textStrokeColor}, -1px -1px 0 ${currentDesign.textStrokeColor}, 1px -1px 0 ${currentDesign.textStrokeColor}, -1px 1px 0 ${currentDesign.textStrokeColor}`
                     : (currentDesign.textColor === '#FFFFFF' ? '2px 2px 4px rgba(0,0,0,0.8)' : '2px 2px 4px rgba(255,255,255,0.8)')

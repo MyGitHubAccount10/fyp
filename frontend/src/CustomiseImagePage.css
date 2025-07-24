@@ -258,6 +258,39 @@
   background: #0056b3;
 }
 
+.text-controls {
+  background: #e3f2fd;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.text-controls h4 {
+  margin: 0 0 1rem 0;
+  color: #1976d2;
+}
+
+.text-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.text-actions button {
+  padding: 0.5rem 1rem;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.3s ease;
+}
+
+.text-actions button:hover {
+  background: #0056b3;
+}
+
 .preview-panel {
   flex: 1;
   display: flex;
@@ -310,12 +343,15 @@
   padding: 4px 8px;
   border-radius: 4px;
   transition: all 0.2s ease;
+  border: 2px solid transparent;
 }
 
 .skimboard-text:hover,
 .skimboard-text.selected {
   background: rgba(255,255,255,0.1);
   backdrop-filter: blur(10px);
+  border-color: #007bff;
+  box-shadow: 0 0 10px rgba(0,123,255,0.3);
 }
 
 .skimboard-text:active {

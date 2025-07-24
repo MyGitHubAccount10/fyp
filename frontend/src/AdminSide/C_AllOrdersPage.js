@@ -132,8 +132,17 @@ function AllOrdersPage() {
         const orderStatus = order.status_id?.status_name || 'Unknown';
         const matchesStatus = selectedStatus === 'All Statuses' || orderStatus === selectedStatus;        // Basic date filtering
         const orderDate = new Date(order.order_date || order.createdAt);
+        
+        // For start date, use beginning of day (00:00:00)
         const matchesStartDate = startDate === '' || orderDate >= new Date(startDate);
-        const matchesEndDate = endDate === '' || orderDate <= new Date(endDate);
+        
+        // For end date, use end of day (23:59:59) to include all orders on that date
+        let matchesEndDate = true;
+        if (endDate !== '') {
+            const endOfDay = new Date(endDate);
+            endOfDay.setHours(23, 59, 59, 999); // Set to end of day
+            matchesEndDate = orderDate <= endOfDay;
+        }
 
         return matchesSearch && matchesStatus && matchesStartDate && matchesEndDate;
     });
@@ -162,6 +171,28 @@ function AllOrdersPage() {
     const handlePrevPage = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
+        }
+    };
+
+    // Handle start date change with validation
+    const handleStartDateChange = (e) => {
+        const newStartDate = e.target.value;
+        setStartDate(newStartDate);
+        
+        // If end date exists and new start date is after end date, update end date to match start date
+        if (endDate && newStartDate && new Date(newStartDate) > new Date(endDate)) {
+            setEndDate(newStartDate);
+        }
+    };
+
+    // Handle end date change with validation
+    const handleEndDateChange = (e) => {
+        const newEndDate = e.target.value;
+        setEndDate(newEndDate);
+        
+        // If start date exists and new end date is before start date, update start date to match end date
+        if (startDate && newEndDate && new Date(newEndDate) < new Date(startDate)) {
+            setStartDate(newEndDate);
         }
     };     // Function to get order status class
     const getOrderStatusClass = (status) => {
@@ -233,7 +264,7 @@ function AllOrdersPage() {
                     <input
                         type="date" 
                         value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
+                        onChange={handleStartDateChange}
                         style={{
                             flex: '1',
                             padding: '10px',
@@ -244,7 +275,7 @@ function AllOrdersPage() {
                     <input
                         type="date"
                         value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
+                        onChange={handleEndDateChange}
                         style={{
                             flex: '1',
                             padding: '10px',

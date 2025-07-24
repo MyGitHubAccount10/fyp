@@ -43,25 +43,44 @@
     min-width: 150px;
 }
 
+/* Style for date inputs to match other filter inputs */
+.filter-bar .date-input,
+input[type="date"].filter-date-input {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95em;
+    box-sizing: border-box;
+    background-color: white;
+    min-width: 150px;
+    width: 100%;
+    flex: 1;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    height: 42px; /* Explicit height to match other inputs */
+    line-height: normal;
+    align-self: center; /* Align with flex container center */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+    margin: 0;
+}
+
+.filter-bar .date-input:focus,
+.filter-bar .date-input:hover,
+input[type="date"].filter-date-input:focus,
+input[type="date"].filter-date-input:hover {
+    border-color: #f1673a;
+    box-shadow: 0 0 0 2px rgba(241, 103, 58, 0.1);
+}
+
 /* Style for date input wrapper if you add a custom icon */
 .filter-bar .date-input-wrapper {
     position: relative; /* For positioning custom icons if needed */
     display: flex; /* Ensure input takes full width in wrapper */
-     min-width: 120px; /* Adjust min-width for date inputs */
-     padding: 0; /* Remove padding from wrapper, add to input */
-     border: none; /* Remove border from wrapper, add to input */
-}
-.filter-bar .date-input-wrapper input.date-input {
-     width: 100%;
-     padding: 10px 15px;
-     border: 1px solid #ccc;
-     border-radius: 4px;
-     font-size: 0.95em;
-     box-sizing: border-box;
-     background-color: white;
-     /* Hide native calendar icon if adding custom */
-     /* appearance: none;
-     -webkit-appearance: none; */
+    min-width: 150px; /* Consistent with other inputs */
+    flex: 1;
 }
 
 /* Reset Filters Button */
@@ -78,6 +97,12 @@
     box-sizing: border-box;
     transition: background-color 0.2s ease;
     white-space: nowrap;
+    /* Remove explicit height to match other filter elements */
+    line-height: normal;
+    align-self: center; /* Align with flex container center */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .btn-apply-filters:hover {
@@ -1513,7 +1538,9 @@ input[type="password"]::-ms-clear {
     }
     
     .filter-bar .filter-input,
-    .filter-bar .search-input {
+    .filter-bar .search-input,
+    .filter-bar .date-input,
+    input[type="date"].filter-date-input {
         width: 100%;
         min-width: 0;
         max-width: 100%;
@@ -1808,13 +1835,16 @@ input[type="password"]::-ms-clear {
         flex: 1 1 auto;
     }
     
-    .filter-input {
+    .filter-input,
+    .filter-bar .date-input,
+    input[type="date"].filter-date-input {
         font-size: 16px; /* Prevent zoom on iOS */
         min-width: 0; /* Remove minimum width constraints on mobile */
         width: 100%;
     }
     
     .filter-bar .search-input {
+        font-size: 16px; /* Prevent zoom on iOS */
         min-width: 0; /* Override the 180px min-width on mobile */
     }
     

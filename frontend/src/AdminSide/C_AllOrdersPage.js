@@ -233,17 +233,18 @@ function AllOrdersPage() {
         <div className='manage-products-page'>
             <h2>Orders</h2>
 
-            {/* Filter Bar */}
+            {/* Filter Section matching AllProductsPage pattern */}
             <div className='card'>
                 <div className="card-input">
-                    <input
-                        type="text"
+                    <input 
+                        type="text" 
                         placeholder="Search by Order ID or Customer Name"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        value={searchTerm} 
+                        onChange={(e) => setSearchTerm(e.target.value)} 
                     />
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', padding: '10px 15px 10px 0', alignItems: 'center' }}>
+                    {/* Status Filter */}
                     <select
                         value={selectedStatus}
                         onChange={(e) => setSelectedStatus(e.target.value)}
@@ -251,7 +252,8 @@ function AllOrdersPage() {
                             flex: '1',
                             padding: '10px',
                             borderRadius: '6px',
-                            border: '1px solid #ccc'
+                            border: '1px solid #ccc',
+                            minWidth: '150px'
                         }}
                     >
                         <option value="All Statuses">All Statuses</option>
@@ -267,10 +269,13 @@ function AllOrdersPage() {
                         onChange={handleStartDateChange}
                         style={{
                             flex: '1',
-                            padding: '10px',
+                            padding: '2px',
                             borderRadius: '6px',
-                            border: '1px solid #ccc'
+                            border: '1px solid #ccc',
+                            minWidth: '150px',
+                            height: '33px'
                         }}
+                        placeholder="Start Date"
                     />
                     <input
                         type="date"
@@ -278,19 +283,28 @@ function AllOrdersPage() {
                         onChange={handleEndDateChange}
                         style={{
                             flex: '1',
-                            padding: '10px',
+                            padding: '2px',
                             borderRadius: '6px',
-                            border: '1px solid #ccc'
+                            border: '1px solid #ccc',
+                            minWidth: '150px',
+                            height: '33px'
                         }}
+                        placeholder="End Date"
                     />
+                    
                     <button 
                         onClick={handleResetFilters} 
                         style={{
-                            padding: '10px 20px',
+                            flex: '1',
+                            padding: '2px',
                             borderRadius: '6px',
-                            border: '1px solid #ccc',
-                            backgroundColor: '#f8f9fa',
-                            cursor: 'pointer'
+                            border: 'none',
+                            backgroundColor: '#f1673a',
+                            color: 'white',
+                            cursor: 'pointer',
+                            fontWeight: '500',
+                            minWidth: '120px',
+                            height: '33px'
                         }}
                     >
                         Reset Filters

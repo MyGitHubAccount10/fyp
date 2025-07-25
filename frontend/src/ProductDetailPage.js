@@ -271,14 +271,14 @@ const ProductDetailPage = () => {
         <section className="product-main-info-grid">
           <div className="product-image-gallery">   
             <div className="product-main-image-container">
-              <img src={`${process.env.REACT_APP_API_URL}/images/${selectedImage}`} alt={product.product_name} className="product-main-image" />
+              <img src={`${process.env.REACT_APP_API_URL}/images/product/${selectedImage}`} alt={product.product_name} className="product-main-image" />
             </div>
             {productImages.length > 1 && (
               <div className="product-thumbnails">
                 {productImages.map((img, index) => (
                   <img
                     key={index}
-                    src={`${process.env.REACT_APP_API_URL}/images/${img}`}
+                    src={`${process.env.REACT_APP_API_URL}/images/product/${img}`}
                     alt={`${product.product_name} thumbnail ${index + 1}`}
                     className={`thumbnail-image ${selectedImage === img ? 'selected-thumbnail' : ''}`}
                     onClick={() => setSelectedImage(img)}
@@ -422,7 +422,7 @@ const ProductDetailPage = () => {
               const isAvailable = p.warehouse_quantity > 0;
               const cardContent = (
                 <div className="similar-product-card" style={{ position: 'relative', opacity: isAvailable ? 1 : 0.8 }}>
-                  <img src={`${process.env.REACT_APP_API_URL}/images/${p.product_image}`} alt={p.product_name} className="similar-product-image" />
+                  <img src={`${process.env.REACT_APP_API_URL}/images/product/${p.product_image}`} alt={p.product_name} className="similar-product-image" />
                   <div className="similar-product-caption">
                     <h3 className="product-name">{p.product_name}</h3>
                     <p style={{ margin: 0, fontWeight: 'normal' }}>${parseFloat(p.product_price).toFixed(2)}</p>

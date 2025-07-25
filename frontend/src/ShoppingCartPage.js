@@ -164,7 +164,7 @@ function ShoppingCartPage() {
                         cartItems.map(item => {
                             const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
                             const isCustomItem = item.topImagePreview && item.bottomImagePreview;
-                            const imageUrl = item.image ? `${process.env.REACT_APP_API_URL}/images/${item.image}` : null;
+                            const imageUrl = item.image ? `${process.env.REACT_APP_API_URL}/images/product/${item.image}` : null;
                             const itemKey = `${item.id}-${item.type}-${item.shape}-${item.size}-${item.material}-${item.thickness}-${item.topImagePreview || ''}-${item.bottomImagePreview || ''}`;
 
                             return (
@@ -255,7 +255,7 @@ function ShoppingCartPage() {
                         savedItems.map(item => {
                             const itemKey = `${item.id}-${item.type}-${item.shape}-${item.size}-${item.material}-${item.thickness}-${item.topImagePreview || ''}-${item.bottomImagePreview || ''}`;
                             const isCustomItem = item.topImagePreview && item.bottomImagePreview;
-                            const imageUrl = item.image ? `${process.env.REACT_APP_API_URL}/images/${item.image}` : null;
+                            const imageUrl = item.image ? `${process.env.REACT_APP_API_URL}/images/product/${item.image}` : null;
                             const itemPrice = typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price;
 
                             return (

@@ -139,7 +139,7 @@ function AllPromosPage() {
 
     const openImagePreview = (promo) => {
         setCurrentPromo(promo);
-        setModalImage(`${process.env.REACT_APP_API_URL}/images/${promo.promo_image}`);
+        setModalImage(`${process.env.REACT_APP_API_URL}/images/promo/${promo.promo_image}`);
     };
 
     const closeModal = () => {
@@ -299,7 +299,7 @@ function AllPromosPage() {
                         <tr key={promo._id}>
                             <td className="promo-image-col">
                                 <img
-                                    src={`${process.env.REACT_APP_API_URL}/images/${promo.promo_image}`}
+                                    src={`${process.env.REACT_APP_API_URL}/images/promo/${promo.promo_image}`}
                                     alt={promo.promo_title}
                                     className="admin-product-image"
                                     onClick={() => openImagePreview(promo)}

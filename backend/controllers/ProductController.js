@@ -130,7 +130,7 @@ const deleteProduct = async (req, res) => {
         // Delete the associated image files from the filesystem
         imagesToDelete.forEach(filename => {
             if (filename) {
-                const filePath = path.join(__dirname, '..', 'public', 'images', filename);
+                const filePath = path.join(__dirname, '../public/images/product', filename);
                 fs.unlink(filePath, (err) => {
                     if (err) {
                         console.error(`Failed to delete image file ${filename}:`, err);
@@ -208,7 +208,7 @@ const updateProduct = async (req, res) => {
             // Delete old image files from the filesystem
             oldImages.forEach(filename => {
                 if (filename) {
-                    const filePath = path.join(__dirname, '..', 'public', 'images', filename);
+                    const filePath = path.join(__dirname, '../public/images/product', filename);
                     fs.unlink(filePath, (err) => {
                         if (err) {
                             console.error(`Failed to delete old image ${filename}:`, err);

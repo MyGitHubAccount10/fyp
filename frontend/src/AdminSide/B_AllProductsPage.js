@@ -421,7 +421,7 @@ function AllProductsPage() {
                         <tr key={product._id}>
                             <td>
                                 <img
-                                    src={`${process.env.REACT_APP_API_URL}/images/${product.product_image}`}
+                                    src={`${process.env.REACT_APP_API_URL}/images/product/${product.product_image}`}
                                     alt={product.product_name}
                                     className="admin-product-image"
                                     onClick={() => openImagePreview(product, 0)}

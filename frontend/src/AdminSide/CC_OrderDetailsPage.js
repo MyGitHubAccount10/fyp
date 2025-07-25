@@ -505,11 +505,11 @@ function OrderDetailPage() {
                       {/* Product image */}
                       {item.product_id?.product_image ? (
                         <img
-                          src={`${process.env.REACT_APP_API_URL}/images/${item.product_id.product_image}`}
+                          src={`${process.env.REACT_APP_API_URL}/images/product/${item.product_id.product_image}`}
                           alt={item.product_id?.product_name || 'Product'}
                           onClick={() => openImagePreview(item.product_id, 0)}
                           onError={(e) => {
-                            console.log('Image failed to load:', `${process.env.REACT_APP_API_URL}/images/${item.product_id.product_image}`);
+                            console.log('Image failed to load:', `${process.env.REACT_APP_API_URL}/images/product/${item.product_id.product_image}`);
                             console.log('Product data:', item.product_id);
                           }}
                           style={{

@@ -82,7 +82,7 @@ const HomePage = () => {
                 if (response.ok) {
                     // Transform promo data to match slideshow format
                     const transformedImages = data.map(promo => ({
-                        src: `${process.env.REACT_APP_API_URL}/images/${promo.promo_image}`,
+                        src: `${process.env.REACT_APP_API_URL}/images/promo/${promo.promo_image}`,
                         link: promo.promo_link
                     }));
                     setSlideshowImages(transformedImages);

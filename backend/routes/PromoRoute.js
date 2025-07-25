@@ -14,12 +14,8 @@ const router = express.Router();
 
 // Configure multer for image upload
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/images/');
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
+    destination: (req, file, cb) => cb(null, path.join(__dirname, '../public/images/promo')),
+    filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 
 const upload = multer({

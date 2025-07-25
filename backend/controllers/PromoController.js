@@ -89,10 +89,10 @@ const updatePromo = async (req, res) => {
         // If new image is uploaded, update the image and delete old one
         if (req.file) {
             // Delete old image file
-            const oldImagePath = path.join(__dirname, '../public/images', existingPromo.promo_image);
-            if (fs.existsSync(oldImagePath)) {
-                fs.unlinkSync(oldImagePath);
-            }
+            // const oldImagePath = path.join(__dirname, '../public/images/promos', existingPromo.promo_image);
+            // if (fs.existsSync(oldImagePath)) {
+            //     fs.unlinkSync(oldImagePath);
+            // }
             updateData.promo_image = req.file.filename;
         }
 
@@ -119,7 +119,7 @@ const deletePromo = async (req, res) => {
         }
 
         // Delete the image file
-        const imagePath = path.join(__dirname, '../public/images', promo.promo_image);
+        const imagePath = path.join(__dirname, '../public/images/promo', promo.promo_image);
         if (fs.existsSync(imagePath)) {
             fs.unlinkSync(imagePath);
         }

@@ -289,9 +289,9 @@ function OrderHistoryPage() {
                                                         {item.type === 'customise' && (
                                                             <>
                                                                 <strong>Top Image:</strong> 
-                                                                <img src={`${process.env.REACT_APP_API_URL}/images/customise/${item.top_image}`} alt="Top Customisation" className="order-item-image" />
+                                                                <img src={`${item.top_image}`} alt="Top Customisation" className="order-item-image" />
                                                                 <strong>Bottom Image:</strong>
-                                                                <img src={`${process.env.REACT_APP_API_URL}/images/customise/${item.bottom_image}`} alt="Bottom Customisation" className="order-item-image" />
+                                                                <img src={`${item.bottom_image}`} alt="Bottom Customisation" className="order-item-image" />
                                                                 <div className="order-item-info">
                                                                     <span>Type: {item.board_type}</span>
                                                                     <span>Shape: {item.board_shape}</span>

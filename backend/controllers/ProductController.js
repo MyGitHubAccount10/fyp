@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Product = require('../models/ProductModel');
+const sharp = require('sharp');
 
 // Get all products
 const getProducts = async (req, res) => {
@@ -58,6 +59,13 @@ const createProduct = async (req, res) => {
     }
 
     try {
+        // Compress images using sharp
+        const compressed_images = await Promise.all(images.map(async (file) => {
+            const compressed = await sharp(file.buffer)
+                .jpeg({ quality: 75 })
+                .toBuffer();
+            return `data:image/jpeg;base64,${compressed.toString('base64')}`;
+        }));
         // Map frontend keys to backend product schema keys - only use fields that exist in schema
         const productData = {
             product_name: name,
@@ -66,17 +74,17 @@ const createProduct = async (req, res) => {
             warehouse_quantity: stockQuantity,
             category,
             threshold: lowStockThreshold || 5, // Use lowStockThreshold for threshold field
-            product_image: `data:${images[0].mimetype};base64,${images[0].buffer.toString('base64')}` // Assuming the first image is the main product image
+            product_image: compressed_images[0] // Assuming the first image is the main product image
         };
 
         // Add additional images if they exist
-        if (images[1]) productData.product_image2 = `data:${images[1].mimetype};base64,${images[1].buffer.toString('base64')}`;
-        if (images[2]) productData.product_image3 = `data:${images[2].mimetype};base64,${images[2].buffer.toString('base64')}`;
-        if (images[3]) productData.product_image4 = `data:${images[3].mimetype};base64,${images[3].buffer.toString('base64')}`;
-        if (images[4]) productData.product_image5 = `data:${images[4].mimetype};base64,${images[4].buffer.toString('base64')}`;
-        if (images[5]) productData.product_image6 = `data:${images[5].mimetype};base64,${images[5].buffer.toString('base64')}`;
-        if (images[6]) productData.product_image7 = `data:${images[6].mimetype};base64,${images[6].buffer.toString('base64')}`;
-        if (images[7]) productData.product_image8 = `data:${images[7].mimetype};base64,${images[7].buffer.toString('base64')}`;
+        if (compressed_images[1]) productData.product_image2 = compressed_images[1];
+        if (compressed_images[2]) productData.product_image3 = compressed_images[2];
+        if (compressed_images[3]) productData.product_image4 = compressed_images[3];
+        if (compressed_images[4]) productData.product_image5 = compressed_images[4];
+        if (compressed_images[5]) productData.product_image6 = compressed_images[5];
+        if (compressed_images[6]) productData.product_image7 = compressed_images[6];
+        if (compressed_images[7]) productData.product_image8 = compressed_images[7];
 
         const product = await Product.create(productData);
         res.status(200).json(product);
@@ -142,15 +150,22 @@ const updateProduct = async (req, res) => {
         if (req.body.category) updateData.category = req.body.category;
         
         const images = req.files || [];
+        // Compress images using sharp
+        const compressed_images = await Promise.all(images.map(async (file) => {
+            const compressed = await sharp(file.buffer)
+                .jpeg({ quality: 75 })
+                .toBuffer();
+            return `data:image/jpeg;base64,${compressed.toString('base64')}`;
+        }));
         // Handle image updates
-        if (images[0]) updateData.product_image = `data:${images[0].mimetype};base64,${images[0].buffer.toString('base64')}`;
-        if (images[1]) updateData.product_image2 = `data:${images[1].mimetype};base64,${images[1].buffer.toString('base64')}`;
-        if (images[2]) updateData.product_image3 = `data:${images[2].mimetype};base64,${images[2].buffer.toString('base64')}`;
-        if (images[3]) updateData.product_image4 = `data:${images[3].mimetype};base64,${images[3].buffer.toString('base64')}`;
-        if (images[4]) updateData.product_image5 = `data:${images[4].mimetype};base64,${images[4].buffer.toString('base64')}`;
-        if (images[5]) updateData.product_image6 = `data:${images[5].mimetype};base64,${images[5].buffer.toString('base64')}`;
-        if (images[6]) updateData.product_image7 = `data:${images[6].mimetype};base64,${images[6].buffer.toString('base64')}`;
-        if (images[7]) updateData.product_image8 = `data:${images[7].mimetype};base64,${images[7].buffer.toString('base64')}`;
+        if (compressed_images[0]) updateData.product_image = compressed_images[0];
+        if (compressed_images[1]) updateData.product_image2 = compressed_images[1];
+        if (compressed_images[2]) updateData.product_image3 = compressed_images[2];
+        if (compressed_images[3]) updateData.product_image4 = compressed_images[3];
+        if (compressed_images[4]) updateData.product_image5 = compressed_images[4];
+        if (compressed_images[5]) updateData.product_image6 = compressed_images[5];
+        if (compressed_images[6]) updateData.product_image7 = compressed_images[6];
+        if (compressed_images[7]) updateData.product_image8 = compressed_images[7];
 
         console.log('Update data:', updateData);
 

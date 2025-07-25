@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Promo = require('../models/PromoModel');
+const sharp = require('sharp');
 
 // Get all promos
 const getPromos = async (req, res) => {
@@ -54,8 +55,11 @@ const createPromo = async (req, res) => {
     }
 
     try {
-        const promo_image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-        
+        const promo_compressed = await sharp(req.file.buffer)
+            .jpeg({ quality: 75 })
+            .toBuffer();
+        const promo_image = `data:${req.file.mimetype};base64,${promo_compressed.toString('base64')}`;
+
         const promo = await Promo.create({
             promo_title,
             promo_image,

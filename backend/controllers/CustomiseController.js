@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Customise = require('../models/CustomiseModel');
+const sharp = require('sharp');
 
 // Get all customises
 const getCustomises = async (req, res) => {
@@ -68,8 +69,14 @@ const createCustomise = async (req, res) => {
         return res.status(400).json({error: 'Bottom image is required'});
     }
 
-    const top_image = `data:${top_file.mimetype};base64,${top_file.buffer.toString('base64')}`;
-    const bottom_image = `data:image/jpeg;base64,${bottom_file.buffer.toString('base64')}`;
+    const top_compressed = await sharp(top_file.buffer)
+        .jpeg({ quality: 75 })
+        .toBuffer();
+    const bottom_compressed = await sharp(bottom_file.buffer)
+        .jpeg({ quality: 75 })
+        .toBuffer();
+    const top_image = `data:image/jpeg;base64,${top_compressed.toString('base64')}`;
+    const bottom_image = `data:image/jpeg;base64,${bottom_compressed.toString('base64')}`;
 
     try {
         const customise = await Customise.create({
@@ -118,12 +125,18 @@ const updateCustomise = async (req, res) => {
     const updates = {...req.body};
     if (req.files && req.files.top_image) {
         const top_file = req.files.top_image[0];
-        updates.top_image = `data:${top_file.mimetype};base64,${top_file.buffer.toString('base64')}`;
+        const top_compressed = await sharp(top_file.buffer)
+            .jpeg({ quality: 75 })
+            .toBuffer();
+        updates.top_image = `data:image/jpeg;base64,${top_compressed.toString('base64')}`;
     }
 
     if (req.files && req.files.bottom_image) {
         const bottom_file = req.files.bottom_image[0];
-        updates.bottom_image = `data:${bottom_file.mimetype};base64,${bottom_file.buffer.toString('base64')}`;
+        const bottom_compressed = await sharp(bottom_file.buffer)
+            .jpeg({ quality: 75 })
+            .toBuffer();
+        updates.bottom_image = `data:image/jpeg;base64,${bottom_compressed.toString('base64')}`;
     }
 
     const customise = await Customise.findOneAndUpdate({_id: id}, updates, { new: true });

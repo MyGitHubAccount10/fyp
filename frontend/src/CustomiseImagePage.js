@@ -423,26 +423,46 @@ export default function CustomiseImagePage() {
       );
       updateImages(updatedImages);
     } else if (dragState.current.type === 'resize') {
-      // Resize image
-      const updatedImages = currentImages.map((img) =>
-        img.id === dragState.current.id
-          ? {
-              ...img,
-              width: Math.max(20, Math.min(200, mouseX - img.x)),
-              height: Math.max(20, Math.min(200, mouseY - img.y)),
-            }
-          : img
-      );
+      // Resize image based on rotation, clamp to min/max, prevent negative/zero
+      const updatedImages = currentImages.map((img) => {
+        if (img.id !== dragState.current.id) return img;
+        const centerX = img.x + img.width / 2;
+        const centerY = img.y + img.height / 2;
+        const relX = mouseX - centerX;
+        const relY = mouseY - centerY;
+        const angleRad = (img.rotation || 0) * Math.PI / 180;
+        // Project mouse movement onto rotated axes
+        const localX = relX * Math.cos(-angleRad) - relY * Math.sin(-angleRad);
+        const localY = relX * Math.sin(-angleRad) + relY * Math.cos(-angleRad);
+        // Clamp width/height to [20, 200]
+        let newWidth = Math.max(20, Math.min(200, Math.abs(localX) * 2));
+        let newHeight = Math.max(20, Math.min(200, Math.abs(localY) * 2));
+        // Prevent zero/negative dimensions
+        if (!isFinite(newWidth) || newWidth < 20) newWidth = 20;
+        if (!isFinite(newHeight) || newHeight < 20) newHeight = 20;
+        return {
+          ...img,
+          width: newWidth,
+          height: newHeight,
+        };
+      });
       updateImages(updatedImages);
     } else if (dragState.current.type === 'rotate') {
-      // Rotate image
+      // Rotate image, always take shortest path, clamp to [0, 360)
+      function shortestAngleDiff(a, b) {
+        let diff = a - b;
+        diff = ((diff + Math.PI) % (2 * Math.PI)) - Math.PI;
+        return diff;
+      }
       const updatedImages = currentImages.map((img) => {
         if (img.id !== dragState.current.id) return img;
         const centerX = img.x + img.width / 2;
         const centerY = img.y + img.height / 2;
         const currentAngle = Math.atan2(mouseY - centerY, mouseX - centerX);
-        const angleDifference = currentAngle - dragState.current.initialAngle;
-        const newRotation = dragState.current.initialRotation + (angleDifference * 180) / Math.PI;
+        let angleDifference = shortestAngleDiff(currentAngle, dragState.current.initialAngle);
+        let newRotation = dragState.current.initialRotation + (angleDifference * 180) / Math.PI;
+        // Clamp rotation to [0, 360)
+        newRotation = ((newRotation % 360) + 360) % 360;
         return { ...img, rotation: newRotation };
       });
       updateImages(updatedImages);
@@ -1144,71 +1164,74 @@ export default function CustomiseImagePage() {
               {currentImages
                 .sort((a, b) => a.zIndex - b.zIndex)
                 .map((img) => (
-                <div
-                  key={img.id}
-                  className={`image-wrapper ${selectedElement?.id === img.id ? 'selected' : ''}`}
-                  style={{
-                    top: img.y,
-                    left: img.x,
-                    width: img.width,
-                    height: img.height,
-                    transform: `rotate(${img.rotation}deg)`,
-                    opacity: img.opacity || 1,
-                    zIndex: img.zIndex,
-                  }}
-                  onMouseDown={(e) => startDrag(e, 'image', img.id)}
-                  onTouchStart={(e) => startDrag(e, 'image', img.id)}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedElement({ type: 'image', id: img.id });
-                  }}
-                  onDoubleClick={() => duplicateImage(img.id)}
-                >
-                  <img 
-                    src={img.src} 
-                    alt="Custom upload" 
-                    className="skimboard-image" 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                    draggable={false}
-                  />
-                  
-                  {/* Control buttons - only show for selected image */}
-                  {selectedElement?.id === img.id && (
-                    <>
-                      <button 
-                        className="delete-btn" 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          deleteImage(img.id);
-                        }}
-                        onTouchEnd={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          deleteImage(img.id);
-                        }}
-                        title="Delete image"
-                      >
-                        ×
-                      </button>
-
-                      <div
-                        className="resize-handle"
-                        onMouseDown={(e) => startDrag(e, 'resize', img.id)}
-                        onTouchStart={(e) => startDrag(e, 'resize', img.id)}
-                        title="Resize"
-                      />
-                      
-                      <div
-                        className="rotate-handle"
-                        onMouseDown={(e) => startDrag(e, 'rotate', img.id)}
-                        onTouchStart={(e) => startDrag(e, 'rotate', img.id)}
-                        title="Rotate"
-                      />
-                    </>
-                  )}
-                </div>
-              ))}
+                  <div
+                    key={img.id}
+                    className={`image-wrapper ${selectedElement?.id === img.id ? 'selected' : ''}`}
+                    style={{
+                      top: img.y,
+                      left: img.x,
+                      width: img.width,
+                      height: img.height,
+                      // Do NOT rotate the wrapper
+                      opacity: img.opacity || 1,
+                      zIndex: img.zIndex,
+                    }}
+                    onMouseDown={(e) => startDrag(e, 'image', img.id)}
+                    onTouchStart={(e) => startDrag(e, 'image', img.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedElement({ type: 'image', id: img.id });
+                    }}
+                    onDoubleClick={() => duplicateImage(img.id)}
+                  >
+                    <img
+                      src={img.src}
+                      alt="Custom upload"
+                      className="skimboard-image"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        transform: `rotate(${img.rotation}deg)`, // Only rotate the image
+                        pointerEvents: 'none', // Prevent drag on image itself
+                      }}
+                      draggable={false}
+                    />
+                    {/* Control buttons - only show for selected image */}
+                    {selectedElement?.id === img.id && (
+                      <>
+                        <button
+                          className="delete-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            deleteImage(img.id);
+                          }}
+                          onTouchEnd={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            deleteImage(img.id);
+                          }}
+                          title="Delete image"
+                        >
+                          ×
+                        </button>
+                        <div
+                          className="resize-handle"
+                          onMouseDown={(e) => startDrag(e, 'resize', img.id)}
+                          onTouchStart={(e) => startDrag(e, 'resize', img.id)}
+                          title="Resize"
+                        />
+                        <div
+                          className="rotate-handle"
+                          onMouseDown={(e) => startDrag(e, 'rotate', img.id)}
+                          onTouchStart={(e) => startDrag(e, 'rotate', img.id)}
+                          title="Rotate"
+                        />
+                      </>
+                    )}
+                  </div>
+                ))}
             </div>
           </div>
         </div>

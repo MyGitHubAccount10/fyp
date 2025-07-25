@@ -187,7 +187,7 @@ function OrderDetailPage() {
     setCurrentImageIndex(imageIndex);
     const images = getProductImages(product);
     if (images.length > 0) {
-      setModalImage(`${images[imageIndex]}`);
+      setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[imageIndex]}`);
     }
   };
 
@@ -198,12 +198,12 @@ function OrderDetailPage() {
       const images = currentProduct.customImages;
       const newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
       setCurrentImageIndex(newIndex);
-      setModalImage(`${images[newIndex].image}`);
+      setModalImage(`${process.env.REACT_APP_API_URL}/images/customise/${images[newIndex].image}`);
     } else {
       const images = getProductImages(currentProduct);
       const newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
       setCurrentImageIndex(newIndex);
-      setModalImage(`${images[newIndex]}`);
+      setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[newIndex]}`);
     }
   };
 
@@ -214,12 +214,12 @@ function OrderDetailPage() {
       const images = currentProduct.customImages;
       const newIndex = currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
       setCurrentImageIndex(newIndex);
-      setModalImage(`${images[newIndex].image}`);
+      setModalImage(`${process.env.REACT_APP_API_URL}/images/customise/${images[newIndex].image}`);
     } else {
       const images = getProductImages(currentProduct);
       const newIndex = currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
       setCurrentImageIndex(newIndex);
-      setModalImage(`${images[newIndex]}`);
+      setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[newIndex]}`);
     }
   };
 
@@ -243,7 +243,7 @@ function OrderDetailPage() {
     
     setCurrentProduct(fakeProduct);
     setCurrentImageIndex(imageIndex);
-    setModalImage(`${images[imageIndex].image}`);
+    setModalImage(`${process.env.REACT_APP_API_URL}/images/customise/${images[imageIndex].image}`);
   };
 
   const handleBack = () => {
@@ -467,13 +467,13 @@ function OrderDetailPage() {
                                     ? currentProduct.customImages.map((_, index) => (
                                         <button type="button" key={index} onClick={() => { 
                                             setCurrentImageIndex(index); 
-                                            setModalImage(`${currentProduct.customImages[index].image}`); 
+                                            setModalImage(`${process.env.REACT_APP_API_URL}/images/customise/${currentProduct.customImages[index].image}`); 
                                         }} style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc', cursor: 'pointer', transition: 'background-color 0.2s' }} />
                                     ))
                                     : getProductImages(currentProduct).map((_, index) => (
                                         <button type="button" key={index} onClick={() => { 
                                             setCurrentImageIndex(index); 
-                                            setModalImage(`${getProductImages(currentProduct)[index]}`); 
+                                            setModalImage(`${process.env.REACT_APP_API_URL}/images/${getProductImages(currentProduct)[index]}`); 
                                         }} style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc', cursor: 'pointer', transition: 'background-color 0.2s' }} />
                                     ))
                                 }
@@ -505,11 +505,11 @@ function OrderDetailPage() {
                       {/* Product image */}
                       {item.product_id?.product_image ? (
                         <img
-                          src={`${item.product_id.product_image}`}
+                          src={`${process.env.REACT_APP_API_URL}/images/${item.product_id.product_image}`}
                           alt={item.product_id?.product_name || 'Product'}
                           onClick={() => openImagePreview(item.product_id, 0)}
                           onError={(e) => {
-                            console.log('Image failed to load:', `${item.product_id.product_image}`);
+                            console.log('Image failed to load:', `${process.env.REACT_APP_API_URL}/images/${item.product_id.product_image}`);
                             console.log('Product data:', item.product_id);
                           }}
                           style={{

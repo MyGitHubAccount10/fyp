@@ -275,7 +275,7 @@ function OrderHistoryPage() {
                                                     <li key={item._id} className="order-item-detail">
                                                         {item.type === 'product' && (
                                                             <>
-                                                                <img src={`${item.product_image}`} alt={item.product_name} className="order-item-image" />
+                                                                <img src={`${process.env.REACT_APP_API_URL}/images/${item.product_image}`} alt={item.product_name} className="order-item-image" />
                                                                 <div className="order-item-info">
                                                                     <strong>{item.product_name}</strong>
                                                                     <span>Type: {item.order_type}</span>

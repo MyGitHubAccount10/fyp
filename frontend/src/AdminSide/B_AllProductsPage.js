@@ -21,6 +21,7 @@ const initialProductsData = {
 
 function AllProductsPage() {
     const [allProducts, setAllProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [categories, setCategories] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All Categories');
@@ -58,13 +59,16 @@ function AllProductsPage() {
 
 
     useEffect(() => {
+        setLoading(true);
         fetch(`${process.env.REACT_APP_API_URL}/api/product`)
             .then(res => res.json())
             .then(data => {
                 setAllProducts(data);
+                setLoading(false);
             })
             .catch(err => {
                 console.error("Failed to fetch products:", err);
+                setLoading(false);
             });
     }, []);
 
@@ -242,210 +246,212 @@ function AllProductsPage() {
 
 
     return (<>
-            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
-        <AdminHeader />
-            </div>
+        <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+            <AdminHeader />
+        </div>
         <div className="manage-products-page">
-            <div className="title-row">
-                <h2>Products</h2>
-                <button onClick={handleAddProduct} className="add-new-btn">
-                    <MdEdit size={18} color="white"/>
-                    Add New Product
-                </button>
-            </div>
-            
-            <div className='card'>
-                <div className="card-input">
-                    <input type="text" placeholder="Search by name..."  
-                    value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap'}}>
-                    {/* All Categories */}
-                    <select
-                        value={selectedCategory} 
-                        onChange={(e) => setSelectedCategory(e.target.value)}
-                        style={{
-                            flex: '1',
-                            padding: '10px',
-                            }}>
-                        <option value="All Categories">All Categories</option>
-                        {categories.map(category => (
-                            <option key={category._id} value={category._id}>{category.category_name}</option>
-                        ))}
-                    </select>
-                    {/* All Statuses */}
-                    <select style={{ flex: '1', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
-                        <option value="All Statuses">All Statuses</option>
-                        <option value="In Stock">In Stock</option>
-                        <option value="Limited Stock">Limited Stock</option>
-                        <option value="Out of Stock">Out of Stock</option>
-                    </select>
-                </div>
-            </div>
-
-            {/* Products Summary */}
-            <div className="products-summary" style={{ margin: '20px 0', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-                <h3 style={{ margin: '0 0 10px 0', fontSize: '1.2em', color: '#333' }}>Products Overview</h3>
-                <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
-                    <div>
-                        <strong>Total Products:</strong> <span style={{ color: '#007bff' }}>{allProducts.length}</span>
-                    </div>
-                    <div>
-                        <strong>Filtered Results:</strong> <span style={{ color: '#28a745' }}>{filteredProducts.length}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div className="pagination-controls" 
-                style={{ display: "flex", 
-                         justifyContent: "space-between",  
-                         alignItems: "center", 
-                         padding: "16px 0", 
-                         flexWrap: "wrap", 
-                         gap: "12px" }}>
-                <span style={{ fontSize: "16px" }}>Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong></span>
-                <div style={{ display: "flex", gap: "10px" }}>
-                    <button onClick={handlePrevPage} disabled={currentPage === 1} className="pagination-button">{'<< Prev'}</button>
-                    <button onClick={handleNextPage} disabled={currentPage === totalPages} className="pagination-button">{'Next >>'}</button>
-                </div>
-            </div>
-
-            {modalImage && currentProduct && (
-                // Black Background
-                <div className="modal-overlay" 
-                        onClick={closeModal} 
-                        style={{ position: 'fixed', 
-                                 top: 0, 
-                                 left: 0, 
-                                 width: '100vw', 
-                                 height: '100vh', 
-                                 backgroundColor: 'rgba(0, 0, 0, 0.8)', 
-                                 display: 'flex', 
-                                 alignItems: 'center', 
-                                 justifyContent: 'center', 
-                                 zIndex: 1000 }}>
-                    {/* The X button */}
-                    <button onClick={closeModal} 
-                            style={{ position: 'absolute', 
-                                     top: '20px', 
-                                     right: '20px', 
-                                     background: 'rgba(0, 0, 0, 0.5)', 
-                                     border: 'none', 
-                                     borderRadius: '50%', 
-                                     width: '40px', 
-                                     height: '40px', 
-                                     display: 'flex', 
-                                     alignItems: 'center', 
-                                     justifyContent: 'center', 
-                                     cursor: 'pointer', 
-                                     zIndex: 1001 }}>
-                        <IoClose size={28} color='white' />
+            {loading ? (
+                <div style={{ textAlign: 'center', padding: '20px' }}>Loading products...</div>
+            ) : (
+                <>
+                <div className="title-row">
+                    <h2>Products</h2>
+                    <button onClick={handleAddProduct} className="add-new-btn">
+                        <MdEdit size={18} color="white"/>
+                        Add New Product
                     </button>
-                    {/* Left and Right Arrow And the name, pic, page num for modal content */}
-                    <div style={{ position: 'relative', 
-                         borderRadius: '8px',
-                         width: '70vw', 
-                         height: '70vh', 
-                         display: 'flex', 
-                         flexDirection: 'column', 
-                         alignItems: 'center', 
-                         justifyContent: 'center', 
-                         padding: '20px', 
-                         boxSizing: 'border-box' }}>
-                        {getProductImages(currentProduct).length > 1 && (
-                            <>
-                                <button onClick={(e) => { e.stopPropagation(); goToPreviousImage(); }} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0, 0, 0, 0.7)', border: 'none', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1002, transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.9)'} onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.7)'}><FaAngleLeft size={24} color="white" /></button>
-                                <button onClick={(e) => { e.stopPropagation(); goToNextImage(); }} style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0, 0, 0, 0.7)', border: 'none', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1002, transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.9)'} onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.7)'}><FaAngleRight size={24} color="white" /></button>
-                            </>
-                        )}
-                        {/* Product Image with Overlaid Name */}
-                        <div onClick={(e) => e.stopPropagation()} style={{ 
+                </div>
+                <div className='card'>
+                    <div className="card-input">
+                        <input type="text" placeholder="Search by name..."  
+                        value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap'}}>
+                        {/* All Categories */}
+                        <select
+                            value={selectedCategory} 
+                            onChange={(e) => setSelectedCategory(e.target.value)}
+                            style={{
+                                flex: '1',
+                                padding: '10px',
+                            }}>
+                            <option value="All Categories">All Categories</option>
+                            {categories.map(category => (
+                                <option key={category._id} value={category._id}>{category.category_name}</option>
+                            ))}
+                        </select>
+                        {/* All Statuses */}
+                        <select style={{ flex: '1', padding: '10px', borderRadius: '6px', border: '1px solid #ccc' }} value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
+                            <option value="All Statuses">All Statuses</option>
+                            <option value="In Stock">In Stock</option>
+                            <option value="Limited Stock">Limited Stock</option>
+                            <option value="Out of Stock">Out of Stock</option>
+                        </select>
+                    </div>
+                </div>
+                {/* Products Summary */}
+                <div className="products-summary" style={{ margin: '20px 0', padding: '15px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+                    <h3 style={{ margin: '0 0 10px 0', fontSize: '1.2em', color: '#333' }}>Products Overview</h3>
+                    <div style={{ display: 'flex', gap: '30px', flexWrap: 'wrap' }}>
+                        <div>
+                            <strong>Total Products:</strong> <span style={{ color: '#007bff' }}>{allProducts.length}</span>
+                        </div>
+                        <div>
+                            <strong>Filtered Results:</strong> <span style={{ color: '#28a745' }}>{filteredProducts.length}</span>
+                        </div>
+                    </div>
+                </div>
+                <div className="pagination-controls" 
+                    style={{ display: "flex", 
+                            justifyContent: "space-between",  
+                            alignItems: "center", 
+                            padding: "16px 0", 
+                            flexWrap: "wrap", 
+                            gap: "12px" }}>
+                    <span style={{ fontSize: "16px" }}>Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong></span>
+                    <div style={{ display: "flex", gap: "10px" }}>
+                        <button onClick={handlePrevPage} disabled={currentPage === 1} className="pagination-button">{'<< Prev'}</button>
+                        <button onClick={handleNextPage} disabled={currentPage === totalPages} className="pagination-button">{'Next >>'}</button>
+                    </div>
+                </div>
+                {modalImage && currentProduct && (
+                    // Black Background
+                    <div className="modal-overlay" 
+                            onClick={closeModal} 
+                            style={{ position: 'fixed', 
+                                    top: 0, 
+                                    left: 0, 
+                                    width: '100vw', 
+                                    height: '100vh', 
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center', 
+                                    zIndex: 1000 }}>
+                        {/* The X button */}
+                        <button onClick={closeModal} 
+                                style={{ position: 'absolute', 
+                                        top: '20px', 
+                                        right: '20px', 
+                                        background: 'rgba(0, 0, 0, 0.5)', 
+                                        border: 'none', 
+                                        borderRadius: '50%', 
+                                        width: '40px', 
+                                        height: '40px', 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'center', 
+                                        cursor: 'pointer', 
+                                        zIndex: 1001 }}>
+                            <IoClose size={28} color='white' />
+                        </button>
+                        {/* Left and Right Arrow And the name, pic, page num for modal content */}
+                        <div style={{ position: 'relative', 
+                            borderRadius: '8px',
+                            width: '70vw', 
+                            height: '70vh', 
                             display: 'flex', 
+                            flexDirection: 'column', 
                             alignItems: 'center', 
                             justifyContent: 'center', 
-                            width: 'fit-content',
-                            height: 'fit-content',
-                            maxWidth: '90%',
-                            maxHeight: '80%',
-                            position: 'relative',
-                            margin: 'auto'
-                        }}>
-                            <img
-                                src={modalImage}
-                                // --- FIX #2: The Image Alt Text Warning ---
-                                // Changed from a potentially redundant description to one that is concise.
-                                alt={`${currentProduct.product_name} preview ${currentImageIndex + 1}`}
-                                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '4px' }}
-                            />
-                            {/* Product Name Overlay */}
-                            <div className="modal-product-name-overlay">
-                                {currentProduct.product_name}
-                            </div>
-                        </div>
-                        {/* Thumbnail Navigation */}
-                        {getProductImages(currentProduct).length > 1 && (
-                            <div onClick={(e) => e.stopPropagation()} style={{ display: 'flex', gap: '8px', marginTop: '15px', alignItems: 'center' }}>
-                                {getProductImages(currentProduct).map((_, index) => (
-                                    <button key={index} onClick={() => { setCurrentImageIndex(index); setModalImage(`${getProductImages(currentProduct)[index]}`); }} style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc', cursor: 'pointer', transition: 'background-color 0.2s' }} />
-                                ))}
-                                <span style={{ marginLeft: '10px', fontSize: '12px', color: '#666' }}>{currentImageIndex + 1} of {getProductImages(currentProduct).length}</span>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
-            {/* Products Table */}
-            <div className="card" style={{ overflowX: 'auto'}}>
-                <table className="my-table">
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {currentProducts.length > 0 ? (
-                        currentProducts.map((product) => (
-                        <tr key={product._id}>
-                            <td>
+                            padding: '20px', 
+                            boxSizing: 'border-box' }}>
+                            {getProductImages(currentProduct).length > 1 && (
+                                <>
+                                    <button onClick={(e) => { e.stopPropagation(); goToPreviousImage(); }} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0, 0, 0, 0.7)', border: 'none', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1002, transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.9)'} onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.7)'}><FaAngleLeft size={24} color="white" /></button>
+                                    <button onClick={(e) => { e.stopPropagation(); goToNextImage(); }} style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', background: 'rgba(0, 0, 0, 0.7)', border: 'none', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1002, transition: 'background-color 0.2s' }} onMouseEnter={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.9)'} onMouseLeave={(e) => e.target.style.background = 'rgba(0, 0, 0, 0.7)'}><FaAngleRight size={24} color="white" /></button>
+                                </>
+                            )}
+                            {/* Product Image with Overlaid Name */}
+                            <div onClick={(e) => e.stopPropagation()} style={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                width: 'fit-content',
+                                height: 'fit-content',
+                                maxWidth: '90%',
+                                maxHeight: '80%',
+                                position: 'relative',
+                                margin: 'auto'
+                            }}>
                                 <img
-                                    src={`${product.product_image}`}
-                                    alt={product.product_name}
-                                    className="admin-product-image"
-                                    onClick={() => openImagePreview(product, 0)}
-                                    onError={(e) => (e.target.src = '/images/placeholder-product.jpg')}
+                                    src={modalImage}
+                                    // --- FIX #2: The Image Alt Text Warning ---
+                                    // Changed from a potentially redundant description to one that is concise.
+                                    alt={`${currentProduct.product_name} preview ${currentImageIndex + 1}`}
+                                    style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', borderRadius: '4px' }}
                                 />
-                            </td>
-                            <td>{getCategory(product.category)}</td>
-                            <td>${product.product_price.toFixed(2)}</td>
-                            <td>{product.warehouse_quantity}</td>
-                            <td>
-                                <span className={getProductStatusClass(getStatus(product))}>
-                                    {getStatus(product)}
-                                </span>
-                            </td>
-                            <td>
-                                <div className="actionButton">
-                                    <button className='editbutton' onClick={() => navigateToEditProduct(product._id)} title="Edit Product"><MdEdit size={39}/></button>
-                                    <button className='deletebutton' onClick={() => handleDeleteProduct(product._id)} title="Delete Product" ><IoMdTrash size={24} /></button>
+                                {/* Product Name Overlay */}
+                                <div className="modal-product-name-overlay">
+                                    {currentProduct.product_name}
                                 </div>
-                            </td>
-                        </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>
-                                No products found.
-                            </td>
-                        </tr>
-                    )}
-                    </tbody>
-                </table>
-            </div>
+                            </div>
+                            {/* Thumbnail Navigation */}
+                            {getProductImages(currentProduct).length > 1 && (
+                                <div onClick={(e) => e.stopPropagation()} style={{ display: 'flex', gap: '8px', marginTop: '15px', alignItems: 'center' }}>
+                                    {getProductImages(currentProduct).map((_, index) => (
+                                        <button key={index} onClick={() => { setCurrentImageIndex(index); setModalImage(`${getProductImages(currentProduct)[index]}`); }} style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc', cursor: 'pointer', transition: 'background-color 0.2s' }} />
+                                    ))}
+                                    <span style={{ marginLeft: '10px', fontSize: '12px', color: '#666' }}>{currentImageIndex + 1} of {getProductImages(currentProduct).length}</span>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+                {/* Products Table */}
+                <div className="card" style={{ overflowX: 'auto'}}>
+                    <table className="my-table">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Category</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {currentProducts.length > 0 ? (
+                            currentProducts.map((product) => (
+                            <tr key={product._id}>
+                                <td>
+                                    <img
+                                        src={`${product.product_image}`}
+                                        alt={product.product_name}
+                                        className="admin-product-image"
+                                        onClick={() => openImagePreview(product, 0)}
+                                        onError={(e) => (e.target.src = '/images/placeholder-product.jpg')}
+                                    />
+                                </td>
+                                <td>{getCategory(product.category)}</td>
+                                <td>${product.product_price.toFixed(2)}</td>
+                                <td>{product.warehouse_quantity}</td>
+                                <td>
+                                    <span className={getProductStatusClass(getStatus(product))}>
+                                        {getStatus(product)}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div className="actionButton">
+                                        <button className='editbutton' onClick={() => navigateToEditProduct(product._id)} title="Edit Product"><MdEdit size={39}/></button>
+                                        <button className='deletebutton' onClick={() => handleDeleteProduct(product._id)} title="Delete Product" ><IoMdTrash size={24} /></button>
+                                    </div>
+                                </td>
+                            </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="7" style={{ textAlign: 'center', padding: '20px' }}>
+                                    No products found.
+                                </td>
+                            </tr>
+                        )}
+                        </tbody>
+                    </table>
+                </div>
+                </>
+            )}
         </div>
     </>);
 }

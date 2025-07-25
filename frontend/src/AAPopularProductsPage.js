@@ -11,7 +11,7 @@ const ProductCard = ({ product }) => {
   const cardInnerContent = (
     <div className="product-card" style={{ position: 'relative', opacity: isAvailable ? 1 : 0.6 }}>
       <img 
-        src={`${process.env.REACT_APP_API_URL}/images/${product.product_image}`} 
+        src={`${product.product_image}`} 
         alt={product.product_name} 
         className="product-image" 
       />
@@ -106,7 +106,9 @@ const PopularProductsPage = () => {
 
   return (
     <>
+      <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
       <Header />
+      </div>
       <div className="title-section">
         <h1 className="title">Popular Products</h1>
         <p style={{ textAlign: 'center', color: '#666', marginTop: '10px' }}>

@@ -289,7 +289,9 @@ function PlaceOrderPage() {
 
     return (
         <>
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
             <Header />
+            </div>
             <div className="container checkout-page-container">
                 <div style={{ textAlign: 'left', marginBottom: '20px' }}>
                     <button

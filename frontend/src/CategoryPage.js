@@ -12,7 +12,7 @@ const ProductCard = ({ product }) => {
   // The visual content of the card
   const cardInnerContent = (
     <div className="product-card" style={{ position: 'relative', opacity: isAvailable ? 1 : 0.8 }}>
-      <img src={`${process.env.REACT_APP_API_URL}/images/${product.product_image}`} alt={product.product_name} className="product-image" />
+      <img src={`${product.product_image}`} alt={product.product_name} className="product-image" />
       <div className="product-info">
         <h3 className="product-name">{product.product_name}</h3>
         <p style={{ margin: 0, fontWeight: 'normal' }}>${parseFloat(product.product_price).toFixed(2)}</p>
@@ -171,7 +171,9 @@ const CategoryPage = ({ categoryName: propCategoryName }) => {
 
   return (
     <>
+      <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
       <Header />
+      </div>
       <div className="title-section">
         <h1 className="title">{categoryName}</h1>
       </div>

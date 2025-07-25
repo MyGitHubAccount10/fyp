@@ -103,7 +103,9 @@ const ContactPage = () => {
 
   return (
     <>
+      <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
       <Header />
+      </div>
       {/* --- MAIN CONTACT PAGE CONTENT --- */}
       <main className="contact-page-content">
         <section className="contact-banner-section">

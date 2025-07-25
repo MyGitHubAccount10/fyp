@@ -8,7 +8,9 @@ const aboutBannerImage = '/images/AboutBanner.png'; // Banner image for About pa
 const AboutPage = () => {
   return (
     <>
-    <Header />
+      <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+      <Header />
+      </div>
       {/* --- MAIN ABOUT PAGE CONTENT --- */}
       <main className="about-page-content">
         <section className="about-banner-section">

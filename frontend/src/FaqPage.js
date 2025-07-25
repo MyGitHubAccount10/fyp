@@ -168,7 +168,9 @@ const FaqPage = () => {
 
   return (
     <>
+      <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
       <Header />
+      </div>
       {/* --- MAIN FAQ PAGE CONTENT --- */}
       <main className="faq-page-content">
         <section className="faq-banner-section" style={{ backgroundImage: `url(${currentCategoryData.bannerImage})` }}>

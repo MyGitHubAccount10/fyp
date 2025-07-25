@@ -103,7 +103,9 @@ const ForgotPasswordPage = () => {
 
     return (
         <>
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
             <Header />
+            </div>
             <div className="container" style={{ maxWidth: '500px', margin: '40px auto' }}>
                 <h2 style={{ fontWeight: 'bold', fontSize: '2em', marginBottom: '10px', textAlign: 'center' }}>Reset Your Password</h2>
                 <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555', textAlign: 'center' }}>

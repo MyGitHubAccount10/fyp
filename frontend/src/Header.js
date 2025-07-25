@@ -166,11 +166,13 @@ const Header = () => {
             
             {/* MODIFIED: The desktop secondary navbar is now permanent */}
             <nav className="secondary-navbar">
-                <NavLink to="/products/skimboards" className="secondary-navbar-item"><SkimboardIcon /> Skimboards</NavLink>
-                <NavLink to="/products/t-shirts" className="secondary-navbar-item"><TshirtIcon /> T-Shirts</NavLink>
-                <NavLink to="/products/jackets" className="secondary-navbar-item"><JacketIcon /> Jackets</NavLink>
-                <NavLink to="/products/boardshorts" className="secondary-navbar-item"><BoardshortsIcon /> Board Shorts</NavLink>
-                <NavLink to="/products/accessories" className="secondary-navbar-item"><AccessoriesIcon /> Accessories</NavLink>
+                <div className="secondary-navbar-wrapper">
+                    <NavLink to="/products/skimboards" className="secondary-navbar-item"><SkimboardIcon /> Skimboards</NavLink>
+                    <NavLink to="/products/t-shirts" className="secondary-navbar-item"><TshirtIcon /> T-Shirts</NavLink>
+                    <NavLink to="/products/jackets" className="secondary-navbar-item"><JacketIcon /> Jackets</NavLink>
+                    <NavLink to="/products/boardshorts" className="secondary-navbar-item"><BoardshortsIcon /> Board Shorts</NavLink>
+                    <NavLink to="/products/accessories" className="secondary-navbar-item"><AccessoriesIcon /> Accessories</NavLink>
+                </div>
             </nav>
 
             {/* The mobile sidebar */}

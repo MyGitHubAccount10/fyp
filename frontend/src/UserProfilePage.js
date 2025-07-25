@@ -189,7 +189,9 @@ function UserProfilePage() {
 
     return (
         <>
-            <Header />
+        <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+        <Header />
+        </div>
             <div className="container user-profile-container">
                 <h2>My Profile</h2>
                 <div className="profile-section">

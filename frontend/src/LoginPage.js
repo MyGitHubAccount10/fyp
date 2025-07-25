@@ -100,7 +100,9 @@ const LoginPage = () => {
 
   return (
     <>
+      <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
       <Header />
+      </div>
       <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '40px', marginTop: '40px' }}>
         <div style={{ flex: 1 }}>
           <h2 style={{ fontWeight: 'bold', fontSize: '2em', marginBottom: '10px' }}>Login Form</h2>

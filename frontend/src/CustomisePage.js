@@ -247,7 +247,9 @@ const CustomisePage = () => {
 
     return (
         <>
-            <Header />
+          <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+          <Header />
+          </div>
                 <div className="title-section">
                   <h1 className="title">Design Your Own Skimboard</h1>
                 </div>

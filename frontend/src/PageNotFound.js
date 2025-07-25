@@ -7,7 +7,9 @@ import Footer from './Footer';
 function PageNotFound() {
     return (
         <>
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
             <Header />
+            </div>
             {/* --- Main Content --- */}
             {/* Improved styling for better vertical and horizontal centering */}
             <div style={{

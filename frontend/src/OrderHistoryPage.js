@@ -214,7 +214,9 @@ function OrderHistoryPage() {
 
     return (
         <>
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
             <Header />
+            </div>
             <div className="container order-history-container">
                 <div className="page-header-with-filter">
                     <h1>Order History</h1>
@@ -273,7 +275,7 @@ function OrderHistoryPage() {
                                                     <li key={item._id} className="order-item-detail">
                                                         {item.type === 'product' && (
                                                             <>
-                                                                <img src={`${process.env.REACT_APP_API_URL}/images/${item.product_image}`} alt={item.product_name} className="order-item-image" />
+                                                                <img src={`${item.product_image}`} alt={item.product_name} className="order-item-image" />
                                                                 <div className="order-item-info">
                                                                     <strong>{item.product_name}</strong>
                                                                     <span>Type: {item.order_type}</span>

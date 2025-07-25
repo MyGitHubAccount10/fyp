@@ -36,8 +36,7 @@ const createCustomiseImg = async (req, res) => {
         layer_order
     } = req.body;
 
-    const customise_img = req.file ? req.file.filename : null;
-
+    const customise_img = req.file ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` : null;
     try {
         const customiseImage = await CustomiseImg.create({
             customise,
@@ -83,7 +82,7 @@ const updateCustomiseImg = async (req, res) => {
     try {
         const updateCustomiseImg = {...req.body};
         if (req.file) {
-            updateCustomiseImg.customise_img = req.file.filename;
+            updateCustomiseImg.customise_img = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
         }
         const customiseImg = await CustomiseImg.findOneAndUpdate({_id: id}, {
             ...updateCustomiseImg

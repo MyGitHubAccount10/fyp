@@ -1,25 +1,8 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, './public/images'),
-    filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-})
-
-const upload = multer({
-    storage,
-    fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('image/')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Not an image! Please upload only images.'), false);
-        }
-    },
-    limits: {
-        fileSize: 5 * 1024 * 1024 // 5MB limit
-    }
-});
+const storage = multer.memoryStorage();
+const upload = multer({storage});
 
 const {
     getCustomiseImg,
@@ -45,9 +28,8 @@ router.post('/upload-multiple', upload.array('images', 10), (req, res) => {
         }
         
         const uploadedFiles = req.files.map(file => ({
-            filename: file.filename,
             originalName: file.originalname,
-            url: `/images/${file.filename}`,
+            base64: `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
             size: file.size
         }));
         

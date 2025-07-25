@@ -579,7 +579,7 @@ function OrderDetailPage() {
                       <div style={{ display: 'flex', gap: '5px' }}>
                         {item.top_image && (
                           <img
-                            src={`${process.env.REACT_APP_API_URL}/images/customise/${item.top_image}`}
+                            src={`${item.top_image}`}
                             alt="Custom Top Design"
                             onClick={() => openCustomImagePreview(item, 0)}
                             style={{
@@ -594,7 +594,7 @@ function OrderDetailPage() {
                         )}
                         {item.bottom_image && (
                           <img
-                            src={`${process.env.REACT_APP_API_URL}/images/customise/${item.bottom_image}`}
+                            src={`${item.bottom_image}`}
                             alt="Custom Bottom Design"
                             onClick={() => openCustomImagePreview(item, item.top_image ? 1 : 0)}
                             style={{

@@ -41,7 +41,7 @@ function EditPromoPage() {
                     is_active: promo.is_active,
                     images: []
                 });
-                setExistingImageURL(`${process.env.REACT_APP_API_URL}/images/${promo.promo_image}`);
+                setExistingImageURL(`${promo.promo_image}`);
                 setIsLoading(false);
             } catch (error) {
                 console.error('Error fetching promo:', error);

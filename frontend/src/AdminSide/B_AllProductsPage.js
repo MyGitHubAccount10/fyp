@@ -200,7 +200,7 @@ function AllProductsPage() {
         setCurrentImageIndex(imageIndex);
         const images = getProductImages(product);
         if (images.length > 0) {
-            setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[imageIndex]}`);
+            setModalImage(`${images[imageIndex]}`);
         }
     };
 
@@ -209,7 +209,7 @@ function AllProductsPage() {
         const images = getProductImages(currentProduct);
         const newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
         setCurrentImageIndex(newIndex);
-        setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[newIndex]}`);
+        setModalImage(`${images[newIndex]}`);
     };
 
     const goToNextImage = () => {
@@ -217,7 +217,7 @@ function AllProductsPage() {
         const images = getProductImages(currentProduct);
         const newIndex = currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
         setCurrentImageIndex(newIndex);
-        setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[newIndex]}`);
+        setModalImage(`${images[newIndex]}`);
     };
 
     const closeModal = () => {
@@ -386,7 +386,7 @@ function AllProductsPage() {
                         {getProductImages(currentProduct).length > 1 && (
                             <div onClick={(e) => e.stopPropagation()} style={{ display: 'flex', gap: '8px', marginTop: '15px', alignItems: 'center' }}>
                                 {getProductImages(currentProduct).map((_, index) => (
-                                    <button key={index} onClick={() => { setCurrentImageIndex(index); setModalImage(`${process.env.REACT_APP_API_URL}/images/${getProductImages(currentProduct)[index]}`); }} style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc', cursor: 'pointer', transition: 'background-color 0.2s' }} />
+                                    <button key={index} onClick={() => { setCurrentImageIndex(index); setModalImage(`${getProductImages(currentProduct)[index]}`); }} style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc', cursor: 'pointer', transition: 'background-color 0.2s' }} />
                                 ))}
                                 <span style={{ marginLeft: '10px', fontSize: '12px', color: '#666' }}>{currentImageIndex + 1} of {getProductImages(currentProduct).length}</span>
                             </div>
@@ -413,7 +413,7 @@ function AllProductsPage() {
                         <tr key={product._id}>
                             <td>
                                 <img
-                                    src={`${process.env.REACT_APP_API_URL}/images/${product.product_image}`}
+                                    src={`${product.product_image}`}
                                     alt={product.product_name}
                                     className="admin-product-image"
                                     onClick={() => openImagePreview(product, 0)}

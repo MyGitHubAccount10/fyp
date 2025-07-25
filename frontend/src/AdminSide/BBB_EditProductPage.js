@@ -58,14 +58,14 @@ function EditProductPage() {
                     category: (typeof data.category === 'object' && data.category._id) ? data.category._id : data.category || '',
                 });
                 setExistingImageURLs([
-                    `${process.env.REACT_APP_API_URL}/images/${data.product_image}`,
-                    ...(data.product_image2 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image2}`] : []),
-                    ...(data.product_image3 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image3}`] : []),
-                    ...(data.product_image4 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image4}`] : []),
-                    ...(data.product_image5 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image5}`] : []),
-                    ...(data.product_image6 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image6}`] : []),
-                    ...(data.product_image7 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image7}`] : []),
-                    ...(data.product_image8 ? [`${process.env.REACT_APP_API_URL}/images/${data.product_image8}`] : [])
+                    `${data.product_image}`,
+                    ...(data.product_image2 ? [`${data.product_image2}`] : []),
+                    ...(data.product_image3 ? [`${data.product_image3}`] : []),
+                    ...(data.product_image4 ? [`${data.product_image4}`] : []),
+                    ...(data.product_image5 ? [`${data.product_image5}`] : []),
+                    ...(data.product_image6 ? [`${data.product_image6}`] : []),
+                    ...(data.product_image7 ? [`${data.product_image7}`] : []),
+                    ...(data.product_image8 ? [`${data.product_image8}`] : [])
                 ]);
             } catch (error) {
                 console.error('Failed to fetch product:', error);

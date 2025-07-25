@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const Product = require('../models/ProductModel');
-const fs = require('fs');
-const path = require('path');
 
 // Get all products
 const getProducts = async (req, res) => {
@@ -45,14 +43,6 @@ const createProduct = async (req, res) => {
     
     // Handle multiple images
     const images = req.files || [];
-    const product_image = images.length > 0 ? images[0].filename : null;
-    const product_image2 = images.length > 1 ? images[1].filename : null;
-    const product_image3 = images.length > 2 ? images[2].filename : null;
-    const product_image4 = images.length > 3 ? images[3].filename : null;
-    const product_image5 = images.length > 4 ? images[4].filename : null;
-    const product_image6 = images.length > 5 ? images[5].filename : null;
-    const product_image7 = images.length > 6 ? images[6].filename : null;
-    const product_image8 = images.length > 7 ? images[7].filename : null;
 
     // Validation
     if (!name || !description || !price || !stockQuantity || !category) {
@@ -61,7 +51,7 @@ const createProduct = async (req, res) => {
         });
     }
 
-    if (!product_image) {
+    if (!images || images.length === 0) {
         return res.status(400).json({
             error: 'At least one product image is required'
         });
@@ -76,17 +66,17 @@ const createProduct = async (req, res) => {
             warehouse_quantity: stockQuantity,
             category,
             threshold: lowStockThreshold || 5, // Use lowStockThreshold for threshold field
-            product_image
+            product_image: `data:${images[0].mimetype};base64,${images[0].buffer.toString('base64')}` // Assuming the first image is the main product image
         };
 
         // Add additional images if they exist
-        if (product_image2) productData.product_image2 = product_image2;
-        if (product_image3) productData.product_image3 = product_image3;
-        if (product_image4) productData.product_image4 = product_image4;
-        if (product_image5) productData.product_image5 = product_image5;
-        if (product_image6) productData.product_image6 = product_image6;
-        if (product_image7) productData.product_image7 = product_image7;
-        if (product_image8) productData.product_image8 = product_image8;
+        if (images[1]) productData.product_image2 = `data:${images[1].mimetype};base64,${images[1].buffer.toString('base64')}`;
+        if (images[2]) productData.product_image3 = `data:${images[2].mimetype};base64,${images[2].buffer.toString('base64')}`;
+        if (images[3]) productData.product_image4 = `data:${images[3].mimetype};base64,${images[3].buffer.toString('base64')}`;
+        if (images[4]) productData.product_image5 = `data:${images[4].mimetype};base64,${images[4].buffer.toString('base64')}`;
+        if (images[5]) productData.product_image6 = `data:${images[5].mimetype};base64,${images[5].buffer.toString('base64')}`;
+        if (images[6]) productData.product_image7 = `data:${images[6].mimetype};base64,${images[6].buffer.toString('base64')}`;
+        if (images[7]) productData.product_image8 = `data:${images[7].mimetype};base64,${images[7].buffer.toString('base64')}`;
 
         const product = await Product.create(productData);
         res.status(200).json(product);
@@ -106,46 +96,17 @@ const deleteProduct = async (req, res) => {
     }
 
     try {
-        // First, find the product to get its image filenames
-        const product = await Product.findById(id);
+        const product = await Product.findByIdAndDelete({_id: id});
 
         if (!product) {
             return res.status(404).json({error: 'Product not found'});
         }
 
-        // Collect all image filenames that need to be deleted
-        const imagesToDelete = [];
-        if (product.product_image) imagesToDelete.push(product.product_image);
-        if (product.product_image2) imagesToDelete.push(product.product_image2);
-        if (product.product_image3) imagesToDelete.push(product.product_image3);
-        if (product.product_image4) imagesToDelete.push(product.product_image4);
-        if (product.product_image5) imagesToDelete.push(product.product_image5);
-        if (product.product_image6) imagesToDelete.push(product.product_image6);
-        if (product.product_image7) imagesToDelete.push(product.product_image7);
-        if (product.product_image8) imagesToDelete.push(product.product_image8);
-
-        // Delete the product from database
-        await Product.findByIdAndDelete({_id: id});
-
-        // Delete the associated image files from the filesystem
-        imagesToDelete.forEach(filename => {
-            if (filename) {
-                const filePath = path.join(__dirname, '..', 'public', 'images', filename);
-                fs.unlink(filePath, (err) => {
-                    if (err) {
-                        console.error(`Failed to delete image file ${filename}:`, err);
-                    } else {
-                        console.log(`Successfully deleted image file: ${filename}`);
-                    }
-                });
-            }
-        });
-
         res.status(200).json({
             message: 'Product and associated images deleted successfully',
             deletedProduct: product,
-            deletedImages: imagesToDelete
         });
+
     } catch (error) {
         console.error('Delete product error:', error);
         res.status(400).json({error: error.message});
@@ -180,45 +141,16 @@ const updateProduct = async (req, res) => {
         if (req.body.threshold !== undefined) updateData.threshold = req.body.threshold || 5;
         if (req.body.category) updateData.category = req.body.category;
         
-        // Handle multiple images and delete old ones if new images are provided
-        if (req.files && req.files.length > 0) {
-            const images = req.files;
-            
-            // Store old image filenames for deletion
-            const oldImages = [];
-            if (currentProduct.product_image) oldImages.push(currentProduct.product_image);
-            if (currentProduct.product_image2) oldImages.push(currentProduct.product_image2);
-            if (currentProduct.product_image3) oldImages.push(currentProduct.product_image3);
-            if (currentProduct.product_image4) oldImages.push(currentProduct.product_image4);
-            if (currentProduct.product_image5) oldImages.push(currentProduct.product_image5);
-            if (currentProduct.product_image6) oldImages.push(currentProduct.product_image6);
-            if (currentProduct.product_image7) oldImages.push(currentProduct.product_image7);
-            if (currentProduct.product_image8) oldImages.push(currentProduct.product_image8);
-            
-            // Set new image filenames
-            updateData.product_image = images[0].filename;
-            updateData.product_image2 = images.length > 1 ? images[1].filename : null;
-            updateData.product_image3 = images.length > 2 ? images[2].filename : null;
-            updateData.product_image4 = images.length > 3 ? images[3].filename : null;
-            updateData.product_image5 = images.length > 4 ? images[4].filename : null;
-            updateData.product_image6 = images.length > 5 ? images[5].filename : null;
-            updateData.product_image7 = images.length > 6 ? images[6].filename : null;
-            updateData.product_image8 = images.length > 7 ? images[7].filename : null;
-            
-            // Delete old image files from the filesystem
-            oldImages.forEach(filename => {
-                if (filename) {
-                    const filePath = path.join(__dirname, '..', 'public', 'images', filename);
-                    fs.unlink(filePath, (err) => {
-                        if (err) {
-                            console.error(`Failed to delete old image ${filename}:`, err);
-                        } else {
-                            console.log(`Successfully deleted old image: ${filename}`);
-                        }
-                    });
-                }
-            });
-        }
+        const images = req.files || [];
+        // Handle image updates
+        if (images[0]) updateData.product_image = `data:${images[0].mimetype};base64,${images[0].buffer.toString('base64')}`;
+        if (images[1]) updateData.product_image2 = `data:${images[1].mimetype};base64,${images[1].buffer.toString('base64')}`;
+        if (images[2]) updateData.product_image3 = `data:${images[2].mimetype};base64,${images[2].buffer.toString('base64')}`;
+        if (images[3]) updateData.product_image4 = `data:${images[3].mimetype};base64,${images[3].buffer.toString('base64')}`;
+        if (images[4]) updateData.product_image5 = `data:${images[4].mimetype};base64,${images[4].buffer.toString('base64')}`;
+        if (images[5]) updateData.product_image6 = `data:${images[5].mimetype};base64,${images[5].buffer.toString('base64')}`;
+        if (images[6]) updateData.product_image7 = `data:${images[6].mimetype};base64,${images[6].buffer.toString('base64')}`;
+        if (images[7]) updateData.product_image8 = `data:${images[7].mimetype};base64,${images[7].buffer.toString('base64')}`;
 
         console.log('Update data:', updateData);
 

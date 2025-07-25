@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const Promo = require('../models/PromoModel');
-const fs = require('fs');
-const path = require('path');
 
 // Get all promos
 const getPromos = async (req, res) => {
@@ -46,15 +44,21 @@ const getPromo = async (req, res) => {
 const createPromo = async (req, res) => {
     const {promo_title, promo_link, display_order, is_active} = req.body;
 
+    if (!promo_title) {
+        return res.status(400).json({error: 'Promo title is required'});
+    }
+    
     // Check if image was uploaded
     if (!req.file) {
         return res.status(400).json({error: 'Promo image is required'});
     }
 
     try {
+        const promo_image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+        
         const promo = await Promo.create({
             promo_title,
-            promo_image: req.file.filename,
+            promo_image,
             promo_link: promo_link || '/',
             display_order: display_order || 0,
             is_active: is_active !== undefined ? is_active : true
@@ -86,14 +90,8 @@ const updatePromo = async (req, res) => {
             is_active: req.body.is_active !== undefined ? req.body.is_active : true
         };
 
-        // If new image is uploaded, update the image and delete old one
         if (req.file) {
-            // Delete old image file
-            const oldImagePath = path.join(__dirname, '../public/images', existingPromo.promo_image);
-            if (fs.existsSync(oldImagePath)) {
-                fs.unlinkSync(oldImagePath);
-            }
-            updateData.promo_image = req.file.filename;
+            updateData.promo_image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
         }
 
         const promo = await Promo.findByIdAndUpdate(id, updateData, {new: true});
@@ -116,12 +114,6 @@ const deletePromo = async (req, res) => {
 
         if (!promo) {
             return res.status(404).json({error: 'Promo not found'});
-        }
-
-        // Delete the image file
-        const imagePath = path.join(__dirname, '../public/images', promo.promo_image);
-        if (fs.existsSync(imagePath)) {
-            fs.unlinkSync(imagePath);
         }
 
         res.status(200).json(promo);

@@ -980,16 +980,9 @@ export default function CustomiseImagePage() {
                       }}
                     />
                   </label>
-                  
                   <div className="image-actions">
                     <button onClick={() => duplicateImage(selectedElement.id)}>
                       Duplicate
-                    </button>
-                    <button onClick={() => moveImageToFront(selectedElement.id)}>
-                      Bring Forward
-                    </button>
-                    <button onClick={() => moveImageToBack(selectedElement.id)}>
-                      Send Back
                     </button>
                   </div>
                 </div>
@@ -1061,8 +1054,8 @@ export default function CustomiseImagePage() {
 
             <div className="help-text">
               <small>
-                💡 Tips: Switch between Top/Bottom sides • Drag elements to move • Use handles to resize/rotate • 
-                Press Delete to remove selected image • Ctrl+Z/Y for undo/redo • Download individual sides or both •
+                💡 Tips: Switch between Top/Bottom sides • Drag elements to move • Use handles to resize/rotate •
+                Double click an image to duplicate and move it to the front • Press Delete to remove selected image • Ctrl+Z/Y for undo/redo • Download individual sides or both •
                 Use "Send to order" to add your design to your skimboard order
               </small>
             </div>

@@ -652,52 +652,8 @@ export default function CustomiseImagePage() {
   };
 
   // Move text to the front (above other elements)
-  const moveTextToFront = () => {
-    // Stepwise bring forward for text
-    const allZIndices = currentImages.map(img => img.zIndex).concat(currentDesign.textZIndex || 100).filter(z => z >= 101);
-    const sortedZ = [...new Set(allZIndices)].sort((a, b) => a - b);
-    const currentZ = currentDesign.textZIndex || 100;
-    const idx = sortedZ.indexOf(currentZ);
-    let newZ = currentZ;
-    if (idx < sortedZ.length - 1) {
-      newZ = sortedZ[idx + 1];
-      // Swap with the element at newZ if it's an image
-      let swapped = false;
-      const updatedImages = currentImages.map(img => {
-        if (!swapped && img.zIndex === newZ) {
-          swapped = true;
-          return { ...img, zIndex: currentZ };
-        }
-        return img;
-      });
-      updateImages(updatedImages);
-    }
-    updateCurrentDesign({ textZIndex: newZ });
-  };
 
   // Move text to the back (behind other elements)
-  const moveTextToBack = () => {
-    // Stepwise send back for text
-    const allZIndices = currentImages.map(img => img.zIndex).concat(currentDesign.textZIndex || 100).filter(z => z >= 101);
-    const sortedZ = [...new Set(allZIndices)].sort((a, b) => a - b);
-    const currentZ = currentDesign.textZIndex || 100;
-    const idx = sortedZ.indexOf(currentZ);
-    let newZ = currentZ;
-    if (idx > 0) {
-      newZ = sortedZ[idx - 1];
-      // Swap with the element at newZ if it's an image
-      let swapped = false;
-      const updatedImages = currentImages.map(img => {
-        if (!swapped && img.zIndex === newZ) {
-          swapped = true;
-          return { ...img, zIndex: currentZ };
-        }
-        return img;
-      });
-      updateImages(updatedImages);
-    }
-    updateCurrentDesign({ textZIndex: newZ });
-  };
 
   // Hide/Show text
   const toggleTextVisibility = () => {
@@ -1040,16 +996,23 @@ export default function CustomiseImagePage() {
               )}
 
               {selectedElement && selectedElement.type === 'text' && (
-                <div className="text-controls">
-                  <h4>Selected Text Controls</h4>
-                  <div className="text-actions">
-                    <button onClick={() => moveTextToFront()}>
-                      Bring Forward
-                    </button>
-                    <button onClick={() => moveTextToBack()}>
-                      Send Back
-                    </button>
-                  </div>
+                <div className="text-control-buttons">
+                  <button 
+                    className="text-hide-btn" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      toggleTextVisibility();
+                    }}
+                    onTouchEnd={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      toggleTextVisibility();
+                    }}
+                    title={currentDesign.textVisible === false ? "Show Text" : "Hide Text"}
+                  >
+                    {currentDesign.textVisible === false ? <FaEye /> : <FaEyeSlash />}
+                  </button>
                 </div>
               )}
             </div>
@@ -1164,38 +1127,6 @@ export default function CustomiseImagePage() {
                 {/* Text Control Buttons - only show for selected text */}
                 {selectedElement?.type === 'text' && (
                   <div className="text-control-buttons">
-                    <button 
-                      className="text-forward-btn" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        moveTextToFront();
-                      }}
-                      onTouchEnd={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        moveTextToFront();
-                      }}
-                      title="Bring Forward"
-                    >
-                      <FaArrowUp />
-                    </button>
-                    <button 
-                      className="text-backward-btn" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        moveTextToBack();
-                      }}
-                      onTouchEnd={(e) => {
-                        e.stopPropagation();
-                        e.preventDefault();
-                        moveTextToBack();
-                      }}
-                      title="Send Back"
-                    >
-                      <FaArrowDown />
-                    </button>
                     <button 
                       className="text-hide-btn" 
                       onClick={(e) => {

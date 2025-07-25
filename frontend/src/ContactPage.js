@@ -13,6 +13,31 @@ const ContactPage = () => {
     feedback: '',
   });
 
+  const [formErrors, setFormErrors] = useState({
+    name: '',
+    email: '',
+    feedback: '',
+  });
+
+  const validateName = (name) => {
+    if (!name) return 'Name is required.';
+    if (!/^[a-zA-Z\s]*$/.test(name)) {
+      return 'Name must only contain letters and spaces.';
+    }
+    return '';
+  };
+
+  const validateEmail = (email) => {
+    if (!email) return 'Email is required.';
+    if (!/^\S+@\S+\.\S+$/.test(email)) return 'Please enter a valid email format (e.g., name@example.com).';
+    return '';
+  };
+
+  const validateFeedback = (feedback) => {
+    if (!feedback) return 'Feedback is required.';
+    return '';
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevData => ({
@@ -23,16 +48,21 @@ const ContactPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Basic validation
-    if (!formData.name || !formData.email || !formData.feedback) {
-      alert('Please fill in all fields.');
+    
+    // Validate all fields
+    const nameError = validateName(formData.name);
+    const emailError = validateEmail(formData.email);
+    const feedbackError = validateFeedback(formData.feedback);
+    
+    setFormErrors({
+      name: nameError,
+      email: emailError,
+      feedback: feedbackError,
+    });
+
+    // If there are errors, don't submit
+    if (nameError || emailError || feedbackError) {
       return;
-    }
-    // Email validation regex (simple one)
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-        alert('Please enter a valid email address.');
-        return;
     }
     
     // Send email using EmailJS to the company
@@ -59,10 +89,17 @@ const ContactPage = () => {
       console.error('Failed to send email:', JSON.stringify(err));
     });
 
-    alert(`Thank you, ${formData.name}! Your feedback has been submitted:\nEmail: ${formData.email}\nFeedback: ${formData.feedback}`);
-    // In a real app, you would send this data to a backend server
+    alert(`Thank you, ${formData.name}! Your feedback has been submitted.`);
     setFormData({ name: '', email: '', feedback: '' }); // Clear form
+    setFormErrors({ name: '', email: '', feedback: '' }); // Clear errors
   };
+
+  const labelStyle = { fontWeight: '600', marginBottom: '6px', display: 'block', fontSize: '0.9em' };
+  const inputStyle = { display: 'block', width: '100%', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
+  const textareaStyle = { ...inputStyle, resize: 'vertical', minHeight: '120px' };
+  const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
+  const errorTextareaStyle = { ...textareaStyle, borderColor: '#e74c3c' };
+  const errorMessageStyle = { color: '#e74c3c', fontSize: '0.875em', marginTop: '5px', marginBottom: '15px' };
 
   return (
     <>
@@ -74,50 +111,60 @@ const ContactPage = () => {
           <h1 className="contact-banner-title">Contact</h1>
         </section>
 
-        <section className="contact-form-section container">
-          <h2 className="contact-form-main-title">Contact Us</h2>
-          <form onSubmit={handleSubmit} className="contact-form-actual">
-            <div className="contact-form-group">
-              <label htmlFor="name" className="contact-form-label">Name</label>
+        <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', marginTop: '40px' }}>
+          <div style={{ flex: 1, maxWidth: '500px' }}>
+            <h2 style={{ fontWeight: 'bold', fontSize: '2em', marginBottom: '10px' }}>Contact Us</h2>
+            <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>We'd love to hear from you!</p>
+            
+            <form onSubmit={handleSubmit} noValidate>
+              <label style={labelStyle}>Name</label>
               <input
                 type="text"
-                id="name"
                 name="name"
-                className="contact-form-input"
+                placeholder="Enter your name"
                 value={formData.name}
                 onChange={handleChange}
-                required
+                onBlur={() => setFormErrors(prev => ({ ...prev, name: validateName(formData.name) }))}
+                style={{...formErrors.name ? errorInputStyle : inputStyle, marginBottom: formErrors.name ? '0' : '15px'}}
               />
-            </div>
-            <div className="contact-form-group">
-              <label htmlFor="email" className="contact-form-label">Email</label>
+              {formErrors.name && <p style={errorMessageStyle}>{formErrors.name}</p>}
+
+              <label style={labelStyle}>Email Address</label>
               <input
                 type="email"
-                id="email"
                 name="email"
-                className="contact-form-input"
+                placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
-                required
+                onBlur={() => setFormErrors(prev => ({ ...prev, email: validateEmail(formData.email) }))}
+                style={{...formErrors.email ? errorInputStyle : inputStyle, marginBottom: formErrors.email ? '0' : '15px'}}
               />
-            </div>
-            <div className="contact-form-group">
-              <label htmlFor="feedback" className="contact-form-label">Feedback</label>
+              {formErrors.email && <p style={errorMessageStyle}>{formErrors.email}</p>}
+
+              <label style={labelStyle}>Feedback</label>
               <textarea
-                id="feedback"
                 name="feedback"
-                className="contact-form-textarea"
+                placeholder="Enter your feedback"
                 rows="6"
                 value={formData.feedback}
                 onChange={handleChange}
-                required
-              ></textarea>
-            </div>
-            <div className="contact-form-submit-group">
-              <button type="submit" className="contact-submit-button">Submit</button>
-            </div>
-          </form>
-        </section>
+                onBlur={() => setFormErrors(prev => ({ ...prev, feedback: validateFeedback(formData.feedback) }))}
+                style={{...formErrors.feedback ? errorTextareaStyle : textareaStyle, marginBottom: formErrors.feedback ? '0' : '15px'}}
+              />
+              {formErrors.feedback && <p style={errorMessageStyle}>{formErrors.feedback}</p>}
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                <button
+                  type="submit"
+                  className="complete-purchase-btn"
+                  style={{ width: '100%', backgroundColor: '#333', color: '#fff', padding: '12px', border: 'none', borderRadius: '4px', fontSize: '1em', cursor: 'pointer' }}
+                >
+                  Submit Feedback
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </main>
       <Footer />
     </>

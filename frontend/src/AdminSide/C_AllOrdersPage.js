@@ -231,7 +231,9 @@ function AllOrdersPage() {
                 <AdminHeader />
             </div>
         <div className='manage-products-page'>
-            <h2>Orders</h2>
+            <div className="title-row">
+                <h2>Orders</h2>
+            </div>
 
             {/* Filter Section matching AllProductsPage pattern */}
             <div className='card'>

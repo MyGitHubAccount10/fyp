@@ -1,11 +1,9 @@
-
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CustomiseImagePage.css';
 import Header from './Header';
 import { useCustomiseContext } from './hooks/useCustomiseContext';
-import { FaEye, FaEyeSlash, FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 // Default settings for a new skimboard design
 const DEFAULT_DESIGN = {
@@ -25,7 +23,6 @@ const DEFAULT_DESIGN = {
 };
 
 // A function to adjust color brightness (It is used to create gradients)
-// clamp () is to make sure Red, Green and Blue values are between 0 and 255 (as that is how computers interpret colors)
 const clamp = (value) => Math.max(0, Math.min(255, value));
 
 const createGradient = (hex, percent) => {
@@ -87,14 +84,12 @@ const generateSkimboardImage = async (designData, previewElement, scale = 2) => 
     ...designData.images.map(img => ({ type: 'image', data: img, zIndex: img.zIndex }))
   ];
   
-  // Only add text if it's visible
   if (designData.textVisible !== false) {
     allElements.push({ type: 'text', data: designData, zIndex: designData.textZIndex || 100 });
   }
   
   allElements.sort((a, b) => a.zIndex - b.zIndex);
 
-  // Draw all elements in zIndex order
   for (const element of allElements) {
     if (element.type === 'image') {
       await drawSingleImage(canvaContext, element.data, scaleX, scaleY);
@@ -125,7 +120,6 @@ const drawSingleImage = async (canvaContext, img, scaleX, scaleY) => {
       canvaContext.translate(scaledX + scaledWidth / 2, scaledY + scaledHeight / 2);
       canvaContext.rotate((img.rotation * Math.PI) / 180);
       
-      // Calculate aspect ratios for proper contain behavior
       const imageAspect = image.width / image.height;
       const targetAspect = scaledWidth / scaledHeight;
       
@@ -139,7 +133,6 @@ const drawSingleImage = async (canvaContext, img, scaleX, scaleY) => {
         drawWidth = drawHeight * imageAspect;
       }
       
-      // Create clipping region
       canvaContext.beginPath();
       canvaContext.rect(-scaledWidth / 2, -scaledHeight / 2, scaledWidth, scaledHeight);
       canvaContext.clip();
@@ -157,7 +150,7 @@ const drawSingleImage = async (canvaContext, img, scaleX, scaleY) => {
     };
     image.onerror = () => {
       console.error('Failed to load image:', img.src);
-      resolve(); // Continue even if one image fails
+      resolve();
     };
   });
 };
@@ -172,7 +165,6 @@ const drawText = (canvaContext, designData, scaleX, scaleY) => {
   const scaledTextX = designData.textPosition.x * scaleX;
   const scaledTextY = designData.textPosition.y * scaleY;
   
-  // Split text into lines
   const lines = designData.customText.split('\n');
   const lineHeight = designData.fontSize * scaleX * 1.2;
   const totalHeight = lines.length * lineHeight;
@@ -204,36 +196,20 @@ export default function CustomiseImagePage() {
   const navigate = useNavigate();
   const { dispatch } = useCustomiseContext();
   
-  // Which side we're currently editing (top or bottom)
   const [currentSide, setCurrentSide] = useState('top');
-  
-  // The design data for both sides of the skimboard
   const [designs, setDesigns] = useState({
     top: { ...DEFAULT_DESIGN, customText: 'My Skimboard' },
     bottom: { ...DEFAULT_DESIGN, color: '#4ECDC4', customText: 'Bottom Side' }
   });
-  
-  // Currently selected element (text or image)
   const [selectedElement, setSelectedElement] = useState(null);
-  
-  // Loading state for downloads
   const [isLoading, setIsLoading] = useState(false);
-  
-  // Preserve aspect ratio for resizing
   const [preserveAspectRatio, setPreserveAspectRatio] = useState(true);
-  
-  // References to DOM elements
   const previewRef = useRef(null);
   const fileInputRef = useRef(null);
-  
-  // History for undo/redo functionality
   const [history, setHistory] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(-1);
-  
-  // Drag state
-  const dragState = useRef({ type: null, id: null, offsetX: 0, offsetY: 0, initialWidth: 0, initialHeight: 0, initialRotation: 0, initialAngle: 0 });
+  const dragState = useRef({ type: null, id: null, offsetX: 0, offsetY: 0, initialWidth: 0, initialHeight: 0, initialRotation: 0, initialAngle: 0, bottomRightX: 0, bottomRightY: 0 });
 
-  // Save the current state to history
   const saveToHistory = useCallback((state) => {
     const newHistory = history.slice(0, currentIndex + 1);
     newHistory.push(JSON.parse(JSON.stringify(state)));
@@ -241,7 +217,6 @@ export default function CustomiseImagePage() {
     setCurrentIndex(newHistory.length - 1);
   }, [history, currentIndex]);
 
-  // Go back to the previous state
   const undo = useCallback(() => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
@@ -250,7 +225,6 @@ export default function CustomiseImagePage() {
     return null;
   }, [history, currentIndex]);
 
-  // Go forward to the next state
   const redo = useCallback(() => {
     if (currentIndex < history.length - 1) {
       setCurrentIndex(currentIndex + 1);
@@ -259,7 +233,6 @@ export default function CustomiseImagePage() {
     return null;
   }, [history, currentIndex]);
 
-  // Helper functions to update the current design
   const updateCurrentDesign = (changes) => {
     setDesigns(prev => ({
       ...prev,
@@ -272,29 +245,24 @@ export default function CustomiseImagePage() {
     updateCurrentDesign(changes);
   };
 
-  // Get the current design and its images
   const currentDesign = designs[currentSide];
   const currentImages = currentDesign.images;
   const updateImages = (newImages) => updateCurrentDesign({ images: newImages });
 
-  // Drag operations for moving/resizing/rotating elements
   const startDrag = (e, type, id = null) => {
     e.stopPropagation();
-    e.preventDefault(); // Prevent default touch behavior
+    e.preventDefault();
     
-    // Handle both mouse and touch events
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     
     const bounds = previewRef.current.getBoundingClientRect();
     
-    // Save current state before starting drag
     if (!dragState.current.type) {
       saveToHistory({ currentSide, designs });
     }
     
     if (type === 'rotate' && id) {
-      // Setup rotation drag
       const img = currentImages.find(img => img.id === id);
       if (img) {
         const centerX = img.x + img.width / 2;
@@ -309,31 +277,37 @@ export default function CustomiseImagePage() {
           initialAngle,
           initialRotation: img.rotation,
           offsetX: 0,
-          offsetY: 0
+          offsetY: 0,
+          bottomRightX: 0,
+          bottomRightY: 0
         };
       }
     } else if (type === 'resize' && id) {
-      // Setup resize drag
       const img = currentImages.find(img => img.id === id);
       if (img) {
+        const mouseX = clientX - bounds.left;
+        const mouseY = clientY - bounds.top;
         dragState.current = {
           type,
           id,
-          offsetX: clientX - bounds.left,
-          offsetY: clientY - bounds.top,
+          offsetX: mouseX - (img.x + img.width),
+          offsetY: mouseY - (img.y + img.height),
           initialWidth: img.width,
-          initialHeight: img.height
+          initialHeight: img.height,
+          bottomRightX: img.x + img.width,
+          bottomRightY: img.y + img.height
         };
       }
     } else {
-      // Setup position drag
       dragState.current = {
         type,
         id,
         offsetX: clientX - bounds.left - (type === 'text' ? currentDesign.textPosition.x : 
           currentImages.find(img => img.id === id)?.x || 0),
         offsetY: clientY - bounds.top - (type === 'text' ? currentDesign.textPosition.y : 
-          currentImages.find(img => img.id === id)?.y || 0)
+          currentImages.find(img => img.id === id)?.y || 0),
+        bottomRightX: 0,
+        bottomRightY: 0
       };
     }
 
@@ -348,9 +322,8 @@ export default function CustomiseImagePage() {
   const updateDrag = useCallback(debounce((e) => {
     if (!dragState.current.type) return;
     
-    e.preventDefault(); // Prevent default touch behavior
+    e.preventDefault();
     
-    // Handle both mouse and touch events
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
@@ -359,7 +332,6 @@ export default function CustomiseImagePage() {
     const mouseY = clientY - bounds.top;
 
     if (dragState.current.type === 'text') {
-      // Move text
       const newPosition = { 
         x: Math.max(0, Math.min(bounds.width, mouseX - dragState.current.offsetX)), 
         y: Math.max(0, Math.min(bounds.height, mouseY - dragState.current.offsetY)) 
@@ -372,7 +344,6 @@ export default function CustomiseImagePage() {
         }
       }));
     } else if (dragState.current.type === 'image') {
-      // Move image
       const updatedImages = currentImages.map((img) =>
         img.id === dragState.current.id ? { 
           ...img, 
@@ -382,37 +353,24 @@ export default function CustomiseImagePage() {
       );
       updateImages(updatedImages);
     } else if (dragState.current.type === 'resize') {
-      // Resize image
       const updatedImages = currentImages.map((img) => {
         if (img.id !== dragState.current.id) return img;
-        const deltaX = mouseX - dragState.current.offsetX;
-        const deltaY = mouseY - dragState.current.offsetY;
         
-        // Calculate scaling factor from bottom-right corner
-        const scale = Math.max(
-          0.2, // Minimum scale to prevent tiny sizes
-          Math.sqrt(deltaX * deltaX + deltaY * deltaY) / 
-          Math.sqrt(dragState.current.initialWidth * dragState.current.initialWidth + 
-                   dragState.current.initialHeight * dragState.current.initialHeight)
-        );
+        // Calculate new bottom-right corner position
+        const newBottomRightX = mouseX - dragState.current.offsetX;
+        const newBottomRightY = mouseY - dragState.current.offsetY;
         
-        let newWidth = dragState.current.initialWidth * scale;
-        let newHeight = dragState.current.initialHeight * scale;
+        // Calculate new dimensions keeping top-left corner fixed
+        let newWidth = Math.max(20, newBottomRightX - img.x);
+        let newHeight = Math.max(20, newBottomRightY - img.y);
 
-        // Preserve aspect ratio if enabled
         if (preserveAspectRatio) {
           const aspectRatio = dragState.current.initialWidth / dragState.current.initialHeight;
           newHeight = newWidth / aspectRatio;
-        }
-
-        // Ensure minimum size
-        if (newWidth < 20) {
-          newWidth = 20;
-          newHeight = preserveAspectRatio ? 20 * (dragState.current.initialWidth / dragState.current.initialHeight) : newHeight;
-        }
-        if (newHeight < 20) {
-          newHeight = 20;
-          newWidth = preserveAspectRatio ? 20 * (dragState.current.initialWidth / dragState.current.initialHeight) : newWidth;
+          if (newHeight < 20) {
+            newHeight = 20;
+            newWidth = newHeight * aspectRatio;
+          }
         }
 
         return {
@@ -423,7 +381,6 @@ export default function CustomiseImagePage() {
       });
       updateImages(updatedImages);
     } else if (dragState.current.type === 'rotate') {
-      // Rotate image with continuous angles
       const updatedImages = currentImages.map((img) => {
         if (img.id !== dragState.current.id) return img;
         const centerX = img.x + img.width / 2;
@@ -432,9 +389,8 @@ export default function CustomiseImagePage() {
         let newRotation = dragState.current.initialRotation + 
                          ((currentAngle - dragState.current.initialAngle) * 180 / Math.PI);
 
-        // Snap to common angles (0°, 45°, 90°, etc.)
         const snapAngles = [0, 45, 90, 135, 180, 225, 270, 315];
-        const snapThreshold = 5; // Degrees within which to snap
+        const snapThreshold = 5;
         for (const angle of snapAngles) {
           if (Math.abs(newRotation - angle) < snapThreshold) {
             newRotation = angle;
@@ -449,10 +405,9 @@ export default function CustomiseImagePage() {
   }, 10), [currentImages, currentDesign, preserveAspectRatio]);
 
   const endDrag = () => {
-    dragState.current = { type: null, id: null, offsetX: 0, offsetY: 0, initialWidth: 0, initialHeight: 0, initialRotation: 0, initialAngle: 0 };
+    dragState.current = { type: null, id: null, offsetX: 0, offsetY: 0, initialWidth: 0, initialHeight: 0, initialRotation: 0, initialAngle: 0, bottomRightX: 0, bottomRightY: 0 };
   };
 
-  // Undo the last action
   const handleUndo = () => {
     const previousState = undo();
     if (previousState) {
@@ -461,7 +416,6 @@ export default function CustomiseImagePage() {
     }
   };
 
-  // Redo the last undone action
   const handleRedo = () => {
     const nextState = redo();
     if (nextState) {
@@ -470,18 +424,15 @@ export default function CustomiseImagePage() {
     }
   };
 
-  // Handle uploading new images
   const addImages = async (files) => {
     if (!files || files.length === 0) return;
 
-    // Filter only image files
     const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
     if (imageFiles.length === 0) {
       alert('Please select only image files.');
       return;
     }
 
-    // Check file sizes (5MB limit per file)
     const oversizedFiles = imageFiles.filter(file => file.size > 5 * 1024 * 1024);
     if (oversizedFiles.length > 0) {
       alert(`Some files are too large. Maximum size is 5MB per file.\nOversized files: ${oversizedFiles.map(f => f.name).join(', ')}`);
@@ -492,13 +443,11 @@ export default function CustomiseImagePage() {
     setIsLoading(true);
     
     try {
-      // Create FormData to send files to backend
       const formData = new FormData();
       imageFiles.forEach(file => {
         formData.append('images', file);
       });
 
-      // Upload files to backend using multer
       const response = await fetch(`${process.env.REACT_APP_API_URL}/api/customise-img/upload-multiple`, {
         method: 'POST',
         body: formData,
@@ -515,11 +464,10 @@ export default function CustomiseImagePage() {
         throw new Error('No files were processed by the server');
       }
       
-      // Create image objects for each uploaded file
       const newImages = result.files.map((file, index) => ({
         id: Date.now() + index,
-        src: `${process.env.REACT_APP_API_URL}${file.url}`, // Use server URL
-        x: 60 + (index * 20),  // Offset each image slightly
+        src: `${process.env.REACT_APP_API_URL}${file.url}`,
+        x: 60 + (index * 20),
         y: 100 + (index * 20),
         width: 80,
         height: 80,
@@ -536,7 +484,6 @@ export default function CustomiseImagePage() {
     } catch (error) {
       console.error('Upload failed:', error);
       
-      // Show specific error messages
       if (error.message.includes('Failed to fetch')) {
         alert('Cannot connect to server. Please make sure the backend is running on port 4000.');
       } else if (error.message.includes('Not an image')) {
@@ -548,19 +495,16 @@ export default function CustomiseImagePage() {
       }
     } finally {
       setIsLoading(false);
-      // Clear the file input
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
     }
   };
 
-  // Delete an image
   const deleteImage = (imageId) => {
     saveToHistory({ currentSide, designs });
     const imageToDelete = currentImages.find(img => img.id === imageId);
     
-    // Clean up blob URLs if they exist (for old client-side uploads)
     if (imageToDelete && imageToDelete.src.startsWith('blob:')) {
       URL.revokeObjectURL(imageToDelete.src);
     }
@@ -569,7 +513,6 @@ export default function CustomiseImagePage() {
     setSelectedElement(null);
   };
 
-  // Create a copy of an image
   const duplicateImage = (imageId) => {
     const originalImage = currentImages.find(img => img.id === imageId);
     if (!originalImage) return;
@@ -578,14 +521,13 @@ export default function CustomiseImagePage() {
     const newImage = {
       ...originalImage,
       id: Date.now(),
-      x: originalImage.x + 20,  // Offset the copy
+      x: originalImage.x + 20,
       y: originalImage.y + 20,
       zIndex: currentImages.length,
     };
     updateImages([...currentImages, newImage]);
   };
 
-  // Move an image to the front (above other images)
   const moveImageToFront = (imageId) => {
     const allZIndices = currentImages.map(img => img.zIndex).concat(currentDesign.textZIndex || 100).filter(z => z >= 101);
     const sortedZ = [...new Set(allZIndices)].sort((a, b) => a - b);
@@ -616,7 +558,6 @@ export default function CustomiseImagePage() {
     }
   };
 
-  // Move an image to the back (behind other images)
   const moveImageToBack = (imageId) => {
     const allZIndices = currentImages.map(img => img.zIndex).concat(currentDesign.textZIndex || 100).filter(z => z >= 101);
     const sortedZ = [...new Set(allZIndices)].sort((a, b) => a - b);
@@ -647,12 +588,10 @@ export default function CustomiseImagePage() {
     }
   };
 
-  // Hide/Show text
   const toggleTextVisibility = () => {
     updateCurrentDesign({ textVisible: !currentDesign.textVisible });
   };
 
-  // Reset everything back to default
   const resetAll = () => {
     saveToHistory({ currentSide, designs });
     setDesigns({
@@ -663,7 +602,6 @@ export default function CustomiseImagePage() {
     setSelectedElement(null);
   };
 
-  // Download the current side as an image file
   const downloadCurrentSide = async () => {
     if (isLoading) return;
     setIsLoading(true);
@@ -679,20 +617,16 @@ export default function CustomiseImagePage() {
     }
   };
 
-  // Download both sides as separate image files
   const downloadBothSides = async () => {
     if (isLoading) return;
     setIsLoading(true);
     
     try {
-      // Download top side
       const topImage = await generateSkimboardImage(designs.top, previewRef.current, 3);
       downloadImage(topImage, `skimboard-top-side-${Date.now()}.png`);
       
-      // Wait a moment between downloads
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Download bottom side
       const bottomImage = await generateSkimboardImage(designs.bottom, previewRef.current, 3);
       downloadImage(bottomImage, `skimboard-bottom-side-${Date.now()}.png`);
     } catch (error) {
@@ -703,7 +637,6 @@ export default function CustomiseImagePage() {
     }
   };
 
-  // Add the custom design to the main customise page
   const addDesignToOrder = async () => {
     if (isLoading) return;
     setIsLoading(true);
@@ -723,41 +656,31 @@ export default function CustomiseImagePage() {
     }
   };
 
-  // Apply a preset color to the current side
   const applyPresetColor = (color) => {
     saveToHistory({ currentSide, designs });
     updateCurrentDesign({ color });
   };
 
-  // Switch to a different side (top/bottom)
   const switchSide = (side) => {
     saveToHistory({ currentSide, designs });
     setCurrentSide(side);
     setSelectedElement(null);
   };
 
-  // Handle keyboard shortcuts
   const handleKeyPress = (e) => {
-    // Undo: Ctrl+Z
     if (e.ctrlKey && e.key === 'z' && !e.shiftKey) {
       e.preventDefault();
       handleUndo();
-    } 
-    // Redo: Ctrl+Y or Ctrl+Shift+Z
-    else if ((e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'Z')) {
+    } else if ((e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'Z')) {
       e.preventDefault();
       handleRedo();
-    } 
-    // Delete selected image: Delete key
-    else if (e.key === 'Delete' && selectedElement && selectedElement.type === 'image') {
+    } else if (e.key === 'Delete' && selectedElement && selectedElement.type === 'image') {
       deleteImage(selectedElement.id);
     }
   };
 
-  // Cleanup blob URLs when component unmounts
   useEffect(() => {
     return () => {
-      // Clean up any blob URLs to prevent memory leaks
       const allImages = [...designs.top.images, ...designs.bottom.images];
       allImages.forEach(img => {
         if (img.src.startsWith('blob:')) {
@@ -767,13 +690,11 @@ export default function CustomiseImagePage() {
     };
   }, []);
 
-  // Setup keyboard shortcuts
   useEffect(() => {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [selectedElement]);
 
-  // Preset colors for quick selection
   const presetColors = [
     '#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', 
     '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8',
@@ -794,7 +715,6 @@ export default function CustomiseImagePage() {
         onTouchMove={updateDrag}
         onTouchEnd={endDrag}
       >
-        {/* Side Selection Buttons */}
         <div className="side-selector">
           <button 
             className={`side-button ${currentSide === 'top' ? 'active' : ''}`}
@@ -811,9 +731,7 @@ export default function CustomiseImagePage() {
         </div>
         
         <div className="skimboard-customiser">
-          {/* Control Panel - Left side */}
           <div className="customisation-panel">
-            {/* Background Controls */}
             <div className="control-group">
               <h3>Background</h3>
               <label>
@@ -865,7 +783,6 @@ export default function CustomiseImagePage() {
               </div>
             </div>
 
-            {/* Text Controls */}
             <div className="control-group">
               <h3>Text</h3>
               <label>
@@ -936,7 +853,6 @@ export default function CustomiseImagePage() {
               )}
             </div>
 
-            {/* Image Controls */}
             <div className="control-group">
               <h3>Images</h3>
               <label>
@@ -1016,7 +932,6 @@ export default function CustomiseImagePage() {
               )}
             </div>
 
-            {/* Action Buttons */}
             <div className="action-buttons">
               <button 
                 onClick={handleUndo} 
@@ -1067,13 +982,11 @@ export default function CustomiseImagePage() {
             </div>
           </div>
           
-          {/* Preview Panel - Right side */}
           <div className="preview-panel">
             <div className="side-indicator">
               Currently editing: <span className="side-label">{currentSide.toUpperCase()} SIDE</span>
             </div>
             
-            {/* Selection indicator outside of skimboard preview */}
             {selectedElement && (
               <div className="selection-info">
                 {selectedElement.type === 'text' ? 'Text Selected' : 'Image Selected'}
@@ -1095,7 +1008,6 @@ export default function CustomiseImagePage() {
                 }
               }}
             >
-              {/* Text Element */}
               <div
                 className={`draggable skimboard-text ${selectedElement?.type === 'text' ? 'selected' : ''}`}
                 style={{ 
@@ -1123,7 +1035,6 @@ export default function CustomiseImagePage() {
               >
                 {currentDesign.customText}
                 
-                {/* Text Control Buttons - only show for selected text */}
                 {selectedElement?.type === 'text' && (
                   <div className="text-control-buttons">
                     <button 
@@ -1146,7 +1057,6 @@ export default function CustomiseImagePage() {
                 )}
               </div>
 
-              {/* Images */}
               {currentImages
                 .sort((a, b) => a.zIndex - b.zIndex)
                 .map((img) => {
@@ -1193,7 +1103,6 @@ export default function CustomiseImagePage() {
                         }}
                         draggable={false}
                       />
-                      {/* Control buttons - only show for selected image */}
                       {selectedElement?.id === img.id && (
                         <>
                           <button

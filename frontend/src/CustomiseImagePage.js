@@ -585,34 +585,118 @@ export default function CustomiseImagePage() {
   };
   // Move an image to the front (above other images)
   const moveImageToFront = (imageId) => {
-    const maxZ = Math.max(...currentImages.map(img => img.zIndex));
-    const updatedImages = currentImages.map(img =>
-      img.id === imageId ? { ...img, zIndex: maxZ + 1 } : img
-    );
-    updateImages(updatedImages);
+    // Stepwise bring forward for image
+    const allZIndices = currentImages.map(img => img.zIndex).concat(currentDesign.textZIndex || 100).filter(z => z >= 101);
+    const sortedZ = [...new Set(allZIndices)].sort((a, b) => a - b);
+    const img = currentImages.find(img => img.id === imageId);
+    if (!img) return;
+    const currentZ = img.zIndex;
+    const idx = sortedZ.indexOf(currentZ);
+    let newZ = currentZ;
+    if (idx < sortedZ.length - 1) {
+      newZ = sortedZ[idx + 1];
+      // Swap with the element at newZ (image or text)
+      let swappedText = false;
+      let swappedImage = false;
+      const updatedImages = currentImages.map(im => {
+        if (!swappedImage && im.zIndex === newZ) {
+          swappedImage = true;
+          return { ...im, zIndex: currentZ };
+        }
+        return im;
+      });
+      if (currentDesign.textZIndex === newZ) {
+        swappedText = true;
+        updateCurrentDesign({ textZIndex: currentZ });
+      }
+      updateImages(updatedImages.map(im => im.id === imageId ? { ...im, zIndex: newZ } : im));
+      if (!swappedText) updateCurrentDesign({ textZIndex: currentDesign.textZIndex });
+    }
+    else {
+      updateImages(currentImages);
+    }
   };
 
   // Move an image to the back (behind other images)
   const moveImageToBack = (imageId) => {
-    const minZ = Math.min(...currentImages.map(img => img.zIndex));
-    const updatedImages = currentImages.map(img =>
-      img.id === imageId ? { ...img, zIndex: minZ - 1 } : img
-    );
-    updateImages(updatedImages);
+    // Stepwise send back for image
+    const allZIndices = currentImages.map(img => img.zIndex).concat(currentDesign.textZIndex || 100).filter(z => z >= 101);
+    const sortedZ = [...new Set(allZIndices)].sort((a, b) => a - b);
+    const img = currentImages.find(img => img.id === imageId);
+    if (!img) return;
+    const currentZ = img.zIndex;
+    const idx = sortedZ.indexOf(currentZ);
+    let newZ = currentZ;
+    if (idx > 0) {
+      newZ = sortedZ[idx - 1];
+      // Swap with the element at newZ (image or text)
+      let swappedText = false;
+      let swappedImage = false;
+      const updatedImages = currentImages.map(im => {
+        if (!swappedImage && im.zIndex === newZ) {
+          swappedImage = true;
+          return { ...im, zIndex: currentZ };
+        }
+        return im;
+      });
+      if (currentDesign.textZIndex === newZ) {
+        swappedText = true;
+        updateCurrentDesign({ textZIndex: currentZ });
+      }
+      updateImages(updatedImages.map(im => im.id === imageId ? { ...im, zIndex: newZ } : im));
+      if (!swappedText) updateCurrentDesign({ textZIndex: currentDesign.textZIndex });
+    }
+    else {
+      updateImages(currentImages);
+    }
   };
 
   // Move text to the front (above other elements)
   const moveTextToFront = () => {
-    const allZIndices = currentImages.length > 0 ? currentImages.map(img => img.zIndex) : [0];
-    const maxZ = Math.max(...allZIndices, currentDesign.textZIndex || 100);
-    updateCurrentDesign({ textZIndex: maxZ + 1 });
+    // Stepwise bring forward for text
+    const allZIndices = currentImages.map(img => img.zIndex).concat(currentDesign.textZIndex || 100).filter(z => z >= 101);
+    const sortedZ = [...new Set(allZIndices)].sort((a, b) => a - b);
+    const currentZ = currentDesign.textZIndex || 100;
+    const idx = sortedZ.indexOf(currentZ);
+    let newZ = currentZ;
+    if (idx < sortedZ.length - 1) {
+      newZ = sortedZ[idx + 1];
+      // Swap with the element at newZ if it's an image
+      let swapped = false;
+      const updatedImages = currentImages.map(img => {
+        if (!swapped && img.zIndex === newZ) {
+          swapped = true;
+          return { ...img, zIndex: currentZ };
+        }
+        return img;
+      });
+      updateImages(updatedImages);
+    }
+    updateCurrentDesign({ textZIndex: newZ });
   };
 
   // Move text to the back (behind other elements)
   const moveTextToBack = () => {
-    const allZIndices = currentImages.length > 0 ? currentImages.map(img => img.zIndex) : [0];
-    const minZ = Math.min(...allZIndices, currentDesign.textZIndex || 100);
-    updateCurrentDesign({ textZIndex: minZ - 1 });
+    // Stepwise send back for text
+    const allZIndices = currentImages.map(img => img.zIndex).concat(currentDesign.textZIndex || 100).filter(z => z >= 101);
+    const sortedZ = [...new Set(allZIndices)].sort((a, b) => a - b);
+    const currentZ = currentDesign.textZIndex || 100;
+    const idx = sortedZ.indexOf(currentZ);
+    let newZ = currentZ;
+    if (idx > 0) {
+      newZ = sortedZ[idx - 1];
+      // Swap with the element at newZ if it's an image
+      let swapped = false;
+      const updatedImages = currentImages.map(img => {
+        if (!swapped && img.zIndex === newZ) {
+          swapped = true;
+          return { ...img, zIndex: currentZ };
+        }
+        return img;
+      });
+      updateImages(updatedImages);
+    }
+    updateCurrentDesign({ textZIndex: newZ });
   };
 
   // Hide/Show text

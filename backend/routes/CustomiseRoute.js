@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, path.join(__dirname, '../public/images/customise')),
+    destination: (req, file, cb) => cb(null, path.join(__dirname, '../public/images/customise-skimboard')),
     filename: (req, file, cb) => cb(null, performance.now() + path.extname(file.originalname))
 })
 

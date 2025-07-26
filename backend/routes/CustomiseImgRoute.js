@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, path.join(__dirname, '../public/images/customise')),
+    destination: (req, file, cb) => cb(null, path.join(__dirname, '../public/images/customise-img')),
     filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 })
 
@@ -47,7 +47,7 @@ router.post('/upload-multiple', upload.array('images', 10), (req, res) => {
         const uploadedFiles = req.files.map(file => ({
             filename: file.filename,
             originalName: file.originalname,
-            url: `/images/${file.filename}`,
+            url: `/images/customise-img/${file.filename}`,
             size: file.size
         }));
         

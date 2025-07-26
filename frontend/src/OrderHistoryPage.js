@@ -275,7 +275,7 @@ function OrderHistoryPage() {
                                                     <li key={item._id} className="order-item-detail">
                                                         {item.type === 'product' && (
                                                             <>
-                                                                <img src={`${process.env.REACT_APP_API_URL}/images/product${item.product_image}`} alt={item.product_name} className="order-item-image" />
+                                                                <img src={`${process.env.REACT_APP_API_URL}/images/product/${item.product_image}`} alt={item.product_name} className="order-item-image" />
                                                                 <div className="order-item-info">
                                                                     <strong>{item.product_name}</strong>
                                                                     <span>Type: {item.order_type}</span>
@@ -291,9 +291,9 @@ function OrderHistoryPage() {
                                                         {item.type === 'customise' && (
                                                             <>
                                                                 <strong>Top Image:</strong> 
-                                                                <img src={`${item.top_image}`} alt="Top Customisation" className="order-item-image" />
+                                                                <img src={`${process.env.REACT_APP_API_URL}/images/customise-skimboard/${item.top_image}`} alt="Top Customisation" className="order-item-image" />
                                                                 <strong>Bottom Image:</strong>
-                                                                <img src={`${item.bottom_image}`} alt="Bottom Customisation" className="order-item-image" />
+                                                                <img src={`${process.env.REACT_APP_API_URL}/images/customise-skimboard/${item.bottom_image}`} alt="Bottom Customisation" className="order-item-image" />
                                                                 <div className="order-item-info">
                                                                     <span>Type: {item.board_type}</span>
                                                                     <span>Shape: {item.board_shape}</span>

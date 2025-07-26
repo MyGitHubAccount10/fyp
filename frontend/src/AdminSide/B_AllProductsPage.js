@@ -213,7 +213,7 @@ function AllProductsPage() {
         const images = getProductImages(currentProduct);
         const newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
         setCurrentImageIndex(newIndex);
-        setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[newIndex]}`);
+        setModalImage(`${process.env.REACT_APP_API_URL}/images/product/${images[newIndex]}`);
     };
 
     const goToNextImage = () => {
@@ -221,7 +221,7 @@ function AllProductsPage() {
         const images = getProductImages(currentProduct);
         const newIndex = currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
         setCurrentImageIndex(newIndex);
-        setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[newIndex]}`);
+        setModalImage(`${process.env.REACT_APP_API_URL}/images/product/${images[newIndex]}`);
     };
 
     const closeModal = () => {

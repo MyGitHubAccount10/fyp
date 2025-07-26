@@ -187,7 +187,7 @@ function OrderDetailPage() {
     setCurrentImageIndex(imageIndex);
     const images = getProductImages(product);
     if (images.length > 0) {
-      setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[imageIndex]}`);
+      setModalImage(`${process.env.REACT_APP_API_URL}/images/product/${images[imageIndex]}`);
     }
   };
 
@@ -203,7 +203,7 @@ function OrderDetailPage() {
       const images = getProductImages(currentProduct);
       const newIndex = currentImageIndex > 0 ? currentImageIndex - 1 : images.length - 1;
       setCurrentImageIndex(newIndex);
-      setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[newIndex]}`);
+      setModalImage(`${process.env.REACT_APP_API_URL}/images/product/${images[newIndex]}`);
     }
   };
 
@@ -219,7 +219,7 @@ function OrderDetailPage() {
       const images = getProductImages(currentProduct);
       const newIndex = currentImageIndex < images.length - 1 ? currentImageIndex + 1 : 0;
       setCurrentImageIndex(newIndex);
-      setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[newIndex]}`);
+      setModalImage(`${process.env.REACT_APP_API_URL}/images/product/${images[newIndex]}`);
     }
   };
 

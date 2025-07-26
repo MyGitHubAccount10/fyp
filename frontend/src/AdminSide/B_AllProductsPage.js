@@ -204,7 +204,7 @@ function AllProductsPage() {
         setCurrentImageIndex(imageIndex);
         const images = getProductImages(product);
         if (images.length > 0) {
-            setModalImage(`${process.env.REACT_APP_API_URL}/images/${images[imageIndex]}`);
+            setModalImage(`${process.env.REACT_APP_API_URL}/images/product/${images[imageIndex]}`);
         }
     };
 

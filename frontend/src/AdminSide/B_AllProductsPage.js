@@ -408,10 +408,11 @@ function AllProductsPage() {
                     <thead>
                         <tr>
                             <th>Image</th>
+                            <th>Name</th>
                             <th>Category</th>
                             <th>Price</th>
                             <th>Stock</th>
-                            <th>Status</th>
+                            <th className="status-col">Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -428,10 +429,13 @@ function AllProductsPage() {
                                     onError={(e) => (e.target.src = '/images/placeholder-product.jpg')}
                                 />
                             </td>
+                            <td onClick={() => openImagePreview(product, 0)} className="product-name-cell">
+                                {product.product_name}
+                            </td>
                             <td>{getCategory(product.category)}</td>
                             <td>${product.product_price.toFixed(2)}</td>
                             <td>{product.warehouse_quantity}</td>
-                            <td>
+                            <td className="status-col">
                                 <span className={getProductStatusClass(getStatus(product))}>
                                     {getStatus(product)}
                                 </span>

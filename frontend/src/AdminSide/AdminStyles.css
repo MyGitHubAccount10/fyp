@@ -1078,6 +1078,13 @@ input[type="date"].filter-date-input:hover {
     color: #666;
 }
 
+/* Hide product status column in All Products table on small screens */
+@media (max-width: 768px) {
+  .my-table .status-col {
+    display: none;
+  }
+}
+
 
 
 

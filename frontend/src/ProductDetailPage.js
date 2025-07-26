@@ -171,12 +171,13 @@ const ProductDetailPage = () => {
   };
 
   const handleAddToCart = () => {
+    const isSkimboard = product.category.category_name === 'Skimboards';
     const isAccessory = product.category.category_name === 'Accessories';
-    const type = isAccessory ? 'N/A' : selectedType;
-    const shape = isAccessory ? 'N/A' : selectedShape;
+    const type = isSkimboard ? selectedType : 'N/A';
+    const shape = isSkimboard ? selectedShape : 'N/A';
     const size = isAccessory ? 'N/A' : selectedSize;
-    const material = isAccessory ? 'N/A' : selectedMaterial;
-    const thickness = isAccessory ? 'N/A' : selectedThickness;
+    const material = isSkimboard ? selectedMaterial : 'N/A';
+    const thickness = isSkimboard ? selectedThickness : 'N/A';
     dispatch({
       type: 'ADD_TO_CART',
       payload: { 
@@ -198,12 +199,13 @@ const ProductDetailPage = () => {
 
   // --- MODIFIED: Buy Now action bypasses the cart context ---
   const handleBuyNow = () => {
+    const isSkimboard = product.category.category_name === 'Skimboards';
     const isAccessory = product.category.category_name === 'Accessories';
-    const type = isAccessory ? 'N/A' : selectedType;
-    const shape = isAccessory ? 'N/A' : selectedShape;
+    const type = isSkimboard ? selectedType : 'N/A';
+    const shape = isSkimboard ? selectedShape : 'N/A';
     const size = isAccessory ? 'N/A' : selectedSize;
-    const material = isAccessory ? 'N/A' : selectedMaterial;
-    const thickness = isAccessory ? 'N/A' : selectedThickness;
+    const material = isSkimboard ? selectedMaterial : 'N/A';
+    const thickness = isSkimboard ? selectedThickness : 'N/A';
   
     // Create the item payload that PlaceOrderPage will receive directly
     const buyNowItem = { 

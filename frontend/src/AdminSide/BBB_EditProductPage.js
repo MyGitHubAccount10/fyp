@@ -6,7 +6,6 @@ import AdminHeader from '../AdminHeader';
 import { FaAngleLeft } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 
-
 function EditProductPage() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -26,7 +25,6 @@ function EditProductPage() {
     const [existingImageURLs, setExistingImageURLs] = useState([]);
     const [imagesToReplace, setImagesToReplace] = useState(false);
 
-    // Fetch categories on component mount
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -54,7 +52,6 @@ function EditProductPage() {
                     stockQuantity: data.warehouse_quantity || '',
                     threshold: data.threshold || '',
                     images: [],
-                    // Fix: Extract category ID from populated category object
                     category: (typeof data.category === 'object' && data.category._id) ? data.category._id : data.category || '',
                 });
                 setExistingImageURLs([
@@ -74,12 +71,14 @@ function EditProductPage() {
         };
 
         fetchProduct();
-    }, [id]);    const handleChange = (e) => {
+    }, [id]);
+
+    const handleChange = (e) => {
         const { name, value, type, files } = e.target;
         if (type === 'file') {
-            setFormData(prev => ({ ...prev, [name]: files }));
-            // Mark that images are being replaced
-            if (name === 'images' && files.length > 0) {
+            const filesArray = Array.from(files); // convert FileList to Array
+            setFormData(prev => ({ ...prev, [name]: filesArray }));
+            if (name === 'images' && filesArray.length > 0) {
                 setImagesToReplace(true);
             }
         } else {
@@ -90,86 +89,76 @@ function EditProductPage() {
     const handleClearImages = () => {
         setFormData(prev => ({ ...prev, images: [] }));
         setImagesToReplace(false);
-        // Clear the file input
         const fileInput = document.getElementById('imageUpload');
         if (fileInput) fileInput.value = '';
-    };    const handleSubmit = async (e) => {
+    };
+
+    const handleDeleteImage = (index) => {
+        setFormData(prev => {
+            const newImages = Array.from(prev.images);
+            newImages.splice(index, 1);
+            return { ...prev, images: newImages };
+        });
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
-        // If images are being replaced, show confirmation dialog
+
         if (imagesToReplace) {
             const confirmReplace = window.confirm(
                 "⚠️ WARNING: You are about to replace the existing product images. " +
                 "The current images will be permanently deleted from the server and cannot be recovered. " +
                 "Do you want to continue?"
             );
-            
-            if (!confirmReplace) {
-                return; // User cancelled the operation
-            }
+            if (!confirmReplace) return;
         }
-        
-        // Frontend validation
+
         if (!formData.name || !formData.description || !formData.price || !formData.stockQuantity || !formData.category) {
             alert('❌ Please fill in all required fields (Name, Description, Price, Stock Quantity, Category)');
             return;
         }
-        
-        console.log('Form data before submission:', formData);
-        
+
         const form = new FormData();
-        // Use the same field names that work for create
         form.append('product_name', formData.name);
         form.append('description', formData.description);
         form.append('product_price', Number(formData.price));
         form.append('warehouse_quantity', Number(formData.stockQuantity));
         form.append('threshold', Number(formData.threshold) || 5);
-        form.append('category', formData.category);        if (formData.images && formData.images.length > 0) {
-            // Send multiple images - this will replace ALL existing images
+        form.append('category', formData.category);
+
+        if (formData.images && formData.images.length > 0) {
             for (let i = 0; i < formData.images.length && i < 8; i++) {
                 form.append('product_images', formData.images[i]);
             }
         }
 
-        // Log all form data entries
-        console.log('FormData entries:');
-        for (let [key, value] of form.entries()) {
-            console.log(key, value);
-        }
-
         try {
             const res = await fetch(`${process.env.REACT_APP_API_URL}/api/product/${id}`, {
-                method: 'PATCH', // Use PATCH instead of PUT
+                method: 'PATCH',
                 body: form,
             });
 
             if (!res.ok) {
                 const errorData = await res.json().catch(() => ({}));
-                console.error('Server response:', {
-                    status: res.status,
-                    statusText: res.statusText,
-                    body: errorData
-                });
                 throw new Error(`Update failed: ${errorData.error || res.statusText}`);
-            }            const result = await res.json();
-            console.log('Product updated:', result);
-              const successMessage = imagesToReplace 
+            }
+
+            alert(imagesToReplace
                 ? '✅ Product updated successfully! Old images have been permanently deleted and replaced with new ones.'
-                : '✅ Product updated successfully!';
-            alert(successMessage);
-            navigate('/all-products', { 
+                : '✅ Product updated successfully!'
+            );
+            navigate('/all-products', {
                 state: {
                     returnToPage: location.state?.returnToPage,
                     filters: location.state?.filters
                 }
             });
         } catch (err) {
-            console.error('Update error:', err);
             alert(`❌ Failed to update product: ${err.message}`);
         }
     };
 
-    const handleBack = () => navigate('/all-products', { 
+    const handleBack = () => navigate('/all-products', {
         state: {
             returnToPage: location.state?.returnToPage,
             filters: location.state?.filters
@@ -179,7 +168,7 @@ function EditProductPage() {
 
     return (
         <div>
-            <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
+            <div style={{ position: 'sticky', top: 0, zIndex: 1000 }}>
                 <AdminHeader />
             </div>
             <div className="manage-products-page">
@@ -198,28 +187,27 @@ function EditProductPage() {
                             <div className="form-section-card">
                                 <h3 className="section-card-title">Edit Product</h3>
 
-
                                 <div className="form-group">
                                     <label>Product Name</label>
                                     <input type="text" name="name" value={formData.name} onChange={handleChange} required />
                                 </div>
                                 <div className="form-group">
                                     <label>Description</label>
-                                    <textarea 
-                                    name="description" 
-                                    value={formData.description} 
-                                    onChange={handleChange} 
-                                    rows="4" 
-                                    required
-                                    style={{
-                                        width: '100%',
-                                        padding: '10px',
-                                        marginTop: '6px',
-                                        borderRadius: '6px',
-                                        border: '1px solid #ccc',
-                                        resize: 'vertical',
-                                        boxSizing: 'border-box'
-                                    }} />
+                                    <textarea
+                                        name="description"
+                                        value={formData.description}
+                                        onChange={handleChange}
+                                        rows="4"
+                                        required
+                                        style={{
+                                            width: '100%',
+                                            padding: '10px',
+                                            marginTop: '6px',
+                                            borderRadius: '6px',
+                                            border: '1px solid #ccc',
+                                            resize: 'vertical',
+                                            boxSizing: 'border-box'
+                                        }} />
                                 </div>
                             </div>
 
@@ -228,12 +216,12 @@ function EditProductPage() {
                                 <div className="form-group">
                                     <label>Price</label>
                                     <input
-                                    type="number"
-                                    name="price"
-                                    value={parseFloat(formData.price || 0).toFixed(2)}
-                                    onChange={handleChange}
-                                    step="0.01"
-                                    required
+                                        type="number"
+                                        name="price"
+                                        value={parseFloat(formData.price || 0).toFixed(2)}
+                                        onChange={handleChange}
+                                        step="0.01"
+                                        required
                                     />
                                 </div>
                                 <div className="form-group">
@@ -245,11 +233,13 @@ function EditProductPage() {
                                     <input type="number" name="threshold" value={formData.threshold} onChange={handleChange} min="0" />
                                     <small className="form-text text-muted">Optional. Set a threshold for low stock alerts.</small>
                                 </div>
-                            </div>                            
+                            </div>
+
                             <div className="form-section-card">
                                 <h3 className="section-card-title">Product Image</h3>
                                 <div className="form-group">
-                                    <label>Replace Images</label>                                    {/* Show warning banner when images will be replaced */}
+                                    <label>Replace Images</label>
+                                    {/* Show warning banner when images will be replaced */}
                                     {imagesToReplace && (
                                         <div style={{
                                             backgroundColor: '#fff3cd',
@@ -264,7 +254,7 @@ function EditProductPage() {
                                             The current images will be permanently deleted and replaced with the new images when you save.
                                         </div>
                                     )}
-                                    
+
                                     <div className="file-upload-area">
                                         <input type="file" name="images" multiple onChange={handleChange} className="file-input-hidden" id="imageUpload" accept="image/*" />
                                         <label htmlFor="imageUpload" className="file-input-label">
@@ -274,8 +264,8 @@ function EditProductPage() {
                                             </span>
                                         </label>
                                         {formData.images.length > 0 && (
-                                            <button 
-                                                type="button" 
+                                            <button
+                                                type="button"
                                                 onClick={handleClearImages}
                                                 style={{
                                                     marginLeft: '10px',
@@ -292,61 +282,92 @@ function EditProductPage() {
                                             </button>
                                         )}
                                     </div>
-                                    
+
                                     {/* Show preview of new images if any are selected */}
                                     {formData.images.length > 0 && (
                                         <div style={{ marginTop: '15px' }}>
                                             <h4 style={{ color: '#007bff', fontSize: '14px', marginBottom: '10px' }}>New Images (Will Replace Current):</h4>
-                                            <div className="preview-images">
-                                                {Array.from(formData.images).map((file, i) => (
-                                                    <img 
-                                                        key={i} 
-                                                        src={URL.createObjectURL(file)} 
-                                                        alt={`New ${i + 1}`} 
-                                                        style={{ 
-                                                            maxWidth: "100px", 
-                                                            marginRight: "10px", 
-                                                            marginTop: "5px",
-                                                            border: "2px solid #007bff",
-                                                            borderRadius: "4px"
-                                                        }} 
-                                                    />
+
+                                            <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                                                {formData.images.map((file, i) => (
+                                                    <div
+                                                        key={i}
+                                                        style={{
+                                                            userSelect: "none",
+                                                            margin: "0 10px 10px 0",
+                                                            cursor: "default",
+                                                            position: "relative"
+                                                        }}
+                                                    >
+                                                        <img
+                                                            src={URL.createObjectURL(file)}
+                                                            alt={`New ${i + 1}`}
+                                                            style={{
+                                                                maxWidth: "100px",
+                                                                border: "2px solid #007bff",
+                                                                borderRadius: "4px"
+                                                            }}
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleDeleteImage(i)}
+                                                            style={{
+                                                                position: 'absolute',
+                                                                top: '-8px',
+                                                                right: '-8px',
+                                                                backgroundColor: '#dc3545',
+                                                                border: 'none',
+                                                                borderRadius: '50%',
+                                                                color: 'white',
+                                                                width: '20px',
+                                                                height: '20px',
+                                                                cursor: 'pointer',
+                                                                fontWeight: 'bold',
+                                                                lineHeight: '18px',
+                                                                padding: 0,
+                                                            }}
+                                                            aria-label={`Delete image ${i + 1}`}
+                                                        >
+                                                            ×
+                                                        </button>
+                                                    </div>
                                                 ))}
                                             </div>
                                         </div>
                                     )}
-                                    
+
                                     {/* Show current images */}
                                     {existingImageURLs.length > 0 && (
                                         <div style={{ marginTop: '15px' }}>
-                                            <h4 style={{ 
-                                                color: imagesToReplace ? '#dc3545' : '#6c757d', 
-                                                fontSize: '14px', 
-                                                marginBottom: '10px' 
+                                            <h4 style={{
+                                                color: imagesToReplace ? '#dc3545' : '#6c757d',
+                                                fontSize: '14px',
+                                                marginBottom: '10px'
                                             }}>
                                                 Current Images {imagesToReplace ? '(Will be deleted)' : ''}:
                                             </h4>
                                             <div className="preview-images">
                                                 {existingImageURLs.map((url, i) => (
-                                                    <img 
-                                                        key={i} 
-                                                        src={url} 
-                                                        alt="Current" 
-                                                        style={{ 
-                                                            maxWidth: "100px", 
-                                                            marginRight: "10px", 
+                                                    <img
+                                                        key={i}
+                                                        src={url}
+                                                        alt="Current"
+                                                        style={{
+                                                            maxWidth: "100px",
+                                                            marginRight: "10px",
                                                             marginTop: "5px",
                                                             opacity: imagesToReplace ? 0.5 : 1,
                                                             border: imagesToReplace ? "2px solid #dc3545" : "1px solid #ccc",
                                                             borderRadius: "4px"
-                                                        }} 
+                                                        }}
                                                     />
                                                 ))}
                                             </div>
                                         </div>
-                                    )}                                    <small className="form-text text-muted">
-                                        {imagesToReplace 
-                                            ? "⚠️ Selecting new images will permanently delete the current images from the server and replace them with the new ones. This action cannot be undone. Maximum 8 images allowed." 
+                                    )}
+                                    <small className="form-text text-muted">
+                                        {imagesToReplace
+                                            ? "⚠️ Selecting new images will permanently delete the current images from the server and replace them with the new ones. This action cannot be undone. Maximum 8 images allowed."
                                             : "First image will be used as the main display image. Select new images to replace current ones. Maximum 8 images allowed."
                                         }
                                     </small>
@@ -357,18 +378,19 @@ function EditProductPage() {
                         {/* RIGHT COLUMN */}
                         <div className="add-product-sidebar-panel">
                             <div className="form-section-card">
-                                <h3 className="section-card-title">Product Category</h3>                                <div className="form-group">
+                                <h3 className="section-card-title">Product Category</h3>
+                                <div className="form-group">
                                     <label htmlFor="productCategory">Category</label>
-                                    <select name="category" 
-                                    value={formData.category} 
-                                    onChange={handleChange} 
-                                    required
-                                    style={{
-                                        flex: '1 1 150px',
-                                        padding: '10px',
-                                        borderRadius: '6px',
-                                        border: '1px solid #ccc'
-                                            }}>
+                                    <select name="category"
+                                        value={formData.category}
+                                        onChange={handleChange}
+                                        required
+                                        style={{
+                                            flex: '1 1 150px',
+                                            padding: '10px',
+                                            borderRadius: '6px',
+                                            border: '1px solid #ccc'
+                                        }}>
                                         <option value="" disabled>Select Category</option>
                                         {categories.map((category) => (
                                             <option key={category._id} value={category._id}>

@@ -265,7 +265,9 @@ const ProductDetailPage = () => {
 
   return (
     <>
+      <div style={{ position: 'sticky', top: 0, zIndex: 1000}}>
       <Header />
+      </div>
       <div className="title-section">
         <h1 className="title">{product.category.category_name}</h1>
       </div>

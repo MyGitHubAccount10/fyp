@@ -83,6 +83,7 @@ const PopularProductsPage = () => {
           product.warehouse_quantity > product.threshold
         )
         .sort((a, b) => a.warehouse_quantity - b.warehouse_quantity)
+        .slice(0, 6) // Limit to top 6 popular products
     : [];
 
   const renderContent = () => {

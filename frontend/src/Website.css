@@ -3189,7 +3189,7 @@ input[type="password"]::-ms-clear {
 
 
 /* --- Tooltip Responsive Fix --- */
-@media (max-width: 600px) {
+@media (max-width: 480px) {
   .info-tooltip-mobile-fix {
     /* Anchor the tooltip's left edge to the icon's left edge */
     left: 0;

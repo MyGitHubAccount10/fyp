@@ -37,29 +37,53 @@ const InfoIcon = ({ hint }) => {
     visibility: isHovered ? 'visible' : 'hidden',
     opacity: isHovered ? 1 : 0,
     width: '240px',
+    minWidth: '200px',
+    maxWidth: '300px',
     backgroundColor: '#343a40',
     color: '#fff',
     textAlign: 'left',
     borderRadius: '6px',
     padding: '10px',
     position: 'absolute',
-    zIndex: 10,
+    zIndex: 1000,
     bottom: '140%',
     left: '50%',
     transform: 'translateX(-50%)',
     transition: 'opacity 0.2s ease-in-out',
-    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
     fontSize: '0.85em',
     lineHeight: '1.4',
     whiteSpace: 'pre-wrap',
+    wordWrap: 'break-word',
+    boxSizing: 'border-box',
   };
 
-  // CSS to fix tooltip positioning on mobile screens
+  // Enhanced CSS to fix tooltip positioning on all devices
   const mobileTooltipFix = `
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       .info-tooltip-mobile-fix {
-        left: -25px;
-        transform: none;
+        width: auto !important;
+        min-width: 200px;
+        max-width: calc(100vw - 40px) !important;
+        left: 0 !important;
+        transform: none !important;
+      }
+    }
+    @media (max-width: 480px) {
+      .info-tooltip-mobile-fix {
+        min-width: 180px;
+        max-width: calc(100vw - 20px) !important;
+        font-size: 0.8em !important;
+        padding: 8px !important;
+        bottom: 120% !important;
+      }
+    }
+    @media (max-width: 360px) {
+      .info-tooltip-mobile-fix {
+        min-width: 150px;
+        max-width: calc(100vw - 10px) !important;
+        font-size: 0.75em !important;
+        padding: 6px !important;
       }
     }
   `;

@@ -110,7 +110,7 @@ const faqData = {
     questions: [
       { id: "q5-1", question: "Where are your skimboards made?", answer: "Our skimboards are proudly handcrafted in Singapore, using high-quality materials sourced both locally and internationally to ensure top performance and durability." },
       { id: "q5-2", question: "How do I care for my custom skimboard?", answer: "To care for your skimboard, rinse it with fresh water after each use, especially if used in saltwater, to remove sand and salt. Avoid prolonged exposure to direct sunlight and extreme temperatures, as this can damage the board. Store it in a cool, dry place, preferably in a board bag to protect it from dings and scratches." },
-      { id: "q5-3", question: "What materials are used in your skimboards?", answer: "We use a variety of high-quality materials depending on the board model, including durable foam cores, epoxy resins, and fiberglass or carbon fiber for reinforcement, ensuring a balance of lightness, strength, and performance." },
+      { id: "q5-3", question: "What materials are used in your skimboards?", answer: "We use a variety of high-quality materials depending on the board model, including durable foam cores, epoxy resins, and fibreglass or carbon fibre for reinforcement, ensuring a balance of lightness, strength, and performance." },
     ]
   }
 };

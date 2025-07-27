@@ -115,7 +115,7 @@ const CustomisePage = () => {
     const types = ['Flatland', 'Wave', 'Hybrid'];
     const shapes = ['Square Tail', 'Round Tail', 'Pin Tail', 'Swallow Tail'];
     const sizes = ['XS', 'S', 'M', 'L', 'XL'];
-    const materials = ['Foam Core', 'Wood', 'Epoxy Coating', 'fibreglass', 'Carbon fibre'];
+    const materials = ['Foam Core', 'Wood', 'Epoxy Coating', 'Fibreglass', 'Carbon Fibre'];
     const thicknesses = ['3mm', '5mm', '7mm', '9mm', '11mm'];
     const optionStyle = { display: 'block', width: '100%', margin: '12px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
 
@@ -169,9 +169,9 @@ const CustomisePage = () => {
         setMaterialPrice(20);
       } else if (material === 'Epoxy Coating') {
         setMaterialPrice(30);
-      } else if (material === 'fibreglass') {
+      } else if (material === 'Fibreglass') {
         setMaterialPrice(40);
-      } else if (material === 'Carbon fibre') {
+      } else if (material === 'Carbon Fibre') {
         setMaterialPrice(50);
       } else {
         setMaterialPrice(0);

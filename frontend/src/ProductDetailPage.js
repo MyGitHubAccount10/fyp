@@ -132,7 +132,7 @@ const ProductDetailPage = () => {
   const types = ['Flatland', 'Wave', 'Hybrid'];
   const shapes = ['Square Tail', 'Round Tail', 'Pin Tail', 'Swallow Tail'];
   const sizes = ['XS', 'S', 'M', 'L', 'XL'];
-  const materials = ['Foam Core', 'Wood', 'Epoxy Coating', 'fibreglass', 'Carbon fibre'];
+  const materials = ['Foam Core', 'Wood', 'Epoxy Coating', 'Fibreglass', 'Carbon Fibre'];
   const thicknesses = ['3mm', '5mm', '7mm', '9mm', '11mm'];
   const optionStyle = { 
     display: 'block', 

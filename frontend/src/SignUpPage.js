@@ -12,6 +12,7 @@ const EyeOffIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http:/
 const CUSTOMER_ROLE_ID = '6849293057e7f26973c9fb40'; 
 
 // ✅ MODIFIED: InfoIcon component now includes a responsive style fix
+// NEW, cleaner version for all your files
 const InfoIcon = ({ hint }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -59,23 +60,12 @@ const InfoIcon = ({ hint }) => {
     whiteSpace: 'pre-wrap',
   };
 
-  // CSS to fix tooltip positioning on mobile screens
-  const mobileTooltipFix = `
-    @media (max-width: 600px) {
-      .info-tooltip-mobile-fix {
-        left: -25px;
-        transform: none;
-      }
-    }
-  `;
-
   return (
     <div 
       style={containerStyle}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <style>{mobileTooltipFix}</style>
       <span style={iconStyle}>i</span>
       <div style={tooltipStyle} className="info-tooltip-mobile-fix">{hint}</div>
     </div>

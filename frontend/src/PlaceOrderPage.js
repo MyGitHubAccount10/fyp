@@ -17,7 +17,7 @@ const paymentOptions = [
     { id: 'googlePay', name: 'Google Pay', logo: '/images/googlepay.png', formUrl: 'https://www.jotform.com/form/252035176639460' },
     { id: 'aliPay', name: 'Alipay', logo: '/images/alipay.png', formUrl: 'https://www.jotform.com/form/252034978749471' },
     { id: 'grabPay', name: 'GrabPay', logo: '/images/grabpay.png', formUrl: 'https://www.jotform.com/form/252034925972461' },
-    { id: 'eNETS', name: 'eNETS', logo: '/images/enets.png', formUrl: 'https://www.jotform.com/form/252034730615449' },
+    { id: 'eNETS', name: 'eNETS', logo: '/images/enets.png', formUrl: 'https://www.jotform.com/form/252073210667452' },
 ];
 
 function PlaceOrderPage() {

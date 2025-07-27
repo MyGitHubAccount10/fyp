@@ -6,6 +6,77 @@ import emailjs from 'emailjs-com';
 
 const contactBannerImage = '/images/AboutBanner.png'; // Reusing AboutBanner.png, replace if you have a specific contact banner
 
+// ✅ ADDED: Self-contained InfoIcon component for hints
+const InfoIcon = ({ hint }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const containerStyle = {
+    position: 'relative',
+    display: 'inline-flex',
+    alignItems: 'center',
+    marginLeft: '8px',
+  };
+
+  const iconStyle = {
+    width: '16px',
+    height: '16px',
+    borderRadius: '50%',
+    backgroundColor: '#adb5bd',
+    color: 'white',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: '12px',
+    fontWeight: 'bold',
+    fontFamily: 'sans-serif',
+    cursor: 'pointer',
+    userSelect: 'none',
+  };
+
+  const tooltipStyle = {
+    visibility: isHovered ? 'visible' : 'hidden',
+    opacity: isHovered ? 1 : 0,
+    width: '240px',
+    backgroundColor: '#343a40',
+    color: '#fff',
+    textAlign: 'left',
+    borderRadius: '6px',
+    padding: '10px',
+    position: 'absolute',
+    zIndex: 10,
+    bottom: '140%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    transition: 'opacity 0.2s ease-in-out',
+    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+    fontSize: '0.85em',
+    lineHeight: '1.4',
+    whiteSpace: 'pre-wrap',
+  };
+
+  // CSS to fix tooltip positioning on mobile screens
+  const mobileTooltipFix = `
+    @media (max-width: 600px) {
+      .info-tooltip-mobile-fix {
+        left: -25px;
+        transform: none;
+      }
+    }
+  `;
+
+  return (
+    <div 
+      style={containerStyle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <style>{mobileTooltipFix}</style>
+      <span style={iconStyle}>i</span>
+      <div style={tooltipStyle} className="info-tooltip-mobile-fix">{hint}</div>
+    </div>
+  );
+};
+
 const ContactPage = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -94,7 +165,8 @@ const ContactPage = () => {
     setFormErrors({ name: '', email: '', feedback: '' }); // Clear errors
   };
 
-  const labelStyle = { fontWeight: '600', marginBottom: '6px', display: 'block', fontSize: '0.9em' };
+  // ✅ MODIFIED: Updated label style to align icon
+  const labelStyle = { fontWeight: '600', marginBottom: '6px', display: 'flex', alignItems: 'center', fontSize: '0.9em' };
   const inputStyle = { display: 'block', width: '100%', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
   const textareaStyle = { ...inputStyle, resize: 'vertical', minHeight: '120px' };
   const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
@@ -119,7 +191,10 @@ const ContactPage = () => {
             <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>We'd love to hear from you!</p>
             
             <form onSubmit={handleSubmit} noValidate>
-              <label style={labelStyle}>Name</label>
+              <label style={labelStyle}>
+                Name
+                <InfoIcon hint="Please use only letters and spaces." />
+              </label>
               <input
                 type="text"
                 name="name"
@@ -131,7 +206,10 @@ const ContactPage = () => {
               />
               {formErrors.name && <p style={errorMessageStyle}>{formErrors.name}</p>}
 
-              <label style={labelStyle}>Email Address</label>
+              <label style={labelStyle}>
+                Email Address
+                <InfoIcon hint="We'll use this address to reply to your feedback, e.g., 'name@example.com'." />
+              </label>
               <input
                 type="email"
                 name="email"
@@ -143,7 +221,7 @@ const ContactPage = () => {
               />
               {formErrors.email && <p style={errorMessageStyle}>{formErrors.email}</p>}
 
-              <label style={labelStyle}>Feedback</label>
+              <label style={{...labelStyle, display: 'block'}}>Feedback</label>
               <textarea
                 name="feedback"
                 placeholder="Enter your feedback"

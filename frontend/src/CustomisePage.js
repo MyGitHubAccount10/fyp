@@ -115,7 +115,7 @@ const CustomisePage = () => {
     const types = ['Flatland', 'Wave', 'Hybrid'];
     const shapes = ['Square Tail', 'Round Tail', 'Pin Tail', 'Swallow Tail'];
     const sizes = ['XS', 'S', 'M', 'L', 'XL'];
-    const materials = ['Foam Core', 'Wood', 'Epoxy Coating', 'Fiberglass', 'Carbon Fiber'];
+    const materials = ['Foam Core', 'Wood', 'Epoxy Coating', 'fibreglass', 'Carbon Fiber'];
     const thicknesses = ['3mm', '5mm', '7mm', '9mm', '11mm'];
     const optionStyle = { display: 'block', width: '100%', margin: '12px', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
 

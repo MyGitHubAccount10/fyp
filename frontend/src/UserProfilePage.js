@@ -9,6 +9,66 @@ import socketService from './services/socketService';
 const EyeIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
 const EyeOffIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>;
 
+// ✅ ADDED: Self-contained InfoIcon component for hints
+const InfoIcon = ({ hint }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const containerStyle = {
+    position: 'relative',
+    display: 'inline-flex',
+    alignItems: 'center',
+    marginLeft: '8px',
+  };
+
+  const iconStyle = {
+    width: '16px',
+    height: '16px',
+    borderRadius: '50%',
+    backgroundColor: '#adb5bd',
+    color: 'white',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: '12px',
+    fontWeight: 'bold',
+    fontFamily: 'sans-serif',
+    cursor: 'pointer',
+    userSelect: 'none',
+  };
+
+  const tooltipStyle = {
+    visibility: isHovered ? 'visible' : 'hidden',
+    opacity: isHovered ? 1 : 0,
+    width: '240px',
+    backgroundColor: '#343a40',
+    color: '#fff',
+    textAlign: 'left',
+    borderRadius: '6px',
+    padding: '10px',
+    position: 'absolute',
+    zIndex: 10,
+    bottom: '140%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    transition: 'opacity 0.2s ease-in-out',
+    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+    fontSize: '0.85em',
+    lineHeight: '1.4',
+    whiteSpace: 'pre-wrap',
+  };
+
+  return (
+    <div 
+      style={containerStyle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <span style={iconStyle}>i</span>
+      <div style={tooltipStyle}>{hint}</div>
+    </div>
+  );
+};
+
 function UserProfilePage() {
     const [personalInfo, setPersonalInfo] = useState({
         fullName: '',
@@ -52,11 +112,21 @@ function UserProfilePage() {
     }, [navigate]);
 
     // --- Validation Functions ---
-    const validateFullName = (name) => !name ? 'Full Name is required.' : '';
+    const validateFullName = (name) => !/^[a-zA-Z\s]*$/.test(name) || !name ? 'Full Name must only contain letters and spaces.' : '';
     const validateEmail = (email) => !email ? 'Email is required.' : (!/^\S+@\S+\.\S+$/.test(email) ? 'Invalid email format.' : '');
     const validatePhone = (phone) => !phone ? 'Phone number is required.' : (!/^\d{8}$/.test(phone) ? 'Must be 8 digits.' : '');
     const validateShippingAddress = (address) => !address ? 'Shipping address is required.' : '';
-    const validateNewPassword = (pass) => pass.length < 8 ? 'Password must be at least 8 characters.' : '';
+
+    // ✅ MODIFIED: Updated password validation for consistency and security
+    const validateNewPassword = (pass) => {
+        if (pass.length < 8) return 'Password must be at least 8 characters long.';
+        if (!/[A-Z]/.test(pass)) return 'Password must contain at least one uppercase letter.';
+        if (!/[a-z]/.test(pass)) return 'Password must contain at least one lowercase letter.';
+        if (!/[0-9]/.test(pass)) return 'Password must contain at least one number.';
+        if (!/[!@#$%^&*]/.test(pass)) return 'Password must contain a special character (e.g., !@#$%^&*).';
+        return '';
+    };
+
     const validateConfirmPassword = (newPass, confirmPass) => newPass !== confirmPass ? 'Passwords do not match.' : '';
 
     const handlePersonalInfoChange = (e) => {
@@ -176,7 +246,6 @@ function UserProfilePage() {
             if (!response.ok) throw new Error(result.error || 'Failed to disable account.');
             alert('Your account has been successfully disabled. You will be logged out.');
             
-            // Disconnect socket before logout
             socketService.disconnect();
             dispatch({ type: 'LOGOUT' });
             navigate('/');
@@ -186,6 +255,9 @@ function UserProfilePage() {
     };
 
     const errorMessageStyle = { color: '#e74c3c', fontSize: '0.875em', marginTop: '5px' };
+    // ✅ ADDED: Style for labels with icons and the password hint text
+    const labelStyle = { display: 'flex', alignItems: 'center', marginBottom: '4px' };
+    const passwordHint = `Your password must include:\n• At least 8 characters\n• An uppercase letter (A-Z)\n• A lowercase letter (a-z)\n• A number (0-9)\n• A special character (!@#$%^&*)`;
 
     return (
         <>
@@ -202,23 +274,30 @@ function UserProfilePage() {
                     {isEditingPersonalInfo ? (
                         <form onSubmit={handleSavePersonalInfo} className="profile-form" noValidate>
                             <div className="form-group">
-                                <label htmlFor="fullName">Full Name</label>
+                                <label htmlFor="fullName" style={labelStyle}>
+                                    Full Name <InfoIcon hint="Please use only letters and spaces." />
+                                </label>
                                 <input type="text" id="fullName" name="fullName" value={personalInfo.fullName} onChange={handlePersonalInfoChange} onBlur={(e) => setPersonalInfoErrors(p => ({...p, fullName: validateFullName(e.target.value)}))} className={personalInfoErrors.fullName ? 'input-error' : ''} />
                                 {personalInfoErrors.fullName && <p style={errorMessageStyle}>{personalInfoErrors.fullName}</p>}
                             </div>
                             <div className="form-group">
-                                <label htmlFor="username">Username</label>
+                                <label htmlFor="username" style={labelStyle}>
+                                    Username <InfoIcon hint="Usernames cannot be changed after account creation. Please contact support if you need assistance." />
+                                </label>
                                 <input type="text" id="username" name="username" value={personalInfo.username} disabled title="Username cannot be changed" className="disabled-input" />
-                                <small className="form-text text-muted">Contact support to change your username.</small>
                             </div>
                             <div className="form-group">
-                                <label htmlFor="email">Email Address</label>
+                                <label htmlFor="email" style={labelStyle}>
+                                    Email Address <InfoIcon hint="e.g., 'name@example.com'. A valid email is required." />
+                                </label>
                                 <input type="email" id="email" name="email" value={personalInfo.email} onChange={handlePersonalInfoChange} onBlur={(e) => setPersonalInfoErrors(p => ({...p, email: validateEmail(e.target.value)}))} className={personalInfoErrors.email ? 'input-error' : ''} />
                                 {personalInfoErrors.email && <p style={errorMessageStyle}>{personalInfoErrors.email}</p>}
                             </div>
                             <div className="form-group">
-                                <label htmlFor="phoneNumber">Phone Number</label>
-                                <input type="tel" id="phoneNumber" name="phoneNumber" value={personalInfo.phoneNumber} onChange={handlePersonalInfoChange} onBlur={(e) => setPersonalInfoErrors(p => ({...p, phoneNumber: validatePhone(e.target.value)}))} pattern="[689]\d{7}" title="Enter a valid Singapore mobile or landline number" className={personalInfoErrors.phoneNumber ? 'input-error' : ''} />
+                                <label htmlFor="phoneNumber" style={labelStyle}>
+                                    Phone Number <InfoIcon hint="Must be exactly 8 digits, no spaces or symbols." />
+                                </label>
+                                <input type="tel" id="phoneNumber" name="phoneNumber" value={personalInfo.phoneNumber} onChange={handlePersonalInfoChange} onBlur={(e) => setPersonalInfoErrors(p => ({...p, phoneNumber: validatePhone(e.target.value)}))} pattern="\d{8}" title="Enter a valid 8-digit phone number" className={personalInfoErrors.phoneNumber ? 'input-error' : ''} />
                                 {personalInfoErrors.phoneNumber && <p style={errorMessageStyle}>{personalInfoErrors.phoneNumber}</p>}
                             </div>
                             <div className="form-actions">
@@ -241,7 +320,9 @@ function UserProfilePage() {
                     {isEditingAddress ? (
                         <form onSubmit={handleSaveAddress} className="profile-form" noValidate>
                             <div className="form-group">
-                                <label htmlFor="shippingAddress">Full Shipping Address</label>
+                                <label htmlFor="shippingAddress" style={labelStyle}>
+                                    Full Shipping Address 
+                                </label>
                                 <input type="text" id="shippingAddress" name="shippingAddress" value={shippingAddress} onChange={(e) => setShippingAddress(e.target.value)} onBlur={(e) => setShippingAddressError(validateShippingAddress(e.target.value))} className={shippingAddressError ? 'input-error' : ''} placeholder="Block/House No., Street, Unit, Postal Code" />
                                 {shippingAddressError && <p style={errorMessageStyle}>{shippingAddressError}</p>}
                             </div>
@@ -254,15 +335,17 @@ function UserProfilePage() {
                     <div className="profile-section-header"><h3>Change Password</h3></div>
                     <form onSubmit={handleChangePassword} className="profile-form" noValidate>
                         <div className="form-group">
-                            <label htmlFor="newPassword">New Password</label>
+                            <label htmlFor="newPassword" style={labelStyle}>
+                                New Password <InfoIcon hint={passwordHint} />
+                            </label>
                             <div className="password-input-wrapper">
                                 <input type={isNewPasswordVisible ? 'text' : 'password'} id="newPassword" name="newPassword" value={passwordChange.newPassword} onChange={handlePasswordFormChange} onBlur={(e) => setPasswordChangeErrors(p => ({...p, newPassword: validateNewPassword(e.target.value)}))} className={passwordChangeErrors.newPassword ? 'input-error' : ''} />
                                 <button type="button" className="password-toggle-btn" onClick={() => setIsNewPasswordVisible(p => !p)}>{isNewPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}</button>
                             </div>
-                            {passwordChangeErrors.newPassword ? <p style={errorMessageStyle}>{passwordChangeErrors.newPassword}</p> : <small className="form-text text-muted">Must be at least 8 characters long.</small>}
+                            {passwordChangeErrors.newPassword && <p style={errorMessageStyle}>{passwordChangeErrors.newPassword}</p>}
                         </div>
                         <div className="form-group">
-                            <label htmlFor="confirmNewPassword">Confirm New Password</label>
+                            <label htmlFor="confirmNewPassword" style={labelStyle}>Confirm New Password</label>
                             <div className="password-input-wrapper">
                                 <input type={isConfirmPasswordVisible ? 'text' : 'password'} id="confirmNewPassword" name="confirmNewPassword" value={passwordChange.confirmNewPassword} onChange={handlePasswordFormChange} onBlur={(e) => setPasswordChangeErrors(p => ({...p, confirmNewPassword: validateConfirmPassword(passwordChange.newPassword, e.target.value)}))} className={passwordChangeErrors.confirmNewPassword ? 'input-error' : ''} />
                                 <button type="button" className="password-toggle-btn" onClick={() => setIsConfirmPasswordVisible(p => !p)}>{isConfirmPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}</button>

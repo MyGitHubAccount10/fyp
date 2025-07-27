@@ -3183,3 +3183,21 @@ input[type="password"]::-ms-clear {
         padding-right: 15px;
     }
 }
+
+
+
+
+
+/* --- Tooltip Responsive Fix --- */
+@media (max-width: 600px) {
+  .info-tooltip-mobile-fix {
+    /* Anchor the tooltip's left edge to the icon's left edge */
+    left: 0;
+    /* Ensure it's not pinned to the right */
+    right: auto;
+    /* CRITICAL: Remove the transform that causes the centering issue */
+    transform: none;
+    /* Safety net: prevent tooltip from being wider than the screen */
+    max-width: calc(100vw - 40px);
+  }
+}

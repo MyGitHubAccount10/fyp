@@ -11,6 +11,66 @@ const EyeIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://ww
 const EyeOffIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>;
 const CUSTOMER_ROLE_ID = '6849293057e7f26973c9fb40'; 
 
+// ✅ ADDED: Self-contained InfoIcon component for hints
+const InfoIcon = ({ hint }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const containerStyle = {
+    position: 'relative',
+    display: 'inline-flex',
+    alignItems: 'center',
+    marginLeft: '8px',
+  };
+
+  const iconStyle = {
+    width: '16px',
+    height: '16px',
+    borderRadius: '50%',
+    backgroundColor: '#adb5bd',
+    color: 'white',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: '12px',
+    fontWeight: 'bold',
+    fontFamily: 'sans-serif',
+    cursor: 'pointer',
+    userSelect: 'none',
+  };
+
+  const tooltipStyle = {
+    visibility: isHovered ? 'visible' : 'hidden',
+    opacity: isHovered ? 1 : 0,
+    width: '240px',
+    backgroundColor: '#343a40',
+    color: '#fff',
+    textAlign: 'left',
+    borderRadius: '6px',
+    padding: '10px',
+    position: 'absolute',
+    zIndex: 10,
+    bottom: '140%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    transition: 'opacity 0.2s ease-in-out',
+    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+    fontSize: '0.85em',
+    lineHeight: '1.4',
+    whiteSpace: 'pre-wrap',
+  };
+
+  return (
+    <div 
+      style={containerStyle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <span style={iconStyle}>i</span>
+      <div style={tooltipStyle}>{hint}</div>
+    </div>
+  );
+};
+
 const SignUpPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -85,9 +145,8 @@ const SignUpPage = () => {
     return '';
   };
 
-  // ✅ MODIFIED: Live validation reads from the event target (e.target.value)
   const handleEmailBlur = async (e) => {
-    const currentValue = e.target.value; // Get value directly from the DOM input
+    const currentValue = e.target.value;
     const formatError = validateEmail(currentValue);
     if (formatError) {
       setEmailError(formatError);
@@ -110,9 +169,8 @@ const SignUpPage = () => {
     }
   };
 
-  // ✅ MODIFIED: Live validation reads from the event target (e.target.value)
   const handleUsernameBlur = async (e) => {
-    const currentValue = e.target.value; // Get value directly from the DOM input
+    const currentValue = e.target.value;
     const formatError = validateUsername(currentValue);
     if (formatError) {
       setUsernameError(formatError);
@@ -157,7 +215,6 @@ const SignUpPage = () => {
     e.preventDefault();
     setApiError(null);
     
-    // Rerun all validations on submit
     const fNameError = validateFullName(fullName);
     const emailErr = validateEmail(email);
     const phoneErr = validatePhone(phone);
@@ -167,10 +224,10 @@ const SignUpPage = () => {
     const cnfPassError = validateConfirmPassword(password, confirmPassword);
     
     setFullNameError(fNameError);
-    setEmailError(emailErr || emailError); // Keep existing "taken" error if format is now valid
+    setEmailError(emailErr || emailError);
     setPhoneError(phoneErr);
     setShippingAddressError(shippingAddressErr);
-    setUsernameError(usernameErr || usernameError); // Keep existing "taken" error
+    setUsernameError(usernameErr || usernameError);
     setPasswordError(passError);
     setConfirmPasswordError(cnfPassError);
     setIsPasswordTouched(true);
@@ -213,10 +270,13 @@ const SignUpPage = () => {
     }
   };
 
-  const labelStyle = { fontWeight: '600', marginBottom: '6px', display: 'block', fontSize: '0.9em' };
+  const labelStyle = { fontWeight: '600', marginBottom: '6px', display: 'flex', alignItems: 'center', fontSize: '0.9em' };
   const inputStyle = { display: 'block', width: '100%', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
   const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
   const errorMessageStyle = { color: '#e74c3c', fontSize: '0.875em', marginTop: '5px', marginBottom: '15px' };
+
+  // ✅ ADDED: Detailed hint text for password requirements
+  const passwordHint = `Your password must include:\n• At least 8 characters\n• An uppercase letter (A-Z)\n• A lowercase letter (a-z)\n• A number (0-9)\n• A special character (!@#$%^&*)`;
 
   return (
     <>
@@ -229,7 +289,10 @@ const SignUpPage = () => {
           <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>Create a new account!</p>
           <form onSubmit={handleSubmit} noValidate>
             
-            <label style={labelStyle}>Full Name</label>
+            <label style={labelStyle}>
+              Full Name
+              <InfoIcon hint="Please use only letters and spaces." />
+            </label>
             <input
               type="text"
               placeholder="Enter your full name"
@@ -239,17 +302,23 @@ const SignUpPage = () => {
               style={{...fullNameError ? errorInputStyle : inputStyle, marginBottom: fullNameError ? '0' : '15px'}} />
             {fullNameError && <p style={errorMessageStyle}>{fullNameError}</p>}
             
-            <label style={labelStyle}>Email Address</label>
+            <label style={labelStyle}>
+              Email Address
+              <InfoIcon hint="e.g., 'name@example.com'. This will be used to log in." />
+            </label>
             <input
               type="email"
               placeholder="Enter your email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              onBlur={handleEmailBlur} // This now passes the event object automatically
+              onBlur={handleEmailBlur}
               style={{...emailError ? errorInputStyle : inputStyle, marginBottom: emailError ? '0' : '15px'}} />
             {emailError && <p style={errorMessageStyle}>{emailError}</p>}
             
-            <label style={labelStyle}>Phone Number</label>
+            <label style={labelStyle}>
+              Phone Number
+              <InfoIcon hint="Must be exactly 8 digits, no spaces or symbols." />
+            </label>
             <input 
               type="tel"
               placeholder="Enter your phone number"
@@ -269,17 +338,23 @@ const SignUpPage = () => {
               style={{...shippingAddressError ? errorInputStyle : inputStyle, marginBottom: shippingAddressError ? '0' : '15px'}} />
             {shippingAddressError && <p style={errorMessageStyle}>{shippingAddressError}</p>}
 
-            <label style={labelStyle}>Username</label>
+            <label style={labelStyle}>
+              Username
+              <InfoIcon hint="Your unique username. Can only contain letters and numbers." />
+            </label>
             <input
               type="text"
               placeholder="Enter your username"
               value={username}
               onChange={e => setUsername(e.target.value)}
-              onBlur={handleUsernameBlur} // This now passes the event object automatically
+              onBlur={handleUsernameBlur}
               style={{...usernameError ? errorInputStyle : inputStyle, marginBottom: usernameError ? '0' : '15px'}} />
             {usernameError && <p style={errorMessageStyle}>{usernameError}</p>}
 
-            <label style={labelStyle}>Password</label>
+            <label style={labelStyle}>
+              Password
+              <InfoIcon hint={passwordHint} />
+            </label>
             <div className="password-input-wrapper" style={{ marginBottom: isPasswordTouched && passwordError ? '0' : '15px' }}>
                 <input
                   type={isPasswordVisible ? 'text' : 'password'}

@@ -12,6 +12,65 @@ import socketService from './services/socketService';
 const EyeIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>;
 const EyeOffIcon = ({ size = 20, color = "currentColor" }) => <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>;
 
+// ✅ ADDED: Self-contained InfoIcon component for hints
+const InfoIcon = ({ hint }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const containerStyle = {
+    position: 'relative',
+    display: 'inline-flex',
+    alignItems: 'center',
+    marginLeft: '8px',
+  };
+
+  const iconStyle = {
+    width: '16px',
+    height: '16px',
+    borderRadius: '50%',
+    backgroundColor: '#adb5bd',
+    color: 'white',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: '12px',
+    fontWeight: 'bold',
+    fontFamily: 'sans-serif',
+    cursor: 'pointer',
+    userSelect: 'none',
+  };
+
+  const tooltipStyle = {
+    visibility: isHovered ? 'visible' : 'hidden',
+    opacity: isHovered ? 1 : 0,
+    width: '240px',
+    backgroundColor: '#343a40',
+    color: '#fff',
+    textAlign: 'left',
+    borderRadius: '6px',
+    padding: '10px',
+    position: 'absolute',
+    zIndex: 10,
+    bottom: '140%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    transition: 'opacity 0.2s ease-in-out',
+    boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+    fontSize: '0.85em',
+    lineHeight: '1.4',
+    whiteSpace: 'pre-wrap',
+  };
+
+  return (
+    <div 
+      style={containerStyle}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <span style={iconStyle}>i</span>
+      <div style={tooltipStyle}>{hint}</div>
+    </div>
+  );
+};
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -92,8 +151,8 @@ const LoginPage = () => {
     navigate('/forgot-password', { state: location.state });
   };
 
-  // ✅ ADDED: Style for labels
-  const labelStyle = { fontWeight: '600', marginBottom: '6px', display: 'block', fontSize: '0.9em' };
+  // ✅ MODIFIED: Style for labels to support icon alignment
+  const labelStyle = { fontWeight: '600', marginBottom: '6px', display: 'flex', alignItems: 'center', fontSize: '0.9em' };
   const inputStyle = { display: 'block', width: '100%', padding: '12px', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' };
   const errorInputStyle = { ...inputStyle, borderColor: '#e74c3c' };
   const errorMessageStyle = { color: '#e74c3c', fontSize: '0.875em', marginTop: '5px', marginBottom: '15px' };
@@ -109,8 +168,11 @@ const LoginPage = () => {
           <p style={{ marginBottom: '30px', fontSize: '1em', color: '#555' }}>Login to your account!</p>
 
           <form onSubmit={handleSubmit} noValidate>
-            {/* ✅ ADDED: Email label */}
-            <label style={labelStyle}>Email Address</label>
+            {/* ✅ MODIFIED: Replaced text hint with InfoIcon component */}
+            <label style={labelStyle}>
+              Email Address
+              <InfoIcon hint="Please enter the email address associated with your account, e.g., 'name@example.com'." />
+            </label>
             <input
               type="email"
               placeholder="Enter your email"
@@ -121,7 +183,6 @@ const LoginPage = () => {
             />
             {emailError && <p style={errorMessageStyle}>{emailError}</p>}
             
-            {/* ✅ ADDED: Password label */}
             <label style={labelStyle}>Password</label>
             <div className="password-input-wrapper" style={{ marginBottom: passwordError ? '0' : '20px' }}>
                 <input

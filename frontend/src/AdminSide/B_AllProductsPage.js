@@ -394,7 +394,7 @@ function AllProductsPage() {
                         {getProductImages(currentProduct).length > 1 && (
                             <div onClick={(e) => e.stopPropagation()} style={{ display: 'flex', gap: '8px', marginTop: '15px', alignItems: 'center' }}>
                                 {getProductImages(currentProduct).map((_, index) => (
-                                    <button key={index} onClick={() => { setCurrentImageIndex(index); setModalImage(`${process.env.REACT_APP_API_URL}/images/${getProductImages(currentProduct)[index]}`); }} style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc', cursor: 'pointer', transition: 'background-color 0.2s' }} />
+                                    <button key={index} onClick={() => { setCurrentImageIndex(index); setModalImage(`${process.env.REACT_APP_API_URL}/images/product/${getProductImages(currentProduct)[index]}`); }} style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc', cursor: 'pointer', transition: 'background-color 0.2s' }} />
                                 ))}
                                 <span style={{ marginLeft: '10px', fontSize: '12px', color: '#666' }}>{currentImageIndex + 1} of {getProductImages(currentProduct).length}</span>
                             </div>

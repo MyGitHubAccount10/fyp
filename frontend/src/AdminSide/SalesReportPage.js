@@ -612,7 +612,7 @@ function SalesReportPage() {
                                 {filterOrdersByDate(orders).slice(0, 10).map(order => (
                                     <tr key={order._id}>
                                         <td className="coloured-link">
-                                            <a href={`/admin/orders/${order._id}`} style={{ color: '#f1673a' }}>
+                                            <a href={`/order-details/${order._id}`} style={{ color: '#f1673a' }}>
                                                 {order._id?.slice(-8) || 'N/A'}
                                             </a>
                                         </td>

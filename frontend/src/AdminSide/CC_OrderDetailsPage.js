@@ -473,7 +473,7 @@ function OrderDetailPage() {
                                     : getProductImages(currentProduct).map((_, index) => (
                                         <button type="button" key={index} onClick={() => { 
                                             setCurrentImageIndex(index); 
-                                            setModalImage(`${process.env.REACT_APP_API_URL}/images/${getProductImages(currentProduct)[index]}`); 
+                                            setModalImage(`${process.env.REACT_APP_API_URL}/images/product/${getProductImages(currentProduct)[index]}`); 
                                         }} style={{ width: '10px', height: '10px', borderRadius: '50%', border: 'none', backgroundColor: index === currentImageIndex ? '#007bff' : '#ccc', cursor: 'pointer', transition: 'background-color 0.2s' }} />
                                     ))
                                 }
